@@ -19,3 +19,17 @@ export async function checkSystem(): Promise<SystemStatus> {
   // TODO(Issue 2 & 4): implement the two fetch calls described above.
   throw new Error("checkSystem not implemented yet");
 }
+export interface HealthStatus {
+  status: string;
+  service: string;
+}
+
+export async function checkHealth(): Promise<HealthStatus> {
+  const response = await fetch(`${API_URL}/api/health`);
+
+  if (!response.ok) {
+    throw new Error("Backend is unavailable");
+  }
+
+  return (await response.json()) as HealthStatus;
+}
