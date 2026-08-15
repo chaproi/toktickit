@@ -1,19 +1,22 @@
 import { useState } from "react";
-import { checkHealth } from "./api.js";
+import { checkSystem, type Category } from "./api.js";
 
 type UiState = "idle" | "loading" | "success" | "error";
 
 export default function App() {
   const [state, setState] = useState<UiState>("idle");
+  const [categories, setCategories] = useState<Category[]>([]);
 
   async function handleCheck() {
     setState("loading");
 
     try {
-      await checkHealth();
+      const systemStatus = await checkSystem();
+      setCategories(systemStatus.categories);
       setState("success");
     } catch (error) {
-      console.error("Health check failed:", error);
+      console.error("Error checking system:", error);
+      setCategories([]);
       setState("error");
     }
   }
@@ -32,14 +35,26 @@ export default function App() {
         {state === "loading" ? "Loading…" : "Check System"}
       </button>
 
+      {state === "loading" && <p className="mt-3">Loading…</p>}
+
       {state === "success" && (
-        <p className="mt-3 text-success">Backend Status: Online</p>
+        <div className="mt-3">
+          <p className="text-success">System Status: Online</p>
+          <p>Supported Request Categories:</p>
+
+          <ul>
+            {categories.map((category) => (
+              <li key={category.id}>{category.name}</li>
+            ))}
+          </ul>
+        </div>
       )}
 
       {state === "error" && (
-        <p className="mt-3 text-danger">
-          Backend Status: Offline — unable to connect to the backend.
-        </p>
+        <div className="mt-3">
+          <p className="text-danger">System Status: Offline</p>
+          <p>Unable to connect to the backend or load categories.</p>
+        </div>
       )}
     </div>
   );
