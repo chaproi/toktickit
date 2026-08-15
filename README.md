@@ -31,6 +31,16 @@ Example:
 DATABASE_URL="postgresql://postgres:YOUR_POSTGRES_PASSWORD@localhost:5432/toktickit?schema=public"
 PORT=3000
 ```
+### Initialize the Database
+
+After configuring `.env`, run the migration and seed commands:
+
+```bash
+cd server
+npx prisma migrate dev --name init
+npm run prisma:seed
+```
+The migration creates the required database tables. The seed command adds the four initial IT request categories and can be run repeatedly without creating duplicates.
 
 Do not commit the `.env` file because it contains private credentials.
 
