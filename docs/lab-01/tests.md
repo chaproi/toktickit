@@ -25,3 +25,13 @@ Tests       3 passed (3)
 ```
 
 All five required tests passed. The complete test commands will also be run again on the final `main` branch before submission.
+
+## Test Screenshots
+
+### Server Test Result
+
+![Server tests passed](./images/server-tests.png)
+
+### Client Test Result
+
+![Client tests passed](./images/client-tests.png)
