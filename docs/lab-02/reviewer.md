@@ -16,7 +16,7 @@ Only completed review activity shall be reported as evidence. Pending items must
 | Integration branch          | `lab2-staging`                      |
 | Engineering-contract PR       | #12                               |
 | Assigned peer reviewer        | @cottonlnwza                       |
-| Review status                 | Changes requested; fixes applied locally; awaiting re-review |
+| Review status | Changes requested; fixes pushed; awaiting re-review |
 | Final release PR            | Pending                             |
 
 ## 3. Reviewers
@@ -56,7 +56,7 @@ Review comments should be specific, actionable, and related to requirements, cor
 | Date    | Pull Request | Reviewer Comment | My Response or Change | Commit / Evidence | Resolved |
 | ------- | ------------ | ---------------- | --------------------- | ----------------- | -------- |
 | 2026-09-04 | #12 | Contract names, response shapes, and Category ordering were inconsistent across documents. | Standardized `name`, `currentStatus`, `originalFilename`, `sortOrder`, `fields`, and `removalReason`; aligned the Create Ticket response and Category ordering. | Commit 256f8bc | Yes |
-| 2026-09-04 | #12 | Duplicate heading and remaining response, attachment, removal, query, and ordering inconsistencies. | Removed the duplicate heading and aligned response shapes, attachment metadata, `removalReason`, `currentStatus`, and Category ordering. | Local changes pending commit and push | No |
+| 2026-09-04 | #12 | Duplicate heading and remaining response, attachment, removal, query, and ordering inconsistencies. | Removed the duplicate heading; aligned Create, List, Detail, and Attachment response shapes; standardized query and ordering rules; and clarified idempotency, unknown-field rejection, and preview/download behavior. | Commits 3b50309 and e02a757 | No |
 
 A comment shall be marked resolved only after the requested clarification or change has been completed and verified.
 
