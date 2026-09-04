@@ -5,6 +5,26 @@ export interface Category {
   name: string;
 }
 
+export interface DevelopmentRequester {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export async function getDevelopmentRequesters(): Promise<
+  DevelopmentRequester[]
+> {
+  const response = await fetch(
+    `${API_URL}/api/development-requesters`,
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch Development Requesters");
+  }
+
+  return (await response.json()) as DevelopmentRequester[];
+}
+
 export interface SystemStatus {
   online: boolean;
   categories: Category[];
