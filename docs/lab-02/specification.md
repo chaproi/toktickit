@@ -300,7 +300,7 @@ The Lab 2 database increment shall extend the existing Lab 1 Prisma schema. The 
 | `DevelopmentRequester` | Temporary Requester identity used only for Lab 2 testing       | `id`, `name`, `email`, `isActive`, `createdAt`, `updatedAt`                                                                                                                          |
 | `TicketNumberSequence` | Transaction-safe annual Ticket Number sequence                 | `year`, `lastValue`, `updatedAt`                                                                                                                                                     |
 | `Ticket`               | Requester-owned IT support request                             | `id`, `ticketNumber`, `clientSubmissionId`, `requesterId`, `categoryId`, `relatedSystemId`, `summary`, `requestedPriority`, `description`, `currentStatus`, `createdAt`, `updatedAt` |
-| `Attachment`           | Metadata for a file associated with a Ticket                   | `id`, `ticketId`, `originalName`, `storageKey`, `mimeType`, `sizeBytes`, `uploadedByRequesterId`, `isRemoved`, `createdAt`, `removedAt`, `removedByRequesterId`, `removalReason`     |
+| `Attachment`           | Metadata for a file associated with a Ticket                   | `id`, `ticketId`, `originalFilename`, `storageKey`, `mimeType`, `sizeBytes`, `uploadedByRequesterId`, `isRemoved`, `createdAt`, `removedAt`, `removedByRequesterId`, `removalReason`     |
 
 ### 7.2 Enumerations
 
@@ -359,7 +359,7 @@ Ticket, Category, Related System, and Development Requester records shall not be
 | `Ticket.description`            | Required, trimmed, 10–5,000 characters                      |
 | `Ticket.requestedPriority`      | Required `RequestedPriority` value                          |
 | `Ticket.currentStatus`          | Required, default `NEW`                                     |
-| `Attachment.originalName`       | Required for display; must not be used as the storage path  |
+| `Attachment.originalFilename`       | Required for display; must not be used as the storage path  |
 | `Attachment.storageKey`         | Unique server-generated identifier                          |
 | `Attachment.mimeType`           | Required and limited to an approved MIME type               |
 | `Attachment.sizeBytes`          | Required integer from 1 to 5,000,000                        |
@@ -447,7 +447,7 @@ The complete request and response definitions are maintained in `docs/lab-02/api
 | `GET`  | `/api/related-systems`        | Retrieve active Related Systems                                         | `200 OK` |
 | `GET`  | `/api/development-requesters` | Retrieve active Development Requesters                                  | `200 OK` |
 
-Reference-data responses shall be arrays ordered by name, except the existing Category endpoint may preserve its Lab 1 ordering to keep existing tests compatible.
+Reference-data responses shall be arrays ordered by name ascending, except the Category endpoint shall preserve its existing Lab 1 ordering for compatibility with existing tests., except the existing Category endpoint may preserve its Lab 1 ordering to keep existing tests compatible.
 
 Example Development Requester response:
 
@@ -531,14 +531,14 @@ Supported query parameters:
 | `requestedPriority` | Filter by Requested Priority                                                | All         |
 | `currentStatus`     | Filter by Current Status                                                    | All         |
 | `sortBy`            | `ticketNumber`, `createdAt`, `updatedAt`, `summary`, or `requestedPriority` | `updatedAt` |
-| `sortDirection`     | `asc` or `desc`                                                             | `desc`      |
+| `sortOrder`     | `asc` or `desc`                                                             | `desc`      |
 | `page`              | One-based page number                                                       | `1`         |
 | `pageSize`          | `10`, `25`, or `50`                                                         | `10`        |
 
 Example request:
 
 ```text
-GET /api/tickets?search=laptop&categoryId=2&sortBy=updatedAt&sortDirection=desc&page=1&pageSize=10
+GET /api/tickets?search=laptop&categoryId=2&sortBy=updatedAt&sortOrder=desc&page=1&pageSize=10
 ```
 
 Successful response:
@@ -636,7 +636,7 @@ Upload response:
 {
   "id": 10,
   "ticketId": 1,
-  "originalName": "battery-report.pdf",
+  "originalFilename": "battery-report.pdf",
   "mimeType": "application/pdf",
   "sizeBytes": 245760,
   "isRemoved": false,
@@ -672,14 +672,14 @@ New Lab 2 endpoints shall use the following safe error format:
   "error": {
     "code": "VALIDATION_ERROR",
     "message": "Some submitted values are invalid.",
-    "fieldErrors": {
+    "fields": {
       "summary": "Summary must contain between 5 and 150 characters."
     }
   }
 }
 ```
 
-`fieldErrors` may be omitted when an error is not related to individual fields. Internal exception messages, SQL details, stack traces, and storage paths shall never be returned.
+`fields` may be omitted when an error is not related to individual fields. Internal exception messages, SQL details, stack traces, and storage paths shall never be returned.
 
 ### 8.7 HTTP Status Decisions
 

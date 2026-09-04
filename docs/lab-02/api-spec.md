@@ -222,12 +222,12 @@ Successful response:
 [
   {
     "id": 1,
-    "displayName": "Development Requester 1",
+    "name": "Development Requester 1",
     "email": "requester1@example.test"
   },
   {
     "id": 2,
-    "displayName": "Development Requester 2",
+    "name": "Development Requester 2",
     "email": "requester2@example.test"
   }
 ]
@@ -236,7 +236,7 @@ Successful response:
 Rules:
 
 * Only active Development Requesters shall be returned.
-* Results shall be sorted by `displayName` ascending.
+* Results shall be sorted by `name` ascending.
 * Passwords, tokens, roles, or other authentication fields shall not be returned.
 * The initial seed shall include four active Development Requesters and one inactive Development Requester.
 * The inactive Requester shall not appear in this response.
@@ -304,27 +304,30 @@ Successful response:
 
 ```json
 {
-  "id": 101,
-  "ticketNumber": "TKT-2026-00001",
-  "ticketDate": "2026-09-03T14:30:00.000Z",
-  "requester": {
-    "id": 1,
-    "displayName": "Development Requester 1"
+  "ticket": {
+    "id": 101,
+    "ticketNumber": "TKT-2026-00001",
+    "ticketDate": "2026-09-03T14:30:00.000Z",
+    "requester": {
+      "id": 1,
+      "name": "Development Requester 1"
+    },
+    "category": {
+      "id": 1,
+      "name": "Hardware"
+    },
+    "relatedSystem": {
+      "id": 2,
+      "name": "Learning Management System"
+    },
+    "requestedPriority": "MEDIUM",
+    "currentStatus": "NEW",
+    "summary": "Laptop battery drains quickly",
+    "description": "The battery decreases from full to empty in approximately one hour.",
+    "createdAt": "2026-09-03T14:30:00.000Z",
+    "updatedAt": "2026-09-03T14:30:00.000Z"
   },
-  "category": {
-    "id": 1,
-    "name": "Hardware"
-  },
-  "relatedSystem": {
-    "id": 2,
-    "name": "Learning Management System"
-  },
-  "requestedPriority": "MEDIUM",
-  "status": "NEW",
-  "summary": "Laptop battery drains quickly",
-  "description": "The battery decreases from full to empty in approximately one hour.",
-  "createdAt": "2026-09-03T14:30:00.000Z",
-  "updatedAt": "2026-09-03T14:30:00.000Z"
+  "replayed": false
 }
 ```
 
@@ -436,7 +439,7 @@ Successful response:
         "name": "Learning Management System"
       },
       "requestedPriority": "MEDIUM",
-      "status": "NEW",
+      "currentStatus": "NEW",
       "summary": "Laptop battery drains quickly",
       "createdAt": "2026-09-03T14:30:00.000Z",
       "updatedAt": "2026-09-03T14:30:00.000Z"
@@ -521,7 +524,7 @@ Successful response:
   "ticketDate": "2026-09-03T14:30:00.000Z",
   "requester": {
     "id": 1,
-    "displayName": "Development Requester 1"
+    "name": "Development Requester 1"
   },
   "category": {
     "id": 1,
@@ -532,7 +535,7 @@ Successful response:
     "name": "Learning Management System"
   },
   "requestedPriority": "MEDIUM",
-  "status": "NEW",
+  "currentStatus": "NEW",
   "summary": "Laptop battery drains quickly",
   "description": "The battery decreases from full to empty in approximately one hour.",
   "createdAt": "2026-09-03T14:30:00.000Z",
@@ -893,7 +896,7 @@ Request body:
 
 ```json
 {
-  "reason": "Uploaded the wrong image."
+  "removalReason": "Uploaded the wrong image."
 }
 ```
 

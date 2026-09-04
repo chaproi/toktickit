@@ -14,16 +14,16 @@ Only completed review activity shall be reported as evidence. Pending items must
 | Engineering-contract Issue  | `#11`                               |
 | Engineering-contract branch | `docs/11-lab2-engineering-contract` |
 | Integration branch          | `lab2-staging`                      |
-| Engineering-contract PR     | Pending                             |
-| Assigned peer reviewer      | Pending                             |
-| Review status               | Not started                         |
+| Engineering-contract PR       | #12                               |
+| Assigned peer reviewer        | @cottonlnwza                       |
+| Review status                 | Changes requested; fixes applied locally; awaiting re-review |
 | Final release PR            | Pending                             |
 
 ## 3. Reviewers
 
 | Reviewer Name | GitHub Username | Role                                | Confirmed |
 | ------------- | --------------- | ----------------------------------- | --------- |
-| Pending       | Pending         | Reviews my Lab 2 Pull Requests      | No        |
+| Not recorded  | @cottonlnwza    | Reviews my Lab 2 Pull Requests   | Yes       |
 | Pending       | Pending         | Student whose Pull Request I review | No        |
 
 Reviewer information shall be replaced with the real identity after review assignment or participation.
@@ -48,13 +48,13 @@ Review comments should be specific, actionable, and related to requirements, cor
 
 | Date    | Reviewer | Pull Request | Scope   | Result  | Approval Link |
 | ------- | -------- | ------------ | ------- | ------- | ------------- |
-| Pending | Pending  | Pending      | Pending | Pending | Pending       |
+| 2026-09-04 | @cottonlnwza | #12 | Engineering contract consistency | Changes requested | Not approved |
 
 ## 7. Comments Received and My Responses
 
 | Date    | Pull Request | Reviewer Comment | My Response or Change | Commit / Evidence | Resolved |
 | ------- | ------------ | ---------------- | --------------------- | ----------------- | -------- |
-| Pending | Pending      | Pending          | Pending               | Pending           | No       |
+| 2026-09-04 | #12 | Contract names, response shapes, and Category ordering were inconsistent across documents. | Standardized `name`, `currentStatus`, `originalFilename`, `sortOrder`, `fields`, and `removalReason`; aligned the Create Ticket response and Category ordering. | Local changes pending commit and push | No |
 
 A comment shall be marked resolved only after the requested clarification or change has been completed and verified.
 
@@ -62,7 +62,7 @@ A comment shall be marked resolved only after the requested clarification or cha
 
 | Pull Request         | Source Branch                       | Target Branch  | Reviewer | Approval Status | Merge Status |
 | -------------------- | ----------------------------------- | -------------- | -------- | --------------- | ------------ |
-| Engineering contract | `docs/11-lab2-engineering-contract` | `lab2-staging` | Pending  | Pending         | Not merged   |
+| Engineering contract | `docs/11-lab2-engineering-contract` | `lab2-staging` | @cottonlnwza | Changes requested | Not merged |
 | Lab 2 release        | `lab2-staging`                      | `main`         | Pending  | Pending         | Not merged   |
 
 Additional feature Pull Requests shall be added during implementation.
