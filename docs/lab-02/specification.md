@@ -2,9 +2,6 @@
 
 ## 1. Sprint Goal
 
-# Lab 2 Sprint Engineering Specification
-
-## 1. Sprint Goal
 
 The goal of Lab 2 is to extend the existing TokTickIT Lab 1 application into a responsive Requester-facing ticketing MVP. A selected Development Requester can create a support ticket, view and find their own tickets, open Ticket Detail, and manage permitted attachments. The increment must preserve the existing React, Express, Prisma, and PostgreSQL foundation while introducing reusable Zen Green UI conventions, testable API behavior, ownership protection, and traceable automated tests.
 
@@ -447,7 +444,7 @@ The complete request and response definitions are maintained in `docs/lab-02/api
 | `GET`  | `/api/related-systems`        | Retrieve active Related Systems                                         | `200 OK` |
 | `GET`  | `/api/development-requesters` | Retrieve active Development Requesters                                  | `200 OK` |
 
-Reference-data responses shall be arrays ordered by name ascending, except the Category endpoint shall preserve its existing Lab 1 ordering for compatibility with existing tests., except the existing Category endpoint may preserve its Lab 1 ordering to keep existing tests compatible.
+Reference-data responses shall be arrays ordered by name ascending, except the Category endpoint shall preserve its existing Lab 1 ordering to maintain compatibility with existing tests.
 
 Example Development Requester response:
 
@@ -493,15 +490,25 @@ First successful creation shall return `201 Created`:
 ```json
 {
   "ticket": {
-    "id": 1,
+    "id": 101,
     "ticketNumber": "TKT-2026-00001",
-    "requesterId": 1,
-    "categoryId": 2,
-    "relatedSystemId": 7,
-    "summary": "Laptop battery drains quickly",
+    "ticketDate": "2026-09-03T14:30:00.000Z",
+    "requester": {
+      "id": 1,
+      "name": "Development Requester 1"
+    },
+    "category": {
+      "id": 1,
+      "name": "Hardware"
+    },
+    "relatedSystem": {
+      "id": 2,
+      "name": "Learning Management System"
+    },
     "requestedPriority": "MEDIUM",
-    "description": "The battery drains much faster than usual after the latest update.",
     "currentStatus": "NEW",
+    "summary": "Laptop battery drains quickly",
+    "description": "The battery decreases from full to empty in approximately one hour.",
     "createdAt": "2026-09-03T14:30:00.000Z",
     "updatedAt": "2026-09-03T14:30:00.000Z"
   },

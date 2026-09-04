@@ -49,12 +49,14 @@ Review comments should be specific, actionable, and related to requirements, cor
 | Date    | Reviewer | Pull Request | Scope   | Result  | Approval Link |
 | ------- | -------- | ------------ | ------- | ------- | ------------- |
 | 2026-09-04 | @cottonlnwza | #12 | Engineering contract consistency | Changes requested | Not approved |
+| 2026-09-04 | @cottonlnwza | #12 | Remaining contract inconsistencies | Changes requested | Not approved |
 
 ## 7. Comments Received and My Responses
 
 | Date    | Pull Request | Reviewer Comment | My Response or Change | Commit / Evidence | Resolved |
 | ------- | ------------ | ---------------- | --------------------- | ----------------- | -------- |
-| 2026-09-04 | #12 | Contract names, response shapes, and Category ordering were inconsistent across documents. | Standardized `name`, `currentStatus`, `originalFilename`, `sortOrder`, `fields`, and `removalReason`; aligned the Create Ticket response and Category ordering. | Local changes pending commit and push | No |
+| 2026-09-04 | #12 | Contract names, response shapes, and Category ordering were inconsistent across documents. | Standardized `name`, `currentStatus`, `originalFilename`, `sortOrder`, `fields`, and `removalReason`; aligned the Create Ticket response and Category ordering. | Commit 256f8bc | Yes |
+| 2026-09-04 | #12 | Duplicate heading and remaining response, attachment, removal, query, and ordering inconsistencies. | Removed the duplicate heading and aligned response shapes, attachment metadata, `removalReason`, `currentStatus`, and Category ordering. | Local changes pending commit and push | No |
 
 A comment shall be marked resolved only after the requested clarification or change has been completed and verified.
 

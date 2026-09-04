@@ -151,7 +151,7 @@ Successful response:
 
 Rules:
 
-* Results shall be sorted by name ascending.
+* Results shall preserve the existing Lab 1 Category ordering.
 * Only active Categories shall be returned.
 * The response shape shall preserve compatibility with the existing Lab 1 Category endpoint.
 
@@ -192,7 +192,7 @@ Successful response:
 
 Rules:
 
-* Results shall be sorted by name ascending.
+* Results shall preserve the existing Lab 1 Category ordering.
 * Only active Related Systems shall be returned.
 * The initial seed shall provide the seven approved Related Systems.
 
@@ -292,7 +292,7 @@ The backend shall generate:
 * `ticketNumber`
 * `ticketDate`
 * Requester ownership
-* Initial `status` of `NEW`
+* Initial `currentStatus` of `NEW`
 * `createdAt`
 * `updatedAt`
 
@@ -392,8 +392,8 @@ Supported query parameters:
 | `categoryId`        | Positive integer | Empty       | Exact Category filter                                                      |
 | `relatedSystemId`   | Positive integer | Empty       | Exact Related System filter                                                |
 | `requestedPriority` | Enum             | Empty       | `LOW`, `MEDIUM`, `HIGH`, or `URGENT`                                       |
-| `status`            | Enum             | Empty       | Approved Ticket status value                                               |
-| `sortBy`            | Enum             | `updatedAt` | `ticketNumber`, `createdAt`, `updatedAt`, `requestedPriority`, or `status` |
+|`currentStatus`            | Enum             | Empty       | Approved Ticket status value                                               |
+| `sortBy`            | Enum             | `updatedAt` | `ticketNumber`, `createdAt`, `updatedAt`, `requestedPriority`, or `currentStatus` |
 | `sortOrder`         | Enum             | `desc`      | `asc` or `desc`                                                            |
 | `page`              | Positive integer | `1`         | Page numbering begins at 1                                                 |
 | `pageSize`          | Integer          | `10`        | Permitted values: `10`, `25`, or `50`                                      |
@@ -593,8 +593,8 @@ Attachment JSON responses shall use:
   "originalFilename": "battery-report.pdf",
   "mimeType": "application/pdf",
   "sizeBytes": 245760,
-  "status": "ACTIVE",
-  "uploadedAt": "2026-09-03T14:35:00.000Z",
+  "isRemoved": false,
+  "createdAt": "2026-09-03T14:35:00.000Z",
   "removedAt": null,
   "removalReason": null
 }
@@ -602,7 +602,7 @@ Attachment JSON responses shall use:
 
 Rules:
 
-* `status` is `ACTIVE` or `REMOVED`.
+* `isRemoved` is `false` for active attachments and `true` for removed attachments.
 * `originalFilename` is retained only for display and download naming.
 * SeaweedFS object identifiers, bucket names, internal URLs, and storage paths must not appear in API responses.
 * Removed attachment metadata remains retrievable by the owning Requester.
@@ -650,8 +650,8 @@ Successful response:
   "originalFilename": "battery-report.pdf",
   "mimeType": "application/pdf",
   "sizeBytes": 245760,
-  "status": "ACTIVE",
-  "uploadedAt": "2026-09-03T14:35:00.000Z",
+  "isRemoved": false,
+  "createdAt": "2026-09-03T14:35:00.000Z",
   "removedAt": null,
   "removalReason": null
 }
@@ -722,8 +722,8 @@ Successful response:
       "originalFilename": "battery-report.pdf",
       "mimeType": "application/pdf",
       "sizeBytes": 245760,
-      "status": "ACTIVE",
-      "uploadedAt": "2026-09-03T14:35:00.000Z",
+      "isRemoved": false,
+      "createdAt": "2026-09-03T14:35:00.000Z",
       "removedAt": null,
       "removalReason": null
     },
@@ -733,8 +733,8 @@ Successful response:
       "originalFilename": "old-photo.jpg",
       "mimeType": "image/jpeg",
       "sizeBytes": 102400,
-      "status": "REMOVED",
-      "uploadedAt": "2026-09-03T14:36:00.000Z",
+      "isRemoved": true,
+      "createdAt": "2026-09-03T14:36:00.000Z",
       "removedAt": "2026-09-03T14:40:00.000Z",
       "removalReason": "Uploaded the wrong image."
     }
@@ -782,8 +782,8 @@ Successful response:
   "originalFilename": "battery-report.pdf",
   "mimeType": "application/pdf",
   "sizeBytes": 245760,
-  "status": "ACTIVE",
-  "uploadedAt": "2026-09-03T14:35:00.000Z",
+  "isRemoved": false,
+  "createdAt": "2026-09-03T14:35:00.000Z",
   "removedAt": null,
   "removalReason": null
 }
@@ -904,7 +904,7 @@ Validation:
 
 | Field    | Rules                                     |
 | -------- | ----------------------------------------- |
-| `reason` | Required; trimmed length 5–200 characters |
+| `removalReason` | Required; trimmed length 5–200 characters |
 
 Successful response:
 
@@ -919,8 +919,8 @@ Successful response:
   "originalFilename": "old-photo.jpg",
   "mimeType": "image/jpeg",
   "sizeBytes": 102400,
-  "status": "REMOVED",
-  "uploadedAt": "2026-09-03T14:36:00.000Z",
+  "isRemoved": true,
+  "createdAt": "2026-09-03T14:36:00.000Z",
   "removedAt": "2026-09-03T14:40:00.000Z",
   "removalReason": "Uploaded the wrong image."
 }
