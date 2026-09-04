@@ -50,8 +50,8 @@ Rules:
 
 * User-entered strings shall be trimmed before validation and storage.
 * Whitespace-only required values shall be treated as empty.
-* Unknown request-body fields shall be ignored or rejected consistently.
-* The chosen implementation behavior shall be covered by an API test.
+* Unknown request-body fields shall be rejected with `400 Bad Request` and the `VALIDATION_ERROR` code.
+* This behavior shall be covered by planned test `API-03`.
 * The API shall never trust client-generated Ticket Numbers, Ticket dates, status, ownership, attachment paths, or storage identifiers.
 
 ## 3. Common Error Format
@@ -192,7 +192,7 @@ Successful response:
 
 Rules:
 
-* Results shall preserve the existing Lab 1 Category ordering.
+* Results shall be sorted by `name` ascending.
 * Only active Related Systems shall be returned.
 * The initial seed shall provide the seven approved Related Systems.
 
@@ -393,7 +393,7 @@ Supported query parameters:
 | `relatedSystemId`   | Positive integer | Empty       | Exact Related System filter                                                |
 | `requestedPriority` | Enum             | Empty       | `LOW`, `MEDIUM`, `HIGH`, or `URGENT`                                       |
 |`currentStatus`            | Enum             | Empty       | Approved Ticket status value                                               |
-| `sortBy`            | Enum             | `updatedAt` | `ticketNumber`, `createdAt`, `updatedAt`, `requestedPriority`, or `currentStatus` |
+| `sortBy` | Enum | `updatedAt` | `ticketNumber`, `ticketDate`, `updatedAt`, `summary`, or `requestedPriority` |
 | `sortOrder`         | Enum             | `desc`      | `asc` or `desc`                                                            |
 | `page`              | Positive integer | `1`         | Page numbering begins at 1                                                 |
 | `pageSize`          | Integer          | `10`        | Permitted values: `10`, `25`, or `50`                                      |
@@ -588,15 +588,17 @@ Attachment JSON responses shall use:
 
 ```json
 {
-  "id": 501,
-  "ticketId": 101,
-  "originalFilename": "battery-report.pdf",
-  "mimeType": "application/pdf",
-  "sizeBytes": 245760,
-  "isRemoved": false,
-  "createdAt": "2026-09-03T14:35:00.000Z",
-  "removedAt": null,
-  "removalReason": null
+    "id": 501,
+    "ticketId": 101,
+    "originalFilename": "battery-report.pdf",
+    "mimeType": "application/pdf",
+    "sizeBytes": 245760,
+    "uploadedByRequesterId": 1,
+    "isRemoved": false,
+    "createdAt": "2026-09-03T14:35:00.000Z",
+    "removedAt": null,
+    "removedByRequesterId": null,
+    "removalReason": null
 }
 ```
 
@@ -645,15 +647,17 @@ Successful response:
 
 ```json
 {
-  "id": 501,
-  "ticketId": 101,
-  "originalFilename": "battery-report.pdf",
-  "mimeType": "application/pdf",
-  "sizeBytes": 245760,
-  "isRemoved": false,
-  "createdAt": "2026-09-03T14:35:00.000Z",
-  "removedAt": null,
-  "removalReason": null
+    "id": 501,
+    "ticketId": 101,
+    "originalFilename": "battery-report.pdf",
+    "mimeType": "application/pdf",
+    "sizeBytes": 245760,
+    "uploadedByRequesterId": 1,
+    "isRemoved": false,
+    "createdAt": "2026-09-03T14:35:00.000Z",
+    "removedAt": null,
+    "removedByRequesterId": null,
+    "removalReason": null
 }
 ```
 
@@ -717,26 +721,30 @@ Successful response:
 {
   "items": [
     {
-      "id": 501,
-      "ticketId": 101,
-      "originalFilename": "battery-report.pdf",
-      "mimeType": "application/pdf",
-      "sizeBytes": 245760,
-      "isRemoved": false,
-      "createdAt": "2026-09-03T14:35:00.000Z",
-      "removedAt": null,
-      "removalReason": null
+        "id": 501,
+        "ticketId": 101,
+        "originalFilename": "battery-report.pdf",
+        "mimeType": "application/pdf",
+        "sizeBytes": 245760,
+        "uploadedByRequesterId": 1,
+        "isRemoved": false,
+        "createdAt": "2026-09-03T14:35:00.000Z",
+        "removedAt": null,
+        "removedByRequesterId": null,
+        "removalReason": null
     },
     {
-      "id": 502,
-      "ticketId": 101,
-      "originalFilename": "old-photo.jpg",
-      "mimeType": "image/jpeg",
-      "sizeBytes": 102400,
-      "isRemoved": true,
-      "createdAt": "2026-09-03T14:36:00.000Z",
-      "removedAt": "2026-09-03T14:40:00.000Z",
-      "removalReason": "Uploaded the wrong image."
+        "id": 502,
+        "ticketId": 101,
+        "originalFilename": "old-photo.jpg",
+        "mimeType": "image/jpeg",
+        "sizeBytes": 102400,
+        "uploadedByRequesterId": 1,
+        "isRemoved": true,
+        "createdAt": "2026-09-03T14:36:00.000Z",
+        "removedAt": "2026-09-03T14:40:00.000Z",
+        "removedByRequesterId": 1,
+        "removalReason": "Uploaded the wrong image."
     }
   ]
 }
@@ -746,7 +754,7 @@ Rules:
 
 * Both active and removed metadata shall be returned.
 * Active Attachments shall appear before removed Attachments.
-* Within each group, results shall be ordered by `uploadedAt ASC`, then `id ASC`.
+* Within each group, results shall be ordered by `createdAt ASC`, then `id ASC`.
 * An owned Ticket without Attachments returns `200 OK` with an empty `items` array.
 * Internal storage identifiers shall not be returned.
 
@@ -777,15 +785,17 @@ Successful response:
 
 ```json
 {
-  "id": 501,
-  "ticketId": 101,
-  "originalFilename": "battery-report.pdf",
-  "mimeType": "application/pdf",
-  "sizeBytes": 245760,
-  "isRemoved": false,
-  "createdAt": "2026-09-03T14:35:00.000Z",
-  "removedAt": null,
-  "removalReason": null
+    "id": 501,
+    "ticketId": 101,
+    "originalFilename": "battery-report.pdf",
+    "mimeType": "application/pdf",
+    "sizeBytes": 245760,
+    "uploadedByRequesterId": 1,
+    "isRemoved": false,
+    "createdAt": "2026-09-03T14:35:00.000Z",
+    "removedAt": null,
+    "removedByRequesterId": null,
+    "removalReason": null
 }
 ```
 
@@ -914,15 +924,17 @@ Successful response:
 
 ```json
 {
-  "id": 502,
-  "ticketId": 101,
-  "originalFilename": "old-photo.jpg",
-  "mimeType": "image/jpeg",
-  "sizeBytes": 102400,
-  "isRemoved": true,
-  "createdAt": "2026-09-03T14:36:00.000Z",
-  "removedAt": "2026-09-03T14:40:00.000Z",
-  "removalReason": "Uploaded the wrong image."
+    "id": 502,
+    "ticketId": 101,
+    "originalFilename": "old-photo.jpg",
+    "mimeType": "image/jpeg",
+    "sizeBytes": 102400,
+    "uploadedByRequesterId": 1,
+    "isRemoved": true,
+    "createdAt": "2026-09-03T14:36:00.000Z",
+    "removedAt": "2026-09-03T14:40:00.000Z",
+    "removedByRequesterId": 1,
+    "removalReason": "Uploaded the wrong image."
 }
 ```
 

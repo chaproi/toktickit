@@ -380,6 +380,7 @@ Each attachment entry shall display:
 * File size
 * Upload date and time
 * Active or removed status
+* **Preview** action for active JPG, JPEG, PNG, WEBP, and PDF files
 * **Download** action for active files
 * **Remove** action for active files
 
@@ -396,12 +397,14 @@ Removed attachments shall remain visible as metadata but shall not provide previ
 * Failed upload shall display a safe message without removing existing attachments.
 * Invalid files shall be rejected before sending when the browser can determine the violation.
 
-### 9.6 Download Behavior
+### 9.6 Preview and Download Behavior
 
-* Selecting **Download** shall request the owned attachment content.
+* Selecting **Preview** shall request the owned active Attachment content using `?disposition=inline`.
+* Selecting **Download** shall request the owned active Attachment content using `?disposition=attachment`.
+* The browser shall render supported images and PDFs inline when Preview is selected.
 * The downloaded file shall use the retained original filename for display.
 * The original filename shall never be constructed into a storage path by the UI.
-* A failed or unavailable download shall display a safe error message.
+* A failed or unavailable preview or download shall display a safe error message.
 
 ### 9.7 Removal Confirmation
 

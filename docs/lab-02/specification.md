@@ -127,9 +127,9 @@ The backend is responsible for generating the official Ticket Number, validating
 
 * **BR-27:** The client shall generate one UUID `clientSubmissionId` for each Create Ticket form attempt.
 * **BR-28:** The Submit button shall be disabled and show a busy state while creation is in progress.
-* **BR-29:** The database shall enforce uniqueness for `clientSubmissionId`.
+* **BR-29:** The database shall enforce a composite unique constraint on (`requesterId`, `clientSubmissionId`).
 * **BR-30:** Repeating the same `clientSubmissionId` with the same Requester and payload shall return the previously created Ticket instead of creating a duplicate.
-* **BR-31:** Reusing a `clientSubmissionId` with different Ticket data shall return `409 Conflict`.
+* **BR-31:** Reusing the same `clientSubmissionId` for the same Requester with different Ticket data shall return `409 Conflict`.
 
 ### 5.6 Search, Filtering, Sorting, and Pagination
 
@@ -296,7 +296,7 @@ The Lab 2 database increment shall extend the existing Lab 1 Prisma schema. The 
 | `RelatedSystem`        | Service, application, device, or platform affected by a Ticket | `id`, `name`, `isActive`, `createdAt`, `updatedAt`                                                                                                                                   |
 | `DevelopmentRequester` | Temporary Requester identity used only for Lab 2 testing       | `id`, `name`, `email`, `isActive`, `createdAt`, `updatedAt`                                                                                                                          |
 | `TicketNumberSequence` | Transaction-safe annual Ticket Number sequence                 | `year`, `lastValue`, `updatedAt`                                                                                                                                                     |
-| `Ticket`               | Requester-owned IT support request                             | `id`, `ticketNumber`, `clientSubmissionId`, `requesterId`, `categoryId`, `relatedSystemId`, `summary`, `requestedPriority`, `description`, `currentStatus`, `createdAt`, `updatedAt` |
+| `Ticket` | Requester-owned IT support request | `id`, `ticketNumber`, `ticketDate`, `clientSubmissionId`, `requesterId`, `categoryId`, `relatedSystemId`, `summary`, `requestedPriority`, `description`, `currentStatus`, `createdAt`, `updatedAt` |
 | `Attachment`           | Metadata for a file associated with a Ticket                   | `id`, `ticketId`, `originalFilename`, `storageKey`, `mimeType`, `sizeBytes`, `uploadedByRequesterId`, `isRemoved`, `createdAt`, `removedAt`, `removedByRequesterId`, `removalReason`     |
 
 ### 7.2 Enumerations
@@ -351,7 +351,8 @@ Ticket, Category, Related System, and Development Requester records shall not be
 | `DevelopmentRequester.email`    | Unique, required, stored in lowercase                       |
 | `DevelopmentRequester.isActive` | Required, default `true`                                    |
 | `Ticket.ticketNumber`           | Unique, backend-generated                                   |
-| `Ticket.clientSubmissionId`     | Unique UUID supplied by the client for duplicate prevention |
+| `Ticket.ticketDate` | Required backend-generated UTC timestamp |
+| `Ticket.clientSubmissionId` | Required UUID; unique together with `requesterId` for duplicate prevention |
 | `Ticket.summary`                | Required, trimmed, 5–150 characters                         |
 | `Ticket.description`            | Required, trimmed, 10–5,000 characters                      |
 | `Ticket.requestedPriority`      | Required `RequestedPriority` value                          |
@@ -373,7 +374,7 @@ The database shall provide:
 * A unique constraint on `RelatedSystem.name`.
 * A unique constraint on `DevelopmentRequester.email`.
 * A unique constraint on `Ticket.ticketNumber`.
-* A unique constraint on `Ticket.clientSubmissionId`.
+* A composite unique constraint on `Ticket(requesterId, clientSubmissionId)`.
 * A unique constraint on `Attachment.storageKey`.
 * A foreign key from `Ticket.requesterId` to `DevelopmentRequester.id`.
 * A foreign key from `Ticket.categoryId` to `Category.id`.
@@ -516,7 +517,7 @@ First successful creation shall return `201 Created`:
 }
 ```
 
-A repeated identical `clientSubmissionId` shall return the existing Ticket with `200 OK` and `"replayed": true`. Reusing the identifier with different data shall return `409 Conflict`.
+For the same Requester, repeating the same `clientSubmissionId` with an identical payload shall return the existing Ticket with `200 OK` and `"replayed": true`. Reusing the identifier with different Ticket data for the same Requester shall return `409 Conflict`.
 
 ### 8.3 My Tickets
 
@@ -537,7 +538,7 @@ Supported query parameters:
 | `relatedSystemId`   | Filter by Related System                                                    | All         |
 | `requestedPriority` | Filter by Requested Priority                                                | All         |
 | `currentStatus`     | Filter by Current Status                                                    | All         |
-| `sortBy`            | `ticketNumber`, `createdAt`, `updatedAt`, `summary`, or `requestedPriority` | `updatedAt` |
+| `sortBy` | `ticketNumber`, `ticketDate`, `updatedAt`, `summary`, or `requestedPriority` | `updatedAt` |
 | `sortOrder`     | `asc` or `desc`                                                             | `desc`      |
 | `page`              | One-based page number                                                       | `1`         |
 | `pageSize`          | `10`, `25`, or `50`                                                         | `10`        |
@@ -568,6 +569,7 @@ Successful response:
       },
       "requestedPriority": "MEDIUM",
       "currentStatus": "NEW",
+      "createdAt": "2026-09-03T14:30:00.000Z",
       "updatedAt": "2026-09-03T14:30:00.000Z"
     }
   ],
@@ -575,7 +577,9 @@ Successful response:
     "page": 1,
     "pageSize": 10,
     "totalItems": 1,
-    "totalPages": 1
+    "totalPages": 1,
+    "hasPreviousPage": false,
+    "hasNextPage": false
   }
 }
 ```
@@ -586,35 +590,31 @@ The response shall contain only Tickets owned by the Requester identified in the
 
 `GET /api/tickets/:ticketId`
 
-A successful `200 OK` response shall contain the owned Ticket, Requester, Category, Related System, and Attachment metadata.
+A successful `200 OK` response shall contain the owned Ticket, Requester, Category, and Related System. Attachment metadata shall be retrieved separately through `GET /api/tickets/:ticketId/attachments`.
 
 ```json
 {
-  "ticket": {
+  "id": 101,
+  "ticketNumber": "TKT-2026-00001",
+  "ticketDate": "2026-09-03T14:30:00.000Z",
+  "requester": {
     "id": 1,
-    "ticketNumber": "TKT-2026-00001",
-    "ticketDate": "2026-09-03T14:30:00.000Z",
-    "requester": {
-      "id": 1,
-      "name": "Jennifer Anderson",
-      "email": "jennifer.anderson@example.com"
-    },
-    "category": {
-      "id": 2,
-      "name": "Hardware"
-    },
-    "relatedSystem": {
-      "id": 7,
-      "name": "Corporate Laptop"
-    },
-    "summary": "Laptop battery drains quickly",
-    "requestedPriority": "MEDIUM",
-    "description": "The battery drains much faster than usual after the latest update.",
-    "currentStatus": "NEW",
-    "createdAt": "2026-09-03T14:30:00.000Z",
-    "updatedAt": "2026-09-03T14:30:00.000Z"
+    "name": "Development Requester 1"
   },
-  "attachments": []
+  "category": {
+    "id": 1,
+    "name": "Hardware"
+  },
+  "relatedSystem": {
+    "id": 2,
+    "name": "Learning Management System"
+  },
+  "requestedPriority": "MEDIUM",
+  "currentStatus": "NEW",
+  "summary": "Laptop battery drains quickly",
+  "description": "The battery decreases from full to empty in approximately one hour.",
+  "createdAt": "2026-09-03T14:30:00.000Z",
+  "updatedAt": "2026-09-03T14:30:00.000Z"
 }
 ```
 
@@ -646,8 +646,12 @@ Upload response:
   "originalFilename": "battery-report.pdf",
   "mimeType": "application/pdf",
   "sizeBytes": 245760,
+  "uploadedByRequesterId": 1,
   "isRemoved": false,
-  "createdAt": "2026-09-03T14:35:00.000Z"
+  "createdAt": "2026-09-03T14:35:00.000Z",
+  "removedAt": null,
+  "removedByRequesterId": null,
+  "removalReason": null
 }
 ```
 
@@ -732,7 +736,7 @@ For requester-owned resources, the backend shall:
 * **AC-10:** Given an inactive or nonexistent Category, Related System, or Development Requester ID, when Ticket creation is requested, then the backend rejects the request with a safe validation response and no Ticket is saved.
 * **AC-11:** Given valid entered values, when the Ticket API fails unexpectedly, then a safe error message is displayed and the valid form values remain available for retry.
 * **AC-12:** Given a Ticket has already been created with a `clientSubmissionId`, when the identical Requester and payload are submitted again with the same identifier, then the existing Ticket is returned and no duplicate Ticket is created.
-* **AC-13:** Given a `clientSubmissionId` has already been used, when it is submitted with different Ticket data, then the API returns `409 Conflict` and no additional Ticket is created.
+* **AC-13:** Given a `clientSubmissionId` has already been used by a Requester, when the same Requester submits it with different Ticket data, then the API returns `409 Conflict` and no additional Ticket is created.
 * **AC-14:** Given submission is in progress, when the Requester attempts to submit again, then the Submit button remains disabled and only one creation request is sent.
 
 ### 9.3 Attachments During Ticket Creation
