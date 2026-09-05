@@ -269,12 +269,13 @@ The screen shall provide:
 * Related System filter
 * Priority filter
 * Status filter
-* Sort selection
+* Sort-field selection
+* Sort-direction selection
 * Page-size selection with `10`, `25`, and `50`
-* **Apply Filters** action when required
+* **Apply Filters** action
 * **Clear Filters** action
 
-Changing search, filters, sorting, or page size shall return the result to page 1.
+Search and filter controls are draft values until the user activates **Apply Filters**. Applying or clearing search and filters shall request page `1`. Sort field, sort direction, and page-size changes shall apply immediately and shall request page `1`. Page navigation shall preserve the currently applied search, filters, sorting, and page size.
 
 ### 8.3 Default Query
 
@@ -282,6 +283,8 @@ Changing search, filters, sorting, or page size shall return the result to page 
 * Default page size: `10`
 * Default sort: `updatedAt` descending
 * Tie-break sort: `id` descending
+* For every non-default sort, the `id` tie-break sort shall use the same direction as the selected primary sort
+* Requested Priority ascending order: `LOW`, `MEDIUM`, `HIGH`, `URGENT`; descending reverses this order
 * Search values shall be trimmed
 * Empty filter values shall mean no filter for that field
 
@@ -292,6 +295,7 @@ The Ticket table shall include:
 | Column         | Behavior                                                        |
 | -------------- | --------------------------------------------------------------- |
 | Ticket Number  | Display as a link to Ticket Detail                              |
+| Ticket Date    | Display a readable local date and time                          |
 | Summary        | Truncate visually when necessary without losing accessible text |
 | Category       | Display Category name                                           |
 | Related System | Display Related System name                                     |
@@ -299,13 +303,14 @@ The Ticket table shall include:
 | Status         | Display a text badge                                            |
 | Updated        | Display a readable local date and time                          |
 
-A row or Ticket Number link shall open `/tickets/:ticketId`.
+A row or Ticket Number link shall open `/tickets/:ticketId`. Issue #17 provides only this link and route target; it shall not implement Ticket Detail content.
 
 ### 8.5 Mobile Presentation
 
 On mobile, table rows may change into stacked cards. Each card shall display:
 
 * Ticket Number
+* Ticket Date
 * Summary
 * Category
 * Related System
@@ -322,19 +327,23 @@ No required Ticket information shall require horizontal scrolling.
 | ----------------- | --------------------------------------------------------------------------------- |
 | Loading           | Display table or card skeletons                                                   |
 | Populated         | Display Requester-owned Tickets and pagination                                    |
-| Empty             | Display `You have not created any Tickets yet.` with a **Create Ticket** action   |
-| No results        | Display `No Tickets match the current search and filters.` with **Clear Filters** |
+| Empty             | When zero items are returned without an applied search or filter, display `You have not created any Tickets yet.` with a **Create Ticket** action; do not make an unfiltered classification request |
+| No results        | When zero items are returned with an applied search or filter, display `No Tickets match the current search and filters.` with **Clear Filters**; sorting alone does not select this state |
 | API error         | Display a safe error message and **Try Again**                                    |
-| Page out of range | Return to the last valid page or page 1                                           |
+| Page out of range | Accept the empty response; when `totalPages > 0`, automatically request the final valid page; when `totalPages` is `0`, do not refetch |
 | Requester changed | Clear previous results and reload for the new Requester                           |
 
 ### 8.7 Pagination
 
-* Display the current page and total page count.
+* Display the current page, selected page size, total item count, and total page count when results exist.
 * Disable **Previous** on the first page.
 * Disable **Next** on the final page.
 * Preserve the current search, filters, sorting, and page size while changing pages.
-* Do not display pagination controls when there are no results.
+* When `totalItems` is `0`, `totalPages` is `0` and pagination controls shall be hidden.
+
+### 8.8 Component Accessibility and Verification Scope
+
+My Tickets component tests shall verify relevant accessible labels, keyboard-reachable controls, visible Priority and Status badge text that does not rely on color, and semantic loading and API-failure feedback. Full cross-screen accessibility, responsive visual, and end-to-end evidence remain assigned to a later Lab 2 verification Issue.
 
 ## 9. Ticket Detail and Attachments Screen
 

@@ -388,9 +388,9 @@ Supported query parameters:
 
 | Parameter           | Type             | Default     | Rules                                                                      |
 | ------------------- | ---------------- | ----------- | -------------------------------------------------------------------------- |
-| `search`            | String           | Empty       | Case-insensitive partial match against Ticket Number or Summary            |
-| `categoryId`        | Positive integer | Empty       | Exact Category filter                                                      |
-| `relatedSystemId`   | Positive integer | Empty       | Exact Related System filter                                                |
+| `search`            | String           | Empty       | Trimmed, maximum 100 characters; case-insensitive partial match against Ticket Number or Summary |
+| `categoryId`        | Positive integer | Empty       | Exact Category filter; a well-formed value need not match an existing reference record |
+| `relatedSystemId`   | Positive integer | Empty       | Exact Related System filter; a well-formed value need not match an existing reference record |
 | `requestedPriority` | Enum             | Empty       | `LOW`, `MEDIUM`, `HIGH`, or `URGENT`                                       |
 |`currentStatus`            | Enum             | Empty       | Approved Ticket status value                                               |
 | `sortBy` | Enum | `updatedAt` | `ticketNumber`, `ticketDate`, `updatedAt`, `summary`, or `requestedPriority` |
@@ -463,10 +463,13 @@ Successful response:
 * Empty search and filter parameters shall be treated as absent.
 * All filtering and ownership conditions shall be applied before pagination.
 * Default ordering is `updatedAt DESC`, followed by `id DESC`.
-* The secondary `id` sort shall always be applied for stable pagination.
+* The secondary `id` sort shall always be applied for stable pagination in the same direction as the selected primary `sortOrder`.
+* Requested Priority sorting shall use the ascending business severity order `LOW`, `MEDIUM`, `HIGH`, `URGENT`; descending order shall reverse it.
 * An empty result returns `200 OK` with an empty `items` array.
-* A page beyond the available range returns `200 OK` with an empty `items` array and valid pagination metadata.
-* Invalid enum values, non-integer identifiers, invalid pages, or unsupported page sizes return `400 Bad Request`.
+* A well-formed positive `categoryId` or `relatedSystemId` that matches no Ticket returns `200 OK` with an empty `items` array and valid pagination metadata. Reference existence or active state is not validated for list filters.
+* When `totalItems` is `0`, `totalPages` is `0`, `hasPreviousPage` is `false`, and `hasNextPage` is `false`.
+* A valid page beyond the available range returns `200 OK` with an empty `items` array and valid pagination metadata. Client-side final-page correction is defined by the UI specification and does not change this API response.
+* Invalid enum values, non-integer identifiers, invalid pages, unsupported page sizes, unknown query parameters, or repeated query parameters return `400 Bad Request` with `INVALID_QUERY`.
 * Sorting shall use a server-side whitelist. Raw client values must not be inserted into SQL.
 
 Invalid-query response:
