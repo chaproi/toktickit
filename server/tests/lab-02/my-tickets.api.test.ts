@@ -572,8 +572,8 @@ describe("GET /api/tickets list behavior", () => {
         ({ summary }: { summary: string }) => summary,
       ),
     ).toEqual([
-      "Network Search Needle",
       "Email Search Needle",
+      "Network Search Needle",
     ]);
   });
 
