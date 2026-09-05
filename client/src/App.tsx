@@ -1,4 +1,8 @@
-import { useEffect, useState, type ReactNode } from "react";
+import {
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 import {
   BrowserRouter,
   Link,
@@ -7,6 +11,7 @@ import {
   Routes,
   useNavigate,
 } from "react-router-dom";
+import CreateTicket from "./components/CreateTicket.js";
 import DevelopmentRequesterSelection from "./components/DevelopmentRequesterSelection.js";
 import {
   checkSystem,
@@ -16,7 +21,14 @@ import {
 } from "./api.js";
 
 const REQUESTER_STORAGE_KEY = "developmentRequesterId";
+
 type UiState = "idle" | "loading" | "success" | "error";
+
+interface AppShellProps {
+  requester: DevelopmentRequester;
+  onChangeRequester: () => void;
+  children?: ReactNode;
+}
 
 function SystemCheck() {
   const [state, setState] = useState<UiState>("idle");
@@ -43,6 +55,7 @@ function SystemCheck() {
           <h2 className="h6">Development system check</h2>
 
           <button
+            type="button"
             className="btn btn-outline-success"
             onClick={handleCheck}
             disabled={state === "loading"}
@@ -55,6 +68,7 @@ function SystemCheck() {
               <p className="text-success">
                 System Status: Online
               </p>
+
               <p>Supported Request Categories:</p>
 
               <ul>
@@ -70,9 +84,9 @@ function SystemCheck() {
               <p className="text-danger">
                 System Status: Offline
               </p>
+
               <p>
-                Unable to connect to the backend or load
-                categories.
+                Unable to connect to the backend or load categories.
               </p>
             </div>
           )}
@@ -92,6 +106,7 @@ function RequesterPage({
       <DevelopmentRequesterSelection
         onContinue={onContinue}
       />
+
       <SystemCheck />
     </div>
   );
@@ -114,10 +129,8 @@ function RootRequesterRedirect({
 function AppShell({
   requester,
   onChangeRequester,
-}: {
-  requester: DevelopmentRequester;
-  onChangeRequester: () => void;
-}) {
+  children,
+}: AppShellProps) {
   return (
     <div className="min-vh-100 bg-body-tertiary">
       <header className="navbar navbar-expand-md bg-success navbar-dark shadow-sm">
@@ -156,16 +169,18 @@ function AppShell({
           </button>
         </div>
 
-        <section className="card border-0 shadow-sm">
-          <div className="card-body p-4">
-            <h1 className="h3">My Tickets</h1>
+        {children ?? (
+          <section className="card border-0 shadow-sm">
+            <div className="card-body p-4">
+              <h1 className="h3">My Tickets</h1>
 
-            <p className="text-secondary mb-0">
-              Ticket features will be implemented in the next
-              Lab 2 issue.
-            </p>
-          </div>
-        </section>
+              <p className="text-secondary mb-0">
+                Ticket features will be implemented in the next
+                Lab 2 issue.
+              </p>
+            </div>
+          </section>
+        )}
       </main>
     </div>
   );
@@ -173,6 +188,7 @@ function AppShell({
 
 function AppRoutes() {
   const navigate = useNavigate();
+
   const storedRequesterId = sessionStorage.getItem(
     REQUESTER_STORAGE_KEY,
   );
@@ -217,6 +233,7 @@ function AppRoutes() {
           "Unable to restore Development Requester:",
           error,
         );
+
         sessionStorage.removeItem(REQUESTER_STORAGE_KEY);
       } finally {
         if (active) {
@@ -249,6 +266,7 @@ function AppRoutes() {
     return (
       <main className="container py-5">
         <h1 className="h3 text-success">TokTickIT</h1>
+
         <p role="status">
           Restoring Development Requester…
         </p>
@@ -265,6 +283,17 @@ function AppRoutes() {
       requester={currentRequester}
       onChangeRequester={changeRequester}
     />
+  ) : (
+    <Navigate to="/select-requester" replace />
+  );
+
+  const createTicketPage = currentRequester ? (
+    <AppShell
+      requester={currentRequester}
+      onChangeRequester={changeRequester}
+    >
+      <CreateTicket requester={currentRequester} />
+    </AppShell>
   ) : (
     <Navigate to="/select-requester" replace />
   );
@@ -289,11 +318,16 @@ function AppRoutes() {
         element={requesterPage}
       />
 
-      <Route path="/tickets" element={protectedPage} />
       <Route
-        path="/tickets/new"
+        path="/tickets"
         element={protectedPage}
       />
+
+      <Route
+        path="/tickets/new"
+        element={createTicketPage}
+      />
+
       <Route
         path="/tickets/:ticketId"
         element={protectedPage}

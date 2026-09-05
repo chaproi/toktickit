@@ -1,6 +1,3 @@
-// Prisma schema — datasource and generator are pre-wired.
-// Your DATABASE_URL lives in server/.env (copy it from .env.example).
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,15 +7,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ---------------------------------------------------------------------------
-// Issue 3 — Create and seed IT request categories
-// Define a Category model with:
-//   id        Int      @id @default(autoincrement())
-//   name      String   @unique
-//   createdAt DateTime @default(now())
-// Then run:  npx prisma migrate dev --name init
-// TODO(Issue 3): add the Category model below.
-// ---------------------------------------------------------------------------
+enum RequestedPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TicketStatus {
+  NEW
+  ASSIGNED
+  IN_PROGRESS
+  PENDING_REQUESTER
+  RESOLVED
+  CLOSED
+  CANCELLED
+}
 
 model Category {
   id        Int      @id @default(autoincrement())
@@ -26,6 +30,7 @@ model Category {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+  tickets   Ticket[]
 }
 
 model RelatedSystem {
@@ -34,17 +39,74 @@ model RelatedSystem {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+  tickets   Ticket[]
 
   @@index([isActive, name])
 }
 
 model DevelopmentRequester {
-  id        Int      @id @default(autoincrement())
-  name      String   @db.VarChar(120)
-  email     String   @unique
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  id                  Int          @id @default(autoincrement())
+  name                String       @db.VarChar(120)
+  email               String       @unique
+  isActive            Boolean      @default(true)
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @default(now()) @updatedAt
+  tickets             Ticket[]
+  uploadedAttachments Attachment[] @relation("AttachmentUploader")
+  removedAttachments  Attachment[] @relation("AttachmentRemover")
 
   @@index([isActive, name])
+}
+
+model TicketNumberSequence {
+  year      Int      @id
+  lastValue Int      @default(0)
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Ticket {
+  id                 Int                  @id @default(autoincrement())
+  ticketNumber       String               @unique @db.VarChar(20)
+  ticketDate         DateTime             @default(now())
+  clientSubmissionId String               @db.Uuid
+  requesterId        Int
+  categoryId         Int
+  relatedSystemId    Int
+  summary            String               @db.VarChar(150)
+  requestedPriority  RequestedPriority
+  description        String               @db.Text
+  currentStatus      TicketStatus         @default(NEW)
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @default(now()) @updatedAt
+  requester          DevelopmentRequester @relation(fields: [requesterId], references: [id], onDelete: Restrict)
+  category           Category             @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  relatedSystem      RelatedSystem        @relation(fields: [relatedSystemId], references: [id], onDelete: Restrict)
+  attachments        Attachment[]
+
+  @@unique([requesterId, clientSubmissionId])
+  @@index([requesterId, updatedAt])
+  @@index([categoryId])
+  @@index([relatedSystemId])
+  @@index([requestedPriority])
+  @@index([currentStatus])
+}
+
+model Attachment {
+  id                    Int                   @id @default(autoincrement())
+  ticketId              Int
+  originalFilename      String                @db.VarChar(255)
+  storageKey            String                @unique @db.VarChar(255)
+  mimeType              String                @db.VarChar(100)
+  sizeBytes             Int
+  uploadedByRequesterId Int
+  isRemoved             Boolean               @default(false)
+  createdAt             DateTime              @default(now())
+  removedAt             DateTime?
+  removedByRequesterId  Int?
+  removalReason         String?               @db.VarChar(200)
+  ticket                Ticket                @relation(fields: [ticketId], references: [id], onDelete: Restrict)
+  uploadedByRequester   DevelopmentRequester  @relation("AttachmentUploader", fields: [uploadedByRequesterId], references: [id], onDelete: Restrict)
+  removedByRequester    DevelopmentRequester? @relation("AttachmentRemover", fields: [removedByRequesterId], references: [id], onDelete: Restrict)
+
+  @@index([ticketId, isRemoved])
 }
