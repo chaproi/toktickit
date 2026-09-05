@@ -305,7 +305,16 @@ describe("My Tickets", () => {
       expect(within(table).getByText(value)).toBeInTheDocument();
     }
 
-    expect(within(table).getAllByText(/2026/)).toHaveLength(2);
+    const timestamps = table.querySelectorAll("time");
+    expect(timestamps).toHaveLength(2);
+    expect(timestamps[0]).toHaveAttribute(
+      "datetime",
+      REQUESTER_A_TICKET.ticketDate,
+    );
+    expect(timestamps[1]).toHaveAttribute(
+      "datetime",
+      REQUESTER_A_TICKET.updatedAt,
+    );
     expect(
       within(table).getByText("URGENT"),
     ).toHaveClass("badge");

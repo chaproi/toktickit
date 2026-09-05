@@ -1,4 +1,5 @@
 import type { Ticket } from "@prisma/client";
+import { randomUUID } from "node:crypto";
 import request from "supertest";
 import {
   afterAll,
@@ -12,38 +13,18 @@ import {
 import { app } from "../../src/app.js";
 import { getPrisma } from "../../src/prisma.js";
 
-const TEST_EMAILS = [
-  "issue17-requester-a@example.test",
-  "issue17-requester-b@example.test",
-  "issue17-requester-empty@example.test",
-  "issue17-requester-inactive@example.test",
-];
+const REQUESTER_A_EMAIL = "alex.morgan@example.com";
+const REQUESTER_B_EMAIL = "daniel.kim@example.com";
+const INACTIVE_REQUESTER_EMAIL = "emily.carter@example.com";
+const REQUESTER_B_NAME = "Daniel Kim";
+const RUN_MARKER = `Issue17-${randomUUID()}`;
+const MARKER_QUERY = encodeURIComponent(RUN_MARKER);
 
-const TEST_CATEGORY_NAMES = [
-  "Issue 17 Category Alpha",
-  "Issue 17 Category Beta",
-];
-
-const TEST_SYSTEM_NAMES = [
-  "Issue 17 System Alpha",
-  "Issue 17 System Beta",
-];
-
-const REQUESTER_A_TICKET_NUMBERS = Array.from(
-  { length: 12 },
-  (_, index) =>
-    `TKT-2042-${String(17_001 + index).padStart(5, "0")}`,
-);
-
-const REQUESTER_B_TICKET_NUMBERS = [
-  "TKT-2042-18001",
-  "TKT-2042-18002",
-];
-
-const TEST_TICKET_NUMBERS = [
-  ...REQUESTER_A_TICKET_NUMBERS,
-  ...REQUESTER_B_TICKET_NUMBERS,
-];
+let requesterATicketNumbers: string[] = [];
+let requesterBTicketNumbers: string[] = [];
+let createdTicketIds: number[] = [];
+let unmatchedCategoryId: number;
+let unmatchedSystemId: number;
 
 type TestReferences = {
   categoryAlphaId: number;
@@ -55,7 +36,6 @@ type TestReferences = {
 type TestRequesters = {
   requesterAId: number;
   requesterBId: number;
-  emptyRequesterId: number;
   inactiveRequesterId: number;
 };
 
@@ -64,50 +44,24 @@ let requesters: TestRequesters;
 let requesterATickets: Ticket[] = [];
 let requesterBTickets: Ticket[] = [];
 
-function submissionId(sequence: number): string {
-  return `00000000-0000-4000-8000-${String(sequence).padStart(12, "0")}`;
-}
-
-async function cleanIssue17Fixtures(): Promise<void> {
+async function cleanIssue17Tickets(): Promise<void> {
   const prisma = getPrisma();
-
-  const existingRequesters =
-    await prisma.developmentRequester.findMany({
-      where: {
-        email: {
-          in: TEST_EMAILS,
-        },
-      },
-      select: {
-        id: true,
-      },
-    });
-
-  const requesterIds = existingRequesters.map(
-    ({ id }) => id,
-  );
-
-  const existingTickets = await prisma.ticket.findMany({
+  const markedTickets = await prisma.ticket.findMany({
     where: {
-      OR: [
-        {
-          ticketNumber: {
-            in: TEST_TICKET_NUMBERS,
-          },
-        },
-        {
-          requesterId: {
-            in: requesterIds,
-          },
-        },
-      ],
+      summary: {
+        startsWith: RUN_MARKER,
+      },
     },
     select: {
       id: true,
     },
   });
-
-  const ticketIds = existingTickets.map(({ id }) => id);
+  const ticketIds = [
+    ...new Set([
+      ...createdTicketIds,
+      ...markedTickets.map(({ id }) => id),
+    ]),
+  ];
 
   if (ticketIds.length > 0) {
     await prisma.attachment.deleteMany({
@@ -117,65 +71,64 @@ async function cleanIssue17Fixtures(): Promise<void> {
         },
       },
     });
+    await prisma.ticket.deleteMany({
+      where: {
+        id: {
+          in: ticketIds,
+        },
+      },
+    });
   }
 
-  await prisma.ticket.deleteMany({
-    where: {
-      id: {
-        in: ticketIds,
-      },
-    },
-  });
-
-  await prisma.developmentRequester.deleteMany({
-    where: {
-      email: {
-        in: TEST_EMAILS,
-      },
-    },
-  });
-
-  await prisma.category.deleteMany({
-    where: {
-      name: {
-        in: TEST_CATEGORY_NAMES,
-      },
-    },
-  });
-
-  await prisma.relatedSystem.deleteMany({
-    where: {
-      name: {
-        in: TEST_SYSTEM_NAMES,
-      },
-    },
-  });
+  createdTicketIds = [];
 }
 
 async function createIssue17Fixtures(): Promise<void> {
   const prisma = getPrisma();
+  const [
+    requesterA,
+    requesterB,
+    inactiveRequester,
+    categoryAlpha,
+    categoryBeta,
+    systemAlpha,
+    systemBeta,
+    categoryMaximum,
+    systemMaximum,
+  ] = await Promise.all([
+    prisma.developmentRequester.findUnique({
+      where: { email: REQUESTER_A_EMAIL },
+    }),
+    prisma.developmentRequester.findUnique({
+      where: { email: REQUESTER_B_EMAIL },
+    }),
+    prisma.developmentRequester.findUnique({
+      where: { email: INACTIVE_REQUESTER_EMAIL },
+    }),
+    prisma.category.findUnique({ where: { name: "Hardware" } }),
+    prisma.category.findUnique({ where: { name: "Network" } }),
+    prisma.relatedSystem.findUnique({ where: { name: "Email" } }),
+    prisma.relatedSystem.findUnique({
+      where: { name: "Campus Wi-Fi" },
+    }),
+    prisma.category.aggregate({ _max: { id: true } }),
+    prisma.relatedSystem.aggregate({ _max: { id: true } }),
+  ]);
 
-  const [categoryAlpha, categoryBeta] = await Promise.all(
-    TEST_CATEGORY_NAMES.map((name) =>
-      prisma.category.create({
-        data: {
-          name,
-          isActive: true,
-        },
-      }),
-    ),
-  );
-
-  const [systemAlpha, systemBeta] = await Promise.all(
-    TEST_SYSTEM_NAMES.map((name) =>
-      prisma.relatedSystem.create({
-        data: {
-          name,
-          isActive: true,
-        },
-      }),
-    ),
-  );
+  if (
+    !requesterA?.isActive ||
+    !requesterB?.isActive ||
+    !inactiveRequester ||
+    inactiveRequester.isActive ||
+    !categoryAlpha?.isActive ||
+    !categoryBeta?.isActive ||
+    !systemAlpha?.isActive ||
+    !systemBeta?.isActive
+  ) {
+    throw new Error(
+      "Required seeded Requesters, Categories, or Related Systems are unavailable.",
+    );
+  }
 
   references = {
     categoryAlphaId: categoryAlpha.id,
@@ -183,45 +136,50 @@ async function createIssue17Fixtures(): Promise<void> {
     systemAlphaId: systemAlpha.id,
     systemBetaId: systemBeta.id,
   };
-
-  const [requesterA, requesterB, emptyRequester, inactiveRequester] =
-    await Promise.all([
-      getPrisma().developmentRequester.create({
-        data: {
-          name: "Issue 17 Requester A",
-          email: TEST_EMAILS[0],
-          isActive: true,
-        },
-      }),
-      getPrisma().developmentRequester.create({
-        data: {
-          name: "Issue 17 Requester B",
-          email: TEST_EMAILS[1],
-          isActive: true,
-        },
-      }),
-      getPrisma().developmentRequester.create({
-        data: {
-          name: "Issue 17 Empty Requester",
-          email: TEST_EMAILS[2],
-          isActive: true,
-        },
-      }),
-      getPrisma().developmentRequester.create({
-        data: {
-          name: "Issue 17 Inactive Requester",
-          email: TEST_EMAILS[3],
-          isActive: false,
-        },
-      }),
-    ]);
-
   requesters = {
     requesterAId: requesterA.id,
     requesterBId: requesterB.id,
-    emptyRequesterId: emptyRequester.id,
     inactiveRequesterId: inactiveRequester.id,
   };
+  unmatchedCategoryId = (categoryMaximum._max.id ?? 0) + 1;
+  unmatchedSystemId = (systemMaximum._max.id ?? 0) + 1;
+
+  const existing2099Numbers = await prisma.ticket.findMany({
+    where: {
+      ticketNumber: {
+        startsWith: "TKT-2099-",
+      },
+    },
+    select: {
+      ticketNumber: true,
+    },
+  });
+  const usedNumbers = new Set(
+    existing2099Numbers.map(({ ticketNumber }) => ticketNumber),
+  );
+  const allocatedNumbers: string[] = [];
+
+  for (let sequence = 10_000; sequence <= 99_999; sequence += 1) {
+    const ticketNumber = `TKT-2099-${String(sequence).padStart(
+      5,
+      "0",
+    )}`;
+
+    if (!usedNumbers.has(ticketNumber)) {
+      allocatedNumbers.push(ticketNumber);
+    }
+
+    if (allocatedNumbers.length === 14) {
+      break;
+    }
+  }
+
+  if (allocatedNumbers.length !== 14) {
+    throw new Error("Unable to allocate unique Issue 17 Ticket Numbers.");
+  }
+
+  requesterATicketNumbers = allocatedNumbers.slice(0, 12);
+  requesterBTicketNumbers = allocatedNumbers.slice(12);
 
   const priorities: Ticket["requestedPriority"][] = [
     "LOW",
@@ -229,7 +187,6 @@ async function createIssue17Fixtures(): Promise<void> {
     "HIGH",
     "URGENT",
   ];
-
   const statuses: Ticket["currentStatus"][] = [
     "NEW",
     "ASSIGNED",
@@ -239,12 +196,11 @@ async function createIssue17Fixtures(): Promise<void> {
     "CLOSED",
     "CANCELLED",
   ];
-
-  const summaries = [
+  const summaryLabels = [
     "Battery Sentinel Alpha",
     "Printer Queue Bravo",
-    "Network Search Needle",
-    "Email Search Needle",
+    "Search Needle Network",
+    "Search Needle Email",
     "Gamma Monitor",
     "Delta Monitor",
     "Epsilon Monitor",
@@ -255,18 +211,16 @@ async function createIssue17Fixtures(): Promise<void> {
     "Kappa Monitor",
   ];
 
-  const requesterASeeds = REQUESTER_A_TICKET_NUMBERS.map(
+  const requesterASeeds = requesterATicketNumbers.map(
     (ticketNumber, index) => {
-      const ticketDate = new Date(
-        Date.UTC(2042, 0, 1, index + 1),
-      );
+      const ticketDate = new Date(Date.UTC(2042, 0, 1, index + 1));
       const updatedHour =
         index < 2 ? 20 : 19 - Math.floor(index / 2);
 
       return {
         ticketNumber,
         ticketDate,
-        clientSubmissionId: submissionId(index + 1),
+        clientSubmissionId: randomUUID(),
         requesterId: requesters.requesterAId,
         categoryId:
           index % 2 === 0
@@ -276,34 +230,28 @@ async function createIssue17Fixtures(): Promise<void> {
           index % 3 === 0
             ? references.systemAlphaId
             : references.systemBetaId,
-        summary: summaries[index],
-        requestedPriority:
-          priorities[index % priorities.length],
+        summary: `${RUN_MARKER} ${summaryLabels[index]}`,
+        requestedPriority: priorities[index % priorities.length],
         description:
           "Deterministic Issue 17 Requester A test Ticket.",
         currentStatus: statuses[index % statuses.length],
         createdAt: ticketDate,
-        updatedAt: new Date(
-          Date.UTC(2042, 0, 2, updatedHour),
-        ),
+        updatedAt: new Date(Date.UTC(2042, 0, 2, updatedHour)),
       };
     },
   );
-
-  const requesterBSeeds = REQUESTER_B_TICKET_NUMBERS.map(
+  const requesterBSeeds = requesterBTicketNumbers.map(
     (ticketNumber, index) => {
-      const ticketDate = new Date(
-        Date.UTC(2042, 1, 1, index + 1),
-      );
+      const ticketDate = new Date(Date.UTC(2042, 1, 1, index + 1));
 
       return {
         ticketNumber,
         ticketDate,
-        clientSubmissionId: submissionId(101 + index),
+        clientSubmissionId: randomUUID(),
         requesterId: requesters.requesterBId,
         categoryId: references.categoryBetaId,
         relatedSystemId: references.systemBetaId,
-        summary: `Requester B Ticket ${index + 1}`,
+        summary: `${RUN_MARKER} Requester B Ticket ${index + 1}`,
         requestedPriority: priorities[index],
         description:
           "Deterministic Issue 17 Requester B test Ticket.",
@@ -318,19 +266,20 @@ async function createIssue17Fixtures(): Promise<void> {
     data: [...requesterASeeds, ...requesterBSeeds],
   });
 
-  [requesterATickets, requesterBTickets] =
-    await Promise.all([
-      prisma.ticket.findMany({
-        where: {
-          requesterId: requesters.requesterAId,
-        },
-      }),
-      prisma.ticket.findMany({
-        where: {
-          requesterId: requesters.requesterBId,
-        },
-      }),
-    ]);
+  const createdTickets = await prisma.ticket.findMany({
+    where: {
+      ticketNumber: {
+        in: allocatedNumbers,
+      },
+    },
+  });
+  createdTicketIds = createdTickets.map(({ id }) => id);
+  requesterATickets = createdTickets.filter(
+    ({ requesterId }) => requesterId === requesters.requesterAId,
+  );
+  requesterBTickets = createdTickets.filter(
+    ({ requesterId }) => requesterId === requesters.requesterBId,
+  );
 }
 
 function listTickets(requesterId: number, query = "") {
@@ -414,7 +363,6 @@ function prioritySortedTicketIds(
 }
 
 beforeAll(async () => {
-  await cleanIssue17Fixtures();
   await createIssue17Fixtures();
 }, 30_000);
 
@@ -423,7 +371,7 @@ afterEach(() => {
 });
 
 afterAll(async () => {
-  await cleanIssue17Fixtures();
+  await cleanIssue17Tickets();
 }, 30_000);
 
 describe("GET /api/tickets Requester ownership", () => {
@@ -464,7 +412,7 @@ describe("GET /api/tickets Requester ownership", () => {
   it("API-05 returns only the selected Requester's Tickets, counts, and approved DTO fields", async () => {
     const response = await listTickets(
       requesters.requesterAId,
-      "?pageSize=50",
+      `?search=${MARKER_QUERY}&pageSize=50`,
     );
 
     expect(response.status).toBe(200);
@@ -506,21 +454,21 @@ describe("GET /api/tickets Requester ownership", () => {
     }
 
     const serialized = JSON.stringify(response.body);
-    expect(serialized).not.toContain(TEST_EMAILS[1]);
-    expect(serialized).not.toContain("Issue 17 Requester B");
+    expect(serialized).not.toContain(REQUESTER_B_EMAIL);
+    expect(serialized).not.toContain(REQUESTER_B_NAME);
     expect(serialized).not.toContain(
-      REQUESTER_B_TICKET_NUMBERS[0],
+      requesterBTicketNumbers[0],
     );
   });
 
   it("API-05 changes the returned list when the Requester changes", async () => {
     const requesterAResponse = await listTickets(
       requesters.requesterAId,
-      "?pageSize=50",
+      `?search=${MARKER_QUERY}&pageSize=50`,
     );
     const requesterBResponse = await listTickets(
       requesters.requesterBId,
-      "?pageSize=50",
+      `?search=${MARKER_QUERY}&pageSize=50`,
     );
 
     expect(requesterAResponse.status).toBe(200);
@@ -533,7 +481,7 @@ describe("GET /api/tickets Requester ownership", () => {
           ticketNumber,
       ),
     ).toEqual(
-      expect.arrayContaining(REQUESTER_B_TICKET_NUMBERS),
+      expect.arrayContaining(requesterBTicketNumbers),
     );
     expect(
       requesterBResponse.body.items.map(
@@ -541,29 +489,32 @@ describe("GET /api/tickets Requester ownership", () => {
           ticketNumber,
       ),
     ).not.toEqual(
-      expect.arrayContaining(REQUESTER_A_TICKET_NUMBERS),
+      expect.arrayContaining(requesterATicketNumbers),
     );
   });
 });
 
 describe("GET /api/tickets list behavior", () => {
   it("API-06 searches case-insensitively by official Ticket Number", async () => {
+    const searchedTicketNumber = requesterATicketNumbers[2];
     const response = await listTickets(
       requesters.requesterAId,
-      "?search=%20%20tkt-2042-17003%20%20&pageSize=50",
+      `?search=%20%20${searchedTicketNumber.toLowerCase()}%20%20&pageSize=50`,
     );
 
     expect(response.status).toBe(200);
     expect(response.body.items).toHaveLength(1);
     expect(response.body.items[0].ticketNumber).toBe(
-      "TKT-2042-17003",
+      searchedTicketNumber,
     );
   });
 
   it("API-06 searches case-insensitively by Ticket Summary", async () => {
     const response = await listTickets(
       requesters.requesterAId,
-      "?search=sEaRcH%20nEeDlE&pageSize=50",
+      `?search=${encodeURIComponent(
+        `${RUN_MARKER} sEaRcH nEeDlE`,
+      )}&pageSize=50`,
     );
 
     expect(response.status).toBe(200);
@@ -572,8 +523,8 @@ describe("GET /api/tickets list behavior", () => {
         ({ summary }: { summary: string }) => summary,
       ),
     ).toEqual([
-      "Email Search Needle",
-      "Network Search Needle",
+      `${RUN_MARKER} Search Needle Email`,
+      `${RUN_MARKER} Search Needle Network`,
     ]);
   });
 
@@ -604,7 +555,7 @@ describe("GET /api/tickets list behavior", () => {
     for (const [query, predicate] of filterCases) {
       const response = await listTickets(
         requesters.requesterAId,
-        `?${query}&pageSize=50`,
+        `?search=${MARKER_QUERY}&${query}&pageSize=50`,
       );
 
       expect(response.status).toBe(200);
@@ -626,13 +577,13 @@ describe("GET /api/tickets list behavior", () => {
 
     const combined = await listTickets(
       requesters.requesterAId,
-      `?categoryId=${references.categoryAlphaId}&relatedSystemId=${references.systemBetaId}&requestedPriority=HIGH&currentStatus=IN_PROGRESS&pageSize=50`,
+      `?search=${MARKER_QUERY}&categoryId=${references.categoryAlphaId}&relatedSystemId=${references.systemBetaId}&requestedPriority=HIGH&currentStatus=IN_PROGRESS&pageSize=50`,
     );
 
     expect(combined.status).toBe(200);
     expect(combined.body.items).toHaveLength(1);
     expect(combined.body.items[0].ticketNumber).toBe(
-      "TKT-2042-17003",
+      requesterATicketNumbers[2],
     );
   });
 
@@ -648,7 +599,7 @@ describe("GET /api/tickets list behavior", () => {
       for (const sortOrder of ["asc", "desc"] as const) {
         const response = await listTickets(
           requesters.requesterAId,
-          `?sortBy=${sortBy}&sortOrder=${sortOrder}&pageSize=50`,
+          `?search=${MARKER_QUERY}&sortBy=${sortBy}&sortOrder=${sortOrder}&pageSize=50`,
         );
 
         expect(response.status).toBe(200);
@@ -671,7 +622,7 @@ describe("GET /api/tickets list behavior", () => {
     for (const sortOrder of ["asc", "desc"] as const) {
       const response = await listTickets(
         requesters.requesterAId,
-        `?sortBy=requestedPriority&sortOrder=${sortOrder}&pageSize=50`,
+        `?search=${MARKER_QUERY}&sortBy=requestedPriority&sortOrder=${sortOrder}&pageSize=50`,
       );
 
       expect(response.status).toBe(200);
@@ -691,11 +642,11 @@ describe("GET /api/tickets list behavior", () => {
   it("API-06 applies one-based pagination and every permitted page size", async () => {
     const firstPage = await listTickets(
       requesters.requesterAId,
-      "?page=1&pageSize=10",
+      `?search=${MARKER_QUERY}&page=1&pageSize=10`,
     );
     const secondPage = await listTickets(
       requesters.requesterAId,
-      "?page=2&pageSize=10",
+      `?search=${MARKER_QUERY}&page=2&pageSize=10`,
     );
 
     expect(firstPage.status).toBe(200);
@@ -723,7 +674,7 @@ describe("GET /api/tickets list behavior", () => {
     for (const pageSize of [25, 50]) {
       const response = await listTickets(
         requesters.requesterAId,
-        `?page=1&pageSize=${pageSize}`,
+        `?search=${MARKER_QUERY}&page=1&pageSize=${pageSize}`,
       );
 
       expect(response.status).toBe(200);
@@ -742,7 +693,7 @@ describe("GET /api/tickets list behavior", () => {
   it("API-06 returns an empty successful page beyond the final page", async () => {
     const response = await listTickets(
       requesters.requesterAId,
-      "?page=99&pageSize=10",
+      `?search=${MARKER_QUERY}&page=99&pageSize=10`,
     );
 
     expect(response.status).toBe(200);
@@ -759,7 +710,8 @@ describe("GET /api/tickets list behavior", () => {
 
   it("API-06 returns totalPages zero and false page flags when no items exist", async () => {
     const response = await listTickets(
-      requesters.emptyRequesterId,
+      requesters.requesterAId,
+      `?search=${encodeURIComponent(`${RUN_MARKER}-no-match`)}`,
     );
 
     expect(response.status).toBe(200);
@@ -776,12 +728,12 @@ describe("GET /api/tickets list behavior", () => {
 
   it("API-06 accepts unmatched positive Category and Related System IDs", async () => {
     for (const query of [
-      "categoryId=2147483647",
-      "relatedSystemId=2147483647",
+      `categoryId=${unmatchedCategoryId}`,
+      `relatedSystemId=${unmatchedSystemId}`,
     ]) {
       const response = await listTickets(
         requesters.requesterAId,
-        `?${query}`,
+        `?search=${MARKER_QUERY}&${query}`,
       );
 
       expect(response.status).toBe(200);
@@ -876,8 +828,8 @@ describe("GET /api/tickets list behavior", () => {
       "DATABASE_URL",
       "private",
       "secret",
-      "Issue 17 Requester B",
-      TEST_EMAILS[1],
+      REQUESTER_B_NAME,
+      REQUESTER_B_EMAIL,
     ]) {
       expect(serialized).not.toContain(prohibitedValue);
     }
