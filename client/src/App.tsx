@@ -9,10 +9,12 @@ import {
   Navigate,
   Route,
   Routes,
+  useLocation,
   useNavigate,
 } from "react-router-dom";
 import CreateTicket from "./components/CreateTicket.js";
 import DevelopmentRequesterSelection from "./components/DevelopmentRequesterSelection.js";
+import MyTickets from "./components/MyTickets.js";
 import {
   checkSystem,
   getDevelopmentRequesters,
@@ -131,6 +133,10 @@ function AppShell({
   onChangeRequester,
   children,
 }: AppShellProps) {
+  const location = useLocation();
+  const myTicketsIsActive = location.pathname === "/tickets";
+  const createTicketIsActive = location.pathname === "/tickets/new";
+
   return (
     <div className="min-vh-100 bg-body-tertiary">
       <header className="navbar navbar-expand-md bg-success navbar-dark shadow-sm">
@@ -142,12 +148,27 @@ function AppShell({
             TokTickIT
           </Link>
 
-          <nav className="d-flex align-items-center gap-3">
-            <Link className="link-light" to="/tickets">
+          <nav
+            className="app-navigation d-flex align-items-center gap-3"
+            aria-label="Primary navigation"
+          >
+            <Link
+              className={`link-light ${
+                myTicketsIsActive ? "active fw-semibold" : ""
+              }`}
+              aria-current={myTicketsIsActive ? "page" : undefined}
+              to="/tickets"
+            >
               My Tickets
             </Link>
 
-            <Link className="link-light" to="/tickets/new">
+            <Link
+              className={`link-light ${
+                createTicketIsActive ? "active fw-semibold" : ""
+              }`}
+              aria-current={createTicketIsActive ? "page" : undefined}
+              to="/tickets/new"
+            >
               Create Ticket
             </Link>
           </nav>
@@ -287,6 +308,20 @@ function AppRoutes() {
     <Navigate to="/select-requester" replace />
   );
 
+  const myTicketsPage = currentRequester ? (
+    <AppShell
+      requester={currentRequester}
+      onChangeRequester={changeRequester}
+    >
+      <MyTickets
+        key={currentRequester.id}
+        requesterId={currentRequester.id}
+      />
+    </AppShell>
+  ) : (
+    <Navigate to="/select-requester" replace />
+  );
+
   const createTicketPage = currentRequester ? (
     <AppShell
       requester={currentRequester}
@@ -320,7 +355,7 @@ function AppRoutes() {
 
       <Route
         path="/tickets"
-        element={protectedPage}
+        element={myTicketsPage}
       />
 
       <Route
