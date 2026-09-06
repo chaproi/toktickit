@@ -654,7 +654,9 @@ test("E2E-04 keeps every Lab 2 screen usable at desktop, tablet, and mobile size
 
   const viewports = [
     { name: "desktop", width: 1440, height: 900 },
+    { name: "tablet-large", width: 1024, height: 900 },
     { name: "tablet", width: 820, height: 900 },
+    { name: "tablet-boundary", width: 768, height: 900 },
     { name: "mobile", width: 390, height: 844 },
   ] as const;
   const routes = [

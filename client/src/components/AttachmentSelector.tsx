@@ -20,6 +20,12 @@ interface AttachmentSelectorProps {
     onFilesChange: (files: File[]) => void;
 }
 
+interface AttachmentError {
+    filename: string;
+    message: string;
+    preserveExactMessage?: boolean;
+}
+
 function getExtension(filename: string): string {
     const dotPosition = filename.lastIndexOf(".");
 
@@ -56,7 +62,7 @@ export default function AttachmentSelector({
     disabled = false,
     onFilesChange,
 }: AttachmentSelectorProps) {
-    const [errors, setErrors] = useState<string[]>([]);
+    const [errors, setErrors] = useState<AttachmentError[]>([]);
 
     function handleSelection(
         event: ChangeEvent<HTMLInputElement>,
@@ -66,7 +72,7 @@ export default function AttachmentSelector({
         );
 
         const nextFiles = [...files];
-        const nextErrors: string[] = [];
+        const nextErrors: AttachmentError[] = [];
 
         for (const file of selectedFiles) {
             const extension = getExtension(file.name);
@@ -77,23 +83,27 @@ export default function AttachmentSelector({
                 !expectedMimeType ||
                 file.type !== expectedMimeType
             ) {
-                nextErrors.push(
-                    `${file.name}: Unsupported file type.`,
-                );
+                nextErrors.push({
+                    filename: file.name,
+                    message: "This file type is not allowed.",
+                    preserveExactMessage: true,
+                });
                 continue;
             }
 
             if (file.size === 0) {
-                nextErrors.push(
-                    `${file.name}: Empty files are not permitted.`,
-                );
+                nextErrors.push({
+                    filename: file.name,
+                    message: "Empty files are not permitted.",
+                });
                 continue;
             }
 
             if (file.size > MAX_FILE_SIZE) {
-                nextErrors.push(
-                    `${file.name}: File must not exceed 5 MB.`,
-                );
+                nextErrors.push({
+                    filename: file.name,
+                    message: "File must not exceed 5 MB.",
+                });
                 continue;
             }
 
@@ -104,16 +114,18 @@ export default function AttachmentSelector({
             );
 
             if (duplicate) {
-                nextErrors.push(
-                    `${file.name}: This file is already selected.`,
-                );
+                nextErrors.push({
+                    filename: file.name,
+                    message: "This file is already selected.",
+                });
                 continue;
             }
 
             if (nextFiles.length >= MAX_FILES) {
-                nextErrors.push(
-                    `${file.name}: A maximum of five files may be selected.`,
-                );
+                nextErrors.push({
+                    filename: file.name,
+                    message: "A maximum of five files may be selected.",
+                });
                 continue;
             }
 
@@ -168,7 +180,16 @@ export default function AttachmentSelector({
                 >
                     <ul className="mb-0">
                         {errors.map((error) => (
-                            <li key={error}>{error}</li>
+                            <li key={`${error.filename}:${error.message}`}>
+                                {error.preserveExactMessage ? (
+                                    <>
+                                        <span>{error.filename}: </span>
+                                        <span>{error.message}</span>
+                                    </>
+                                ) : (
+                                    `${error.filename}: ${error.message}`
+                                )}
+                            </li>
                         ))}
                     </ul>
                 </div>

@@ -552,7 +552,12 @@ export default function MyTickets({
           )}
 
           {loadState === "success" && items.length > 0 && (
-            <div className="my-tickets-table-wrap">
+            <div
+              className="my-tickets-table-wrap"
+              role="region"
+              aria-label="Scrollable My Tickets table"
+              tabIndex={0}
+            >
               <table
                 className="table align-middle my-tickets-table"
                 aria-label="My Tickets"

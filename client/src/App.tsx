@@ -24,6 +24,7 @@ import {
 } from "./api.js";
 
 const REQUESTER_STORAGE_KEY = "developmentRequesterId";
+const MOBILE_NAVIGATION_QUERY = "(max-width: 767.98px)";
 
 type UiState = "idle" | "loading" | "success" | "error";
 
@@ -31,6 +32,28 @@ interface AppShellProps {
   requester: DevelopmentRequester;
   onChangeRequester: () => void;
   children?: ReactNode;
+}
+
+function useMediaQuery(query: string): boolean {
+  const readMatch = () =>
+    typeof window.matchMedia === "function" &&
+    window.matchMedia(query).matches;
+  const [matches, setMatches] = useState(readMatch);
+
+  useEffect(() => {
+    if (typeof window.matchMedia !== "function") {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia(query);
+    const updateMatch = () => setMatches(mediaQuery.matches);
+
+    updateMatch();
+    mediaQuery.addEventListener("change", updateMatch);
+    return () => mediaQuery.removeEventListener("change", updateMatch);
+  }, [query]);
+
+  return matches;
 }
 
 function SystemCheck() {
@@ -135,11 +158,27 @@ function AppShell({
   children,
 }: AppShellProps) {
   const location = useLocation();
+  const isMobileNavigation = useMediaQuery(
+    MOBILE_NAVIGATION_QUERY,
+  );
+  const [isNavigationOpen, setIsNavigationOpen] = useState(false);
   const myTicketsIsActive =
     location.pathname === "/tickets" ||
     (/^\/tickets\/[^/]+$/.test(location.pathname) &&
       location.pathname !== "/tickets/new");
   const createTicketIsActive = location.pathname === "/tickets/new";
+  const navigationIsVisible =
+    !isMobileNavigation || isNavigationOpen;
+
+  useEffect(() => {
+    setIsNavigationOpen(false);
+  }, [isMobileNavigation, location.pathname]);
+
+  function closeMobileNavigation() {
+    if (isMobileNavigation) {
+      setIsNavigationOpen(false);
+    }
+  }
 
   return (
     <div className="min-vh-100 bg-body-tertiary">
@@ -152,8 +191,26 @@ function AppShell({
             TokTickIT
           </Link>
 
+          <button
+            type="button"
+            className="navbar-toggler app-navigation-toggle"
+            hidden={!isMobileNavigation}
+            aria-label="Toggle primary navigation"
+            aria-expanded={isNavigationOpen}
+            aria-controls="primary-navigation"
+            onClick={() =>
+              setIsNavigationOpen((current) => !current)
+            }
+          >
+            <span className="navbar-toggler-icon" aria-hidden="true" />
+          </button>
+
           <nav
-            className="app-navigation d-flex align-items-center gap-3"
+            id="primary-navigation"
+            className={`app-navigation align-items-center gap-3 ${
+              navigationIsVisible ? "d-flex" : "d-none"
+            }`}
+            hidden={!navigationIsVisible}
             aria-label="Primary navigation"
           >
             <Link
@@ -162,6 +219,7 @@ function AppShell({
               }`}
               aria-current={myTicketsIsActive ? "page" : undefined}
               to="/tickets"
+              onClick={closeMobileNavigation}
             >
               My Tickets
             </Link>
@@ -172,6 +230,7 @@ function AppShell({
               }`}
               aria-current={createTicketIsActive ? "page" : undefined}
               to="/tickets/new"
+              onClick={closeMobileNavigation}
             >
               Create Ticket
             </Link>

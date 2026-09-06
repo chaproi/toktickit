@@ -130,6 +130,8 @@ a:focus-visible {
 
 .my-tickets-table-wrap {
     max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
 }
 
 .my-tickets-table {
@@ -307,6 +309,11 @@ a:focus-visible {
 }
 
 @media (max-width: 767.98px) {
+    .app-navigation-toggle {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
     .app-navigation {
         width: 100%;
         justify-content: space-between;
