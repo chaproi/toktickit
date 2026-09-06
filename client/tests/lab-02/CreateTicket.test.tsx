@@ -389,9 +389,9 @@ describe("Create Ticket", () => {
             [file, invalidFile],
         );
 
-        expect(
-            screen.getByText(/notes\.txt.*unsupported file type/i),
-        ).toBeInTheDocument();
+        expect(screen.getByRole("alert")).toHaveTextContent(
+            "notes.txt: This file type is not allowed.",
+        );
 
         expect(
             await screen.findByText("clear-evidence.png"),
@@ -412,9 +412,7 @@ describe("Create Ticket", () => {
         expect(
             screen.queryByText("clear-evidence.png"),
         ).not.toBeInTheDocument();
-        expect(
-            screen.queryByText(/notes\.txt.*unsupported file type/i),
-        ).not.toBeInTheDocument();
+        expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     });
 
     it("UI-03 blocks an invalid submission and displays validation errors", async () => {
@@ -766,11 +764,9 @@ describe("Create Ticket", () => {
             await screen.findByText("evidence.png"),
         ).toBeInTheDocument();
 
-        expect(
-            screen.getByText(
-                /notes\.txt.*unsupported file type/i,
-            ),
-        ).toBeInTheDocument();
+        expect(screen.getByRole("alert")).toHaveTextContent(
+            "notes.txt: This file type is not allowed.",
+        );
 
         expect(
             screen.getByText(/image\/png/i),

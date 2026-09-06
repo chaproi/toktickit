@@ -12,3 +12,7 @@ server/prisma/*.db
 # logs & OS
 *.log
 .DS_Store
+# Playwright transient output (curated screenshots are committed separately)
+test-results/
+playwright-report/
+blob-report/

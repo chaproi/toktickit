@@ -2,105 +2,98 @@
 
 ## 1. Purpose
 
-This document records the peer-review evidence for Lab 2, including reviewer identities, Pull Request links, comments given and received, responses to review feedback, requested changes, and approvals.
-
-Only completed review activity shall be reported as evidence. Pending items must remain marked as `Pending`.
+This document records peer-review evidence that is supported by the repository history and confirmed review activity. Pending events remain explicitly marked `Pending`; no Issue #21 approval, release, or closure is claimed.
 
 ## 2. Current Review Status
 
-| Item                        | Value                               |
-| --------------------------- | ----------------------------------- |
-| Repository owner            | `@chaproi`                          |
-| Engineering-contract Issue  | `#11`                               |
-| Engineering-contract branch | `docs/11-lab2-engineering-contract` |
-| Integration branch          | `lab2-staging`                      |
-| Engineering-contract PR       | #12                               |
-| Assigned peer reviewer        | @cottonlnwza                       |
-| Review status | Changes requested; fixes pushed; awaiting re-review |
-| Final release PR            | Pending                             |
+| Item | Value |
+| --- | --- |
+| Repository owner | `@chaproi` |
+| Engineering-contract Issue | `#11` |
+| Engineering-contract PR | `#12` |
+| Ticket Detail and Attachment Issue | `#19` |
+| Ticket Detail and Attachment PR | `#20` |
+| Final verification Issue | `#21` |
+| Integration branch | `lab2-staging` |
+| Confirmed peer reviewer | `@cottonlnwza` |
+| PR #20 status | Re-reviewed, approved, and merged into `lab2-staging` |
+| Issue #21 peer review | Pending |
+| Final release PR and approval | Pending |
 
-## 3. Reviewers
+The reviewer's real name was not recorded, so this document retains only the confirmed GitHub username.
 
-| Reviewer Name | GitHub Username | Role                                | Confirmed |
-| ------------- | --------------- | ----------------------------------- | --------- |
-| Not recorded  | @cottonlnwza    | Reviews my Lab 2 Pull Requests   | Yes       |
-| Pending       | Pending         | Student whose Pull Request I review | No        |
+## 3. Pull Requests Received for Review
 
-Reviewer information shall be replaced with the real identity after review assignment or participation.
+No completed evidence of a Pull Request from another student reviewed by this repository owner is recorded here. That required activity remains pending and must not be inferred from reviews received on this repository.
 
-## 4. Pull Requests Received for Review
+## 4. Reviews Received on This Repository
 
-Use this table for Pull Requests from other students that I review.
+| Date | Reviewer | Pull Request | Scope | Result | Evidence |
+| --- | --- | --- | --- | --- | --- |
+| 2026-09-04 | `@cottonlnwza` | #12 | Engineering-contract consistency | Changes requested | Contract response-shape, naming, ordering, and consistency findings were recorded in the existing review history. |
+| 2026-09-04 | `@cottonlnwza` | #12 | Remaining engineering-contract inconsistencies | Changes requested | Follow-up corrections were recorded in commits `3b50309` and `e02a757`. |
+| 2026-09-06 | `@cottonlnwza` | #20 | Ticket Detail and Attachment lifecycle | Changes requested | Findings covered concurrent active-Attachment enforcement, strict identifier validation, and filename-specific accessible success feedback. |
+| 2026-09-06 | `@cottonlnwza` | #20 | Corrected Ticket Detail and Attachment lifecycle | Approved | RED–GREEN corrections were re-reviewed before PR #20 was merged into `lab2-staging`. |
 
-| Date    | Student / GitHub User | Repository | Pull Request | Scope Reviewed | Review Result |
-| ------- | --------------------- | ---------- | ------------ | -------------- | ------------- |
-| Pending | Pending               | Pending    | Pending      | Pending        | Pending       |
+The local Git history confirms merge commit `c60c3dc` for PR #20. It also confirms merge commit `0264d31` for PR #12; the current record does not add an approval claim for PR #12 beyond the review evidence listed above.
 
-## 5. Comments Given to Other Students
+## 5. Review Findings and Resolutions
 
-| Date    | Pull Request | File or Topic | Review Comment | Resolution |
-| ------- | ------------ | ------------- | -------------- | ---------- |
-| Pending | Pending      | Pending       | Pending        | Pending    |
+### 5.1 Engineering Contract — PR #12
 
-Review comments should be specific, actionable, and related to requirements, correctness, tests, security, maintainability, or UI behavior.
+| Finding | Response | Commit Evidence | Status |
+| --- | --- | --- | --- |
+| Contract names, response shapes, and Category ordering were inconsistent across documents. | Standardized `name`, `currentStatus`, `originalFilename`, `sortOrder`, `fields`, and `removalReason`; aligned the Create Ticket response and Category ordering. | `256f8bc` | Resolved |
+| Duplicate heading and remaining response, Attachment, removal, query, and ordering inconsistencies. | Removed the duplicate heading; aligned Create, List, Detail, and Attachment shapes; standardized query and ordering rules; clarified idempotency, unknown-field rejection, and preview/download behavior. | `3b50309`, `e02a757` | Resolved in the merged contract branch |
 
-## 6. Reviews Received on My Pull Requests
+### 5.2 Ticket Detail and Attachment Lifecycle — PR #20
 
-| Date    | Reviewer | Pull Request | Scope   | Result  | Approval Link |
-| ------- | -------- | ------------ | ------- | ------- | ------------- |
-| 2026-09-04 | @cottonlnwza | #12 | Engineering contract consistency | Changes requested | Not approved |
-| 2026-09-04 | @cottonlnwza | #12 | Remaining contract inconsistencies | Changes requested | Not approved |
+| Requested Change | RED Regression Evidence | GREEN Resolution | Status |
+| --- | --- | --- | --- |
+| Concurrent uploads could exceed the five-active-Attachment maximum. | Commit `9101d26` added a concurrent upload regression that required exactly one success, one contract conflict, five final active metadata rows, and no orphaned stored content. | Commit `53edc40` enforced the invariant at the PostgreSQL transaction boundary and retained storage compensation. | Resolved and approved |
+| Attachment upload did not apply the contract's strict Requester and Ticket identifier validation in every case. | Commit `9101d26` added missing, blank, malformed, non-integer, zero, negative, inactive, nonexistent, and ownership-safe regression cases. | Commit `53edc40` aligned upload validation and safe error mapping with the approved API contract. | Resolved and approved |
+| Upload and removal feedback did not include the filename-specific accessible information required by the UI contract. | Commit `9101d26` tightened the component assertions for successful feedback. | Commit `53edc40` included the affected filename in the accessible Upload and Remove status messages. | Resolved and approved |
 
-## 7. Comments Received and My Responses
+The PR #20 findings were handled as a separate RED commit followed by the minimum GREEN production correction. Existing assertions were not disabled or weakened.
 
-| Date    | Pull Request | Reviewer Comment | My Response or Change | Commit / Evidence | Resolved |
-| ------- | ------------ | ---------------- | --------------------- | ----------------- | -------- |
-| 2026-09-04 | #12 | Contract names, response shapes, and Category ordering were inconsistent across documents. | Standardized `name`, `currentStatus`, `originalFilename`, `sortOrder`, `fields`, and `removalReason`; aligned the Create Ticket response and Category ordering. | Commit 256f8bc | Yes |
-| 2026-09-04 | #12 | Duplicate heading and remaining response, attachment, removal, query, and ordering inconsistencies. | Removed the duplicate heading; aligned Create, List, Detail, and Attachment response shapes; standardized query and ordering rules; and clarified idempotency, unknown-field rejection, and preview/download behavior. | Commits 3b50309 and e02a757 | No |
+## 6. Final E2E and Release Audit — Issue #21
 
-A comment shall be marked resolved only after the requested clarification or change has been completed and verified.
+The final integration audit found four release blockers:
 
-## 8. Pull Request Approval Record
+* Tablet-width horizontal overflow.
+* Incorrect invalid-file feedback copy.
+* Missing accessible mobile navigation.
+* A broken compiled production-server start path.
 
-| Pull Request         | Source Branch                       | Target Branch  | Reviewer | Approval Status | Merge Status |
-| -------------------- | ----------------------------------- | -------------- | -------- | --------------- | ------------ |
-| Engineering contract | `docs/11-lab2-engineering-contract` | `lab2-staging` | @cottonlnwza | Changes requested | Not merged |
-| Lab 2 release        | `lab2-staging`                      | `main`         | Pending  | Pending         | Not merged   |
+Commit `e750e61` added failing E2E and regression coverage for these findings. Commit `0f4d48d` supplied the GREEN corrections. The subsequent verification passed 6/6 E2E scenarios, 58/58 client tests, 106/106 server tests, both production builds, and the compiled-server start smoke test. Screenshot evidence is indexed in `docs/lab-02/tests.md`.
 
-Additional feature Pull Requests shall be added during implementation.
+This technical result is not a peer-review or release decision. Issue #21 has not yet been peer-reviewed, approved, merged, released, or closed.
 
-## 9. Reviewer Checklist
+## 7. Pull Request Approval Record
 
-For each Pull Request, the reviewer should verify the applicable items:
+| Pull Request | Source Branch | Target Branch | Reviewer | Approval Status | Merge Status |
+| --- | --- | --- | --- | --- | --- |
+| #12 Engineering contract | `docs/11-lab2-engineering-contract` | `lab2-staging` | `@cottonlnwza` | Changes-requested history retained; final approval not added without evidence | Merged (`0264d31`) |
+| #20 Ticket Detail and Attachment lifecycle | `feat/19-ticket-detail` | `lab2-staging` | `@cottonlnwza` | Approved after requested changes | Merged (`c60c3dc`) |
+| Issue #21 final verification/release | `test/21-lab2-final-integration` | Pending | Pending | Pending | Not merged |
+| Lab 2 release | `lab2-staging` | `main` | Pending | Pending | Not merged |
 
-* [ ] The Pull Request is linked to the correct GitHub Issue.
-* [ ] The source and target branches follow the required Lab 2 workflow.
-* [ ] The change remains within the Issue scope.
-* [ ] The implementation follows `specification.md`.
-* [ ] API behavior follows `api-spec.md`.
-* [ ] UI behavior follows `ui-spec.md`.
-* [ ] Tests follow `tests.md`.
-* [ ] Acceptance Criteria covered by the Pull Request are identified.
-* [ ] Relevant automated tests pass.
+## 8. Remaining Review Checklist
+
+Before Lab 2 release, the Issue #21 reviewer should confirm:
+
+* [ ] The change is linked to Issue #21 and targets the intended integration/release flow.
+* [ ] The implementation and evidence still follow `specification.md`, `api-spec.md`, `ui-spec.md`, and `tests.md`.
+* [ ] The recorded automated results and tracked screenshots are reproducible.
 * [ ] Existing Lab 1 behavior remains operational.
-* [ ] No required test is skipped, disabled, or commented out.
-* [ ] Validation and ownership checks are enforced in the backend.
-* [ ] Errors do not expose sensitive implementation details.
-* [ ] UI changes are responsive and use the Zen Green specification.
-* [ ] No unrelated Lab 3 functionality is included.
-* [ ] Review comments have been answered or resolved.
-* [ ] The reviewer has approved the final revision.
+* [ ] No tests are skipped, disabled, or weakened.
+* [ ] Ownership checks and safe errors remain enforced.
+* [ ] Responsive and Zen Green evidence is acceptable.
+* [ ] The remaining live-storage limitation is understood.
+* [ ] Final approval is recorded before merge or release.
 
-## 10. Final Peer-Review Declaration
+## 9. Final Peer-Review Declaration
 
-Current status: **Pending**
+Current status: **Pending for Issue #21 and release**.
 
-Before Lab 2 submission, this section shall be updated to confirm:
-
-* All required feature Pull Requests entered `lab2-staging` through peer review.
-* Review comments were addressed and resolved.
-* Required approvals were recorded.
-* The release Pull Request from `lab2-staging` to `main` was reviewed.
-* The rendered evidence in this document matches the actual GitHub history.
-
-No peer-review completion is claimed at the engineering-contract preparation stage.
+PR #20's requested changes were resolved, re-reviewed, approved, and merged. Issue #21 technical verification is complete on its branch, but its peer review, Pull Request, merge, release approval, release, and Issue closure have not occurred.

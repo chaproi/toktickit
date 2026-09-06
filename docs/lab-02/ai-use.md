@@ -1,63 +1,59 @@
 # Lab 2 AI Use Record
 
-## 1. AI Tool Used
+## 1. AI Tool and Scope
 
-| Item                   | Details                                                                                                                  |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Tool                   | OpenAI ChatGPT with Codex                                                                                                |
-| Use period             | Lab 2 specification and planning stage                                                                                   |
-| Main purpose           | Requirements analysis, engineering-contract drafting, test planning, consistency checking, and step-by-step Git guidance |
-| Student responsibility | I reviewed, corrected, and approved the final documents and remain responsible for all decisions and submitted work      |
+| Item | Details |
+| --- | --- |
+| Tool | OpenAI ChatGPT with Codex |
+| Use period | Lab 2 specification, implementation, testing, review correction, final verification, and documentation stages |
+| Main uses | Contract analysis, implementation assistance, regression-test generation, E2E tooling and test creation, debugging, responsive/accessibility review, and documentation consistency checks |
+| Human responsibility | I reviewed the suggestions, checked them against the approved engineering contract, ran the repository commands, inspected browser behavior and evidence, responded to peer review, and remain responsible for the submitted work. |
 
-## 2. Selected Key Prompts
+AI assistance did not independently approve a Pull Request, merge a branch, release the system, or close an Issue. No secret, credential, connection string, or private environment value is recorded in this document.
 
-The prompts below summarize the main requests used during the engineering-contract preparation. Repeated short continuation messages are not listed separately.
+## 2. Selected Key Prompts and Outcomes
 
-| No. | Selected Key Prompt                                                                                                                                                                                     | Purpose                                                     | Result and My Review                                                                                                                               |
-| --: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-|   1 | Review the Lab 2 handout and explain how many GitHub Issues should be created and in what order.                                                                                                        | Plan the sprint and Git workflow.                           | The AI proposed an Issue decomposition and helped start the engineering-contract Issue. I checked the branch flow against the handout.             |
-|   2 | Determine whether the instructor-provided `AGENTS.md` and supporting files must be copied into the repository.                                                                                          | Clarify a repository requirement.                           | The AI initially suggested copying the files, but I questioned the requirement. After checking the handout, the unnecessary files were removed.    |
-|   3 | Draft `specification.md` for the TokTickIT Requester Ticketing MVP with numbered Functional Requirements, Business Rules, Given-When-Then Acceptance Criteria, database design, and Definition of Done. | Create the main engineering contract before implementation. | The draft was reviewed section by section. I checked the numbered counts and corrected attachment-storage wording.                                 |
-|   4 | Check the approved TokTickIT System-Level SDS and define how Attachment binaries and metadata should be stored.                                                                                         | Resolve an attachment-storage decision.                     | The final decision uses local single-node SeaweedFS for binaries and PostgreSQL for metadata. Original filenames are retained only for display.    |
-|   5 | Create `tests.md` with planned unit, API/integration, UI component, UI style, responsive, E2E, and Lab 1 regression tests. Map every Acceptance Criterion to at least one planned test.                 | Prepare Test-Driven Development and traceability.           | The final plan contains 26 planned tests and maps all 42 Acceptance Criteria. I verified the counts using PowerShell.                              |
-|   6 | Draft the Zen Green `ui-spec.md` with routes, screen states, validation feedback, responsive behavior, accessibility, and evidence requirements.                                                        | Define the UI contract before implementation.               | I reviewed the draft against the handout and corrected the exact required colors, desktop breakpoint, and Development Requester dropdown behavior. |
-|   7 | Draft `api-spec.md` with endpoint paths, request and response examples, query parameters, HTTP statuses, ownership checks, attachment lifecycle rules, and safe errors.                                 | Define the backend contract before coding.                  | The resulting contract contains 11 Lab 2 endpoints. I verified the endpoint summary and retained compatibility with the Lab 1 APIs.                |
-|   8 | Initialize `reviewer.md` without inventing reviewer identities, comments, approvals, or Pull Request evidence.                                                                                          | Prepare a truthful peer-review evidence record.             | The document contains pending tables and checklists that will be updated only after real reviews occur.                                            |
+The entries below summarize the material requests used during Lab 2. Repeated continuation and status prompts are omitted.
 
-## 3. How AI Output Was Checked
+| No. | Selected Key Prompt | Purpose | Human Review and Outcome |
+| ---: | --- | --- | --- |
+| 1 | Review the Lab 2 handout and decompose the work into engineering-contract and feature Issues. | Plan scope and Git workflow. | The proposed sequence was checked against the assignment and adjusted before work began. |
+| 2 | Draft the numbered Functional Requirements, Business Rules, Given–When–Then Acceptance Criteria, data decisions, and Definition of Done. | Establish the engineering contract before implementation. | Counts, scope boundaries, Attachment storage, Requester ownership, and terminology were manually checked and corrected. |
+| 3 | Create a traceable test plan covering unit, API, UI, responsive, E2E, and Lab 1 regression behavior. | Prepare strict TDD coverage. | All 42 AC identifiers were mapped; later documentation was reconciled to the files actually implemented. |
+| 4 | Define the Zen Green UI and API contracts, including responsive behavior, accessibility, safe errors, and Attachment lifecycle rules. | Make frontend/backend behavior explicit before coding. | Colors, breakpoints, messages, DTOs, status codes, validation order, and ownership rules were checked against the approved contract. |
+| 5 | Add failing tests, then implement Development Requester selection and Requester-owned Ticket creation. | Implement the first Lab 2 increments with RED–GREEN TDD. | Targeted tests, full suites, and builds were executed in the repository before the work advanced. |
+| 6 | Clarify and implement My Tickets search, filter, sort, pagination, responsive, and Requester-isolation behavior. | Deliver Issue #17 without expanding into Ticket Detail content. | Human-approved contract clarifications controlled test corrections; deterministic fixture cleanup repaired cross-file test isolation. |
+| 7 | Add failing Ticket Detail and Attachment lifecycle tests, then implement the approved backend and frontend behavior. | Deliver Issue #19 with ownership-safe APIs and accessible UI states. | Generated implementation suggestions were constrained by the existing schema, storage adapter, contract messages, and committed RED tests. |
+| 8 | Address PR #20 findings with focused regression tests before production fixes. | Repair concurrent Attachment limits, identifier validation, and filename-specific success feedback. | The reviewer findings were reproduced by RED tests and fixed in a separate GREEN commit before re-review and merge. |
+| 9 | Create real-browser E2E coverage with isolated data, cleanup, screenshots, responsive widths, and release-smoke checks. | Verify the integrated Requester workflow for Issue #21. | Browser behavior was run against the real application; cleanup was verified to leave zero matching E2E Tickets. |
+| 10 | Audit implementation, tests, screenshots, contracts, reviewer history, AI use, and operational documentation for consistency. | Close technical documentation without overstating release status. | Repository paths, AC coverage, Git history, verification totals, limitations, and documentation-only scope were checked with repeatable commands. |
 
-I used the following checks before accepting the drafted contract:
+## 3. Human Oversight and Verification
 
-* Compared the proposed scope with the Lab 2 handout.
-* Compared attachment storage decisions with the approved TokTickIT System-Level SDS.
-* Removed repository files that were not explicitly required.
-* Checked that Functional Requirements, Business Rules, and Acceptance Criteria use numbered identifiers.
-* Verified 30 Functional Requirements, 67 Business Rules, and 42 Acceptance Criteria.
-* Verified that all 42 Acceptance Criteria map to planned tests.
-* Verified that the test plan contains 26 planned tests.
-* Corrected the Zen Green colors to `#006B3C`, `#0B7A46`, and `#EAF6EF`.
-* Corrected the desktop breakpoint to `992px` and above.
-* Corrected the Development Requester selector to use the required dropdown.
-* Verified that the API endpoint summary contains 11 endpoints.
-* Kept test results and peer-review evidence marked as pending when they had not yet occurred.
+AI-generated analysis and changes were accepted only after human-directed checks:
 
-## 4. My Reflection
+* Requirements and proposed behavior were compared with `docs/lab-02/specification.md`, `api-spec.md`, `ui-spec.md`, and `tests.md`.
+* Functional Requirement, Business Rule, Acceptance Criterion, endpoint, status-code, and message identifiers were preserved rather than rewritten to fit implementation mistakes.
+* Automated tests and production builds were executed in the repository; passing results were not inferred from code inspection.
+* Real browser execution was used for the integrated Requester workflow, responsive widths, keyboard-accessible interactions, Attachment preview/download/removal, and retained screenshots.
+* Deterministic fixture markers and cleanup were inspected so automated runs did not depend on or erase unrelated Tickets.
+* Peer review was used before PR #20 was merged into `lab2-staging`.
+* Suggestions were corrected when committed tests, full-suite failures, E2E execution, or reviewer feedback exposed defects.
+* Generated documentation was checked for unsupported claims, nonexistent files, absolute local paths, secrets, and release statements that had not occurred.
 
-Using AI helped me turn a long stakeholder handout into structured requirements, business rules, Acceptance Criteria, UI behavior, API contracts, and planned tests. It was especially useful for identifying failure cases, ownership checks, attachment boundaries, and links between Acceptance Criteria and tests.
+## 4. Examples of Corrections Made Under Human Direction
 
-However, I learned that AI output cannot be accepted without checking it against the original documents. Some early suggestions, such as copying optional files and using different UI values, were not accurate for this assignment. I questioned those suggestions, checked the handout, and corrected the documents. This process showed me that the AI is useful as an engineering assistant, but I am still responsible for the final scope, decisions, implementation, tests, and evidence.
+The AI did not provide consistently correct output without review. Human direction corrected or rejected suggestions when they conflicted with evidence, including:
 
-## 5. Future AI Use During Implementation
+* Removing an unrelated `AGENTS.md` instead of treating it as a Lab 2 requirement.
+* Correcting test expectations so stable Ticket ordering followed the approved primary sort and same-direction `id` secondary sort.
+* Replacing an overly broad date assertion with semantic `<time>` assertions while retaining the Ticket Number and both required dates.
+* Repairing parallel API-test fixture isolation after the full suite exposed globally visible records.
+* Adding database-boundary concurrency protection after peer review exposed a race in the five-active-Attachment invariant.
+* Correcting tablet overflow, invalid-file copy, accessible mobile navigation, and the compiled-server start path after final E2E RED evidence.
 
-This file shall be updated during implementation with selected prompts related to:
+## 5. Reflection and Boundaries
 
-* Contract and ambiguity review
-* Failing-test creation
-* Database migration and seed implementation
-* Requester context implementation
-* Ticket API and UI implementation
-* Attachment lifecycle implementation
-* Responsive and accessibility review
-* Final completion audit
+AI assistance was useful for turning a large contract into small TDD increments, enumerating boundary cases, diagnosing failures, and keeping frontend, backend, E2E, and documentation evidence aligned. The work also demonstrated why generated suggestions require human scrutiny: plausible output can conflict with exact contract wording, test isolation, concurrency behavior, accessibility semantics, or repository reality.
 
-Only prompts that materially influenced the implementation or review shall be retained in the final 6–10 key-prompt table.
+The temporary `X-Development-Requester-Id` mechanism remains a Lab 2 testing context rather than real authentication. Issue #21 E2E used the existing in-memory Attachment adapter in its scoped test server and did not verify a live SeaweedFS deployment. These limitations are recorded rather than hidden or resolved by changing the contract.
