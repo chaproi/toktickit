@@ -172,8 +172,136 @@ a:focus-visible {
     color: var(--text-muted);
 }
 
+.ticket-detail-page,
+.ticket-attachments,
+.attachment-item-details {
+    min-width: 0;
+}
+
+.ticket-detail-number {
+    color: var(--secondary-green);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", monospace;
+    font-size: 1.05rem;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.ticket-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.ticket-detail-label {
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+}
+
+.ticket-detail-value {
+    height: calc(100% - 1.9rem);
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+.ticket-detail-wide {
+    grid-column: 1 / -1;
+}
+
+.ticket-detail-description {
+    display: block;
+    max-width: 75ch;
+}
+
+.ticket-detail-state {
+    display: flex;
+    min-height: 8rem;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    text-align: center;
+    background: var(--pale-green);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.attachment-upload-panel {
+    padding: 1rem;
+    background: var(--pale-green);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.attachment-upload-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.75rem;
+    align-items: start;
+}
+
+.attachment-list {
+    display: grid;
+    gap: 1rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.attachment-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.attachment-item-removed {
+    background: var(--read-only);
+}
+
+.attachment-filename,
+.attachment-metadata,
+.attachment-removal-details {
+    overflow-wrap: anywhere;
+}
+
+.attachment-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.attachment-dialog-backdrop {
+    position: fixed;
+    z-index: 1050;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    background: rgba(23, 53, 42, 0.62);
+}
+
+.attachment-dialog {
+    width: min(100%, 36rem);
+    max-height: calc(100vh - 2rem);
+    padding: 1.5rem;
+    overflow-y: auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 1rem 3rem rgba(23, 53, 42, 0.24);
+}
+
 @media (max-width: 991.98px) {
     .my-tickets-filter-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ticket-detail-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
@@ -245,5 +373,26 @@ a:focus-visible {
 
     .my-tickets-pagination .btn {
         flex: 1;
+    }
+
+    .ticket-detail-grid,
+    .attachment-upload-controls,
+    .attachment-item {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .ticket-detail-wide {
+        grid-column: auto;
+    }
+
+    .attachment-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .attachment-actions .btn,
+    .attachment-upload-controls .btn,
+    .attachment-dialog .btn {
+        width: 100%;
     }
 }

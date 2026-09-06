@@ -258,6 +258,43 @@ export interface Attachment {
   removalReason: string | null;
 }
 
+export interface TicketDetail {
+  id: number;
+  ticketNumber: string;
+  ticketDate: string;
+  requester: {
+    id: number;
+    name: string;
+  };
+  category: Category;
+  relatedSystem: RelatedSystem;
+  requestedPriority: RequestedPriority;
+  currentStatus: TicketStatus;
+  summary: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AttachmentListResponse {
+  items: Attachment[];
+}
+
+async function readErrorResponse(
+  response: Response,
+  fallbackMessage: string,
+): Promise<ApiRequestError> {
+  const responseBody = (await response
+    .json()
+    .catch(() => null)) as ErrorResponse | null;
+
+  return new ApiRequestError(
+    responseBody?.error?.message ?? fallbackMessage,
+    response.status,
+    responseBody?.error?.code,
+  );
+}
+
 export async function uploadAttachment(
   requesterId: number,
   ticketId: number,
@@ -278,7 +315,113 @@ export async function uploadAttachment(
   );
 
   if (!response.ok) {
-    throw new Error(`Unable to upload ${file.name}`);
+    throw await readErrorResponse(
+      response,
+      "Something went wrong. Please try again.",
+    );
+  }
+
+  return (await response.json()) as Attachment;
+}
+
+export async function getTicketDetail(
+  requesterId: number,
+  ticketId: number,
+  signal?: AbortSignal,
+): Promise<TicketDetail> {
+  const response = await fetch(
+    `${API_URL}/api/tickets/${ticketId}`,
+    {
+      headers: {
+        "X-Development-Requester-Id": String(requesterId),
+      },
+      signal,
+    },
+  );
+
+  if (!response.ok) {
+    throw await readErrorResponse(
+      response,
+      "Something went wrong. Please try again.",
+    );
+  }
+
+  return (await response.json()) as TicketDetail;
+}
+
+export async function getAttachments(
+  requesterId: number,
+  ticketId: number,
+  signal?: AbortSignal,
+): Promise<AttachmentListResponse> {
+  const response = await fetch(
+    `${API_URL}/api/tickets/${ticketId}/attachments`,
+    {
+      headers: {
+        "X-Development-Requester-Id": String(requesterId),
+      },
+      signal,
+    },
+  );
+
+  if (!response.ok) {
+    throw await readErrorResponse(
+      response,
+      "Something went wrong. Please try again.",
+    );
+  }
+
+  return (await response.json()) as AttachmentListResponse;
+}
+
+export async function getAttachmentContent(
+  requesterId: number,
+  ticketId: number,
+  attachmentId: number,
+  disposition: "inline" | "attachment",
+): Promise<Blob> {
+  const response = await fetch(
+    `${API_URL}/api/tickets/${ticketId}/attachments/${attachmentId}/content?disposition=${disposition}`,
+    {
+      headers: {
+        "X-Development-Requester-Id": String(requesterId),
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw await readErrorResponse(
+      response,
+      "Something went wrong. Please try again.",
+    );
+  }
+
+  return response.blob();
+}
+
+export async function removeAttachment(
+  requesterId: number,
+  ticketId: number,
+  attachmentId: number,
+  removalReason: string,
+): Promise<Attachment> {
+  const response = await fetch(
+    `${API_URL}/api/tickets/${ticketId}/attachments/${attachmentId}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Development-Requester-Id": String(requesterId),
+      },
+      body: JSON.stringify({ removalReason }),
+    },
+  );
+
+  if (!response.ok) {
+    throw await readErrorResponse(
+      response,
+      "Something went wrong. Please try again.",
+    );
   }
 
   return (await response.json()) as Attachment;

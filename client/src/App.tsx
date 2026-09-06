@@ -15,6 +15,7 @@ import {
 import CreateTicket from "./components/CreateTicket.js";
 import DevelopmentRequesterSelection from "./components/DevelopmentRequesterSelection.js";
 import MyTickets from "./components/MyTickets.js";
+import RequesterTicketDetail from "./components/RequesterTicketDetail.js";
 import {
   checkSystem,
   getDevelopmentRequesters,
@@ -134,7 +135,10 @@ function AppShell({
   children,
 }: AppShellProps) {
   const location = useLocation();
-  const myTicketsIsActive = location.pathname === "/tickets";
+  const myTicketsIsActive =
+    location.pathname === "/tickets" ||
+    (/^\/tickets\/[^/]+$/.test(location.pathname) &&
+      location.pathname !== "/tickets/new");
   const createTicketIsActive = location.pathname === "/tickets/new";
 
   return (
@@ -299,15 +303,6 @@ function AppRoutes() {
     <RequesterPage onContinue={selectRequester} />
   );
 
-  const protectedPage = currentRequester ? (
-    <AppShell
-      requester={currentRequester}
-      onChangeRequester={changeRequester}
-    />
-  ) : (
-    <Navigate to="/select-requester" replace />
-  );
-
   const myTicketsPage = currentRequester ? (
     <AppShell
       requester={currentRequester}
@@ -328,6 +323,17 @@ function AppRoutes() {
       onChangeRequester={changeRequester}
     >
       <CreateTicket requester={currentRequester} />
+    </AppShell>
+  ) : (
+    <Navigate to="/select-requester" replace />
+  );
+
+  const ticketDetailPage = currentRequester ? (
+    <AppShell
+      requester={currentRequester}
+      onChangeRequester={changeRequester}
+    >
+      <RequesterTicketDetail requester={currentRequester} />
     </AppShell>
   ) : (
     <Navigate to="/select-requester" replace />
@@ -365,7 +371,7 @@ function AppRoutes() {
 
       <Route
         path="/tickets/:ticketId"
-        element={protectedPage}
+        element={ticketDetailPage}
       />
 
       <Route

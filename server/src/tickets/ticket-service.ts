@@ -36,6 +36,27 @@ const ticketListSelect = {
   updatedAt: true,
 } satisfies Prisma.TicketSelect;
 
+const ticketDetailSelect = {
+  id: true,
+  ticketNumber: true,
+  ticketDate: true,
+  requester: {
+    select: { id: true, name: true },
+  },
+  category: {
+    select: { id: true, name: true },
+  },
+  relatedSystem: {
+    select: { id: true, name: true },
+  },
+  requestedPriority: true,
+  currentStatus: true,
+  summary: true,
+  description: true,
+  createdAt: true,
+  updatedAt: true,
+} satisfies Prisma.TicketSelect;
+
 export type TicketWithReferences =
   Prisma.TicketGetPayload<{
     include: typeof ticketInclude;
@@ -81,6 +102,62 @@ export type ListTicketsResult =
   | {
       kind: "invalid-requester";
     };
+
+export type GetTicketDetailResult =
+  | {
+      kind: "success";
+      ticket: Prisma.TicketGetPayload<{
+        select: typeof ticketDetailSelect;
+      }>;
+    }
+  | {
+      kind: "invalid-requester";
+    }
+  | {
+      kind: "not-found";
+    };
+
+export async function getTicketDetailForRequester(
+  requesterId: number,
+  ticketId: number,
+): Promise<GetTicketDetailResult> {
+  const prisma = getPrisma();
+  const requester =
+    await prisma.developmentRequester.findFirst({
+      where: {
+        id: requesterId,
+        isActive: true,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+  if (!requester) {
+    return {
+      kind: "invalid-requester",
+    };
+  }
+
+  const ticket = await prisma.ticket.findFirst({
+    where: {
+      id: ticketId,
+      requesterId,
+    },
+    select: ticketDetailSelect,
+  });
+
+  if (!ticket) {
+    return {
+      kind: "not-found",
+    };
+  }
+
+  return {
+    kind: "success",
+    ticket,
+  };
+}
 
 export async function listTicketsForRequester(
   requesterId: number,

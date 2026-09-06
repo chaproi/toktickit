@@ -1,6 +1,7 @@
 import {
   CreateBucketCommand,
   DeleteObjectCommand,
+  GetObjectCommand,
   HeadBucketCommand,
   PutObjectCommand,
   S3Client,
@@ -14,6 +15,7 @@ export type StoreAttachmentInput = {
 
 export interface AttachmentStorage {
   store(input: StoreAttachmentInput): Promise<void>;
+  read?(storageKey: string): Promise<Buffer>;
   remove(storageKey: string): Promise<void>;
 }
 
@@ -117,6 +119,33 @@ class SeaweedFsS3Storage implements AttachmentStorage {
       throw new StorageUnavailableError();
     }
   }
+
+  async read(storageKey: string): Promise<Buffer> {
+    try {
+      await this.ensureBucket();
+
+      const result = await this.client.send(
+        new GetObjectCommand({
+          Bucket: this.bucket,
+          Key: storageKey,
+        }),
+      );
+
+      if (!result.Body) {
+        throw new StorageUnavailableError();
+      }
+
+      return Buffer.from(
+        await result.Body.transformToByteArray(),
+      );
+    } catch (error) {
+      if (error instanceof StorageUnavailableError) {
+        throw error;
+      }
+
+      throw new StorageUnavailableError();
+    }
+  }
 }
 
 class InMemoryAttachmentStorage
@@ -135,6 +164,16 @@ class InMemoryAttachmentStorage
 
   async remove(storageKey: string): Promise<void> {
     this.objectsVariable.delete(storageKey);
+  }
+
+  async read(storageKey: string): Promise<Buffer> {
+    const stored = this.objectsVariable.get(storageKey);
+
+    if (!stored) {
+      throw new StorageUnavailableError();
+    }
+
+    return Buffer.from(stored.content);
   }
 }
 
