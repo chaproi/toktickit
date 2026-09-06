@@ -12,8 +12,12 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import { Prisma } from "@prisma/client";
 import { getPrisma } from "./prisma.js";
-import { createTicketForRequester } from "./tickets/ticket-service.js";
+import {
+  createTicketForRequester,
+  listTicketsForRequester,
+} from "./tickets/ticket-service.js";
 import { validateCreateTicketInput } from "./tickets/ticket-validation.js";
+import { parseTicketListQuery } from "./tickets/ticket-query.js";
 
 export const app = express();
 
@@ -138,6 +142,79 @@ app.get(
     }
   },
 );
+
+app.get("/api/tickets", async (req: Request, res: Response) => {
+  const requesterHeader = req.header(
+    "X-Development-Requester-Id",
+  );
+
+  if (
+    !requesterHeader ||
+    !/^[1-9]\d*$/.test(requesterHeader)
+  ) {
+    res.status(400).json({
+      error: {
+        code: "REQUESTER_REQUIRED",
+        message:
+          "A valid Development Requester is required.",
+      },
+    });
+    return;
+  }
+
+  const requesterId = Number(requesterHeader);
+  if (!Number.isSafeInteger(requesterId)) {
+    res.status(400).json({
+      error: {
+        code: "REQUESTER_REQUIRED",
+        message:
+          "A valid Development Requester is required.",
+      },
+    });
+    return;
+  }
+
+  const validation = parseTicketListQuery(
+    req.query as Record<string, unknown>,
+  );
+
+  if (!validation.success) {
+    res.status(400).json({
+      error: {
+        code: "INVALID_QUERY",
+        message:
+          "One or more query parameters are invalid.",
+        fields: validation.fields,
+      },
+    });
+    return;
+  }
+
+  try {
+    const result = await listTicketsForRequester(
+      requesterId,
+      validation.data,
+    );
+
+    if (result.kind === "invalid-requester") {
+      res.status(400).json({
+        error: {
+          code: "INVALID_REQUESTER",
+          message:
+            "The selected Development Requester is invalid.",
+        },
+      });
+      return;
+    }
+
+    res.status(200).json({
+      items: result.items,
+      pagination: result.pagination,
+    });
+  } catch (error) {
+    sendDatabaseError(res, error, "listing Tickets");
+  }
+});
 
 app.post("/api/tickets", async (req: Request, res: Response) => {
   const requesterHeader = req.header(

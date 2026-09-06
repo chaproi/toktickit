@@ -95,6 +95,64 @@ export type RequestedPriority =
   | "HIGH"
   | "URGENT";
 
+export type TicketStatus =
+  | "NEW"
+  | "ASSIGNED"
+  | "IN_PROGRESS"
+  | "PENDING_REQUESTER"
+  | "RESOLVED"
+  | "CLOSED"
+  | "CANCELLED";
+
+export type TicketSortField =
+  | "ticketNumber"
+  | "ticketDate"
+  | "updatedAt"
+  | "summary"
+  | "requestedPriority";
+
+export type TicketSortOrder = "asc" | "desc";
+export type TicketPageSize = 10 | 25 | 50;
+
+export interface TicketListQuery {
+  search?: string;
+  categoryId?: number;
+  relatedSystemId?: number;
+  requestedPriority?: RequestedPriority;
+  currentStatus?: TicketStatus;
+  sortBy: TicketSortField;
+  sortOrder: TicketSortOrder;
+  page: number;
+  pageSize: TicketPageSize;
+}
+
+export interface TicketListItem {
+  id: number;
+  ticketNumber: string;
+  ticketDate: string;
+  category: Category;
+  relatedSystem: RelatedSystem;
+  requestedPriority: RequestedPriority;
+  currentStatus: TicketStatus;
+  summary: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TicketListPagination {
+  page: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
+export interface TicketListResponse {
+  items: TicketListItem[];
+  pagination: TicketListPagination;
+}
+
 export interface CreateTicketInput {
   clientSubmissionId: string;
   categoryId: number;
@@ -224,4 +282,74 @@ export async function uploadAttachment(
   }
 
   return (await response.json()) as Attachment;
+}
+
+export async function getTickets(
+  requesterId: number,
+  query: TicketListQuery,
+  signal?: AbortSignal,
+): Promise<TicketListResponse> {
+  const parameters = new URLSearchParams();
+
+  const search = query.search?.trim();
+  if (search) {
+    parameters.set("search", search);
+  }
+
+  if (query.categoryId !== undefined) {
+    parameters.set("categoryId", String(query.categoryId));
+  }
+
+  if (query.relatedSystemId !== undefined) {
+    parameters.set(
+      "relatedSystemId",
+      String(query.relatedSystemId),
+    );
+  }
+
+  if (query.requestedPriority !== undefined) {
+    parameters.set(
+      "requestedPriority",
+      query.requestedPriority,
+    );
+  }
+
+  if (query.currentStatus !== undefined) {
+    parameters.set("currentStatus", query.currentStatus);
+  }
+
+  parameters.set("sortBy", query.sortBy);
+  parameters.set("sortOrder", query.sortOrder);
+  parameters.set("page", String(query.page));
+  parameters.set("pageSize", String(query.pageSize));
+
+  const response = await fetch(
+    `${API_URL}/api/tickets?${parameters.toString()}`,
+    {
+      headers: {
+        "X-Development-Requester-Id": String(requesterId),
+      },
+      signal,
+    },
+  );
+
+  const responseBody = (await response
+    .json()
+    .catch(() => null)) as
+    | TicketListResponse
+    | ErrorResponse
+    | null;
+
+  if (!response.ok) {
+    const errorResponse = responseBody as ErrorResponse | null;
+
+    throw new ApiRequestError(
+      errorResponse?.error?.message ??
+        "Something went wrong. Please try again.",
+      response.status,
+      errorResponse?.error?.code,
+    );
+  }
+
+  return responseBody as TicketListResponse;
 }

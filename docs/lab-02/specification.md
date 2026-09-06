@@ -136,14 +136,14 @@ The backend is responsible for generating the official Ticket Number, validating
 * **BR-32:** Search shall be case-insensitive and match the official Ticket Number or Ticket Summary.
 * **BR-33:** Search text shall be trimmed and limited to 100 characters.
 * **BR-34:** Supported filters shall include Category, Related System, Requested Priority, and Current Status.
-* **BR-35:** Unsupported filter values or sort fields shall return `400 Bad Request`.
+* **BR-35:** Unsupported filter values or sort fields, unknown query parameters, and repeated query parameters shall return `400 Bad Request`. A well-formed positive Category or Related System ID remains a valid filter when it matches no Ticket and shall produce a successful empty result rather than a validation error.
 * **BR-36:** Supported sort fields shall include Ticket Number, Ticket Date, Last Updated, Summary, and Requested Priority.
-* **BR-37:** The default sorting shall be Last Updated descending, followed by Ticket ID descending to provide stable ordering.
+* **BR-37:** The default sorting shall be Last Updated descending, followed by Ticket ID descending to provide stable ordering. For every supported primary sort, Ticket ID shall be the stable secondary sort in the same direction as the selected primary sort. Requested Priority shall use the business severity order `LOW`, `MEDIUM`, `HIGH`, `URGENT`; descending order shall reverse that order.
 * **BR-38:** The default page shall be `1`, and the default page size shall be `10`.
 * **BR-39:** Permitted page sizes shall be `10`, `25`, and `50`.
 * **BR-40:** Page numbers less than `1` or unsupported page sizes shall return `400 Bad Request`.
-* **BR-41:** A valid page beyond the final page shall return an empty `items` array with correct pagination metadata.
-* **BR-42:** An empty state means the selected Requester owns no Tickets. A no-results state means Tickets exist but none match the current search or filters.
+* **BR-41:** A valid page beyond the final page shall return `200 OK` with an empty `items` array and correct pagination metadata. When `totalItems` is zero, `totalPages` shall be `0`. If `totalPages` is greater than `0`, the client shall automatically request the final valid page; when no items exist, the client shall not refetch.
+* **BR-42:** When zero items are returned without an active search or filter, the My Tickets screen shall show the empty state. When an applied search or filter is active, it shall show the no-results state. Sorting alone shall not produce the no-results state, and the client shall not make an additional unfiltered request to classify the state.
 
 ### 5.7 Attachment Rules
 
@@ -233,9 +233,9 @@ The desktop layout shall use a table containing enough information to identify a
 * Current Status
 * Last Updated
 
-The screen shall provide search, Category filter, Related System filter, Requested Priority filter, Current Status filter, sorting, Clear Filters, pagination, and Create Ticket actions.
+The screen shall provide search, Category filter, Related System filter, Requested Priority filter, Current Status filter, sorting, Clear Filters, pagination, and Create Ticket actions. Search and filter values shall use an explicit Apply action. Sort field, sort direction, and page-size changes shall apply immediately. Applying or clearing search and filters, or changing sorting or page size, shall reset the result to page `1`.
 
-On mobile screens, each Ticket shall be displayed as a readable card or responsive row without requiring horizontal page scrolling. Empty, no-results, loading, and API-failure states shall be visually distinct.
+On mobile screens, each Ticket shall be displayed as a readable card or responsive row containing Ticket Date and the other required Ticket information without requiring horizontal page scrolling. Empty, no-results, loading, and API-failure states shall be visually distinct. Issue #17 shall provide only the Ticket Detail link to `/tickets/:ticketId`; Ticket Detail content remains outside this Issue.
 
 ### 6.5 Ticket Detail and Attachments
 
@@ -586,6 +586,8 @@ Successful response:
 
 The response shall contain only Tickets owned by the Requester identified in the required header.
 
+For every supported sort, `id` shall be applied as the stable secondary sort in the same direction as `sortOrder`. Requested Priority sorting shall use `LOW`, `MEDIUM`, `HIGH`, `URGENT` as the ascending severity order. Unknown or repeated query parameters shall return `400 Bad Request` with `INVALID_QUERY`. A well-formed positive Category or Related System ID that matches no Ticket shall return `200 OK` with an empty result. When `totalItems` is `0`, `totalPages` shall be `0`.
+
 ### 8.4 Owned Ticket Detail
 
 `GET /api/tickets/:ticketId`
@@ -749,12 +751,12 @@ For requester-owned resources, the backend shall:
 
 * **AC-18:** Given Requester A is selected and owns Tickets, when My Tickets loads, then only Requester A’s Tickets are returned and displayed.
 * **AC-19:** Given Requester A’s Tickets are visible, when the user changes to Requester B, then Requester A’s Tickets disappear and only Requester B’s Tickets are displayed.
-* **AC-20:** Given the selected Requester owns multiple Tickets, when a Ticket Number or Summary search is entered, then matching Tickets are returned using case-insensitive search.
+* **AC-20:** Given the selected Requester owns multiple Tickets, when a Ticket Number or Summary search is entered and applied, then matching Tickets are returned using case-insensitive search.
 * **AC-21:** Given Tickets with different Categories, Related Systems, Requested Priorities, and Current Statuses exist, when filters are applied, then only Tickets matching all active filters are returned.
-* **AC-22:** Given multiple matching Tickets exist, when an allowed sort field and direction are selected, then the result is returned in that order with stable secondary sorting.
-* **AC-23:** Given more matching Tickets exist than the selected page size, when another page is requested, then the correct items and page, page size, total item, and total page metadata are returned.
-* **AC-24:** Given the selected Requester owns no Tickets, when My Tickets loads without filters, then the empty state and Create Ticket action are displayed.
-* **AC-25:** Given the selected Requester owns Tickets but none match the active search or filters, when the request completes, then a no-results state and Clear Filters action are displayed.
+* **AC-22:** Given multiple matching Tickets exist, when an allowed sort field and direction are selected, then the result is returned in that order with Ticket ID as the stable secondary sort in the same direction. Requested Priority uses `LOW`, `MEDIUM`, `HIGH`, `URGENT` as its ascending business severity order and reverses that order when descending.
+* **AC-23:** Given more matching Tickets exist than the selected page size, when another page is requested, then the correct items and page, page size, total item, and total page metadata are returned. A valid page beyond the final page first returns an empty page; when `totalPages` is greater than `0`, the client requests the final valid page, while zero total items produce `totalPages: 0` with no refetch and no pagination controls.
+* **AC-24:** Given zero items are returned and no applied search or filter is active, when My Tickets finishes loading, then the empty state and Create Ticket action are displayed without an additional unfiltered request.
+* **AC-25:** Given zero items are returned while an applied search or filter is active, when the request completes, then a no-results state and Clear Filters action are displayed. Sorting alone does not select the no-results state.
 * **AC-26:** Given the My Tickets API fails, when the screen attempts to load data, then a safe failure state and Retry action are displayed without showing stale data from another Requester.
 
 ### 9.5 Ticket Detail and Ownership
@@ -854,8 +856,8 @@ Course delivery is complete only when:
 | `D-09` | Ownership failures return the same `404 Not Found` response as missing resources.                                                                                                                             | Prevents disclosure of another Requester’s Ticket or Attachment existence.                           |
 | `D-10` | The API base path remains `/api` instead of introducing `/api/v1` during Lab 2.                                                                                                                               | Preserves compatibility with the existing Lab 1 endpoints and handout examples.                      |
 | `D-11` | All API timestamps use ISO 8601 UTC strings. The client may format them for display in the user’s locale.                                                                                                     | Provides consistent storage and test assertions.                                                     |
-| `D-12` | My Tickets defaults to page 1, page size 10, and Last Updated descending with Ticket ID descending as a stable secondary sort.                                                                                | Shows the most recently changed Tickets first and provides deterministic pagination.                 |
+| `D-12` | My Tickets defaults to page 1, page size 10, and Last Updated descending with Ticket ID descending as a stable secondary sort. Every other primary sort uses Ticket ID in the same direction, and Requested Priority uses `LOW`, `MEDIUM`, `HIGH`, `URGENT` as its ascending business severity order. | Shows the most recently changed Tickets first and provides deterministic pagination.                 |
 | `D-13` | Attachment uploads use one `file` field per request instead of uploading a batch in one request.                                                                                                              | Simplifies validation, retry, compensation, and partial-failure handling.                            |
 | `D-14` | Search covers Ticket Number and Ticket Summary only.                                                                                                                                                          | These are the fields Requesters can identify most easily and are explicitly suitable for Lab 2.      |
-| `D-15` | Lab 2 does not create, update, or expose passwords, sessions, tokens, IT Staff controls, comments, notes, Actions Taken, notifications, or status-transition endpoints.                                       | These capabilities are explicitly outside the approved sprint scope.                                 |
+| `D-15` | Lab 2 does not create, update, or expose passwords, sessions, tokens, IT Staff controls, comments, notes, Actions Taken, notifications, or status-transition endpoints. Issue #17 provides a Ticket Detail link and route target but does not implement Ticket Detail content, and it does not refactor existing Create Ticket or Attachment Requester-context handling. | These capabilities are explicitly outside the approved sprint scope.                                 |
 | `D-16` | There are no unresolved specification questions at the start of implementation. Any later change requires updating the affected specification, Acceptance Criteria, and planned tests before the code change. | Maintains Spec-Driven Development and traceability.                                                  |

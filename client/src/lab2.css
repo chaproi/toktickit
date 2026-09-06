@@ -93,3 +93,157 @@ a:focus-visible {
     border: 1px solid var(--border);
     border-radius: 8px;
 }
+
+.app-navigation .active {
+    text-underline-offset: 0.35rem;
+    text-decoration-thickness: 0.15rem;
+}
+
+.my-tickets-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.my-tickets-search-field {
+    grid-column: span 2;
+}
+
+.my-tickets-sort-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.my-tickets-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-height: 8rem;
+    padding: 1.5rem;
+    text-align: center;
+    background: var(--pale-green);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.my-tickets-table-wrap {
+    max-width: 100%;
+}
+
+.my-tickets-table {
+    margin-bottom: 0;
+}
+
+.my-tickets-table th {
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+.my-tickets-table td {
+    max-width: 18rem;
+    vertical-align: middle;
+}
+
+.my-tickets-summary {
+    overflow-wrap: anywhere;
+}
+
+.ticket-number-link {
+    color: var(--secondary-green);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", monospace;
+    font-weight: 600;
+}
+
+.my-tickets-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.my-tickets-pagination-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    color: var(--text-muted);
+}
+
+@media (max-width: 991.98px) {
+    .my-tickets-filter-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767.98px) {
+    .app-navigation {
+        width: 100%;
+        justify-content: space-between;
+        padding-top: 0.5rem;
+    }
+
+    .my-tickets-filter-grid,
+    .my-tickets-sort-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .my-tickets-search-field {
+        grid-column: auto;
+    }
+
+    .my-tickets-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    .my-tickets-table,
+    .my-tickets-table tbody,
+    .my-tickets-table tr,
+    .my-tickets-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .my-tickets-table tr {
+        margin-bottom: 1rem;
+        padding: 0.75rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+    }
+
+    .my-tickets-table td {
+        display: grid;
+        grid-template-columns: minmax(7rem, 40%) minmax(0, 1fr);
+        gap: 0.75rem;
+        max-width: none;
+        padding: 0.5rem;
+        border: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .my-tickets-table td::before {
+        content: attr(data-label);
+        color: var(--text-primary);
+        font-weight: 600;
+    }
+
+    .my-tickets-pagination {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .my-tickets-pagination .btn {
+        flex: 1;
+    }
+}

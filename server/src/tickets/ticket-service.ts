@@ -2,6 +2,10 @@ import { Prisma, type Ticket } from "@prisma/client";
 import { getPrisma } from "../prisma.js";
 import { formatTicketNumber } from "./ticket-number.js";
 import type { CreateTicketInput } from "./ticket-validation.js";
+import {
+  buildTicketListOrderBy,
+  type TicketListQuery,
+} from "./ticket-query.js";
 
 const ticketInclude = {
   requester: {
@@ -14,6 +18,23 @@ const ticketInclude = {
     select: { id: true, name: true },
   },
 } satisfies Prisma.TicketInclude;
+
+const ticketListSelect = {
+  id: true,
+  ticketNumber: true,
+  ticketDate: true,
+  category: {
+    select: { id: true, name: true },
+  },
+  relatedSystem: {
+    select: { id: true, name: true },
+  },
+  requestedPriority: true,
+  currentStatus: true,
+  summary: true,
+  createdAt: true,
+  updatedAt: true,
+} satisfies Prisma.TicketSelect;
 
 export type TicketWithReferences =
   Prisma.TicketGetPayload<{
@@ -39,6 +60,120 @@ export type CreateTicketResult =
   | {
       kind: "idempotency-conflict";
     };
+
+export type TicketListItem = Prisma.TicketGetPayload<{
+  select: typeof ticketListSelect;
+}>;
+
+export type ListTicketsResult =
+  | {
+      kind: "success";
+      items: TicketListItem[];
+      pagination: {
+        page: number;
+        pageSize: number;
+        totalItems: number;
+        totalPages: number;
+        hasPreviousPage: boolean;
+        hasNextPage: boolean;
+      };
+    }
+  | {
+      kind: "invalid-requester";
+    };
+
+export async function listTicketsForRequester(
+  requesterId: number,
+  query: TicketListQuery,
+): Promise<ListTicketsResult> {
+  const prisma = getPrisma();
+
+  const requester =
+    await prisma.developmentRequester.findFirst({
+      where: {
+        id: requesterId,
+        isActive: true,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+  if (!requester) {
+    return {
+      kind: "invalid-requester",
+    };
+  }
+
+  const where: Prisma.TicketWhereInput = {
+    requesterId,
+    ...(query.categoryId === null
+      ? {}
+      : { categoryId: query.categoryId }),
+    ...(query.relatedSystemId === null
+      ? {}
+      : { relatedSystemId: query.relatedSystemId }),
+    ...(query.requestedPriority === null
+      ? {}
+      : { requestedPriority: query.requestedPriority }),
+    ...(query.currentStatus === null
+      ? {}
+      : { currentStatus: query.currentStatus }),
+    ...(query.search === ""
+      ? {}
+      : {
+          OR: [
+            {
+              ticketNumber: {
+                contains: query.search,
+                mode: "insensitive" as const,
+              },
+            },
+            {
+              summary: {
+                contains: query.search,
+                mode: "insensitive" as const,
+              },
+            },
+          ],
+        }),
+  };
+
+  const [totalItems, items] = await prisma.$transaction([
+    prisma.ticket.count({ where }),
+    prisma.ticket.findMany({
+      where,
+      select: ticketListSelect,
+      orderBy:
+        buildTicketListOrderBy(
+          query.sortBy,
+          query.sortOrder,
+        ) as Prisma.TicketOrderByWithRelationInput[],
+      skip: (query.page - 1) * query.pageSize,
+      take: query.pageSize,
+    }),
+  ]);
+
+  const totalPages =
+    totalItems === 0
+      ? 0
+      : Math.ceil(totalItems / query.pageSize);
+
+  return {
+    kind: "success",
+    items,
+    pagination: {
+      page: query.page,
+      pageSize: query.pageSize,
+      totalItems,
+      totalPages,
+      hasPreviousPage:
+        totalItems > 0 && query.page > 1,
+      hasNextPage:
+        totalItems > 0 && query.page < totalPages,
+    },
+  };
+}
 
 function payloadMatches(
   ticket: Ticket,
