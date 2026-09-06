@@ -20,17 +20,21 @@ Install the following software before running the project:
 
 ## Database Setup
 
-1. Create a PostgreSQL database named `toktickit`.
+1. Create separate PostgreSQL databases named `toktickit` and `toktickit_test`.
 2. Open the `server` directory.
 3. Copy `.env.example` to `.env`.
-4. Update `DATABASE_URL` in `.env` with your local PostgreSQL username and password.
+4. Update `DATABASE_URL` and `TEST_DATABASE_URL` in `.env` with your local PostgreSQL username and password.
 
 Example:
 
 ```env
-DATABASE_URL="postgresql://postgres:YOUR_POSTGRES_PASSWORD@localhost:5432/toktickit?schema=public"
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/toktickit?schema=public"
+TEST_DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/toktickit_test?schema=public"
 PORT=3000
 ```
+
+`TEST_DATABASE_URL` must target a dedicated database whose name contains `test`. It must never identify the same normalized host, port, database, and schema as `DATABASE_URL`, and it must not point to a development or production database. Database integration and E2E tests fail before Prisma access when this isolation check is missing or unsafe.
+
 ### Initialize the Database
 
 After configuring `.env`, run the migration and seed commands:
@@ -40,7 +44,9 @@ cd server
 npx prisma migrate dev --name init
 npm run prisma:seed
 ```
-The migration creates the required database tables. The seed command adds the four initial IT request categories and can be run repeatedly without creating duplicates.
+The development migration creates the required database tables. The seed command adds the required reference data and can be run repeatedly without creating duplicates.
+
+Server integration and E2E commands validate `TEST_DATABASE_URL`, apply the repository's existing migrations to that test target using `prisma migrate deploy`, and idempotently seed its required fixtures before tests start. They do not rewrite `server/.env` or migrate `DATABASE_URL`.
 
 Do not commit the `.env` file because it contains private credentials.
 
@@ -105,7 +111,7 @@ npm test
 
 ## Lab 2 Verification and Operations
 
-Before running Lab 2 tests or the application, configure `server/.env` with a local PostgreSQL `DATABASE_URL`, apply the repository migrations, and load the required reference data:
+Before running Lab 2 tests or the application, configure `server/.env` with both database URLs. Apply development migrations and reference data only when preparing the normal application database:
 
 ```bash
 cd server
@@ -119,7 +125,7 @@ Run the complete Lab 2 browser workflow from the repository root:
 npm run test:e2e
 ```
 
-The E2E harness sets `NODE_ENV=test` only for the API server it starts and uses the existing in-memory Attachment storage adapter. This does not change normal production behavior: outside the test environment, Attachment storage continues to use the configured SeaweedFS S3-compatible endpoint and bucket. A live SeaweedFS service is therefore needed to exercise Attachment storage in normal application execution.
+The server test and E2E harnesses fail fast unless the dedicated test target passes the central isolation guard. The E2E harness sets `NODE_ENV=test` only for the API server it starts and uses the existing in-memory Attachment storage adapter. This does not change normal production behavior: outside the test environment, database access continues to use `DATABASE_URL`, and Attachment storage continues to use the configured SeaweedFS S3-compatible endpoint and bucket. A live SeaweedFS service is therefore needed to exercise Attachment storage in normal application execution.
 
 Run all client and server tests and production builds in their package directories:
 
