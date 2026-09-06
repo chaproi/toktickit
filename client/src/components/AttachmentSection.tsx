@@ -240,7 +240,7 @@ export default function AttachmentSection({
         fileInputRef.current.value = "";
       }
       setSuccessMessage(
-        "Attachment uploaded successfully.",
+        `Attachment uploaded successfully. File: ${uploaded.originalFilename}.`,
       );
     } catch (error) {
       setActionError(safeErrorMessage(error));
@@ -393,7 +393,7 @@ export default function AttachmentSection({
       setAttachmentToRemove(null);
       setRemovalReason("");
       setSuccessMessage(
-        "Attachment removed successfully.",
+        `Attachment removed successfully. File: ${removed.originalFilename}.`,
       );
     } catch (error) {
       setRemovalError(safeErrorMessage(error));

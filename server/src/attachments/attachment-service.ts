@@ -342,95 +342,88 @@ export async function uploadAttachmentForRequester(
             kind: "invalid-requester",
         };
     }
-    const ticket = await prisma.ticket.findFirst({
-        where: {
-            id: ticketId,
-            requesterId,
-        },
-        select: {
-            id: true,
-        },
-    });
-
-    if (!ticket) {
-        return {
-            kind: "not-found",
-        };
-    }
-
-    const activeAttachmentCount =
-        await prisma.attachment.count({
-            where: {
-                ticketId,
-                isRemoved: false,
-            },
-        });
-
     const detectedFileType =
         await fileTypeFromBuffer(file.buffer);
-
-    const validation = validateAttachmentInput({
-        originalFilename: file.originalname,
-        declaredMimeType: file.mimetype,
-        detectedMimeType: detectedFileType?.mime ?? "",
-        sizeBytes: file.size,
-        activeAttachmentCount,
-    });
-
-    if (!validation.success) {
-        return {
-            kind: "invalid-file",
-            validation,
-        };
-    }
-
     const storage = getAttachmentStorage();
-    const storageKey = randomUUID();
-
-    await storage.store({
-        storageKey,
-        content: file.buffer,
-        mimeType: validation.data.mimeType,
-    });
+    let storedKey: string | null = null;
 
     try {
-        const attachment = await prisma.attachment.create({
-            data: {
-                ticketId,
-                originalFilename:
-                    validation.data.originalFilename,
-                storageKey,
-                mimeType: validation.data.mimeType,
-                sizeBytes: validation.data.sizeBytes,
-                uploadedByRequesterId: requesterId,
-            },
-            select: {
-                id: true,
-                ticketId: true,
-                originalFilename: true,
-                mimeType: true,
-                sizeBytes: true,
-                uploadedByRequesterId: true,
-                isRemoved: true,
-                createdAt: true,
-                removedAt: true,
-                removedByRequesterId: true,
-                removalReason: true,
-            },
-        });
+        return await prisma.$transaction(async (transaction) => {
+            const ownedTickets = await transaction.$queryRaw<
+                Array<{ id: number }>
+            >`
+                SELECT "id"
+                FROM "Ticket"
+                WHERE "id" = ${ticketId}
+                  AND "requesterId" = ${requesterId}
+                FOR UPDATE
+            `;
 
-        return {
-            kind: "uploaded",
-            attachment,
-        };
+            if (ownedTickets.length === 0) {
+                return {
+                    kind: "not-found" as const,
+                };
+            }
+
+            const activeAttachmentCount =
+                await transaction.attachment.count({
+                    where: {
+                        ticketId,
+                        isRemoved: false,
+                    },
+                });
+            const validation = validateAttachmentInput({
+                originalFilename: file.originalname,
+                declaredMimeType: file.mimetype,
+                detectedMimeType: detectedFileType?.mime ?? "",
+                sizeBytes: file.size,
+                activeAttachmentCount,
+            });
+
+            if (!validation.success) {
+                return {
+                    kind: "invalid-file" as const,
+                    validation,
+                };
+            }
+
+            const storageKey = randomUUID();
+            await storage.store({
+                storageKey,
+                content: file.buffer,
+                mimeType: validation.data.mimeType,
+            });
+            storedKey = storageKey;
+
+            const attachment =
+                await transaction.attachment.create({
+                    data: {
+                        ticketId,
+                        originalFilename:
+                            validation.data.originalFilename,
+                        storageKey,
+                        mimeType: validation.data.mimeType,
+                        sizeBytes: validation.data.sizeBytes,
+                        uploadedByRequesterId: requesterId,
+                    },
+                    select: attachmentMetadataSelect,
+                });
+
+            return {
+                kind: "uploaded" as const,
+                attachment,
+            };
+        });
     } catch (error) {
-        try {
-            await storage.remove(storageKey);
-        } catch (cleanupError) {
-            console.error(
-                "Unable to remove an orphaned Attachment object:",
-                cleanupError,
-            );
+        if (storedKey !== null) {
+            try {
+                await storage.remove(storedKey);
+            } catch (cleanupError) {
+                console.error(
+                    "Unable to remove an orphaned Attachment object:",
+                    cleanupError,
+                );
+            }
         }
 
         throw error;

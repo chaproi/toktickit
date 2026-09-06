@@ -799,38 +799,18 @@ app.delete(
 app.post(
   "/api/tickets/:ticketId/attachments",
   (req: Request, res: Response) => {
-    const requesterHeader = req.header(
-      "X-Development-Requester-Id",
+    const requesterId = getRequesterId(req);
+    const ticketId = parsePositiveIdentifier(
+      req.params.ticketId,
     );
-    const requesterId = Number(requesterHeader);
-    const ticketId = Number(req.params.ticketId);
 
-    if (
-      !requesterHeader ||
-      !Number.isInteger(requesterId) ||
-      requesterId <= 0
-    ) {
-      res.status(400).json({
-        error: {
-          code: "REQUESTER_REQUIRED",
-          message:
-            "A valid Development Requester is required.",
-        },
-      });
+    if (requesterId === null) {
+      sendRequesterRequired(res);
       return;
     }
 
-    if (
-      !Number.isInteger(ticketId) ||
-      ticketId <= 0
-    ) {
-      res.status(400).json({
-        error: {
-          code: "INVALID_TICKET_ID",
-          message:
-            "Ticket identifier must be a positive integer.",
-        },
-      });
+    if (ticketId === null) {
+      sendInvalidTicketId(res);
       return;
     }
 
