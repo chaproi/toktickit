@@ -1,45 +1,16 @@
-import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "@playwright/test";
+import { configureTestDatabaseEnvironment } from "./server/src/testing/test-database.js";
 
 const repositoryRoot = dirname(fileURLToPath(import.meta.url));
 const serverDirectory = join(repositoryRoot, "server");
 const clientUrl = "http://127.0.0.1:4173";
 
-function loadLocalDatabaseUrl(): void {
-  if (process.env.DATABASE_URL) {
-    return;
-  }
-
-  const serverEnvironment = readFileSync(
-    join(serverDirectory, ".env"),
-    "utf8",
-  );
-  const databaseUrlLine = serverEnvironment
-    .split(/\r?\n/u)
-    .find((line) => line.trimStart().startsWith("DATABASE_URL="));
-
-  if (!databaseUrlLine) {
-    throw new Error(
-      "DATABASE_URL must be set or present in server/.env before E2E tests run.",
-    );
-  }
-
-  const configuredValue = databaseUrlLine
-    .slice(databaseUrlLine.indexOf("=") + 1)
-    .trim()
-    .replace(/^(["'])(.*)\1$/u, "$2");
-
-  if (!configuredValue) {
-    throw new Error("DATABASE_URL must not be empty.");
-  }
-
-  process.env.DATABASE_URL = configuredValue;
-}
-
-loadLocalDatabaseUrl();
+configureTestDatabaseEnvironment({
+  environmentFilePath: join(serverDirectory, ".env"),
+});
 
 process.env.TOKTICKIT_E2E_RUN_MARKER ??= `Issue21-${randomUUID()}`;
 

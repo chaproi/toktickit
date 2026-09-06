@@ -1,6 +1,7 @@
 import type { Server } from "node:http";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
+import { prepareTestDatabase } from "../server/src/testing/prepare-test-database.js";
 
 const API_PORT = 3100;
 const CLIENT_PORT = 4173;
@@ -21,10 +22,13 @@ async function listenForApi(app: {
 }
 
 export default async function globalSetup(): Promise<() => Promise<void>> {
+  const repositoryRoot = process.cwd();
+  const serverDirectory = join(repositoryRoot, "server");
+  await prepareTestDatabase(serverDirectory);
+
   process.env.NODE_ENV = "test";
   process.env.VITE_API_URL = `http://127.0.0.1:${API_PORT}`;
 
-  const repositoryRoot = process.cwd();
   const clientDirectory = join(repositoryRoot, "client");
   const [{ app }, vite] = await Promise.all([
     import("../server/src/app.js"),

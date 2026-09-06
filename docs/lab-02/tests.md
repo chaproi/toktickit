@@ -24,7 +24,7 @@ Each automated test shall:
 6. Verify both successful and failure behavior.
 7. Record its actual test-file path and final result.
 
-My Tickets API and UI tests use deterministic, isolated data with uniquely identifiable records and clean up every record they create. Existing Tickets do not determine asserted totals, ordering, empty states, or no-results states. The final E2E harness similarly uses a unique `Issue21-` run marker and deletes only matching fixtures.
+My Tickets API and UI tests use deterministic, isolated data with uniquely identifiable records and clean up every record they create. Existing Tickets do not determine asserted totals, ordering, empty states, or no-results states. Database integration and E2E execution require a structurally validated `TEST_DATABASE_URL`; they never fall back to `DATABASE_URL`. The E2E harness additionally uses a unique `Issue21-` run marker and deletes only matching fixtures as defense in depth.
 
 `Implemented` means the test exists and passed in the latest Issue #21 GREEN verification. It does not mean Issue #21 has received peer-review, merge, or release approval.
 
@@ -153,24 +153,29 @@ From the repository root:
 npm run test:e2e
 ```
 
-The E2E harness scopes `NODE_ENV=test` to its own server execution and therefore uses the repository's existing in-memory Attachment storage adapter. Production storage defaults were not changed. A live SeaweedFS deployment was not exercised by this E2E run.
+Before database integration or E2E execution, the central guard requires a valid PostgreSQL `TEST_DATABASE_URL`, requires the database name to contain `test`, and rejects the same normalized hostname, port, database name, and schema as `DATABASE_URL`. The harness then makes that validated test URL the effective Prisma `DATABASE_URL`, applies existing migrations with `prisma migrate deploy`, and idempotently seeds required reference fixtures before Prisma-backed tests begin.
+
+The E2E harness scopes `NODE_ENV=test` to its own server execution and therefore uses the repository's existing in-memory Attachment storage adapter. Production database and storage defaults were not changed. A live SeaweedFS deployment was not exercised by this E2E run.
 
 ## 6. Latest Verified Results
 
-The latest GREEN verification was performed after commit `0f4d48d` on the Issue #21 branch.
+The latest GREEN verification includes the PR #23 database-isolation correction on `fix/23-test-database-isolation`.
 
 | Verification | Result |
 | --- | --- |
+| Test-database guard | Passed: 6/6 unit tests without a database connection |
 | End-to-end suite | Passed: 6/6 scenarios |
 | Client suite | Passed: 58/58 tests across 8 files |
-| Server suite | Passed: 106/106 tests across 12 files |
+| Server database/API selection | Passed: 80/80 tests across 7 files against the dedicated test database |
+| Server suite | Passed: 112/112 tests across 13 files |
 | Client production build | Passed |
 | Server production build | Passed |
 | Compiled server production-start smoke test | Passed |
 | `git diff --check` | Passed |
-| Issue #21 E2E database cleanup | Passed: zero matching E2E Tickets remained |
+| Development database read-only check | Passed: observed fixture counts were unchanged and zero `Issue21-` marker Tickets appeared |
+| Issue #21 E2E test-database cleanup | Passed: zero matching E2E Tickets remained |
 
-All 26 planned logical Test IDs are implemented. Executable test counts differ from the 26 logical IDs because a logical ID may contain multiple test cases, while the four E2E IDs are implemented as six consolidated browser scenarios.
+All 26 planned logical Test IDs are implemented. The six PR #23 database-guard regressions are implemented in `server/tests/lab-02/test-database.unit.test.ts` as release-safety coverage rather than a new application Acceptance Criterion. Executable test counts differ from the 26 logical IDs because a logical ID may contain multiple test cases, while the four E2E IDs are implemented as six consolidated browser scenarios.
 
 ## 7. Automated E2E Evidence Index
 
@@ -220,8 +225,8 @@ These tracked screenshots were produced by the passing GREEN execution of `e2e/l
 * E2E Attachment behavior was verified with the scoped test environment and existing in-memory adapter; a live SeaweedFS deployment was not tested in Issue #21.
 * Retained screenshots were inspected, but no automated visual-regression threshold or pixel baseline is claimed.
 * Tests for IT Staff workflows, comments, internal notes, actions taken, status transitions, and administrator functions remain outside Lab 2 scope.
-* Issue #21 peer review, release Pull Request, merge, release approval, and Issue closure remain pending.
+* Release PR #23 received a requested-changes review for database isolation. Its re-review, approval, merge, release, and Issue #21 closure remain pending.
 
 ## 9. Definition-of-Done Status
 
-Technical verification is complete on the Issue #21 branch: automated E2E, client, server, production builds, compiled-server startup, responsive evidence, cleanup, and diff checks passed. Governance and release completion are separate: Issue #21 still requires peer review, its release Pull Request has not been created or merged, and no release or Issue closure is claimed.
+Technical verification is complete on the PR #23 correction branch: the central guard, isolated database/API run, automated E2E, client and server suites, production builds, compiled-server startup, database checks, cleanup, and diff checks passed. Governance and release completion are separate: PR #23 still requires re-review and approval, has not been merged, and no release or Issue #21 closure is claimed.

@@ -1,7 +1,9 @@
-import { getPrisma } from "../src/prisma.js";
+import { pathToFileURL } from "node:url";
+import type { PrismaClient } from "@prisma/client";
 
-async function main() {
-  const prisma = getPrisma();
+export async function seedDatabase(
+  prisma: PrismaClient,
+): Promise<void> {
 
   const categories = [
     "Account and Access",
@@ -92,11 +94,23 @@ async function main() {
   );
 }
 
-main()
-  .catch((error) => {
+async function main(): Promise<void> {
+  const { PrismaClient } = await import("@prisma/client");
+  const prisma = new PrismaClient();
+  try {
+    await seedDatabase(prisma);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+const executedPath = process.argv[1]
+  ? pathToFileURL(process.argv[1]).href
+  : null;
+
+if (executedPath === import.meta.url) {
+  main().catch((error) => {
     console.error(error);
     process.exit(1);
-  })
-  .finally(async () => {
-    await getPrisma().$disconnect();
   });
+}
