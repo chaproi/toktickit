@@ -38,6 +38,27 @@ const PDF_BUFFER = Buffer.from(
 const RUN_MARKER = `Issue19-Attachment-${randomUUID()}`;
 const createdTicketIds: number[] = [];
 
+function expectSafeError(
+    response: request.Response,
+    status: number,
+    code: string,
+    message: string,
+): void {
+    expect(response.status).toBe(status);
+    expect(response.body).toEqual({
+        error: {
+            code,
+            message,
+        },
+    });
+
+    const serializedBody = JSON.stringify(response.body);
+    expect(serializedBody).not.toContain(RUN_MARKER);
+    expect(serializedBody).not.toContain("Alex Morgan");
+    expect(serializedBody).not.toContain("Daniel Kim");
+    expect(serializedBody).not.toContain("@example.com");
+}
+
 async function getReferenceId(
     endpoint: string,
     name: string,
@@ -155,6 +176,205 @@ afterEach(async () => {
 });
 
 describe("POST /api/tickets/:ticketId/attachments", () => {
+    it.each([
+        { label: "missing", requesterId: undefined },
+        { label: "blank", requesterId: "" },
+        { label: "malformed", requesterId: "requester" },
+        { label: "non-integer", requesterId: "1.5" },
+        { label: "zero", requesterId: "0" },
+        { label: "negative", requesterId: "-1" },
+    ])(
+        "API-08 rejects a $label Requester identifier with the Requester-required error",
+        async ({ requesterId }) => {
+            const { ticketId } = await createOwnedTicket();
+            const uploadRequest = request(app).post(
+                `/api/tickets/${ticketId}/attachments`,
+            );
+
+            if (requesterId !== undefined) {
+                uploadRequest.set(
+                    "X-Development-Requester-Id",
+                    requesterId,
+                );
+            }
+
+            const response = await uploadRequest.attach(
+                "file",
+                PNG_BUFFER,
+                {
+                    filename: "identifier-check.png",
+                    contentType: "image/png",
+                },
+            );
+
+            expectSafeError(
+                response,
+                400,
+                "REQUESTER_REQUIRED",
+                "A valid Development Requester is required.",
+            );
+        },
+    );
+
+    it("API-08 rejects alternate numeric syntax in the Requester identifier", async () => {
+        const { ticketId, requesterId } =
+            await createOwnedTicket();
+
+        const response = await request(app)
+            .post(`/api/tickets/${ticketId}/attachments`)
+            .set(
+                "X-Development-Requester-Id",
+                `${requesterId}e0`,
+            )
+            .attach("file", PNG_BUFFER, {
+                filename: "requester-syntax.png",
+                contentType: "image/png",
+            });
+
+        expectSafeError(
+            response,
+            400,
+            "REQUESTER_REQUIRED",
+            "A valid Development Requester is required.",
+        );
+    });
+
+    it.each([
+        { label: "blank", ticketId: "%20" },
+        { label: "malformed", ticketId: "ticket" },
+        { label: "non-integer", ticketId: "1.5" },
+        { label: "zero", ticketId: "0" },
+        { label: "negative", ticketId: "-1" },
+    ])(
+        "API-08 rejects a $label Ticket identifier with the invalid-Ticket error",
+        async ({ ticketId }) => {
+            const { requesterId } = await createOwnedTicket();
+
+            const response = await request(app)
+                .post(`/api/tickets/${ticketId}/attachments`)
+                .set(
+                    "X-Development-Requester-Id",
+                    String(requesterId),
+                )
+                .attach("file", PNG_BUFFER, {
+                    filename: "identifier-check.png",
+                    contentType: "image/png",
+                });
+
+            expectSafeError(
+                response,
+                400,
+                "INVALID_TICKET_ID",
+                "Ticket identifier must be a positive integer.",
+            );
+        },
+    );
+
+    it("API-08 rejects alternate numeric syntax in the Ticket identifier", async () => {
+        const { ticketId, requesterId } =
+            await createOwnedTicket();
+
+        const response = await request(app)
+            .post(`/api/tickets/${ticketId}e0/attachments`)
+            .set(
+                "X-Development-Requester-Id",
+                String(requesterId),
+            )
+            .attach("file", PNG_BUFFER, {
+                filename: "ticket-syntax.png",
+                contentType: "image/png",
+            });
+
+        expectSafeError(
+            response,
+            400,
+            "INVALID_TICKET_ID",
+            "Ticket identifier must be a positive integer.",
+        );
+    });
+
+    it("API-08 distinguishes unknown and inactive Requesters from malformed identifiers", async () => {
+        const { ticketId } = await createOwnedTicket();
+        const prisma = getPrisma();
+        const inactiveRequester =
+            await prisma.developmentRequester.findUnique({
+                where: {
+                    email: "emily.carter@example.com",
+                },
+                select: {
+                    id: true,
+                },
+            });
+        const nonexistentRequesterId = 2_147_483_647;
+
+        expect(inactiveRequester).not.toBeNull();
+        expect(
+            await prisma.developmentRequester.findUnique({
+                where: { id: nonexistentRequesterId },
+            }),
+        ).toBeNull();
+
+        for (const requesterId of [
+            inactiveRequester!.id,
+            nonexistentRequesterId,
+        ]) {
+            const response = await uploadAttachment(
+                ticketId,
+                requesterId,
+                {
+                    filename: "invalid-requester.png",
+                    contentType: "image/png",
+                    content: PNG_BUFFER,
+                },
+            );
+
+            expectSafeError(
+                response,
+                400,
+                "INVALID_REQUESTER",
+                "The selected Development Requester is invalid.",
+            );
+        }
+    });
+
+    it("API-08 returns ownership-safe not-found errors for nonexistent and non-owned Tickets", async () => {
+        const { ticketId, requesterId } =
+            await createOwnedTicket();
+        const otherRequesterId = await getReferenceId(
+            "/api/development-requesters",
+            "Daniel Kim",
+        );
+        const nonexistentTicketId = 2_147_483_647;
+
+        expect(
+            await getPrisma().ticket.findUnique({
+                where: { id: nonexistentTicketId },
+            }),
+        ).toBeNull();
+
+        for (const [requestedTicketId, selectedRequesterId] of [
+            [nonexistentTicketId, requesterId],
+            [ticketId, otherRequesterId],
+        ]) {
+            const response = await uploadAttachment(
+                requestedTicketId,
+                selectedRequesterId,
+                {
+                    filename: "hidden-ticket.png",
+                    contentType: "image/png",
+                    content: PNG_BUFFER,
+                },
+            );
+
+            expectSafeError(
+                response,
+                404,
+                "TICKET_NOT_FOUND",
+                "Ticket not found.",
+            );
+        }
+    });
+
     it("API-08 uploads one permitted Attachment", async () => {
         const { ticketId, requesterId } =
             await createOwnedTicket();
@@ -474,6 +694,107 @@ describe("POST /api/tickets/:ticketId/attachments", () => {
 
         expect(savedTicket).not.toBeNull();
         expect(attachmentCount).toBe(0);
+    });
+
+    it("API-08 atomically limits two concurrent uploads when four Attachments are active", async () => {
+        const { ticketId, requesterId } =
+            await createOwnedTicket();
+
+        for (let index = 1; index <= 4; index += 1) {
+            const response = await uploadAttachment(
+                ticketId,
+                requesterId,
+                {
+                    filename: `existing-${index}.png`,
+                    contentType: "image/png",
+                    content: PNG_BUFFER,
+                },
+            );
+            expect(response.status).toBe(201);
+        }
+
+        const storedObjects = new Map<string, Buffer>();
+        let concurrentStores = 0;
+        let releaseStores: (() => void) | undefined;
+        const bothStoresStarted = new Promise<void>((resolve) => {
+            releaseStores = resolve;
+        });
+        const coordinatedStorage: AttachmentStorage = {
+            async store({ storageKey, content }) {
+                storedObjects.set(storageKey, Buffer.from(content));
+                concurrentStores += 1;
+
+                if (concurrentStores === 2) {
+                    releaseStores?.();
+                }
+
+                await Promise.race([
+                    bothStoresStarted,
+                    new Promise<void>((resolve) => {
+                        setTimeout(resolve, 250);
+                    }),
+                ]);
+            },
+            async remove(storageKey) {
+                storedObjects.delete(storageKey);
+            },
+        };
+        setAttachmentStorageForTests(coordinatedStorage);
+
+        const responses = await Promise.all([
+            uploadAttachment(ticketId, requesterId, {
+                filename: "concurrent-a.png",
+                contentType: "image/png",
+                content: PNG_BUFFER,
+            }),
+            uploadAttachment(ticketId, requesterId, {
+                filename: "concurrent-b.png",
+                contentType: "image/png",
+                content: PNG_BUFFER,
+            }),
+        ]);
+        const statuses = responses
+            .map((response) => response.status)
+            .sort((left, right) => left - right);
+
+        expect(statuses).toEqual([201, 409]);
+        const rejectedResponse = responses.find(
+            (response) => response.status === 409,
+        );
+        expect(rejectedResponse?.body).toEqual({
+            error: {
+                code: "ATTACHMENT_LIMIT_REACHED",
+                message:
+                    "This Ticket already has five active attachments.",
+            },
+        });
+
+        const prisma = getPrisma();
+        const [activeAttachmentCount, concurrentMetadata] =
+            await Promise.all([
+                prisma.attachment.count({
+                    where: { ticketId, isRemoved: false },
+                }),
+                prisma.attachment.findMany({
+                    where: {
+                        ticketId,
+                        originalFilename: {
+                            in: [
+                                "concurrent-a.png",
+                                "concurrent-b.png",
+                            ],
+                        },
+                    },
+                    select: { storageKey: true },
+                }),
+            ]);
+
+        expect(activeAttachmentCount).toBe(5);
+        expect(concurrentMetadata).toHaveLength(1);
+        expect(storedObjects.size).toBe(1);
+        expect(
+            storedObjects.has(concurrentMetadata[0].storageKey),
+        ).toBe(true);
     });
 });
 

@@ -305,9 +305,11 @@ describe("Ticket Detail Attachment section", () => {
       ),
     );
 
-    expect(await screen.findByRole("status")).toHaveTextContent(
+    const uploadStatus = await screen.findByRole("status");
+    expect(uploadStatus).toHaveTextContent(
       "Attachment uploaded successfully.",
     );
+    expect(uploadStatus).toHaveTextContent("new-evidence.png");
     expect(
       await screen.findByText("new-evidence.png"),
     ).toBeInTheDocument();
@@ -475,9 +477,11 @@ describe("Ticket Detail Attachment section", () => {
       }),
     );
 
-    expect(await screen.findByRole("status")).toHaveTextContent(
+    const removalStatus = await screen.findByRole("status");
+    expect(removalStatus).toHaveTextContent(
       "Attachment removed successfully.",
     );
+    expect(removalStatus).toHaveTextContent("display-photo.png");
 
     const deleteRequest = attachmentRequests(fetchMock, "DELETE")[0];
     expect(deleteRequest).toBeDefined();
