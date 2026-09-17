@@ -11,11 +11,14 @@ This file records only review and governance events supported by repository or G
 | Engineering-contract Issue | #25 |
 | Source branch | docs/lab3-engineering-contract |
 | Intended PR target | lab3-staging |
-| Starting commit | e2fc1a25cd3e17b980dc7bee1509e8ea7c643483 |
-| Pull Request | Not opened |
-| Peer reviewer | Not assigned or recorded |
-| Review comments | None recorded |
-| Approval | Pending |
+| Reviewed commit | f77339c635145286e20c1efc21c83183a5381aa2 |
+| Pull Request | #26 — docs(lab3): define sprint 3 engineering contract |
+| Peer reviewer | Chxtamos |
+| Review status | Requested Changes |
+| Review comments | Four blocker categories recorded below |
+| Corrective commit | Follow-up commit containing this response; immutable hash is reported from Git after creation because a commit cannot contain its own hash |
+| Re-review | Pending; not requested during this correction |
+| Approval | Not granted |
 | Merge | Not performed |
 | Issue closure | Not performed |
 | GitHub Project status change | Not performed |
@@ -39,12 +42,15 @@ The future reviewer should verify:
 
 ## 4. Findings and Responses
 
-No peer-review findings or responses exist yet. Add dated rows only after a real reviewer submits evidence.
+PR #26 has one requested-changes review from Chxtamos. The response column records documentation changes made locally; it does not claim that a conversation was resolved or that the reviewer accepted the response.
 
 | Date | Reviewer | Location | Finding | Response / Commit | Status |
 | --- | --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | No review has occurred | Pending | Pending |
+| 2026-09-18 | Chxtamos | PR #26 requested-changes review, Blocker 1 | Migrated Lab 2 statuses, ownerId=null, and the owner invariant were contradictory. | Added the complete seven-status table, null-owner migration/postflight policy, unassigned Queue/Claim behavior, ACs, and Planned migration/API tests in the corrective follow-up commit containing this row. | Addressed locally; re-review pending |
+| 2026-09-18 | Chxtamos | PR #26 requested-changes review, Blocker 2 | Assignment and Administrator deactivation/demotion races lacked one lock/transaction protocol and final-state tests. | Added SERIALIZABLE User-before-Ticket locks, ascending ids, bounded 40001 retry, deterministic race outcomes, safe conflicts, and Planned database-state race tests in the corrective follow-up commit containing this row. | Addressed locally; re-review pending |
+| 2026-09-18 | Chxtamos | PR #26 requested-changes review, Blocker 3 | Login could create a session without an exact Origin contract. | Added required exact Login Origin validation, ORIGIN_REQUIRED/ORIGIN_FORBIDDEN, no Referer/partial match, no rejected session, UI behavior, AC, and Planned tests in the corrective follow-up commit containing this row. | Addressed locally; re-review pending |
+| 2026-09-18 | Chxtamos | PR #26 requested-changes review, Blocker 4 | Responsive evidence used width breakpoints instead of exact reproducible dimensions. | Separated CSS breakpoints from 390 x 844, 834 x 1112, 1440 x 900, and 200% zoom evidence; specified all six screens, exact paths/assertions, ACs, and Planned tests in the corrective follow-up commit containing this row. | Addressed locally; re-review pending |
 
 ## 5. Approval Record
 
-No approval, merge, release, or completion is claimed. This section must be updated from actual Pull Request evidence after human review.
+No approval, conversation resolution, re-review, merge, release, Issue closure, Done transition, or completion is claimed. This section must be updated only from later actual Pull Request evidence.

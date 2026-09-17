@@ -62,7 +62,7 @@ Color never carries meaning alone. Role, priority, status, active/inactive, publ
 | Tablet | 768–991px | Two columns where readable; Queue may use a bounded table or compact cards |
 | Desktop | 992px and above | Centered multi-column layout with a sensible maximum width |
 
-Verification widths are 390, 768, 820, 1024, and 1440 pixels. There is no unintended page-level horizontal scrolling, clipped label, overlapping message, hidden action, or unreadable long filename/email.
+CSS breakpoints govern layout only; they are not evidence dimensions. Required evidence viewports are exactly Mobile 390 x 844, Tablet 834 x 1112, and Desktop 1440 x 900. Each is tested independently from the required 200% browser-zoom pass. There is no unintended page-level horizontal overflow, clipped essential content, overlapping message, hidden action, or unreadable long filename/email.
 
 ### 3.2 Accessibility
 
@@ -72,7 +72,7 @@ Verification widths are 390, 768, 820, 1024, and 1440 pixels. There is no uninte
 - Modal focus is trapped; Escape closes a non-processing modal; close returns focus to its trigger.
 - Loading, error, conflict, and success messages use appropriate status or alert semantics.
 - Tables use headers and captions; card alternatives retain equivalent labels.
-- Controls and status meaning remain usable at 200% zoom and without color.
+- At 200% browser zoom, keyboard focus remains visible; controls and validation remain usable; essential content is not clipped or overlapped; no unintended horizontal page overflow appears; Public Comments and Internal Notes remain visually distinct; and editable/read-only fields remain distinguishable without color alone.
 - User content is rendered as text; no Comment/Note HTML or Markdown is interpreted.
 
 ## 4. Routes and Application Shell
@@ -154,6 +154,7 @@ Not every screen needs every state, but each applicable state in Sections 6–11
 - INVALID_CREDENTIALS always displays “Email or password is incorrect.”
 - ACCOUNT_INACTIVE displays “This account is inactive. Contact an Administrator.”
 - LOGIN_THROTTLED displays a safe retry time without confirming an account.
+- ORIGIN_REQUIRED and ORIGIN_FORBIDDEN display “The sign-in request could not be verified. Reload this page and try again.” The UI does not retry with Referer, add a CSRF token, or reveal whether the email exists.
 - Safe dependency failure displays the general error and Try Again.
 - Password is cleared after any failed login; email may remain.
 
@@ -264,7 +265,7 @@ Columns:
 | Owner | Name/role or Unassigned |
 | Updated | Last Updated and Open action |
 
-This grouping keeps nine data concepts in seven columns. At 768/820px, secondary text may wrap and lower-priority metadata may stack inside cells; the table remains bounded within its container. Below 768px, every Ticket becomes a labelled card with the same information and an Open Ticket action.
+This grouping keeps nine data concepts in seven columns. At the 834 x 1112 tablet evidence viewport, secondary text may wrap and lower-priority metadata may stack inside cells; the table remains bounded within its container. Below the 768px CSS breakpoint, including the 390 x 844 evidence viewport, every Ticket becomes a labelled card with the same information and an Open Ticket action.
 
 ### 9.3 States
 
@@ -292,12 +293,13 @@ Only Owner, IT Priority, and permitted action controls are editable. Requested P
 
 ### 10.2 Claim and Owner Controls
 
-- An unassigned active Ticket offers Claim Ticket.
+- Any unassigned non-terminal Ticket offers Claim Ticket, including migrated OPEN, IN_PROGRESS, WAITING_FOR_REQUESTER, or RESOLVED Tickets. The Queue and Detail show “Unassigned” without changing the migrated status.
 - Claim becomes “Claiming…” and handles a competing-owner conflict by announcing who now owns the Ticket after reload.
 - Assign/Reassign opens an assignee dialog populated only with active IT Staff and Administrators.
 - Unassign appears only for NEW, OPEN, or REOPENED.
 - Dialog shows current owner, target, and Save/Cancel.
 - A stale conflict preserves no misleading success and offers Reload Ticket.
+- OWNER_ELIGIBILITY_CONFLICT or CONCURRENT_UPDATE preserves the server state, announces that ownership eligibility changed, and offers Reload Ticket without naming protected Tickets or accounts beyond the refreshed permitted DTO.
 - CLOSED/CANCELLED shows ownership read-only.
 
 ### 10.3 IT Priority
@@ -312,7 +314,7 @@ Only Owner, IT Priority, and permitted action controls are editable. Requested P
 - The dropdown contains only allowedStatusTransitions from the server.
 - Selecting RESOLVED, CLOSED, or CANCELLED opens a confirmation dialog.
 - CANCELLED dialog additionally requires a 5–500 character reason.
-- Owner-required transitions remain disabled with the explanation “Assign an active Ticket Owner first.”
+- Owner-required transitions on any unassigned Ticket remain disabled with the explanation “Assign an active Ticket Owner first.” The Ticket's current status remains valid and Claim stays available while non-terminal.
 - The UI sends expectedUpdatedAt and never synthesizes an unapproved transition.
 - Success updates the badge/history. A conflict reloads server state and announces that no change was applied.
 - CLOSED/CANCELLED displays “No further status changes are available.”
@@ -392,7 +394,7 @@ Safety behavior:
 - Changing a Requester to IT Staff or Administrator warns that current permissions will change but existing submitted Tickets remain attributed to that historical User; it never offers to transfer or rewrite requesterId.
 - Deactivation or a change to Requester is blocked while the User owns any non-terminal Ticket. The safe conflict asks the Administrator to reassign or unassign remaining work without displaying protected Ticket details in the error.
 - If the User owns only CLOSED or CANCELLED Tickets, deactivation or a change to Requester may succeed and the UI explains that historical ownership remains. Active IT Staff/Administrator role swaps remain available, subject to self-change and last-active-Administrator protection; a simultaneous deactivation still applies the non-terminal-owner rule.
-- Last-active-Administrator, non-terminal-owner, or stale conflicts show the exact safe business explanation and retain non-password edits for correction.
+- Last-active-Administrator, non-terminal-owner, stale, or exhausted-concurrency conflicts show the exact safe business explanation and retain non-password edits for correction.
 - Stale write says “This user changed since you opened the form. Reload the latest details.”
 - No Delete action exists.
 
@@ -445,14 +447,20 @@ The table controls rendering only. The API authorization matrix remains the secu
 
 ## 14. Visual Evidence Requirements
 
-Implementation evidence must include actual, readable screenshots under artifacts/lab-03/screenshots for:
+Implementation evidence must cover every major screen at each exact viewport. Screenshot paths are deterministic:
 
-- Login invalid and valid/forced-change states.
-- Change Password validation and success.
-- Queue populated, filtered/no-results, mobile cards, and safe failure.
-- Operational Detail ownership, priorities, status confirmation, Comments, private Notes, Attachment continuity, and resolution banner.
-- User Management list, create/edit, validation/safety conflict, and mobile view.
-- Visible keyboard focus at representative controls.
+| Screen | Mobile 390 x 844 | Tablet 834 x 1112 | Desktop 1440 x 900 |
+| --- | --- | --- | --- |
+| Login | artifacts/lab-03/screenshots/mobile-390x844/login.png | artifacts/lab-03/screenshots/tablet-834x1112/login.png | artifacts/lab-03/screenshots/desktop-1440x900/login.png |
+| Mandatory Change Password | artifacts/lab-03/screenshots/mobile-390x844/change-password.png | artifacts/lab-03/screenshots/tablet-834x1112/change-password.png | artifacts/lab-03/screenshots/desktop-1440x900/change-password.png |
+| Authenticated Requester shell and updated Ticket Detail | artifacts/lab-03/screenshots/mobile-390x844/requester-ticket-detail.png | artifacts/lab-03/screenshots/tablet-834x1112/requester-ticket-detail.png | artifacts/lab-03/screenshots/desktop-1440x900/requester-ticket-detail.png |
+| IT Staff Ticket Queue | artifacts/lab-03/screenshots/mobile-390x844/staff-ticket-queue.png | artifacts/lab-03/screenshots/tablet-834x1112/staff-ticket-queue.png | artifacts/lab-03/screenshots/desktop-1440x900/staff-ticket-queue.png |
+| IT Staff Ticket Detail | artifacts/lab-03/screenshots/mobile-390x844/staff-ticket-detail.png | artifacts/lab-03/screenshots/tablet-834x1112/staff-ticket-detail.png | artifacts/lab-03/screenshots/desktop-1440x900/staff-ticket-detail.png |
+| Administrator User Management | artifacts/lab-03/screenshots/mobile-390x844/admin-user-management.png | artifacts/lab-03/screenshots/tablet-834x1112/admin-user-management.png | artifacts/lab-03/screenshots/desktop-1440x900/admin-user-management.png |
+
+The Login set includes invalid/Origin-safe failure and valid/forced-change routing; screen-specific validation, loading/busy, success, empty/no-results, conflict, and safe-failure states may be captured as additional exact-dimension screenshots or proven by named automated assertions. Queue evidence includes populated, filtered/no-results, unassigned migrated Tickets, and mobile cards. Staff Detail includes ownership, priority, status confirmation, Comments versus private Notes, Attachment continuity, and resolution indication. Administrator evidence includes list, create/edit, validation, owner/admin safety conflict, and responsive form mode.
+
+A separate 200%-zoom automated pass covers all six screens and explicitly asserts visible keyboard focus, usable controls and validation, no clipped essential content, no overlapping content, no unintended horizontal page overflow, distinct Public Comments/Internal Notes, and distinguishable editable/read-only fields. Retained zoom screenshots, when captured, use artifacts/lab-03/screenshots/zoom-200/{screen}.png.
 
 No screenshot is marked complete in this contract. Placeholder or design-only images are not evidence.
 

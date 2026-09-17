@@ -18,7 +18,7 @@ The Lab 2 contract remains the regression baseline except where this contract ex
 - Exactly one role per User: REQUESTER, IT_STAFF, or ADMINISTRATOR.
 - Backend role and ownership authorization for every protected operation.
 - Removal of the Development Requester selector, Change Requester action, sessionStorage identity, and X-Development-Requester-Id authority.
-- Lossless migration of all DevelopmentRequester rows into User rows while preserving Ticket and Attachment references.
+- Lossless migration of all DevelopmentRequester rows into User rows, deterministic mapping of every Lab 2 Ticket status, and null operational ownership without inventing historical assignees.
 - Authenticated continuation of Create Ticket, My Tickets, Requester Ticket Detail, and permitted Attachment behavior.
 - A shared IT Staff Ticket Queue and an operational Ticket Detail screen.
 - Claim, assign, reassign, and constrained unassign behavior.
@@ -29,7 +29,7 @@ The Lab 2 contract remains the regression baseline except where this contract ex
 - Minimal Administrator user listing, search, optional role filter, create, edit, activate/deactivate, and initial-password reset.
 - Idempotent local seed data for all roles, realistic Tickets, Comments, and Notes.
 - Migration, unit, API/integration, authorization/security, UI, style, responsive, regression, and E2E testing.
-- Responsive and accessible Zen Green behavior at Lab 2 breakpoints.
+- Responsive and accessible Zen Green behavior at Lab 2 CSS breakpoints, with required evidence at 390 x 844, 834 x 1112, 1440 x 900, and 200% browser zoom.
 
 ### 3.2 Explicitly Excluded
 
@@ -55,12 +55,12 @@ The Lab 2 contract remains the regression baseline except where this contract ex
 
 ### 4.2 Functional Requirements
 
-- **FR-01:** The system shall authenticate an active User with a normalized email address and valid password.
+- **FR-01:** The system shall authenticate an active User with a normalized email address and valid password only after the Login request passes exact approved-Origin validation.
 - **FR-02:** The system shall establish a revocable server-side session without exposing the session credential to client JavaScript.
 - **FR-03:** The system shall retrieve the current authenticated User and their single role.
 - **FR-04:** The system shall log out the current session and remove authenticated access.
 - **FR-05:** The system shall require a User with mustChangePassword set to replace the initial password before entering normal application screens.
-- **FR-06:** The system shall enforce session expiration, account activation, CSRF validation, and login throttling.
+- **FR-06:** The system shall enforce session expiration, account activation, authenticated-request CSRF validation, exact Origin validation including Login, and login throttling.
 - **FR-07:** The application shell shall display the authenticated User name and role and shall show role-permitted navigation only.
 - **FR-08:** The backend shall enforce the authorization matrix for every protected endpoint regardless of UI visibility.
 - **FR-09:** The Development Requester selector and Change Requester behavior shall be removed.
@@ -76,7 +76,7 @@ The Lab 2 contract remains the regression baseline except where this contract ex
 - **FR-19:** The Ticket Queue shall support the specified search, filters, stable sorting, pagination, counts, and default ordering.
 - **FR-20:** IT Staff and Administrators shall open operational Ticket Detail for any Ticket.
 - **FR-21:** IT Staff and Administrators shall view active and removed Attachment metadata and active Attachment content on operational Ticket Detail.
-- **FR-22:** IT Staff and Administrators shall claim an eligible unassigned Ticket.
+- **FR-22:** IT Staff and Administrators shall claim any eligible unassigned non-terminal Ticket, including a migrated Ticket whose legacy workflow status was preserved.
 - **FR-23:** IT Staff and Administrators shall assign, reassign, or, where permitted, unassign a Ticket to an active IT Staff or Administrator User.
 - **FR-24:** IT Staff and Administrators shall update IT Priority without changing Requested Priority.
 - **FR-25:** IT Staff and Administrators shall perform only transitions permitted by the status-transition matrix.
@@ -92,12 +92,12 @@ The Lab 2 contract remains the regression baseline except where this contract ex
 - **FR-35:** The system shall prevent self-deactivation and removal or deactivation of the last active Administrator.
 - **FR-36:** The system shall prevent deactivating or changing to Requester a User who owns non-terminal Tickets until those Tickets are reassigned or unassigned, while preserving historical ownership on terminal Tickets.
 - **FR-37:** The system shall reject duplicate normalized email addresses and invalid role values.
-- **FR-38:** Lab 2 Development Requesters shall migrate to Users without changing their numeric identifiers or Ticket ownership and shall receive unique runtime-supplied initial credentials that require password change.
+- **FR-38:** Lab 2 Development Requesters shall migrate to Users without changing identifiers or requester references; every legacy Ticket shall receive the documented deterministic status mapping, ownerId=null, and unique runtime-supplied initial credentials that require password change.
 - **FR-39:** Existing Tickets, Attachments, Categories, and Related Systems shall remain valid and accessible after migration.
 - **FR-40:** The seed process shall be idempotent and shall create the required role, Ticket, Comment, and Note fixtures from unique runtime-supplied credentials without storing real, hard-coded, or shared passwords.
-- **FR-41:** All new screens and states shall follow the reusable Zen Green, responsive, keyboard, focus, labelling, and non-color-feedback rules.
+- **FR-41:** All new screens and states shall follow the reusable Zen Green, responsive, keyboard, focus, labelling, and non-color-feedback rules and shall produce evidence at the exact required mobile, tablet, desktop, and 200%-zoom configurations.
 - **FR-42:** API and UI failures shall use safe messages without exposing password hashes, session tokens, stack traces, SQL details, storage keys, internal notes to Requesters, or protected-resource existence.
-- **FR-43:** Concurrent ownership, status, priority, password, and Administrator-safety updates shall detect stale state or conflicting invariants.
+- **FR-43:** Claim, assignment, reassignment, owner-dependent status, and Administrator role/activation changes shall share the documented lock-ordered transaction protocol so no concurrent commit violates final owner eligibility or Administrator safety.
 - **FR-44:** Original Lab 1 and completed Lab 2 behavior shall continue to pass except for explicitly migrated identity and status behavior.
 
 ## 5. Business Rules
@@ -119,7 +119,7 @@ The Lab 2 contract remains the regression baseline except where this contract ex
 - **BR-13:** A successful password change or Administrator initial-password reset revokes all existing sessions for the affected User.
 - **BR-14:** Login creates a separate random CSRF token in the readable tocktickit_csrf SameSite=Strict cookie and stores only its SHA-256 digest in AuthSession.
 - **BR-15:** Every authenticated POST, PATCH, PUT, or DELETE request must supply an X-CSRF-Token header equal to the CSRF cookie and matching the stored digest; otherwise it returns 403 CSRF_INVALID. Login is exempt because no authenticated session exists yet.
-- **BR-16:** Credentialed CORS is permitted only for the configured same-site client origin. Unsafe authenticated requests with a missing or disallowed Origin are rejected.
+- **BR-16:** Credentialed CORS is permitted only for configured approved origins. POST /api/auth/login requires exactly one Origin header and compares its normalized scheme, hostname, and effective port as an exact tuple against the allowlist before credential lookup; wildcard, suffix, substring, literal null, malformed values, and Referer fallback are forbidden. Missing Origin returns 403 ORIGIN_REQUIRED; malformed, null, or disallowed Origin returns 403 ORIGIN_FORBIDDEN. Login requires no CSRF token because no authenticated session exists, and an Origin rejection creates no session and reveals no account information. Every authenticated unsafe request retains the same exact-Origin rule plus BR-15 CSRF validation.
 - **BR-17:** Five failed logins for the same normalized-email-and-IP key within 15 minutes produce 429 LOGIN_THROTTLED for that key until 15 minutes after the fifth failure. A valid successful login clears that key. This transient throttle is not account locking.
 - **BR-18:** A User with mustChangePassword true may access only current-user, change-password, and logout operations. Other protected operations return 403 PASSWORD_CHANGE_REQUIRED.
 - **BR-19:** A valid mandatory password change verifies the current password, validates matching newPassword and confirmPassword values, saves a new hash, sets mustChangePassword false, records passwordChangedAt, revokes all sessions, and issues a new session so the User can continue.
@@ -146,14 +146,42 @@ The Lab 2 contract remains the regression baseline except where this contract ex
 
 ### 5.4 Assignment, Priority, and Concurrency
 
-- **BR-34:** Ticket.ownerId is nullable. On every non-terminal Ticket, a non-null owner must currently be an active IT Staff or Administrator. CLOSED and CANCELLED Tickets may retain their historical owner after that User is deactivated or changed to REQUESTER; the reference is not rewritten, and the User foreign key preserves identity rather than a permanent role invariant.
-- **BR-35:** Claim succeeds only for an active non-terminal Ticket with no owner; claiming a Ticket already owned by the caller is an idempotent 200, while another owner causes 409 OWNER_CONFLICT.
+- **BR-34:** Ticket.ownerId is nullable in every status, so an unassigned non-terminal Ticket is valid. When a non-terminal Ticket has a non-null owner, that User must currently be active IT Staff or Administrator. CLOSED and CANCELLED Tickets may retain their historical owner after that User is deactivated or changed to REQUESTER; the reference is not rewritten, and the User foreign key preserves identity rather than a permanent role invariant.
+- **BR-35:** Claim succeeds for any non-terminal Ticket with no owner, including migrated OPEN, IN_PROGRESS, WAITING_FOR_REQUESTER, or RESOLVED Tickets; claiming a Ticket already owned by the caller is an idempotent 200, while another owner causes 409 OWNER_CONFLICT.
 - **BR-36:** Assign or reassign is permitted for every status except CLOSED and CANCELLED.
 - **BR-37:** Unassign is permitted only in NEW, OPEN, or REOPENED. It is rejected in IN_PROGRESS, WAITING_FOR_REQUESTER, RESOLVED, CLOSED, and CANCELLED.
-- **BR-38:** A transition to OPEN, IN_PROGRESS, WAITING_FOR_REQUESTER, RESOLVED, CLOSED, or REOPENED requires a non-null active Ticket Owner.
+- **BR-38:** A future transition to OPEN, IN_PROGRESS, WAITING_FOR_REQUESTER, RESOLVED, CLOSED, or REOPENED requires a non-null eligible Ticket Owner at commit time. This mutation prerequisite does not make an already stored unassigned Ticket in any status invalid and does not authorize migration to invent an owner or alter a legacy status.
 - **BR-39:** IT Priority is one of LOW, MEDIUM, HIGH, or URGENT and may be updated only by IT Staff or Administrators.
 - **BR-40:** Owner, IT Priority, status, and Administrator User edits require expectedUpdatedAt. A stale value returns 409 STALE_WRITE without partial change.
-- **BR-41:** Claim and all invariant-sensitive updates run in a database transaction; concurrency may produce one success and one documented conflict, never a lost update.
+- **BR-41:** Claim, assign, reassign, owner-dependent status transitions, and Administrator role/activation edits use the shared eligibility transaction protocol below. Concurrency may produce one success and one documented safe conflict, never a lost update or an invalid final owner.
+
+#### Shared eligibility transaction protocol
+
+1. Begin a PostgreSQL SERIALIZABLE transaction.
+2. From an initial read, collect every User that can affect the decision: authenticated actor, Administrator target, current owner, proposed owner/claimant, and all active Administrators needed for the last-active-Administrator invariant. Lock those User rows with SELECT FOR UPDATE in ascending User id order.
+3. Lock the affected Ticket with SELECT FOR UPDATE. An Administrator demotion/deactivation additionally locks all non-terminal Tickets currently owned by the target in ascending Ticket id order after User locks. If the locked Ticket reveals an affected User not in the initial lock set, roll back without mutation and restart from step 1 with the expanded set.
+4. After all locks are held, re-read User role/activation, Ticket status/ownerId/updatedAt, and User updatedAt; then revalidate authorization, expected versions, owner eligibility, terminal state, and last-active-Administrator safety.
+5. Apply the Ticket/User/session/history changes atomically and commit. A non-terminal Ticket may commit unassigned, but must never commit with a non-null owner who is inactive or not IT Staff/Administrator; a terminal Ticket may retain a historical owner.
+6. Automatically retry only PostgreSQL serialization failures (SQLSTATE 40001), at most twice after the initial attempt for three total attempts. Every retry restarts the whole protocol and lock order. Exhaustion returns 409 CONCURRENT_UPDATE without partial change. Business conflicts, stale versions, validation failures, and unexpected/deadlock errors are not retried; deterministic User-then-Ticket and ascending-id ordering prevents protocol deadlocks.
+7. Final eligibility failures return safe 409 codes: OWNER_ELIGIBILITY_CONFLICT for claim/assign/reassign/status races, USER_HAS_NON_TERMINAL_TICKETS for blocked deactivation/demotion, STATUS_OWNER_REQUIRED for an owner-required transition on an unassigned Ticket, and STALE_WRITE for a changed expected version. Responses contain no protected Ticket details.
+
+Deterministic race outcomes:
+
+| Race pair | First valid commit | Waiting operation and final database state |
+| --- | --- | --- |
+| Claim vs claimant deactivation | Claim sets the eligible caller as owner | Deactivation returns USER_HAS_NON_TERMINAL_TICKETS; Ticket retains an active eligible owner |
+| Claimant deactivation vs claim | Deactivation makes the caller inactive | Claim returns OWNER_ELIGIBILITY_CONFLICT; Ticket remains unassigned |
+| Assign vs target deactivation | Assignment sets the eligible target | Deactivation returns USER_HAS_NON_TERMINAL_TICKETS; target remains active and owns the Ticket |
+| Target deactivation vs assign | Deactivation succeeds before ownership exists | Assignment returns OWNER_ELIGIBILITY_CONFLICT; Ticket owner is unchanged |
+| Assign vs target change to REQUESTER | Assignment sets the eligible target | Role change returns USER_HAS_NON_TERMINAL_TICKETS; target retains an operational role |
+| Target change to REQUESTER vs assign | Role change succeeds before ownership exists | Assignment returns OWNER_ELIGIBILITY_CONFLICT; Ticket owner is unchanged |
+| Reassign vs old-owner deactivation/demotion | Reassignment removes the old owner | User edit may then succeed if no other non-terminal ownership remains; Ticket has the eligible new owner |
+| Old-owner deactivation/demotion vs reassign | User edit sees the still-owned non-terminal Ticket | User edit returns USER_HAS_NON_TERMINAL_TICKETS; reassignment may then commit and final owner is eligible |
+| Reassign vs new-owner deactivation/demotion | Reassignment sets the eligible new owner | User edit returns USER_HAS_NON_TERMINAL_TICKETS; new owner remains eligible |
+| New-owner deactivation/demotion vs reassign | User edit succeeds before new ownership exists | Reassignment returns OWNER_ELIGIBILITY_CONFLICT; prior owner remains unchanged and eligible |
+| Owner-dependent status transition vs owner eligibility edit | The transition revalidates and commits with an eligible owner | A later edit conflicts while the Ticket remains non-terminal; if the transition made it terminal, the edit may succeed and retain historical ownerId |
+| Owner eligibility edit vs status transition | A valid edit can commit only when it does not invalidate existing non-terminal ownership | The transition re-reads final state and either commits with an eligible owner or returns OWNER_ELIGIBILITY_CONFLICT/STATUS_OWNER_REQUIRED |
+| Concurrent Administrator edits | First valid edit updates User.updatedAt and all safety invariants | The second returns STALE_WRITE or the applicable last-admin/owner conflict; final Administrator count and ownership are valid |
 
 ### 5.5 Ticket Status Workflow
 
@@ -178,6 +206,8 @@ The Lab 2 contract remains the regression baseline except where this contract ex
 | CLOSED | None | None | Terminal |
 | CANCELLED | None | None | Terminal |
 
+The matrix governs requested transitions, not migration validity. An unassigned Ticket may remain stored in any mapped status and may be claimed while non-terminal; an owner-required transition remains unavailable until an eligible owner is assigned or claims it.
+
 ### 5.6 Comments, Notes, and Resolution Indication
 
 - **BR-49:** Public Comment content is trimmed, required, and 1 to 2,000 characters.
@@ -199,7 +229,7 @@ The Lab 2 contract remains the regression baseline except where this contract ex
 - **BR-62:** No API deletes a User.
 - **BR-63:** An Administrator cannot deactivate their own account or change their own role through User Management.
 - **BR-64:** A transaction must preserve at least one active Administrator after any role or activation edit.
-- **BR-65:** Deactivating a User or changing an IT Staff/Administrator to REQUESTER returns 409 USER_HAS_NON_TERMINAL_TICKETS if that User owns any Ticket not in CLOSED or CANCELLED; the edit may succeed only after every such Ticket is reassigned or unassigned. Ownership of only CLOSED or CANCELLED Tickets does not block the edit and those historical ownerId references remain unchanged. IT_STAFF-to-ADMINISTRATOR and ADMINISTRATOR-to-IT_STAFF changes remain eligible for non-terminal ownership, subject to self-change and last-active-Administrator protection. These checks, the edit, and session invalidation are one transaction; every successful role change or deactivation deletes the affected User's sessions so current authorization takes effect immediately.
+- **BR-65:** Deactivating a User or changing an IT Staff/Administrator to REQUESTER returns 409 USER_HAS_NON_TERMINAL_TICKETS if that User owns any Ticket not in CLOSED or CANCELLED; the edit may succeed only after every such Ticket is reassigned or unassigned. Ownership of only CLOSED or CANCELLED Tickets does not block the edit and those historical ownerId references remain unchanged. IT_STAFF-to-ADMINISTRATOR and ADMINISTRATOR-to-IT_STAFF changes remain eligible for non-terminal ownership, subject to self-change and last-active-Administrator protection. The shared eligibility protocol locks and rechecks User/Ticket state before the edit and session deletion commit together, so authorization changes take effect immediately without racing a new assignment.
 - **BR-66:** Setting a new initial password for another User validates the password, replaces its hash, sets mustChangePassword true, records passwordChangedAt, and revokes all their sessions.
 - **BR-67:** Administrators cannot use the initial-password endpoint on themselves; they use the authenticated Change Password screen instead.
 - **BR-68:** User create, edit, password reset, and Administrator-count invariants are transactionally enforced.
@@ -231,7 +261,7 @@ Legend: Own means the authenticated Requester owns the Ticket; All means all Tic
 | List My Tickets | Own only | — | — | 403 |
 | Requester Ticket Detail | Own only | — | — | 404 for non-owned |
 | Queue and operational Ticket Detail | — | All | All | 403 |
-| Claim, assign, reassign, unassign | — | All eligible | All eligible | 403/409 |
+| Claim any unassigned non-terminal Ticket; assign, reassign, or constrained unassign | — | All eligible | All eligible | 403/409 |
 | Change IT Priority or status | — | All eligible | All eligible | 403/409 |
 | List Attachment metadata/content | Own | All | All | 404 for protected mismatch |
 | Upload or soft-remove Attachment | Own | — | — | 403 or ownership-safe 404 |
@@ -252,7 +282,7 @@ The complete contract is in [ui-spec.md](ui-spec.md).
 - Requester routes remain /tickets, /tickets/new, and /tickets/:ticketId; selector UI is removed.
 - IT Staff and Administrators use /staff/tickets and /staff/tickets/:ticketId.
 - Administrators use /admin/users; IT Staff and Requesters cannot render or directly enter it.
-- Queue desktop/tablet presentation avoids a mega-grid and uses cards below 768px.
+- Queue desktop/tablet presentation avoids a mega-grid and uses cards below the mobile CSS breakpoint; required evidence uses 390 x 844 mobile, 834 x 1112 tablet, and 1440 x 900 desktop viewports.
 - Operational Ticket Detail visually separates public communication from private Internal Notes.
 - User Management is one responsive list-and-form surface without deletion, bulk actions, or mandatory pagination.
 - Every applicable screen provides loading, validation, saving, success, empty/no-results, forbidden, not-found, conflict, and safe-failure feedback.
@@ -280,7 +310,7 @@ The complete contract is in [ui-spec.md](ui-spec.md).
 | InternalNote | id; ticketId; authorId; content text; createdAt; index on ticketId, createdAt, id |
 | TicketStatusHistory | id; ticketId; actorId; fromStatus; toStatus; reason nullable varchar(500); createdAt; index on ticketId, createdAt, id |
 
-Application/service transactions enforce current-role eligibility when a Ticket is submitted, when a non-terminal owner is assigned or retained through a User edit, and when a User authors a Comment, Note, or resolution indication. Ticket.requesterId is an immutable historical submitter reference and does not require the User to remain a Requester. Ticket.ownerId must reference an active IT Staff or Administrator while the Ticket is non-terminal, but CLOSED and CANCELLED Tickets may retain a historical owner who later becomes inactive or a Requester. PostgreSQL foreign keys preserve User identity with RESTRICT; they do not enforce permanent roles, and no Lab 3 operation hard-deletes these records.
+Application/service transactions enforce current-role eligibility when a Ticket is submitted, when a non-null non-terminal owner is assigned or retained through a User edit, and when a User authors a Comment, Note, or resolution indication. Ticket.requesterId is an immutable historical submitter reference and does not require the User to remain a Requester. Ticket.ownerId may be null in every status; if non-null on a non-terminal Ticket it must reference an active IT Staff or Administrator, while CLOSED and CANCELLED Tickets may retain a historical owner who later becomes inactive or a Requester. PostgreSQL foreign keys preserve User identity with RESTRICT; they do not enforce permanent roles, and no Lab 3 operation hard-deletes these records.
 
 Queue indexes include Ticket(updatedAt, id), Ticket(ownerId, updatedAt), Ticket(currentStatus, updatedAt), Ticket(itPriority, updatedAt), and existing Category, Related System, Requested Priority, and Requester indexes. Normalized User email is unique; User(role, isActive, name) supports assignee and Admin queries.
 
@@ -289,7 +319,7 @@ Exact new-field decisions:
 - User.id is an auto-increment integer retained from DevelopmentRequester. name is varchar(120); email is varchar(254); role is required UserRole; passwordHash is varchar(255); mustChangePassword and isActive are required booleans; passwordChangedAt is a nullable UTC timestamp; createdAt and updatedAt are required UTC timestamps. Defaults are mustChangePassword=true, isActive=true, and backend/database current time for timestamps.
 - AuthSession.id is a generated UUID. tokenHash and csrfTokenHash are required 64-character lowercase hexadecimal digests; tokenHash is unique. userId is a required RESTRICT foreign key to User. createdAt, lastSeenAt, and expiresAt are required UTC timestamps. Session invalidation deletes the row; an expiry-cleanup job may delete expired rows.
 - LoginThrottle.keyHash is the 64-character primary key derived from normalized email plus IP using a server-side HMAC secret; raw email/IP combinations are not stored in this table. failureCount is a non-negative integer; windowStartedAt and updatedAt are required timestamps; blockedUntil is nullable. Expired entries may be deleted.
-- Ticket.ownerId is a nullable RESTRICT foreign key to User. itPriority is required RequestedPriority. requesterResolutionIndicatedAt is nullable and requesterResolutionIndicatedById is a nullable RESTRICT foreign key to User; both are null or populated together. Every successful Ticket mutation advances updatedAt.
+- Ticket.ownerId is a nullable RESTRICT foreign key to User in every TicketStatus. Current owner eligibility is a transactionally enforced final-state invariant rather than a database role constraint. itPriority is required RequestedPriority. requesterResolutionIndicatedAt is nullable and requesterResolutionIndicatedById is a nullable RESTRICT foreign key to User; both are null or populated together. Every successful Ticket mutation advances updatedAt.
 - PublicComment and InternalNote use auto-increment integer ids and required RESTRICT foreign keys to Ticket and User. content is PostgreSQL text and createdAt is a required UTC timestamp. They have no updatedAt because Lab 3 entries are immutable.
 - TicketStatusHistory uses an auto-increment integer id; required RESTRICT foreign keys to Ticket and actor User; required fromStatus and toStatus TicketStatus values; nullable varchar(500) reason; and required createdAt. It has no update/delete API.
 - Attachment keeps every Lab 2 field, constraint, storage key, and Ticket reference. Only uploader/remover foreign-key column names and Prisma relation names change from Requester to User terminology; the public Lab 2 DTO remains compatible.
@@ -298,16 +328,29 @@ Exact new-field decisions:
 
 ### 8.3 Lossless Migration
 
-1. Preflight asserts no orphan Ticket or Attachment requester references and records row counts and ownership checksums.
-2. Before any mutation, load LAB3_MIGRATION_INITIAL_CREDENTIALS as an untracked environment-provided JSON mapping with exactly one entry keyed by each existing DevelopmentRequester numeric id. Reject a missing User entry, duplicate plaintext value assigned to two Users, any value that violates BR-05, or an unexpected key. Validation errors identify only safe User ids and never echo a credential.
-3. Rename DevelopmentRequester to User so existing ids remain unchanged; add role=REQUESTER, password fields initially nullable, and authentication fields.
-4. Rename Attachment uploader/remover foreign-key columns to User terminology without changing their values.
-5. Add Ticket.ownerId nullable, itPriority nullable, resolution fields, and supporting tables/indexes.
-6. Convert ASSIGNED to OPEN and PENDING_REQUESTER to WAITING_FOR_REQUESTER while preserving every other status; add REOPENED.
-7. Backfill Ticket.itPriority from requestedPriority, leave ownerId and resolution fields null, and do not fabricate status-history events for changes that predate Lab 3.
+The complete Lab 2 status mapping is:
+
+| Lab 2 status | Lab 3 status | ownerId after migration |
+| --- | --- | --- |
+| NEW | NEW | null |
+| ASSIGNED | OPEN | null |
+| IN_PROGRESS | IN_PROGRESS | null |
+| PENDING_REQUESTER | WAITING_FOR_REQUESTER | null |
+| RESOLVED | RESOLVED | null |
+| CLOSED | CLOSED | null |
+| CANCELLED | CANCELLED | null |
+
+1. Before any mutation, preflight asserts that the distinct legacy Ticket statuses are exactly values covered by the table, that no Ticket or Attachment requester reference is orphaned, and that the credential mapping is complete. An unsupported/unknown legacy status causes a safe failure with no schema or data change; it is never silently coerced.
+2. Record Ticket, Attachment, DevelopmentRequester, Category, and RelatedSystem row counts; Ticket id/requesterId/status/createdAt/updatedAt checksums; Attachment id/ticket/uploader/remover checksums; status totals; and relevant foreign-key validity for postflight comparison.
+3. Load LAB3_MIGRATION_INITIAL_CREDENTIALS as an untracked environment-provided JSON mapping with exactly one entry keyed by each existing DevelopmentRequester numeric id. Reject a missing User entry, duplicate plaintext value assigned to two Users, any value that violates BR-05, or an unexpected key. Validation errors identify only safe User ids and never echo a credential.
+4. Rename DevelopmentRequester to User so existing ids remain unchanged; add role=REQUESTER, password fields initially nullable, and authentication fields.
+5. Rename Attachment uploader/remover foreign-key columns to User terminology without changing their values.
+6. Add Ticket.ownerId nullable, itPriority nullable, resolution fields, and supporting tables/indexes. Set ownerId=null for every migrated Ticket because Lab 2 recorded no operational IT owner; never infer or fabricate one.
+7. Apply the status table exactly and backfill Ticket.itPriority from requestedPriority. Do not change Ticket ids, requesterId, ticketNumber, ticketDate, createdAt, updatedAt, Category/RelatedSystem links, Attachment data/links, or other preserved fields, and do not fabricate status-history events for activity that predates Lab 3.
 8. Independently hash each validated mapped credential with Argon2id and a unique random salt, store only its encoded hash, and set mustChangePassword=true for every migrated User. Plaintext values and the complete mapping are never stored, logged, returned, committed, or included in test output.
-9. Validate non-null fields, foreign keys, counts, Ticket-to-Requester ownership, Attachment-to-Ticket links, and status totals; then make passwordHash and itPriority non-null.
-10. Remove Development Requester API/client state only after authenticated ownership regression tests pass. Migration never resets the database.
+9. Postflight validates non-null fields, foreign keys, unchanged preserved counts/checksums/timestamps, exact per-status totals after mapping, requester/Attachment links, ownerId=null for every migrated Ticket, and itPriority=requestedPriority; then passwordHash and itPriority become non-null.
+10. Run the migration against equivalent populated Lab 2 fixtures more than once from the same starting snapshot and require identical transformed data/checksums. Migrated unassigned Tickets of every non-terminal mapped status must appear in the Staff Queue with owner=null and be claimable without changing their migrated status first.
+11. Remove Development Requester API/client state only after authenticated ownership and migrated-queue regression tests pass. Migration never resets the database.
 
 Rollback uses the pre-migration database backup and migration transaction; it does not attempt lossy down-conversion after Lab 3 writes exist.
 
@@ -329,7 +372,7 @@ The exact 31 operations, cookies, bodies, DTOs, queries, validations, and failur
 
 ### 10.1 Authentication and Session
 
-- **AC-01:** Given an active User with valid credentials, when Login is submitted, then one revocable session is established in secure cookies and the response contains only the safe User and session expiry fields.
+- **AC-01:** Given an approved exact Origin and an active User with valid credentials, when Login is submitted, then Origin validation precedes credential validation, one revocable session is established in secure cookies, and the response contains only the safe User and session expiry fields.
 - **AC-02:** Given an unknown email, malformed email, or wrong password, when Login is submitted, then the same safe 401 response is returned and no session is created.
 - **AC-03:** Given an inactive User and the correct password, when Login is submitted, then a safe inactive-account response is shown and no session is created.
 - **AC-04:** Given five failed attempts for one normalized-email-and-IP key in 15 minutes, when another attempt occurs during the block, then it returns 429 without performing authenticated access.
@@ -361,8 +404,8 @@ The exact 31 operations, cookies, bodies, DTOs, queries, validations, and failur
 
 ### 10.4 Assignment, Priority, Status, and Resolution Indication
 
-- **AC-24:** Given an eligible unassigned active Ticket, when IT Staff or an Administrator claims it, then that User becomes owner exactly once; a competing claim receives a conflict.
-- **AC-25:** Given an eligible Ticket and active IT Staff or Administrator target, when assignment or reassignment uses the current expectedUpdatedAt, then owner changes and a stale concurrent request is rejected without overwrite.
+- **AC-24:** Given any eligible unassigned non-terminal Ticket, including an unassigned migrated OPEN, IN_PROGRESS, WAITING_FOR_REQUESTER, or RESOLVED Ticket, when IT Staff or an Administrator claims it, then that User becomes owner exactly once without an intermediate status rewrite; a competing claim receives a safe conflict.
+- **AC-25:** Given an eligible Ticket and active IT Staff or Administrator target, when assignment or reassignment uses the current expectedUpdatedAt, then the shared User-then-Ticket lock protocol commits an eligible owner or rejects the stale/ineligible race without overwrite.
 - **AC-26:** Given a Ticket in NEW, OPEN, or REOPENED, when a permitted actor unassigns it, then owner becomes null; disallowed statuses reject unassignment.
 - **AC-27:** Given a valid IT Priority and current expectedUpdatedAt, when IT Staff or an Administrator updates priority, then only itPriority changes and Requested Priority remains unchanged.
 - **AC-28:** Given a current Ticket status, when a permitted target in the transition matrix is submitted with all prerequisites, then the status changes and one history row records actor, from, to, reason, and time.
@@ -390,43 +433,46 @@ The exact 31 operations, cookies, bodies, DTOs, queries, validations, and failur
 - **AC-44:** Given an existing User and current expectedUpdatedAt, when an Administrator edits name, email, role, or activation, then only approved fields change, current role/active state immediately governs permissions, historical requesterId references remain unchanged, and stale edits conflict.
 - **AC-45:** Given an Administrator attempts self-deactivation or self-role-change, when the edit is submitted, then it returns a conflict and the account remains an active Administrator.
 - **AC-46:** Given only one active Administrator would remain, when an edit would remove or deactivate that role, then the transaction is rejected and at least one active Administrator remains.
-- **AC-47:** Given a User owns any non-terminal Ticket, when deactivation or a change to REQUESTER is submitted, then the edit conflicts until every such Ticket is reassigned or unassigned; given only CLOSED or CANCELLED ownership, the edit succeeds and preserves historical ownerId references. IT_STAFF/ADMINISTRATOR changes remain permitted unless self-change or last-active-Administrator protection blocks them.
+- **AC-47:** Given a User owns any non-terminal Ticket, when deactivation or a change to REQUESTER races an ownership operation, then the shared lock protocol permits only a final state with an eligible owner and otherwise returns the documented safe conflict; given only CLOSED or CANCELLED ownership, the edit succeeds and preserves historical ownerId references. IT_STAFF/ADMINISTRATOR changes remain permitted unless self-change or last-active-Administrator protection blocks them.
 - **AC-48:** Given an Administrator sets another User’s valid new initial password, when it succeeds, then the password is hashed, all sessions are revoked, and the next login requires password change; self-reset is rejected.
 
 ### 10.7 Migration, Safety, UI, and Regression
 
-- **AC-49:** Given populated Lab 2 data, when Lab 3 migration completes, then every Development Requester keeps the same User id, every Ticket retains the same requester, and every Attachment retains its Ticket and uploader/remover references.
-- **AC-50:** Given existing Lab 2 statuses and priorities, when migration completes, then ASSIGNED maps to OPEN, PENDING_REQUESTER maps to WAITING_FOR_REQUESTER, all other meanings remain, and IT Priority equals Requested Priority.
+- **AC-49:** Given populated Lab 2 data, when Lab 3 migration completes, then every Development Requester keeps the same User id, every Ticket retains its id/requester/timestamps and other preserved fields, and every Attachment retains its id, Ticket, uploader/remover references, timestamps, and counts.
+- **AC-50:** Given the seven Lab 2 statuses, when migration completes, then NEW/IN_PROGRESS/RESOLVED/CLOSED/CANCELLED remain unchanged, ASSIGNED maps to OPEN, PENDING_REQUESTER maps to WAITING_FOR_REQUESTER, every migrated ownerId is null, and IT Priority equals Requested Priority; an uncovered value fails before mutation.
 - **AC-51:** Given seed runs repeatedly with environment-provided local credentials, when it completes, then required role and realistic workflow fixtures exist once and existing hashes are not reset.
 - **AC-52:** Given any safe failure or protected denial, when its response and logs are inspected, then no plaintext password, hash, cookie, CSRF token, Internal Note to a Requester, stack trace, SQL detail, database URL, storage key, or protected-resource existence leaks.
-- **AC-53:** Given every major Lab 3 screen at 390, 768, 820, 1024, and 1440 pixels, when inspected, then it follows Zen Green tokens with no unintended horizontal page scrolling, clipping, overlap, or hidden required actions.
-- **AC-54:** Given keyboard-only and assistive-technology use, when Login, password change, queue, operational detail, comments/notes, and User Management are exercised, then labels, focus, dialogs, live feedback, and non-color status meaning remain usable.
+- **AC-53:** Given Login, mandatory Change Password, authenticated Requester shell/Ticket Detail, Staff Queue, Staff Ticket Detail, and Administrator User Management at exactly 390 x 844, 834 x 1112, and 1440 x 900, when evidence is captured, then each screen follows Zen Green tokens with no unintended horizontal page overflow, clipping, overlap, or hidden essential action.
+- **AC-54:** Given those six screens at 200% browser zoom with keyboard-only and assistive-technology use, when exercised, then focus remains visible; controls, validation, labels, dialogs, and live feedback remain usable; essential content is not clipped or overlapped; Comments/Notes remain distinct; and editable/read-only fields remain distinguishable without color alone.
 - **AC-55:** Given the Lab 3 increment is complete, when all original Lab 1 and Lab 2 regression suites plus planned Lab 3 suites and builds run against the isolated test database, then all applicable tests pass with only the explicitly migrated identity/status assertions updated.
 - **AC-56:** Given populated Lab 2 Users and the migration credential mapping, when preflight runs, then a missing User credential, duplicate credential, unexpected key, or policy-invalid credential fails before mutation; when a valid unique mapping is supplied, every migrated User receives an independently salted Argon2id hash and mustChangePassword=true without plaintext appearing in storage, logs, responses, commits, or test output.
 - **AC-57:** Given a historical Ticket submitter is deactivated or changed away from REQUESTER, when the User edit succeeds, then existing requesterId values remain unchanged while that User can no longer authenticate as or receive Requester operations under the former role.
-- **AC-58:** Given concurrent Administrator edits involving role, activation, last-active-Administrator state, or non-terminal ownership, when OP-30 executes, then at most one valid transaction commits and each losing request receives the documented safe conflict without Ticket contents.
+- **AC-58:** Given concurrent Administrator edits involving role, activation, last-active-Administrator state, or non-terminal ownership, when OP-30 executes through the shared lock protocol, then at most one valid transaction commits and each losing request receives the documented safe conflict without Ticket contents.
+- **AC-59:** Given a populated Lab 2 snapshot containing every legacy status, when migration runs repeatedly from equivalent starting snapshots, then the exact mapping and null-owner result are deterministic, preserved identifiers/references/counts/timestamps match postflight checks, every migrated Ticket appears in the Staff Queue, and every non-terminal migrated Ticket is claimable without a status rewrite.
+- **AC-60:** Given each documented claim/assign/reassign/status-versus-role-or-activation race and concurrent Administrator edit, when both operations execute, then locks use ascending User ids before Ticket ids, only documented serialization failures receive at most two retries, the HTTP outcomes match the race table, and assertions prove the final database owner/status/User/session/history state satisfies every invariant.
+- **AC-61:** Given Login with a missing, literal null, malformed, wrong-scheme, wrong-hostname, wrong-port, misleading suffix/subdomain, or approved Origin, when submitted, then the first case returns 403 ORIGIN_REQUIRED, the disallowed cases return 403 ORIGIN_FORBIDDEN, the approved exact tuple continues to credential validation without a CSRF token, rejected cases create no session, and no response reveals whether the email exists.
 
 ## 11. Product Definition of Done
 
 Product completion requires every applicable item below; documentation approval alone is not implementation completion.
 
 - [ ] FR-01 through FR-44 and BR-01 through BR-81 are implemented or directly verified.
-- [ ] AC-01 through AC-58 map to at least one planned test and later to passing evidence.
+- [ ] AC-01 through AC-61 map to at least one planned test and later to passing evidence.
 - [ ] All 31 REST operations match api-spec.md and the authorization matrix.
-- [ ] Argon2id parameters, password boundaries, session digest storage, expiry, logout revocation, login throttling, and CSRF controls are implemented and tested.
+- [ ] Argon2id parameters, password boundaries, session digest storage, expiry, logout revocation, login throttling, authenticated CSRF, and exact Login/unsafe-request Origin controls are implemented and tested.
 - [ ] Forced password change cannot be bypassed through routes or direct API calls.
 - [ ] The Development Requester selector, Change Requester action, sessionStorage identity, and identity header are removed.
 - [ ] Requester Ticket and Attachment ownership is derived from the session and remains safe against direct identifiers.
-- [ ] Queue query, assignment, priority, status, Comment, Note, and resolution-indication contracts are complete and concurrency-safe.
+- [ ] Queue query, assignment, priority, status, Comment, Note, and resolution-indication contracts are complete; every ownership/User race follows ascending User-id then Ticket-id locks, bounded serialization retry, and final-state assertions.
 - [ ] The exact status-transition matrix and required confirmations are enforced.
 - [ ] Requesters never receive Internal Notes.
 - [ ] Administrator self-safety, last-active-Administrator, non-terminal-owner, duplicate-email, one-role, no-deletion, and session-revocation rules are enforced transactionally; terminal-only ownership and historical submitter/owner references remain intact.
-- [ ] Migration preflight and postflight prove that existing Users/Tickets/Attachments and ownership links are preserved, and a complete unique per-User credential mapping is validated before mutation and independently hashed without exposure.
+- [ ] Migration preflight/postflight prove the complete seven-status mapping, ownerId=null, deterministic repeatability, Queue visibility/claimability, preserved ids/references/counts/timestamps, and complete unique per-User credential hashing without exposure.
 - [ ] Seed is idempotent, uses unique environment-provided per-User local credentials, preserves existing hashes, and creates all required safe fixtures.
-- [ ] Unit, API/integration, SEC, MIG, REG, UI, STYLE, RESP, and E2E planned tests are implemented without skipped or weakened assertions.
+- [ ] All 75 stable Unit, API/integration, SEC, MIG, REG, UI, STYLE, RESP, and E2E Planned tests are implemented without skipped or weakened assertions.
 - [ ] Existing Lab 1 and Lab 2 suites pass after only approved migration updates.
 - [ ] Client and server production builds pass; compiled-server start and health smoke checks pass.
-- [ ] Desktop, tablet, and mobile screenshots cover authentication, queue, operational detail, and User Management with visible focus and safe states.
+- [ ] Evidence covers all six major screens at exactly 390 x 844, 834 x 1112, and 1440 x 900, plus 200% zoom assertions for visible focus, usable controls/validation, no clipped/overlapping/overflowing essential content, communication distinction, and editable/read-only distinction.
 - [ ] No response or tracked artifact contains a credential, secret, token, hash, database URL, or private Internal Note exposed to a Requester.
 - [ ] reviewer.md contains only real review evidence and ai-use.md contains only real AI-use evidence.
 - [ ] README and environment examples document untracked migration/seed credential-map provisioning, session configuration, run, test, and recovery steps without real credentials or complete mappings.
@@ -438,7 +484,7 @@ Product completion requires every applicable item below; documentation approval 
 | ID | Decision | Reason |
 | --- | --- | --- |
 | D-01 | Use Argon2id and opaque database-backed cookie sessions instead of browser-stored bearer tokens. | Password and logout revocation are explicit, and JavaScript cannot read the session credential. |
-| D-02 | Use SameSite=Strict cookies plus a stored-digest double-submit CSRF token and Origin allowlist. | Cookie authentication needs explicit unsafe-request protection. |
+| D-02 | Use SameSite=Strict cookies plus a stored-digest double-submit CSRF token and an exact normalized scheme/host/effective-port Origin allowlist; Login requires Origin but no CSRF token. | Cookie authentication and session-creating Login both need explicit cross-site request protection without trusting Referer or partial hostname matches. |
 | D-03 | Grant Administrators the operational Ticket permissions shown in the matrix. | The handout permits Administrator ownership and visibility; the choice is explicit rather than accidental. |
 | D-04 | Keep Requester REST paths stable and replace only identity resolution. | Minimizes Lab 2 regression while removing insecure simulated identity. |
 | D-05 | Keep Attachment mutation Requester-only; Staff/Admin receive read access. | Lab 3 requires Attachment continuity on operational detail but does not add Staff attachment management. |
@@ -447,7 +493,9 @@ Product completion requires every applicable item below; documentation approval 
 | D-08 | Rename the existing requester table and preserve ids and immutable requesterId references. | This is the least risky way to keep Ticket and Attachment ownership intact while current role and activation independently govern permissions. |
 | D-09 | Do not paginate the minimalist Administrator list. | The handout excludes mandatory pagination and advanced list behavior. |
 | D-10 | Treat CLOSED and CANCELLED as terminal for Lab 3. | REOPENED is reserved for returning a RESOLVED Ticket to work and avoids an ambiguous terminal workflow. |
-| D-11 | Require optimistic timestamps on mutable operational and Admin records. | Prevents silent overwrites during concurrent lab workflows. |
+| D-11 | Combine optimistic timestamps with SERIALIZABLE transactions, ascending User-id then Ticket-id row locks, and at most two full retries for SQLSTATE 40001. | Prevents silent overwrites, assignment/demotion races, and protocol deadlocks while giving deterministic safe conflicts. |
 | D-12 | There are no unresolved specification ambiguities in this revision. Future changes must update affected requirements, ACs, APIs, UI rules, and planned tests before implementation. | Preserves Spec DD and traceability. |
 | D-13 | Provision migrated and seeded initial credentials from separate untracked per-User environment mappings; reject incomplete, duplicate, unexpected, or policy-invalid values before mutation. | Unique credentials eliminate the shared-secret design while keeping real password material outside version control and evidence. |
 | D-14 | Treat requesterId and terminal ownerId as historical identity references, while application transactions enforce current eligibility for permissions and non-terminal ownership. | A foreign key preserves who acted; it cannot safely encode a User's permanent role, and history must not be rewritten. |
+| D-15 | Preserve every legacy Ticket's mapped workflow status with ownerId=null rather than inventing an owner or altering status to meet a future-transition prerequisite. | Lab 2 stored no operational IT owner, and migration must preserve facts rather than manufacture them. |
+| D-16 | Keep CSS breakpoints separate from evidence viewports and require 390 x 844, 834 x 1112, 1440 x 900, and 200% zoom evidence. | Exact reproducible evidence dimensions make responsive acceptance objective without redefining layout breakpoints. |

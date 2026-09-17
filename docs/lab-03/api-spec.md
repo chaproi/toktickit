@@ -21,7 +21,7 @@ The browser sends credentials with same-origin requests. There is no bearer toke
 | tocktickit_session | Raw 32-byte opaque session token | HttpOnly; SameSite=Strict; Path=/; Secure outside localhost; Max-Age no later than absolute expiry |
 | tocktickit_csrf | Raw random CSRF token | SameSite=Strict; Path=/; Secure outside localhost; same expiry; intentionally readable so the client can echo it |
 
-Only SHA-256 digests of both values are stored. Authenticated unsafe methods require X-CSRF-Token equal to the CSRF cookie and its stored digest. Credentialed CORS allows only the configured same-site client origin. Unsafe requests also require an allowed Origin.
+Only SHA-256 digests of both values are stored. Authenticated unsafe methods require X-CSRF-Token equal to the CSRF cookie and its stored digest. Every unsafe request, including unauthenticated Login, requires exactly one Origin header whose normalized scheme, hostname, and effective port exactly match an approved tuple. Login does not require a CSRF token because no authenticated session exists yet. Origin matching never uses wildcard, suffix, substring, literal null, or Referer fallback.
 
 ### 1.3 Session and Password-Change Gate
 
@@ -79,7 +79,7 @@ fields and requestId are optional. Internal exceptions, Prisma/SQL text, databas
 | 204 No Content | Successful Logout |
 | 400 Bad Request | Invalid body, path, or query |
 | 401 Unauthorized | No live authenticated session or invalid login credentials |
-| 403 Forbidden | Role denial, inactive valid credentials, forced-password gate, or invalid CSRF |
+| 403 Forbidden | Role denial, inactive valid credentials, forced-password gate, invalid CSRF, or missing/disallowed Origin |
 | 404 Not Found | Missing resource or ownership-safe protected resource |
 | 409 Conflict | Stale write, duplicate email, invalid current state, or safety invariant |
 | 410 Gone | Removed owned Attachment content |
@@ -102,6 +102,31 @@ For a protected request, the server performs this order:
 7. Validate current state, references, expectedUpdatedAt, and business invariants.
 8. Perform the transaction and return an explicit DTO.
 
+### 2.4 Shared Eligibility Mutation Protocol
+
+OP-22 Claim, OP-23 Assign/Reassign, OP-25 owner-dependent Status, and OP-30 role/activation edits share this protocol:
+
+1. Begin a PostgreSQL SERIALIZABLE transaction.
+2. Perform a non-mutating preliminary read to collect all potentially affected User ids: actor, Administrator target, current owner, proposed owner/claimant, and active Administrators required for the last-active-Administrator check.
+3. Lock those User rows with SELECT FOR UPDATE in ascending User-id order. Then lock the affected Ticket row; an OP-30 demotion/deactivation locks every non-terminal Ticket currently owned by the target in ascending Ticket-id order. If the locked Ticket reveals an affected User not already locked, roll back without mutation and restart with the expanded lock set.
+4. Re-read role, isActive, User.updatedAt, Ticket status, ownerId, and Ticket.updatedAt after locks; revalidate authorization, expected versions, terminal state, last-admin safety, and the final owner invariant.
+5. Apply all User/Ticket/session/history changes atomically and commit. A non-terminal Ticket may commit with owner=null; if non-null, the owner must be active IT Staff or Administrator. CLOSED/CANCELLED may retain an historical owner.
+6. Retry only SQLSTATE 40001 serialization failures, at most twice after the initial attempt. Every retry restarts the transaction and lock acquisition; exhaustion returns 409 CONCURRENT_UPDATE. Business/stale/validation conflicts and unexpected/deadlock errors are never retried. The mandatory User-before-Ticket and ascending-id order prevents protocol deadlocks.
+
+Safe race results:
+
+| Race | Result if ownership operation locks first | Result if role/activation edit locks first |
+| --- | --- | --- |
+| Claim vs claimant deactivation | Claim 200; deactivation 409 USER_HAS_NON_TERMINAL_TICKETS; active eligible owner committed | Deactivation 200; claim 409 OWNER_ELIGIBILITY_CONFLICT; Ticket remains unassigned |
+| Assign vs target deactivation | Assign 200; deactivation 409 USER_HAS_NON_TERMINAL_TICKETS; eligible owner committed | Deactivation 200; assign 409 OWNER_ELIGIBILITY_CONFLICT; prior owner unchanged |
+| Assign vs target change to REQUESTER | Assign 200; role edit 409 USER_HAS_NON_TERMINAL_TICKETS; eligible owner committed | Role edit 200; assign 409 OWNER_ELIGIBILITY_CONFLICT; prior owner unchanged |
+| Reassign vs old-owner deactivation/demotion | Reassign 200; edit may then succeed only if no other non-terminal ownership remains | Edit returns 409 USER_HAS_NON_TERMINAL_TICKETS while old ownership remains; reassign may then commit |
+| Reassign vs new-owner deactivation/demotion | Reassign 200; edit returns 409 USER_HAS_NON_TERMINAL_TICKETS | Edit 200 before ownership; reassign 409 OWNER_ELIGIBILITY_CONFLICT; prior owner unchanged |
+| Owner-dependent status vs owner eligibility edit | Status revalidates owner; later edit conflicts while result is non-terminal, or may succeed after a terminal result and preserve history | Edit cannot invalidate an existing non-terminal owner; status re-reads and commits with eligible owner or returns OWNER_ELIGIBILITY_CONFLICT/STATUS_OWNER_REQUIRED |
+| Concurrent Administrator edits | First valid edit commits and advances User.updatedAt | Waiting edit returns STALE_WRITE or the applicable LAST_ACTIVE_ADMIN_REQUIRED/USER_HAS_NON_TERMINAL_TICKETS conflict |
+
+Each conflict returns the common error shape without Ticket identifiers or contents. A race test must verify the committed User, Ticket, session, and history rows, not only the HTTP codes.
+
 ## 3. Endpoint Catalog
 
 | Operation | Method and path | Authentication | Permitted role | Success |
@@ -109,7 +134,7 @@ For a protected request, the server performs this order:
 | OP-01 | GET /api/health | No | Public | 200 |
 | OP-02 | GET /api/categories | No | Public | 200 |
 | OP-03 | GET /api/related-systems | No | Public | 200 |
-| OP-04 | POST /api/auth/login | No | Public | 200 |
+| OP-04 | POST /api/auth/login | No session; exact Origin required | Public | 200 |
 | OP-05 | GET /api/auth/me | Yes | Any active User, including forced-change | 200 |
 | OP-06 | POST /api/auth/logout | Session if present; CSRF if live | Any | 204 |
 | OP-07 | POST /api/auth/change-password | Yes + CSRF | Any active User, including forced-change | 200 |
@@ -150,6 +175,10 @@ GET /api/categories preserves the Lab 1 array shape and ordering. GET /api/relat
 
 ### OP-04 Login
 
+POST /api/auth/login first requires exactly one Origin header. The server parses it as an origin and normalizes the scheme and hostname to lowercase plus the effective port (explicit port, otherwise 443 for https or 80 for http). The resulting (scheme, hostname, effectivePort) tuple must exactly equal one configured allowlist tuple. The comparison does not accept wildcards, suffixes, substrings, misleading subdomains, alternate schemes/ports, the literal value null, multiple values, or a Referer substitute.
+
+Origin validation occurs before request-body credential lookup or session creation. A rejected Origin performs no password verification, throttle success/reset, AuthSession insert, or cookie issue and uses the same response for every supplied email. Approved Origin proceeds to the normal body, throttle, and credential validation. No X-CSRF-Token is required for Login because no authenticated session exists.
+
 Request:
 
     {
@@ -183,6 +212,8 @@ Failures:
 
 | Status | Code | Condition |
 | --- | --- | --- |
+| 403 | ORIGIN_REQUIRED | Origin header is absent |
+| 403 | ORIGIN_FORBIDDEN | Origin is malformed, repeated, literal null, wrong scheme/hostname/effective port, misleading suffix/subdomain, or otherwise not an exact allowlist tuple |
 | 400 | VALIDATION_ERROR | Missing, non-string, oversized, or unknown field |
 | 401 | INVALID_CREDENTIALS | Unknown/malformed email or wrong password; same message |
 | 403 | ACCOUNT_INACTIVE | Correct password for inactive User |
@@ -447,7 +478,7 @@ Response:
       }
     }
 
-matching is totalItems after all filters. unassigned and mine apply the same search/category/system/priority/status filters but replace the owner filter, so the simple counts remain meaningful. Invalid query returns 400 INVALID_QUERY. Valid unmatched references return 200 empty.
+matching is totalItems after all filters. unassigned and mine apply the same search/category/system/priority/status filters but replace the owner filter, so the simple counts remain meaningful. owner is null for unassigned Tickets in any status. Migrated unassigned Tickets appear under the same filters and default ordering; migration does not hide or rewrite them. Invalid query returns 400 INVALID_QUERY. Valid unmatched references return 200 empty.
 
 ### OP-20 Operational Ticket Detail
 
@@ -482,7 +513,7 @@ GET /api/staff/tickets/:ticketId returns:
       ]
     }
 
-History sorts oldest first. Attachment, Comment, and Note collections use their separate endpoints. Missing Ticket returns 404 TICKET_NOT_FOUND.
+History sorts oldest first. owner may be null in every status and is rendered as Unassigned; an unassigned migrated non-terminal Ticket remains claimable. Attachment, Comment, and Note collections use their separate endpoints. Missing Ticket returns 404 TICKET_NOT_FOUND.
 
 ### OP-21 Eligible Assignees
 
@@ -514,7 +545,7 @@ POST /api/staff/tickets/:ticketId/claim accepts only:
 
     { "expectedUpdatedAt": "2026-09-17T10:00:00.000Z" }
 
-Ticket must not be CLOSED or CANCELLED. Unassigned becomes owned by authenticated User. Already owned by caller is idempotent 200 even if expectedUpdatedAt is unchanged from the caller’s current representation. Another owner returns 409 OWNER_CONFLICT; stale unassigned state returns 409 STALE_WRITE.
+Ticket must not be CLOSED or CANCELLED. Any unassigned non-terminal Ticket—including migrated OPEN, IN_PROGRESS, WAITING_FOR_REQUESTER, or RESOLVED—becomes owned by the authenticated User without changing status. Already owned by caller is idempotent 200 only after the shared protocol confirms that caller remains active Staff/Admin. Another owner returns 409 OWNER_CONFLICT; stale unassigned state returns 409 STALE_WRITE; claimant role/deactivation races return 409 OWNER_ELIGIBILITY_CONFLICT; exhausted serialization retries return 409 CONCURRENT_UPDATE.
 
 ### OP-23 Assign, Reassign, or Unassign
 
@@ -525,7 +556,7 @@ PATCH /api/staff/tickets/:ticketId/owner accepts:
       "expectedUpdatedAt": "2026-09-17T10:00:00.000Z"
     }
 
-ownerId may be null only for NEW, OPEN, or REOPENED. A non-null target must be active IT Staff or Administrator. CLOSED/CANCELLED cannot change owner. Failures: 400 VALIDATION_ERROR, 404 TICKET_NOT_FOUND or OWNER_NOT_FOUND, 409 OWNER_CHANGE_NOT_ALLOWED or STALE_WRITE.
+ownerId=null is a permitted stored state in every status, but this endpoint may deliberately unassign only NEW, OPEN, or REOPENED. A non-null target must remain active IT Staff or Administrator through commit. CLOSED/CANCELLED cannot change owner. Assignment/reassignment uses the shared protocol and returns 409 OWNER_ELIGIBILITY_CONFLICT if the proposed owner becomes inactive or REQUESTER, 409 STALE_WRITE for a changed Ticket version, 409 CONCURRENT_UPDATE after serialization retry exhaustion, or 409 OWNER_CHANGE_NOT_ALLOWED for a disallowed status/action. Invalid input returns 400 VALIDATION_ERROR; missing/hidden Ticket or assignee returns 404 TICKET_NOT_FOUND or OWNER_NOT_FOUND.
 
 ### OP-24 Update IT Priority
 
@@ -564,7 +595,7 @@ Allowed transitions:
 | CLOSED | none |
 | CANCELLED | none |
 
-OPEN, IN_PROGRESS, WAITING_FOR_REQUESTER, RESOLVED, CLOSED, and REOPENED require an active owner. RESOLVED, CLOSED, and CANCELLED require confirm=true. Success updates Ticket and creates exactly one status-history row in one transaction. REOPENED clears the resolution indication. Failures include 409 STATUS_TRANSITION_NOT_ALLOWED, STATUS_OWNER_REQUIRED, STATUS_CONFIRMATION_REQUIRED, STATUS_UNCHANGED, TERMINAL_TICKET, or STALE_WRITE.
+OPEN, IN_PROGRESS, WAITING_FOR_REQUESTER, RESOLVED, CLOSED, and REOPENED transitions require a non-null active Staff/Admin owner at commit; an already stored unassigned Ticket remains valid until such a transition is requested. RESOLVED, CLOSED, and CANCELLED require confirm=true. The shared protocol locks/revalidates the owner and Ticket; success updates Ticket and creates exactly one status-history row atomically, and REOPENED clears the resolution indication. Failures include 409 STATUS_TRANSITION_NOT_ALLOWED, STATUS_OWNER_REQUIRED, OWNER_ELIGIBILITY_CONFLICT, STATUS_CONFIRMATION_REQUIRED, STATUS_UNCHANGED, TERMINAL_TICKET, STALE_WRITE, or CONCURRENT_UPDATE.
 
 ## 9. Internal Notes
 
@@ -657,7 +688,7 @@ PATCH /api/admin/users/:userId requires the complete editable state to avoid amb
 
 Only these fields are accepted. Password and mustChangePassword are not editable here.
 
-The service locks the target User and evaluates the complete replacement state in one transaction. After syntax and normalized-email validation, checks run in this deterministic order: expectedUpdatedAt, self-change protection, last-active-Administrator protection, non-terminal owner eligibility, and normalized-email uniqueness. Every check is repeated against transaction-visible state before commit. A successful role change or deactivation deletes every session for the affected User in that transaction so later access cannot continue with stale permissions.
+The service uses Section 2.4's shared SERIALIZABLE eligibility protocol. It locks all contributing User rows in ascending id order before the target's non-terminal Ticket rows in ascending id order, then evaluates expectedUpdatedAt, self-change protection, last-active-Administrator protection, non-terminal owner eligibility, and normalized-email uniqueness against the locked state. A successful role change or deactivation and deletion of every affected session commit atomically so no concurrent claim/assignment can retain stale permission.
 
 Exact role, history, and owner behavior:
 
@@ -667,7 +698,7 @@ Exact role, history, and owner behavior:
 - If the User owns only CLOSED or CANCELLED Tickets, deactivation or a change to REQUESTER returns 200 and preserves every historical ownerId. No reassignment is performed implicitly.
 - IT_STAFF-to-ADMINISTRATOR and ADMINISTRATOR-to-IT_STAFF changes with proposed isActive=true return 200 while non-terminal ownership is retained because both roles remain owner-eligible, unless self-change or last-active-Administrator protection applies. A simultaneous deactivation still applies the non-terminal-owner conflict.
 - An edit that would leave no active Administrator returns 409 LAST_ACTIVE_ADMIN_REQUIRED, including an otherwise owner-eligible ADMINISTRATOR-to-IT_STAFF change. Self-deactivation or self-role-change returns 409 SELF_ADMIN_CHANGE_FORBIDDEN.
-- Concurrent requests serialize on the locked target and Administrator-safety state. Exactly one request may commit against a given expectedUpdatedAt; a later request returns 409 STALE_WRITE, or the more specific safety conflict if a separately committed ownership/Administrator change invalidated its proposed state. No partial User, session, requesterId, or ownerId change occurs.
+- Concurrent User edits and Ticket ownership mutations follow the Section 2.4 race table. Exactly one request may commit against a given expectedUpdatedAt; a later request returns 409 STALE_WRITE, the applicable USER_HAS_NON_TERMINAL_TICKETS/LAST_ACTIVE_ADMIN_REQUIRED conflict, or 409 CONCURRENT_UPDATE after three failed serialization attempts. No partial User, session, requesterId, or ownerId change occurs.
 
 Success is exactly 200 with { user: UserManagementDTO }. Unchanged submitted role/activation values do not rewrite historical references. Role changes and deactivation revoke the target sessions; an email/name-only edit does not.
 
@@ -680,6 +711,7 @@ Conflicts:
 | 409 LAST_ACTIVE_ADMIN_REQUIRED | Edit would leave zero active Administrators |
 | 409 USER_HAS_NON_TERMINAL_TICKETS | Deactivation or change to REQUESTER would invalidate one or more non-terminal owner assignments; reassign or unassign them first, with no Ticket contents returned |
 | 409 STALE_WRITE | expectedUpdatedAt no longer matches transaction-visible state |
+| 409 CONCURRENT_UPDATE | Three SERIALIZABLE attempts could not commit; retry the whole user action from fresh state |
 
 Invalid path/body values return 400 INVALID_USER_ID or VALIDATION_ERROR. Missing User returns 404 USER_NOT_FOUND. Every conflict leaves the User, sessions, requesterId references, and ownerId references unchanged. There is no DELETE User endpoint.
 
@@ -700,12 +732,12 @@ Success atomically replaces the hash, sets mustChangePassword true, records pass
 
 | Area | Stable codes |
 | --- | --- |
-| Authentication | VALIDATION_ERROR, INVALID_CREDENTIALS, ACCOUNT_INACTIVE, LOGIN_THROTTLED, AUTHENTICATION_REQUIRED, PASSWORD_CHANGE_REQUIRED, INVALID_CURRENT_PASSWORD, CSRF_INVALID, ORIGIN_FORBIDDEN |
+| Authentication | VALIDATION_ERROR, INVALID_CREDENTIALS, ACCOUNT_INACTIVE, LOGIN_THROTTLED, AUTHENTICATION_REQUIRED, PASSWORD_CHANGE_REQUIRED, INVALID_CURRENT_PASSWORD, CSRF_INVALID, ORIGIN_REQUIRED, ORIGIN_FORBIDDEN |
 | Authorization | ROLE_FORBIDDEN |
-| Ticket/query | INVALID_QUERY, INVALID_TICKET_ID, TICKET_NOT_FOUND, IDEMPOTENCY_CONFLICT, STALE_WRITE, TERMINAL_TICKET |
+| Ticket/query | INVALID_QUERY, INVALID_TICKET_ID, TICKET_NOT_FOUND, IDEMPOTENCY_CONFLICT, STALE_WRITE, CONCURRENT_UPDATE, TERMINAL_TICKET |
 | Attachment | INVALID_ATTACHMENT_ID, ATTACHMENT_NOT_FOUND, FILE_REQUIRED, ATTACHMENT_TOO_LARGE, UNSUPPORTED_ATTACHMENT_TYPE, ATTACHMENT_LIMIT_REACHED, INVALID_DISPOSITION, ATTACHMENT_REMOVED, ATTACHMENT_ALREADY_REMOVED |
-| Ownership/workflow | OWNER_NOT_FOUND, OWNER_CONFLICT, OWNER_CHANGE_NOT_ALLOWED, STATUS_TRANSITION_NOT_ALLOWED, STATUS_OWNER_REQUIRED, STATUS_CONFIRMATION_REQUIRED, STATUS_UNCHANGED, RESOLUTION_INDICATION_NOT_ALLOWED |
-| User Admin | INVALID_USER_ID, USER_NOT_FOUND, EMAIL_ALREADY_EXISTS, SELF_ADMIN_CHANGE_FORBIDDEN, LAST_ACTIVE_ADMIN_REQUIRED, USER_HAS_NON_TERMINAL_TICKETS, SELF_INITIAL_PASSWORD_RESET_FORBIDDEN |
+| Ownership/workflow | OWNER_NOT_FOUND, OWNER_CONFLICT, OWNER_ELIGIBILITY_CONFLICT, OWNER_CHANGE_NOT_ALLOWED, STATUS_TRANSITION_NOT_ALLOWED, STATUS_OWNER_REQUIRED, STATUS_CONFIRMATION_REQUIRED, STATUS_UNCHANGED, RESOLUTION_INDICATION_NOT_ALLOWED |
+| User Admin | INVALID_USER_ID, USER_NOT_FOUND, EMAIL_ALREADY_EXISTS, SELF_ADMIN_CHANGE_FORBIDDEN, LAST_ACTIVE_ADMIN_REQUIRED, USER_HAS_NON_TERMINAL_TICKETS, STALE_WRITE, CONCURRENT_UPDATE, SELF_INITIAL_PASSWORD_RESET_FORBIDDEN |
 | Dependencies | INTERNAL_ERROR, SERVICE_UNAVAILABLE, STORAGE_UNAVAILABLE |
 
 ## 12. Removed and Preserved Contract
@@ -714,4 +746,5 @@ Success atomically replaces the hash, sets mustChangePassword true, records pass
 - X-Development-Requester-Id never authorizes or changes a Lab 3 request.
 - Health, Category, Related System, Requester Ticket, and Attachment paths remain stable where listed.
 - Lab 2 Ticket numbering, idempotency, query stability, Attachment validation/storage compensation, safe content headers, and soft-removal semantics remain in force.
+- Migration maps NEW/IN_PROGRESS/RESOLVED/CLOSED/CANCELLED to themselves, ASSIGNED to OPEN, and PENDING_REQUESTER to WAITING_FOR_REQUESTER; every migrated Ticket has ownerId=null, remains visible in the Staff Queue, and is claimable while non-terminal.
 - No endpoint supports self-registration, user deletion, multiple roles, Actions Taken, account history, email delivery, bulk operations, or password-reset links.
