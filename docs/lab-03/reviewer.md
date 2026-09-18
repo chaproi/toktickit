@@ -87,12 +87,12 @@ This section records the corrective commits now pushed and visible in PR #28 tog
 | RED concurrency-test commit | 0fc0cd373ffa596276875aa1376ecb69561c5ba8 (`test(auth): cover concurrent login failures`) |
 | GREEN atomic-throttle commit | 0e606ac2cc9d52583db6bca0d4b95978dd3581e6 (`fix(auth): serialize failed-login updates`) |
 | Documentation-evidence commit | 268eb53a6935528aee005ef9ec8cc54c53cf2cbe (`docs(lab3): record throttle concurrency review`) |
-| Commit visibility | Five commits are pushed and visible in PR #28 |
+| Commit visibility | The implementation and corrective commits through `268eb53` are pushed and visible in PR #28. The containing governance-sync commit is identified by Git history. |
 | Correction | A single PostgreSQL `INSERT ... ON CONFLICT ... DO UPDATE ... RETURNING` statement now calculates and commits the same-key count, active-window reset, and block deadline atomically at the unique throttle row. |
 | Regression coverage | A database lock barrier deterministically overlaps two real failed-login requests from stored count 3; the test asserts count 5, one throttle row, a valid 15-minute block, a safe following 429, an unchanged independent key, and redacted response bodies. |
 | Verification after correction | The focused concurrency case passed six consecutive runs; 73 focused Issue #27 tests, 185 server tests, 58 client tests, and six existing Lab 2 Playwright scenarios passed. Server/client production builds and the compiled health smoke passed, the smoke listener terminated, test sessions/throttles and disposable schemas were absent, and development counts/checksums remained unchanged. |
 | Re-review | Pending and not requested |
-| Review thread | Not resolved |
+| Review thread | No inline review thread exists; the submitted `Changes Requested` review remains active. |
 | Approval / merge / Issue #27 closure / Done transition | None occurred |
 
 The three corrective commits listed above are pushed and visible in PR #28. This documentation sync performs no GitHub action: it does not request re-review, resolve a review thread, approve or merge the PR, close Issue #27, or move the Project item from Fixing to Done.
@@ -106,13 +106,14 @@ Replace the implementation-evidence section of the PR #28 description with the f
 
 Closes #27
 
-### Commit history
+### Key commits
 
 - Initial RED: `22ce542`
 - Initial GREEN: `e74334a`
 - Concurrency RED: `0fc0cd3`
 - Concurrency GREEN: `0e606ac`
 - Documentation evidence: `268eb53`
+- Governance evidence sync: `8f370d6`
 
 ### Verification
 
