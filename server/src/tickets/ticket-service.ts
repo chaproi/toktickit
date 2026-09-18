@@ -123,10 +123,11 @@ export async function getTicketDetailForRequester(
 ): Promise<GetTicketDetailResult> {
   const prisma = getPrisma();
   const requester =
-    await prisma.developmentRequester.findFirst({
+    await prisma.user.findFirst({
       where: {
         id: requesterId,
         isActive: true,
+        role: "REQUESTER",
       },
       select: {
         id: true,
@@ -166,10 +167,11 @@ export async function listTicketsForRequester(
   const prisma = getPrisma();
 
   const requester =
-    await prisma.developmentRequester.findFirst({
+    await prisma.user.findFirst({
       where: {
         id: requesterId,
         isActive: true,
+        role: "REQUESTER",
       },
       select: {
         id: true,
@@ -304,10 +306,11 @@ export async function createTicketForRequester(
   const prisma = getPrisma();
 
   const requester =
-    await prisma.developmentRequester.findFirst({
+    await prisma.user.findFirst({
       where: {
         id: requesterId,
         isActive: true,
+        role: "REQUESTER",
       },
       select: {
         id: true,
@@ -403,6 +406,7 @@ export async function createTicketForRequester(
             relatedSystemId: input.relatedSystemId,
             requestedPriority:
               input.requestedPriority,
+            itPriority: input.requestedPriority,
             summary: input.summary,
             description: input.description,
           },

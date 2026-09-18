@@ -12,7 +12,7 @@ import {
 import {
   StorageUnavailableError,
 } from "./attachments/attachment-storage.js";
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import { Prisma } from "@prisma/client";
 import { getPrisma } from "./prisma.js";
@@ -23,11 +23,38 @@ import {
 } from "./tickets/ticket-service.js";
 import { validateCreateTicketInput } from "./tickets/ticket-validation.js";
 import { parseTicketListQuery } from "./tickets/ticket-query.js";
+import { authRouter } from "./auth/auth-router.js";
+import {
+  parseAllowedOrigins,
+  validateOriginHeader,
+} from "./auth/origin.js";
 
 export const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin(origin, callback) {
+      if (!origin) {
+        callback(null, false);
+        return;
+      }
+      try {
+        callback(
+          null,
+          validateOriginHeader(
+            [origin],
+            parseAllowedOrigins(process.env.AUTH_ALLOWED_ORIGINS),
+          ).success,
+        );
+      } catch {
+        callback(null, false);
+      }
+    },
+  }),
+);
 app.use(express.json());
+app.use(authRouter);
 
 const attachmentUpload = multer({
   storage: multer.memoryStorage(),
@@ -54,7 +81,7 @@ function sendDatabaseError(
   error: unknown,
   operation: string,
 ): void {
-  console.error(`Database error while ${operation}:`, error);
+  console.error(`Database error while ${operation}.`);
 
   if (isDatabaseUnavailableError(error)) {
     res.status(503).json({
@@ -159,8 +186,7 @@ function sendStorageError(
   operation: string,
 ): void {
   console.error(
-    `Attachment storage unavailable while ${operation}:`,
-    error,
+    `Attachment storage unavailable while ${operation}.`,
   );
   res.status(503).json({
     error: {
@@ -243,9 +269,10 @@ app.get(
   "/api/development-requesters",
   async (_req: Request, res: Response) => {
     try {
-      const requesters = await getPrisma().developmentRequester.findMany({
+      const requesters = await getPrisma().user.findMany({
         where: {
           isActive: true,
+          role: "REQUESTER",
         },
         select: {
           id: true,
@@ -915,8 +942,7 @@ app.post(
             error instanceof StorageUnavailableError
           ) {
             console.error(
-              "Attachment storage unavailable:",
-              error,
+              "Attachment storage unavailable.",
             );
 
             res.status(503).json({
@@ -937,6 +963,37 @@ app.post(
         }
       },
     );
+  },
+);
+
+app.use(
+  (
+    error: unknown,
+    _req: Request,
+    res: Response,
+    _next: NextFunction,
+  ) => {
+    if (
+      error instanceof SyntaxError &&
+      "status" in error &&
+      (error as SyntaxError & { status?: number }).status === 400
+    ) {
+      res.status(400).json({
+        error: {
+          code: "VALIDATION_ERROR",
+          message: "Request body must be valid JSON.",
+        },
+      });
+      return;
+    }
+
+    console.error("Unexpected request processing error.");
+    res.status(500).json({
+      error: {
+        code: "INTERNAL_ERROR",
+        message: "Something went wrong. Please try again.",
+      },
+    });
   },
 );
 export default app;

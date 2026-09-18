@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import {
+  afterAll,
   afterEach,
   describe,
   expect,
@@ -14,6 +15,24 @@ type ReferenceItem = {
   id: number;
   name: string;
 };
+
+const createdTicketIds = new Set<number>();
+
+function trackCreatedTicket(response: { body?: { ticket?: { id?: unknown } } }): void {
+  const ticketId = response.body?.ticket?.id;
+  if (typeof ticketId === "number" && Number.isSafeInteger(ticketId)) {
+    createdTicketIds.add(ticketId);
+  }
+}
+
+async function cleanCreatedTickets(): Promise<void> {
+  const ids = [...createdTicketIds];
+  if (ids.length === 0) return;
+  const prisma = getPrisma();
+  await prisma.attachment.deleteMany({ where: { ticketId: { in: ids } } });
+  await prisma.ticket.deleteMany({ where: { id: { in: ids } } });
+  createdTicketIds.clear();
+}
 
 async function getReferenceId(
   endpoint: string,
@@ -35,6 +54,8 @@ describe("POST /api/tickets", () => {
     afterEach(() => {
         vi.restoreAllMocks();
     });
+
+    afterAll(cleanCreatedTickets, 30_000);
 
     it("API-02 creates one valid Requester-owned Ticket", async () => {
         const [requesterId, categoryId, relatedSystemId] =
@@ -65,6 +86,7 @@ describe("POST /api/tickets", () => {
             description:
             "The battery decreases from full to empty in approximately one hour.",
         });
+        trackCreatedTicket(response);
 
         expect(response.status).toBe(201);
         expect(response.body.replayed).toBe(false);
@@ -163,7 +185,7 @@ describe("POST /api/tickets", () => {
 
     it("API-03 rejects inactive and nonexistent Requesters", async () => {
     const inactiveRequester =
-        await getPrisma().developmentRequester.findUnique({
+        await getPrisma().user.findUnique({
         where: {
             email: "emily.carter@example.com",
         },
@@ -275,6 +297,7 @@ describe("POST /api/tickets", () => {
         String(requesterId),
         )
         .send(payload);
+    trackCreatedTicket(firstResponse);
 
     expect(firstResponse.status).toBe(201);
     expect(replayResponse.status).toBe(200);
@@ -336,6 +359,7 @@ describe("POST /api/tickets", () => {
         ...payload,
         summary: "Campus Wi-Fi cannot connect",
         });
+    trackCreatedTicket(firstResponse);
 
     expect(firstResponse.status).toBe(201);
     expect(conflictResponse.status).toBe(409);
@@ -356,7 +380,7 @@ describe("POST /api/tickets", () => {
     );
 
     vi.spyOn(
-        getPrisma().developmentRequester,
+        getPrisma().user,
         "findFirst",
     ).mockRejectedValueOnce(
         new Error(

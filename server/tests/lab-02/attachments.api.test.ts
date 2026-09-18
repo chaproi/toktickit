@@ -297,7 +297,7 @@ describe("POST /api/tickets/:ticketId/attachments", () => {
         const { ticketId } = await createOwnedTicket();
         const prisma = getPrisma();
         const inactiveRequester =
-            await prisma.developmentRequester.findUnique({
+            await prisma.user.findUnique({
                 where: {
                     email: "emily.carter@example.com",
                 },
@@ -309,7 +309,7 @@ describe("POST /api/tickets/:ticketId/attachments", () => {
 
         expect(inactiveRequester).not.toBeNull();
         expect(
-            await prisma.developmentRequester.findUnique({
+            await prisma.user.findUnique({
                 where: { id: nonexistentRequesterId },
             }),
         ).toBeNull();
@@ -570,7 +570,7 @@ describe("POST /api/tickets/:ticketId/attachments", () => {
         const { ticketId } = await createOwnedTicket();
 
         const inactiveRequester =
-            await getPrisma().developmentRequester.findUnique({
+            await getPrisma().user.findUnique({
                 where: {
                     email: "emily.carter@example.com",
                 },
@@ -829,7 +829,7 @@ describe("owned Attachment metadata and content", () => {
             data: {
                 isRemoved: true,
                 removedAt,
-                removedByRequesterId: requesterId,
+                removedByUserId: requesterId,
                 removalReason: "Uploaded the wrong document.",
             },
         });
@@ -1091,7 +1091,7 @@ describe("owned Attachment soft removal", () => {
         expect(attachment).toMatchObject({
             isRemoved: false,
             removedAt: null,
-            removedByRequesterId: null,
+            removedByUserId: null,
             removalReason: null,
         });
     });
@@ -1139,7 +1139,7 @@ describe("owned Attachment soft removal", () => {
         expect(retainedMetadata).toMatchObject({
             id: uploadResponse.body.id,
             isRemoved: true,
-            removedByRequesterId: requesterId,
+            removedByUserId: requesterId,
             removalReason: "Uploaded the wrong image.",
         });
         expect(retainedMetadata?.removedAt).not.toBeNull();
@@ -1187,7 +1187,7 @@ describe("owned Attachment soft removal", () => {
         expect(retainedMetadata?.removedAt?.toISOString()).toBe(
             firstResponse.body.removedAt,
         );
-        expect(retainedMetadata?.removedByRequesterId).toBe(
+        expect(retainedMetadata?.removedByUserId).toBe(
             requesterId,
         );
         expect(retainedMetadata?.removalReason).toBe(
