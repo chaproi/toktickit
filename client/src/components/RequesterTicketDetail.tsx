@@ -1,28 +1,23 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   ApiRequestError,
+  addPublicComment,
+  getPublicComments,
   getTicketDetail,
-  type DevelopmentRequester,
+  indicateResolution,
+  type PublicComment,
   type RequestedPriority,
   type TicketDetail,
   type TicketStatus,
 } from "../api.js";
 import AttachmentSection from "./AttachmentSection.js";
 
-interface RequesterTicketDetailProps {
-  requester: DevelopmentRequester;
-}
-
-type DetailState = "loading" | "success" | "error";
+type LoadState = "loading" | "success" | "error";
 
 function formatDate(value: string): string {
   const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-
+  if (Number.isNaN(date.getTime())) return value;
   return new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "short",
@@ -32,25 +27,18 @@ function formatDate(value: string): string {
   }).format(date);
 }
 
-function badgeClass(
-  value: RequestedPriority | TicketStatus,
-): string {
-  if (value === "URGENT" || value === "CANCELLED") {
-    return "text-bg-danger";
-  }
+function enumLabel(value: string): string {
+  return value.toLowerCase().split("_").map((part) =>
+    part[0]?.toUpperCase() + part.slice(1),
+  ).join(" ");
+}
 
-  if (value === "HIGH" || value === "WAITING_FOR_REQUESTER") {
-    return "text-bg-warning";
-  }
-
-  if (
-    value === "LOW" ||
-    value === "RESOLVED" ||
-    value === "CLOSED"
-  ) {
+function badgeClass(value: RequestedPriority | TicketStatus): string {
+  if (value === "URGENT" || value === "CANCELLED") return "text-bg-danger";
+  if (value === "HIGH" || value === "WAITING_FOR_REQUESTER") return "text-bg-warning";
+  if (value === "LOW" || value === "RESOLVED" || value === "CLOSED") {
     return "text-bg-secondary";
   }
-
   return "text-bg-success";
 }
 
@@ -66,214 +54,253 @@ function ReadOnlyValue({
   return (
     <div className={className}>
       <dt className="ticket-detail-label">{label}</dt>
-      <dd className="read-only-field ticket-detail-value">
-        {children}
-      </dd>
+      <dd className="read-only-field ticket-detail-value">{children}</dd>
     </div>
   );
 }
 
-export default function RequesterTicketDetail({
-  requester,
-}: RequesterTicketDetailProps) {
-  const { ticketId: ticketIdParameter = "" } = useParams();
-  const ticketId = Number(ticketIdParameter);
-  const [detailState, setDetailState] =
-    useState<DetailState>("loading");
-  const [ticket, setTicket] = useState<TicketDetail | null>(null);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [retryVersion, setRetryVersion] = useState(0);
-  const [attachmentInitialLoadComplete, setAttachmentInitialLoadComplete] =
-    useState(false);
+function PublicComments({ ticketId }: { ticketId: number }) {
+  const [state, setState] = useState<LoadState>("loading");
+  const [items, setItems] = useState<PublicComment[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [content, setContent] = useState("");
+  const [error, setError] = useState("");
+  const [posting, setPosting] = useState(false);
+  const [retry, setRetry] = useState(0);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  const completeAttachmentInitialLoad = useCallback(() => {
-    setAttachmentInitialLoadComplete(true);
-  }, []);
+  const load = useCallback(async (signal?: AbortSignal) => {
+    setState("loading");
+    setError("");
+    try {
+      const response = await getPublicComments(ticketId, page, 20, signal);
+      setItems(response.items);
+      setTotalPages(response.pagination.totalPages);
+      setState("success");
+    } catch (caught) {
+      if (caught instanceof DOMException && caught.name === "AbortError") return;
+      setError(caught instanceof ApiRequestError ? caught.message : "Something went wrong. Please try again.");
+      setState("error");
+    }
+  }, [page, ticketId]);
 
   useEffect(() => {
     const controller = new AbortController();
-    setDetailState("loading");
-    setTicket(null);
-    setErrorMessage("");
-    setAttachmentInitialLoadComplete(false);
-
-    void getTicketDetail(
-      requester.id,
-      ticketId,
-      controller.signal,
-    )
-      .then((loadedTicket) => {
-        setTicket(loadedTicket);
-        setDetailState("success");
-      })
-      .catch((error: unknown) => {
-        if (
-          error instanceof DOMException &&
-          error.name === "AbortError"
-        ) {
-          return;
-        }
-
-        const isSafeDenial =
-          error instanceof ApiRequestError &&
-          (error.status === 403 || error.status === 404);
-        setErrorMessage(
-          isSafeDenial
-            ? "Ticket not found."
-            : error instanceof ApiRequestError
-              ? error.message
-              : "Something went wrong. Please try again.",
-        );
-        setDetailState("error");
-      });
-
+    void load(controller.signal);
     return () => controller.abort();
-  }, [requester.id, ticketId, retryVersion]);
+  }, [load, retry]);
 
-  if (detailState === "loading") {
-    return (
-      <section aria-labelledby="ticket-detail-heading">
-        <h1 id="ticket-detail-heading" className="h2">
-          Loading Ticket Detail
-        </h1>
-        <div className="ticket-detail-state" role="status">
-          Loading Ticket Detail…
-        </div>
-      </section>
-    );
+  async function submit(event: FormEvent) {
+    event.preventDefault();
+    if (posting) return;
+    const trimmed = content.trim();
+    if (trimmed.length < 1 || trimmed.length > 2_000) {
+      setError("Comment must contain between 1 and 2000 characters.");
+      inputRef.current?.focus();
+      return;
+    }
+    setPosting(true);
+    setError("");
+    try {
+      await addPublicComment(ticketId, trimmed);
+      setContent("");
+      await load();
+    } catch (caught) {
+      setError(caught instanceof ApiRequestError ? caught.message : "Something went wrong. Please try again.");
+    } finally {
+      setPosting(false);
+    }
   }
 
-  if (detailState === "error" || !ticket) {
-    const isNotFound = errorMessage === "Ticket not found.";
+  return (
+    <section className="card border-0 shadow-sm mb-4" aria-labelledby="comments-heading">
+      <div className="card-body p-4">
+        <h2 id="comments-heading" className="h4">Public Comments</h2>
+        {state === "loading" && <p role="status">Loading public comments…</p>}
+        {state === "error" && (
+          <div className="alert alert-danger" role="alert">
+            <p>{error}</p>
+            <button className="btn btn-outline-danger" type="button" onClick={() => setRetry((value) => value + 1)}>Try Again</button>
+          </div>
+        )}
+        {state === "success" && items.length === 0 && <p>No public comments yet.</p>}
+        {state === "success" && items.length > 0 && (
+          <ol className="public-comment-list">
+            {items.map((comment) => (
+              <li key={comment.id} className="public-comment-item">
+                <p className="mb-1"><strong>{comment.author.name}</strong> <span className="badge text-bg-light">{enumLabel(comment.author.role)}</span></p>
+                <p className="mb-1 public-comment-content">{comment.content}</p>
+                <time className="text-secondary small" dateTime={comment.createdAt}>{formatDate(comment.createdAt)}</time>
+              </li>
+            ))}
+          </ol>
+        )}
+        {totalPages > 1 && (
+          <div className="d-flex gap-2 mb-4">
+            <button className="btn btn-outline-success" type="button" disabled={page === 1} onClick={() => setPage((value) => value - 1)}>Previous comments</button>
+            <span className="align-self-center">Page {page} of {totalPages}</span>
+            <button className="btn btn-outline-success" type="button" disabled={page >= totalPages} onClick={() => setPage((value) => value + 1)}>Next comments</button>
+          </div>
+        )}
+        <form onSubmit={(event) => void submit(event)}>
+          <label className="form-label fw-semibold" htmlFor="public-comment">Add a public comment</label>
+          <p className="form-text">Visible to you and the support team.</p>
+          <textarea
+            ref={inputRef}
+            id="public-comment"
+            className="form-control"
+            rows={4}
+            maxLength={2_000}
+            disabled={posting}
+            value={content}
+            onChange={(event) => setContent(event.target.value)}
+          />
+          <p className="form-text">{content.length}/2000 characters</p>
+          {error && state !== "error" && <div className="alert alert-danger" role="alert">{error}</div>}
+          <button className="btn btn-success" type="submit" disabled={posting}>
+            {posting ? "Posting…" : "Post comment"}
+          </button>
+        </form>
+      </div>
+    </section>
+  );
+}
 
+const RESOLUTION_STATUSES = new Set<TicketStatus>([
+  "OPEN", "IN_PROGRESS", "WAITING_FOR_REQUESTER", "REOPENED",
+]);
+
+export default function RequesterTicketDetail() {
+  const { ticketId: parameter = "" } = useParams();
+  const ticketId = Number(parameter);
+  const [state, setState] = useState<LoadState>("loading");
+  const [ticket, setTicket] = useState<TicketDetail | null>(null);
+  const [error, setError] = useState("");
+  const [retry, setRetry] = useState(0);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [indicating, setIndicating] = useState(false);
+  const [indicationError, setIndicationError] = useState("");
+
+  useEffect(() => {
+    const controller = new AbortController();
+    setState("loading");
+    setError("");
+    void getTicketDetail(ticketId, controller.signal)
+      .then((response) => {
+        setTicket(response);
+        setState("success");
+      })
+      .catch((caught: unknown) => {
+        if (caught instanceof DOMException && caught.name === "AbortError") return;
+        const notFound = caught instanceof ApiRequestError && (caught.status === 403 || caught.status === 404);
+        setError(notFound ? "Ticket not found." : caught instanceof ApiRequestError ? caught.message : "Something went wrong. Please try again.");
+        setState("error");
+      });
+    return () => controller.abort();
+  }, [retry, ticketId]);
+
+  async function confirmResolution() {
+    if (!ticket || indicating) return;
+    setIndicating(true);
+    setIndicationError("");
+    try {
+      const result = await indicateResolution(ticket.id);
+      setTicket({
+        ...ticket,
+        currentStatus: result.currentStatus,
+        requesterResolutionIndicatedAt: result.requesterResolutionIndicatedAt,
+      });
+      setDialogOpen(false);
+    } catch (caught) {
+      if (caught instanceof ApiRequestError && caught.code === "RESOLUTION_INDICATION_NOT_ALLOWED") {
+        setDialogOpen(false);
+        setIndicationError("The Ticket changed and this action is no longer available. Reload the latest detail.");
+      } else {
+        setIndicationError("Something went wrong. Please try again.");
+      }
+    } finally {
+      setIndicating(false);
+    }
+  }
+
+  if (state === "loading") {
+    return <section><h1 className="h2">Loading Ticket Detail</h1><div className="ticket-detail-state" role="status">Loading Ticket Detail…</div></section>;
+  }
+  if (state === "error" || !ticket) {
     return (
-      <section aria-labelledby="ticket-detail-heading">
-        <h1 id="ticket-detail-heading" className="h2">
-          Ticket Detail
-        </h1>
+      <section>
+        <h1 className="h2">Ticket Detail</h1>
         <div className="ticket-detail-state" role="alert">
           <div>
-            <p className="mb-3">{errorMessage}</p>
-            <div className="d-flex flex-wrap justify-content-center gap-2">
-              {!isNotFound && (
-                <button
-                  type="button"
-                  className="btn btn-success"
-                  onClick={() =>
-                    setRetryVersion((current) => current + 1)
-                  }
-                >
-                  Try Again
-                </button>
-              )}
-              <Link className="btn btn-outline-success" to="/tickets">
-                Back to My Tickets
-              </Link>
-            </div>
+            <p>{error}</p>
+            {error !== "Ticket not found." && <button className="btn btn-success" type="button" onClick={() => setRetry((value) => value + 1)}>Try Again</button>}
+            <Link className="btn btn-outline-success ms-2" to="/tickets">Back to My Tickets</Link>
           </div>
         </div>
       </section>
     );
   }
 
+  const mayIndicate = RESOLUTION_STATUSES.has(ticket.currentStatus) &&
+    ticket.requesterResolutionIndicatedAt === null;
   return (
-    <section
-      className="ticket-detail-page"
-      aria-labelledby="ticket-detail-heading"
-    >
+    <section className="ticket-detail-page" aria-labelledby="ticket-detail-heading">
       <div className="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
         <div>
-          <h1 id="ticket-detail-heading" className="h2 mb-2">
-            {attachmentInitialLoadComplete
-              ? "Ticket Detail"
-              : "Loading Ticket Detail"}
-          </h1>
-          <p className="ticket-detail-number mb-0">
-            Official Ticket {ticket.ticketNumber}
-          </p>
+          <h1 id="ticket-detail-heading" className="h2 mb-2">Ticket Detail</h1>
+          <p className="ticket-detail-number mb-0">{ticket.ticketNumber}</p>
         </div>
-        <Link className="btn btn-outline-success" to="/tickets">
-          Back to My Tickets
-        </Link>
+        <Link className="btn btn-outline-success" to="/tickets">Back to My Tickets</Link>
       </div>
-
+      {indicationError && <div className="alert alert-warning" role="alert">{indicationError}</div>}
+      {ticket.requesterResolutionIndicatedAt && (
+        <div className="alert alert-success" role="status">
+          <p className="mb-1">Problem appears resolved as of {formatDate(ticket.requesterResolutionIndicatedAt)}.</p>
+          <p className="mb-0">Waiting for the support team to formally resolve this Ticket.</p>
+        </div>
+      )}
       <div className="card border-0 shadow-sm mb-4">
         <div className="card-body p-4">
-          <p className="text-secondary mb-4">
-            Ticket information is read-only.
-          </p>
+          <p className="text-secondary">Ticket information is read-only.</p>
           <dl className="ticket-detail-grid mb-0">
-            <ReadOnlyValue label="Ticket Number">
-              <span className="ticket-number-link">
-                {ticket.ticketNumber}
-              </span>
-            </ReadOnlyValue>
-            <ReadOnlyValue label="Ticket Date">
-              <time dateTime={ticket.ticketDate}>
-                {formatDate(ticket.ticketDate)}
-              </time>
-            </ReadOnlyValue>
-            <ReadOnlyValue label="Development Requester">
-              {ticket.requester.name}
-            </ReadOnlyValue>
-            <ReadOnlyValue label="Category">
-              {ticket.category.name}
-            </ReadOnlyValue>
-            <ReadOnlyValue label="Related System">
-              {ticket.relatedSystem.name}
-            </ReadOnlyValue>
-            <ReadOnlyValue label="Priority">
-              <span
-                className={`badge ${badgeClass(
-                  ticket.requestedPriority,
-                )}`}
-              >
-                {ticket.requestedPriority}
-              </span>
-            </ReadOnlyValue>
-            <ReadOnlyValue label="Status">
-              <span
-                className={`badge ${badgeClass(
-                  ticket.currentStatus,
-                )}`}
-              >
-                {ticket.currentStatus}
-              </span>
-            </ReadOnlyValue>
-            <ReadOnlyValue label="Created">
-              <time dateTime={ticket.createdAt}>
-                {formatDate(ticket.createdAt)}
-              </time>
-            </ReadOnlyValue>
-            <ReadOnlyValue label="Updated">
-              <time dateTime={ticket.updatedAt}>
-                {formatDate(ticket.updatedAt)}
-              </time>
-            </ReadOnlyValue>
-            <ReadOnlyValue
-              label="Summary"
-              className="ticket-detail-wide"
-            >
-              {ticket.summary}
-            </ReadOnlyValue>
-            <ReadOnlyValue
-              label="Description"
-              className="ticket-detail-wide"
-            >
-              <span className="ticket-detail-description">
-                {ticket.description}
-              </span>
-            </ReadOnlyValue>
+            <ReadOnlyValue label="Ticket Number">{ticket.ticketNumber}</ReadOnlyValue>
+            <ReadOnlyValue label="Ticket Date"><time dateTime={ticket.ticketDate}>{formatDate(ticket.ticketDate)}</time></ReadOnlyValue>
+            <ReadOnlyValue label="Requester">{ticket.requester.name}</ReadOnlyValue>
+            <ReadOnlyValue label="Category">{ticket.category.name}</ReadOnlyValue>
+            <ReadOnlyValue label="Related System">{ticket.relatedSystem.name}</ReadOnlyValue>
+            <ReadOnlyValue label="Requested Priority"><span className={`badge ${badgeClass(ticket.requestedPriority)}`}>{enumLabel(ticket.requestedPriority)}</span></ReadOnlyValue>
+            <ReadOnlyValue label="IT Priority"><span className={`badge ${badgeClass(ticket.itPriority)}`}>{enumLabel(ticket.itPriority)}</span></ReadOnlyValue>
+            <ReadOnlyValue label="Owner">{ticket.owner?.name ?? "Unassigned"}</ReadOnlyValue>
+            <ReadOnlyValue label="Status"><span className={`badge ${badgeClass(ticket.currentStatus)}`}>{enumLabel(ticket.currentStatus)}</span></ReadOnlyValue>
+            <ReadOnlyValue label="Created"><time dateTime={ticket.createdAt}>{formatDate(ticket.createdAt)}</time></ReadOnlyValue>
+            <ReadOnlyValue label="Updated"><time dateTime={ticket.updatedAt}>{formatDate(ticket.updatedAt)}</time></ReadOnlyValue>
+            <ReadOnlyValue label="Summary" className="ticket-detail-wide">{ticket.summary}</ReadOnlyValue>
+            <ReadOnlyValue label="Description" className="ticket-detail-wide"><span className="ticket-detail-description">{ticket.description}</span></ReadOnlyValue>
           </dl>
+          {mayIndicate && (
+            <button className="btn btn-outline-success mt-4" type="button" onClick={() => setDialogOpen(true)}>
+              Problem Appears Resolved
+            </button>
+          )}
         </div>
       </div>
-
-      <AttachmentSection
-        key={`${requester.id}-${ticket.id}`}
-        requesterId={requester.id}
-        ticketId={ticket.id}
-        onInitialLoadComplete={completeAttachmentInitialLoad}
-      />
+      <PublicComments ticketId={ticket.id} />
+      <AttachmentSection ticketId={ticket.id} />
+      {dialogOpen && (
+        <div className="attachment-dialog-backdrop">
+          <div className="attachment-dialog" role="dialog" aria-modal="true" aria-labelledby="resolution-heading">
+            <h2 id="resolution-heading" className="h4">Does the problem appear resolved?</h2>
+            <p>This tells the support team the problem appears resolved. It does not formally resolve or close the Ticket.</p>
+            <div className="d-flex justify-content-end gap-2">
+              <button className="btn btn-outline-secondary" type="button" disabled={indicating} onClick={() => setDialogOpen(false)}>Cancel</button>
+              <button className="btn btn-success" type="button" disabled={indicating} onClick={() => void confirmResolution()}>
+                {indicating ? "Saving…" : "Yes, it appears resolved"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

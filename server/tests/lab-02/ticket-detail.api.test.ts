@@ -9,6 +9,12 @@ import {
 } from "vitest";
 import { app } from "../../src/app.js";
 import { getPrisma } from "../../src/prisma.js";
+import {
+  authenticated,
+  createTestSession,
+  removeTestSessions,
+  type TestSession,
+} from "./authenticated-test-session.js";
 
 const RUN_MARKER = `Issue19-Detail-${randomUUID()}`;
 const ACTIVE_REQUESTER_EMAIL = "alex.morgan@example.com";
@@ -25,6 +31,7 @@ let otherTicketNumber: string;
 let categoryId: number;
 let relatedSystemId: number;
 let createdTicketIds: number[] = [];
+let requesterSession: TestSession;
 
 async function allocateTicketNumbers(count: number): Promise<string[]> {
   const existingNumbers = await getPrisma().ticket.findMany({
@@ -168,6 +175,9 @@ async function cleanFixtures(): Promise<void> {
 function getTicket(ticketId: string | number, requesterId?: string | number) {
   const ticketRequest = request(app).get(`/api/tickets/${ticketId}`);
 
+  if (requesterId === activeRequesterId) {
+    return authenticated(ticketRequest, requesterSession);
+  }
   if (requesterId !== undefined) {
     ticketRequest.set(
       "X-Development-Requester-Id",
@@ -178,8 +188,14 @@ function getTicket(ticketId: string | number, requesterId?: string | number) {
   return ticketRequest;
 }
 
-beforeAll(createFixtures, 30_000);
-afterAll(cleanFixtures, 30_000);
+beforeAll(async () => {
+  await createFixtures();
+  requesterSession = await createTestSession(activeRequesterId);
+}, 30_000);
+afterAll(async () => {
+  await removeTestSessions([requesterSession]);
+  await cleanFixtures();
+}, 30_000);
 
 describe("GET /api/tickets/:ticketId", () => {
   it("API-07 returns every approved read-only field for an owned Ticket", async () => {
@@ -203,10 +219,13 @@ describe("GET /api/tickets/:ticketId", () => {
         name: "Corporate Laptop",
       },
       requestedPriority: "HIGH",
+      itPriority: "HIGH",
+      owner: null,
       currentStatus: "IN_PROGRESS",
       summary: `${RUN_MARKER} owned laptop display issue`,
       description:
         "The corporate laptop display flickers after startup.",
+      requesterResolutionIndicatedAt: null,
       createdAt: "2042-06-01T08:30:00.000Z",
       updatedAt: "2042-06-02T09:45:00.000Z",
     });
@@ -214,29 +233,29 @@ describe("GET /api/tickets/:ticketId", () => {
     expect(response.body).not.toHaveProperty("requesterId");
   });
 
-  it("API-07 rejects a missing or malformed Development Requester header", async () => {
+  it("API-07 requires authentication and ignores malformed development identity headers", async () => {
     for (const requesterId of [undefined, "not-an-id", "1.5", "0", "-1"]) {
       const response = await getTicket(ownedTicketId, requesterId);
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(401);
       expect(response.body).toEqual({
         error: {
-          code: "REQUESTER_REQUIRED",
-          message: "A valid Development Requester is required.",
+          code: "AUTHENTICATION_REQUIRED",
+          message: "Authentication is required.",
         },
       });
     }
   });
 
-  it("API-07 rejects an inactive or unknown Development Requester safely", async () => {
+  it("API-07 does not accept inactive or unknown IDs as authentication", async () => {
     for (const requesterId of [inactiveRequesterId, 2_147_483_647]) {
       const response = await getTicket(ownedTicketId, requesterId);
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(401);
       expect(response.body).toEqual({
         error: {
-          code: "INVALID_REQUESTER",
-          message: "The selected Development Requester is invalid.",
+          code: "AUTHENTICATION_REQUIRED",
+          message: "Authentication is required.",
         },
       });
     }

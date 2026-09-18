@@ -48,10 +48,67 @@ describe("Issue 29 Public Comments", () => {
     expect(empty.status).toBe(400);
     expect(empty.body.error.code).toBe("VALIDATION_ERROR");
 
+    const tooLong = await authenticatedUnsafe(
+      request(app).post(`/api/tickets/${ticket.id}/comments`),
+      owner,
+    ).send({ content: "x".repeat(2_001) });
+    expect(tooLong.status).toBe(400);
+    expect(tooLong.body.error.code).toBe("VALIDATION_ERROR");
+
     const foreign = await request(app)
       .get(`/api/tickets/${ticket.id}/comments`)
       .set("Cookie", other.cookie);
     expect(foreign.status).toBe(404);
     expect(foreign.body.error.code).toBe("TICKET_NOT_FOUND");
+  });
+
+  it("allows operational roles to append/list and rejects invalid pagination", async () => {
+    const owner = await authenticatedFixture({ label: "comment-role-owner" });
+    const staff = await authenticatedFixture({ role: "IT_STAFF", label: "comment-staff" });
+    const administrator = await authenticatedFixture({
+      role: "ADMINISTRATOR",
+      label: "comment-admin",
+    });
+    const ticket = await createTicketFixture(owner.user.id);
+
+    for (const [index, fixture] of [staff, administrator].entries()) {
+      const created = await authenticatedUnsafe(
+        request(app).post(`/api/tickets/${ticket.id}/comments`),
+        fixture,
+      ).send({ content: `Public update from ${fixture.user.role}` });
+      expect(created.status).toBe(201);
+      expect(created.body.author).toMatchObject({
+        id: fixture.user.id,
+        role: fixture.user.role,
+      });
+
+      const listed = await request(app)
+        .get(`/api/tickets/${ticket.id}/comments?page=1&pageSize=20`)
+        .set("Cookie", fixture.cookie);
+      expect(listed.status).toBe(200);
+      expect(listed.body.pagination).toMatchObject({
+        page: 1,
+        pageSize: 20,
+        totalItems: index + 1,
+        totalPages: 1,
+        hasPreviousPage: false,
+        hasNextPage: false,
+      });
+    }
+
+    const invalid = await request(app)
+      .get(`/api/tickets/${ticket.id}/comments?page=0&pageSize=7&unexpected=true`)
+      .set("Cookie", staff.cookie);
+    expect(invalid.status).toBe(400);
+    expect(invalid.body).toMatchObject({
+      error: {
+        code: "INVALID_QUERY",
+        fields: {
+          page: expect.any(String),
+          pageSize: expect.any(String),
+          unexpected: expect.any(String),
+        },
+      },
+    });
   });
 });

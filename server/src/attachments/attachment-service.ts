@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { Prisma } from "@prisma/client";
+import { Prisma, type UserRole } from "@prisma/client";
 import { fileTypeFromBuffer } from "file-type";
 import { getPrisma } from "../prisma.js";
 import {
@@ -92,22 +92,23 @@ export type RemoveAttachmentResult =
     | { kind: "already-removed" }
     | AttachmentRequesterFailure;
 
-async function isActiveRequester(
-    requesterId: number,
+async function isActiveActor(
+    userId: number,
+    role: UserRole,
 ): Promise<boolean> {
-    const requester =
+    const user =
         await getPrisma().user.findFirst({
             where: {
-                id: requesterId,
+                id: userId,
                 isActive: true,
-                role: "REQUESTER",
+                role,
             },
             select: {
                 id: true,
             },
         });
 
-    return requester !== null;
+    return user !== null;
 }
 
 async function findOwnedAttachment(
@@ -127,20 +128,39 @@ async function findOwnedAttachment(
     });
 }
 
+async function findVisibleAttachment(
+    userId: number,
+    role: UserRole,
+    ticketId: number,
+    attachmentId: number,
+) {
+    return getPrisma().attachment.findFirst({
+        where: {
+            id: attachmentId,
+            ticketId,
+            ...(role === "REQUESTER"
+                ? { ticket: { requesterId: userId } }
+                : {}),
+        },
+        select: attachmentContentSelect,
+    });
+}
+
 export async function listAttachmentsForRequester(
     requesterId: number,
     ticketId: number,
+    role: UserRole = "REQUESTER",
 ): Promise<ListAttachmentsResult> {
     const prisma = getPrisma();
 
-    if (!(await isActiveRequester(requesterId))) {
+    if (!(await isActiveActor(requesterId, role))) {
         return { kind: "invalid-requester" };
     }
 
     const ticket = await prisma.ticket.findFirst({
         where: {
             id: ticketId,
-            requesterId,
+            ...(role === "REQUESTER" ? { requesterId } : {}),
         },
         select: {
             id: true,
@@ -173,13 +193,15 @@ export async function getAttachmentForRequester(
     requesterId: number,
     ticketId: number,
     attachmentId: number,
+    role: UserRole = "REQUESTER",
 ): Promise<GetAttachmentResult> {
-    if (!(await isActiveRequester(requesterId))) {
+    if (!(await isActiveActor(requesterId, role))) {
         return { kind: "invalid-requester" };
     }
 
-    const attachment = await findOwnedAttachment(
+    const attachment = await findVisibleAttachment(
         requesterId,
+        role,
         ticketId,
         attachmentId,
     );
@@ -201,13 +223,15 @@ export async function getAttachmentContentForRequester(
     requesterId: number,
     ticketId: number,
     attachmentId: number,
+    role: UserRole = "REQUESTER",
 ): Promise<GetAttachmentContentResult> {
-    if (!(await isActiveRequester(requesterId))) {
+    if (!(await isActiveActor(requesterId, role))) {
         return { kind: "invalid-requester" };
     }
 
-    const attachment = await findOwnedAttachment(
+    const attachment = await findVisibleAttachment(
         requesterId,
+        role,
         ticketId,
         attachmentId,
     );
@@ -245,7 +269,7 @@ export async function removeAttachmentForRequester(
 ): Promise<RemoveAttachmentResult> {
     const prisma = getPrisma();
 
-    if (!(await isActiveRequester(requesterId))) {
+    if (!(await isActiveActor(requesterId, "REQUESTER"))) {
         return { kind: "invalid-requester" };
     }
 

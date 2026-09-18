@@ -51,4 +51,47 @@ describe("Issue 29 authenticated shell", () => {
     expect(await screen.findByRole("heading", { name: heading })).toBeInTheDocument();
     expect(window.location.pathname).toBe(destination);
   });
+
+  it("clears protected UI and redirects after a protected request reports expiry", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const url = requestUrl(input);
+      if (url.pathname === "/api/auth/me") return jsonResponse(authResponse(requesterUser));
+      if (url.pathname === "/api/tickets") {
+        return jsonResponse({ error: { code: "AUTHENTICATION_REQUIRED" } }, 401);
+      }
+      if (url.pathname === "/api/categories" || url.pathname === "/api/related-systems") {
+        return jsonResponse([]);
+      }
+      throw new Error(`Unexpected request: ${url.pathname}`);
+    }));
+    renderAt("/tickets");
+    expect(await screen.findByText("Your session has expired. Please sign in again.")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Sign in" })).toBeInTheDocument();
+    expect(screen.queryByText("Authenticated Requester")).not.toBeInTheDocument();
+    expect(window.location.pathname).toBe("/login");
+  });
+
+  it("clears local authenticated state even when logout returns a safe failure", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const url = requestUrl(input);
+      if (url.pathname === "/api/auth/me") return jsonResponse(authResponse(requesterUser));
+      if (url.pathname === "/api/auth/logout") {
+        return jsonResponse({ error: { code: "SAFE_FAILURE" } }, 500);
+      }
+      if (url.pathname === "/api/tickets") {
+        return jsonResponse({ items: [], pagination: {
+          page: 1, pageSize: 10, totalItems: 0, totalPages: 0,
+          hasPreviousPage: false, hasNextPage: false,
+        } });
+      }
+      if (url.pathname === "/api/categories" || url.pathname === "/api/related-systems") {
+        return jsonResponse([]);
+      }
+      throw new Error(`Unexpected request: ${url.pathname}`);
+    }));
+    renderAt("/tickets");
+    await userEvent.click(await screen.findByRole("button", { name: "Logout" }));
+    expect(await screen.findByRole("heading", { name: "Sign in" })).toBeInTheDocument();
+    expect(window.location.pathname).toBe("/login");
+  });
 });

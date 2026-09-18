@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { randomBytes, randomUUID } from "node:crypto";
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import {
@@ -9,6 +9,8 @@ import {
   type APIResponse,
   type Page,
 } from "@playwright/test";
+import { hashPassword } from "../../server/src/auth/password.js";
+import { getPrisma } from "../../server/src/prisma.js";
 
 const API_URL = "http://127.0.0.1:3100";
 const SCREENSHOT_DIRECTORY = join(
@@ -55,6 +57,9 @@ let corporateLaptop: ReferenceItem;
 let emailSystem: ReferenceItem;
 let responsiveTicket: CreatedTicket["ticket"];
 let responsiveActiveFilename: string;
+let primaryPassword: string;
+let otherPassword: string;
+let apiCsrfToken: string;
 
 async function readJson<T>(response: APIResponse): Promise<T> {
   if (!response.ok()) {
@@ -84,7 +89,7 @@ async function createTicketThroughApi(
   const even = index % 2 === 0;
   const response = await api.post("/api/tickets", {
     headers: {
-      "X-Development-Requester-Id": String(primaryRequester.id),
+      "X-CSRF-Token": apiCsrfToken,
     },
     data: {
       clientSubmissionId: randomUUID(),
@@ -110,7 +115,7 @@ async function uploadThroughApi(
     `/api/tickets/${ticketId}/attachments`,
     {
       headers: {
-        "X-Development-Requester-Id": String(primaryRequester.id),
+        "X-CSRF-Token": apiCsrfToken,
       },
       multipart: {
         file: {
@@ -125,23 +130,19 @@ async function uploadThroughApi(
   return readJson<AttachmentMetadata>(response);
 }
 
-async function selectRequester(
+async function signInRequester(
   page: Page,
   requesterName: string,
 ): Promise<void> {
-  await page.goto("/select-requester");
-  const requesterSelect = page.getByLabel("Development Requester");
-  await expect(requesterSelect).toBeEnabled();
-  await requesterSelect.selectOption({ label: requesterName });
-  const continueButton = page.getByRole("button", {
-    name: "Continue",
-  });
-  await continueButton.focus();
-  await page.keyboard.press("Enter");
+  const selected = requesterName === primaryRequester.name
+    ? { requester: primaryRequester, password: primaryPassword }
+    : { requester: otherRequester, password: otherPassword };
+  await page.goto("/login");
+  await page.getByLabel("Email").fill(selected.requester.email!);
+  await page.getByLabel("Password", { exact: true }).fill(selected.password);
+  await page.getByRole("button", { name: "Sign in" }).click();
   await expect(page).toHaveURL(/\/tickets$/u);
-  await expect(
-    page.getByText(`Current Requester: ${requesterName}`),
-  ).toBeVisible();
+  await expect(page.getByText(requesterName)).toBeVisible();
 }
 
 async function applyTicketSearch(
@@ -149,7 +150,7 @@ async function applyTicketSearch(
   search: string,
 ): Promise<void> {
   await page
-    .getByLabel("Search by Ticket Number or Summary")
+    .getByLabel("Search Tickets")
     .fill(search);
   await page.getByRole("button", { name: "Apply Filters" }).click();
 }
@@ -176,18 +177,50 @@ async function expectNoHorizontalOverflow(
 
 test.beforeAll(async () => {
   mkdirSync(SCREENSHOT_DIRECTORY, { recursive: true });
-  api = await createRequestContext.newContext({ baseURL: API_URL });
+  const prisma = getPrisma();
+  const suffix = randomUUID();
+  primaryPassword = `Aa1!${randomBytes(18).toString("base64url")}`;
+  otherPassword = `Aa1!${randomBytes(18).toString("base64url")}`;
+  const [createdPrimary, createdOther] = await Promise.all([
+    prisma.user.create({
+      data: {
+        name: "E2E Requester Primary",
+        email: `e2e-primary-${suffix}@example.test`,
+        passwordHash: await hashPassword(primaryPassword),
+        mustChangePassword: false,
+      },
+      select: { id: true, name: true, email: true },
+    }),
+    prisma.user.create({
+      data: {
+        name: "E2E Requester Other",
+        email: `e2e-other-${suffix}@example.test`,
+        passwordHash: await hashPassword(otherPassword),
+        mustChangePassword: false,
+      },
+      select: { id: true, name: true, email: true },
+    }),
+  ]);
+  primaryRequester = createdPrimary;
+  otherRequester = createdOther;
+  api = await createRequestContext.newContext({
+    baseURL: API_URL,
+    extraHTTPHeaders: { Origin: "http://127.0.0.1:4173" },
+  });
+  const login = await api.post("/api/auth/login", {
+    data: { email: primaryRequester.email, password: primaryPassword },
+  });
+  expect(login.ok(), await login.text()).toBe(true);
+  const state = await api.storageState();
+  apiCsrfToken = state.cookies.find(({ name }) => name === "toktickit_csrf")?.value ?? "";
+  expect(apiCsrfToken).not.toBe("");
 
   [
-    primaryRequester,
-    otherRequester,
     hardwareCategory,
     networkCategory,
     corporateLaptop,
     emailSystem,
   ] = await Promise.all([
-    getNamedReference("/api/development-requesters", "Alex Morgan"),
-    getNamedReference("/api/development-requesters", "Daniel Kim"),
     getNamedReference("/api/categories", "Hardware"),
     getNamedReference("/api/categories", "Network"),
     getNamedReference("/api/related-systems", "Corporate Laptop"),
@@ -213,7 +246,7 @@ test.beforeAll(async () => {
     `/api/tickets/${responsiveTicket.id}/attachments/${removedAttachment.id}`,
     {
       headers: {
-        "X-Development-Requester-Id": String(primaryRequester.id),
+        "X-CSRF-Token": apiCsrfToken,
       },
       data: {
         removalReason: "Prepared removed evidence for responsive verification.",
@@ -227,13 +260,13 @@ test.afterAll(async () => {
   await api?.dispose();
 });
 
-test("E2E-01 selects and restores a Requester, creates an owned Ticket, and opens its read-only Detail", async ({
+test("E2E-01 authenticates and restores a Requester session, creates an owned Ticket, and opens its read-only Detail", async ({
   page,
 }) => {
   await page.goto("/select-requester");
   await expect(
     page.getByRole("heading", {
-      name: "Select Development Requester",
+      name: "Sign in",
     }),
   ).toBeVisible();
   await page.screenshot({
@@ -241,16 +274,12 @@ test("E2E-01 selects and restores a Requester, creates an owned Ticket, and open
     fullPage: true,
   });
 
-  await selectRequester(page, primaryRequester.name);
-  expect(
-    await page.evaluate(() =>
-      sessionStorage.getItem("developmentRequesterId"),
-    ),
-  ).toBe(String(primaryRequester.id));
+  await signInRequester(page, primaryRequester.name);
+  expect(await page.evaluate(() => sessionStorage.length)).toBe(0);
 
   await page.reload();
   await expect(
-    page.getByText(`Current Requester: ${primaryRequester.name}`),
+    page.getByText(primaryRequester.name),
   ).toBeVisible();
 
   await page.getByRole("link", { name: "Create Ticket" }).click();
@@ -301,11 +330,7 @@ test("E2E-01 selects and restores a Requester, creates an owned Ticket, and open
   expect(ticketHref).toMatch(/^\/tickets\/\d+$/u);
   const browserTicketId = Number(ticketHref!.split("/").at(-1));
 
-  const ownedResponse = await api.get(`/api/tickets/${browserTicketId}`, {
-    headers: {
-      "X-Development-Requester-Id": String(primaryRequester.id),
-    },
-  });
+  const ownedResponse = await api.get(`/api/tickets/${browserTicketId}`);
   const ownedTicket = await readJson<{
     ticketNumber: string;
     requester: { id: number };
@@ -341,7 +366,6 @@ test("E2E-01 selects and restores a Requester, creates an owned Ticket, and open
   ).toBeVisible();
   await expect(page.getByText(createdAttachmentFilename)).toBeVisible();
   for (const prohibitedControl of [
-    "Public Comments",
     "Internal Notes",
     "Actions Taken",
     "Claim Ticket",
@@ -358,7 +382,7 @@ test("E2E-01 selects and restores a Requester, creates an owned Ticket, and open
 test("E2E-01 shows required-field and approved invalid-file feedback", async ({
   page,
 }) => {
-  await selectRequester(page, primaryRequester.name);
+  await signInRequester(page, primaryRequester.name);
   await page.getByRole("link", { name: "Create Ticket" }).click();
   await page.getByRole("button", { name: "Create Ticket" }).click();
 
@@ -395,7 +419,7 @@ test("E2E-01 shows required-field and approved invalid-file feedback", async ({
 test("E2E-01 exercises applied search, filters, sorting, pagination, and reset behavior", async ({
   page,
 }) => {
-  await selectRequester(page, primaryRequester.name);
+  await signInRequester(page, primaryRequester.name);
   await applyTicketSearch(page, `${RUN_MARKER} fixture`);
 
   const table = page.getByRole("table", { name: "My Tickets" });
@@ -434,8 +458,8 @@ test("E2E-01 exercises applied search, filters, sorting, pagination, and reset b
   for (const row of await table.locator("tbody tr").all()) {
     await expect(row).toContainText("Hardware");
     await expect(row).toContainText("Corporate Laptop");
-    await expect(row).toContainText("MEDIUM");
-    await expect(row).toContainText("NEW");
+    await expect(row).toContainText("Medium");
+    await expect(row).toContainText("New");
   }
   await page.screenshot({
     path: join(SCREENSHOT_DIRECTORY, "my-tickets-filtered-desktop.png"),
@@ -444,7 +468,7 @@ test("E2E-01 exercises applied search, filters, sorting, pagination, and reset b
 
   await page.getByRole("button", { name: "Clear Filters" }).click();
   await expect(
-    page.getByLabel("Search by Ticket Number or Summary"),
+    page.getByLabel("Search Tickets"),
   ).toHaveValue("");
   await expect(page.getByLabel("Category")).toHaveValue("");
   await expect(page.getByLabel("Related System")).toHaveValue("");
@@ -456,7 +480,7 @@ test("E2E-01 exercises applied search, filters, sorting, pagination, and reset b
 test("E2E-02 and E2E-03 complete the owned Attachment lifecycle and enforce ownership isolation", async ({
   page,
 }) => {
-  await selectRequester(page, primaryRequester.name);
+  await signInRequester(page, primaryRequester.name);
   await page.goto(`/tickets/${responsiveTicket.id}`);
   await expect(
     page.getByRole("heading", { name: "Ticket Detail" }),
@@ -547,11 +571,6 @@ test("E2E-02 and E2E-03 complete the owned Attachment lifecycle and enforce owne
 
   const metadataResponse = await api.get(
     `/api/tickets/${responsiveTicket.id}/attachments`,
-    {
-      headers: {
-        "X-Development-Requester-Id": String(primaryRequester.id),
-      },
-    },
   );
   const metadata = await readJson<{
     items: Array<AttachmentMetadata & { isRemoved: boolean }>;
@@ -562,11 +581,6 @@ test("E2E-02 and E2E-03 complete the owned Attachment lifecycle and enforce owne
   expect(removed?.isRemoved).toBe(true);
   const removedContentResponse = await api.get(
     `/api/tickets/${responsiveTicket.id}/attachments/${removed!.id}/content?disposition=inline`,
-    {
-      headers: {
-        "X-Development-Requester-Id": String(primaryRequester.id),
-      },
-    },
   );
   expect(removedContentResponse.status()).toBe(410);
   expect(await removedContentResponse.json()).toEqual({
@@ -576,15 +590,8 @@ test("E2E-02 and E2E-03 complete the owned Attachment lifecycle and enforce owne
     },
   });
 
-  await page.getByRole("button", { name: "Change Requester" }).click();
-  const requesterSelect = page.getByLabel("Development Requester");
-  const continueButton = page.getByRole("button", { name: "Continue" });
-  await expect(async () => {
-    await requesterSelect.selectOption({ label: otherRequester.name });
-    await expect(requesterSelect).toHaveValue(String(otherRequester.id));
-    await expect(continueButton).toBeEnabled();
-  }).toPass();
-  await continueButton.click();
+  await page.getByRole("button", { name: "Logout" }).click();
+  await signInRequester(page, otherRequester.name);
   await applyTicketSearch(page, RUN_MARKER);
   await expect(
     page.getByText("No Tickets match the current search and filters."),
@@ -632,7 +639,7 @@ test("E2E-01 shows a safe API failure and retries without stale data", async ({
     },
   );
 
-  await selectRequester(page, primaryRequester.name);
+  await signInRequester(page, primaryRequester.name);
   const alert = page.getByRole("alert").filter({
     hasText: "Something went wrong. Please try again.",
   });
@@ -650,7 +657,7 @@ test("E2E-01 shows a safe API failure and retries without stale data", async ({
 test("E2E-04 keeps every Lab 2 screen usable at desktop, tablet, and mobile sizes", async ({
   page,
 }) => {
-  await selectRequester(page, primaryRequester.name);
+  await signInRequester(page, primaryRequester.name);
 
   const viewports = [
     { name: "desktop", width: 1440, height: 900 },
@@ -660,7 +667,7 @@ test("E2E-04 keeps every Lab 2 screen usable at desktop, tablet, and mobile size
     { name: "mobile", width: 390, height: 844 },
   ] as const;
   const routes = [
-    { name: "requester-selection", path: "/select-requester" },
+    { name: "obsolete-selector-redirect", path: "/select-requester" },
     { name: "create-ticket", path: "/tickets/new" },
     { name: "my-tickets", path: "/tickets" },
     {
@@ -675,10 +682,10 @@ test("E2E-04 keeps every Lab 2 screen usable at desktop, tablet, and mobile size
     for (const route of routes) {
       await page.goto(route.path);
       await expect(page.locator("main")).toBeVisible();
-      if (route.name === "requester-selection") {
+      if (route.name === "obsolete-selector-redirect") {
         await expect(
           page.getByRole("heading", {
-            name: "Select Development Requester",
+            name: "My Tickets",
           }),
         ).toBeVisible();
       } else if (route.name === "create-ticket") {

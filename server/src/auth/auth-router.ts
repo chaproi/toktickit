@@ -1,6 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
 import { Router, type Request, type Response } from "express";
-import type { AuthSession, User } from "@prisma/client";
+import type { AuthSession, User, UserRole } from "@prisma/client";
 import { getPrisma } from "../prisma.js";
 import {
   getDummyPasswordHash,
@@ -37,7 +37,7 @@ type SafeUser = Pick<
   "id" | "name" | "email" | "role" | "mustChangePassword"
 >;
 
-type LiveSession = {
+export type LiveSession = {
   session: AuthSession;
   user: User;
   csrfCookie: string | undefined;
@@ -56,7 +56,7 @@ export function isAllowedDuringMandatoryPasswordChange(
   ]).has(`${method.toUpperCase()} ${path}`);
 }
 
-function errorBody(code: string, message: string, fields?: Record<string, string>) {
+export function errorBody(code: string, message: string, fields?: Record<string, string>) {
   return {
     error: {
       code,
@@ -125,7 +125,7 @@ function setAuthenticationCookies(
   );
 }
 
-function clearAuthenticationCookies(req: Request, res: Response): void {
+export function clearAuthenticationCookies(req: Request, res: Response): void {
   const secure = !isLocalDevelopmentOrigin(req);
   const common = { path: "/", sameSite: "strict" as const, secure };
   res.clearCookie(SESSION_COOKIE, { ...common, httpOnly: true });
@@ -149,7 +149,7 @@ function validateConfiguredOrigin(req: Request):
   }
 }
 
-function requireOrigin(req: Request, res: Response): boolean {
+export function requireOrigin(req: Request, res: Response): boolean {
   const result = validateConfiguredOrigin(req);
   if (result.success) return true;
   if (result.code === "SERVICE_UNAVAILABLE") {
@@ -197,7 +197,7 @@ async function createSession(userId: number, successfulThrottleKey: string) {
   return { session, sessionToken, csrfToken };
 }
 
-async function resolveLiveSession(
+export async function resolveLiveSession(
   req: Request,
   refreshLastSeen = true,
 ): Promise<LiveSession | null> {
@@ -232,7 +232,7 @@ async function resolveLiveSession(
   };
 }
 
-function requireCsrf(req: Request, res: Response, live: LiveSession): boolean {
+export function requireCsrf(req: Request, res: Response, live: LiveSession): boolean {
   const csrfHeader = req.header("X-CSRF-Token");
   if (
     !csrfHeader ||
@@ -377,6 +377,43 @@ async function recordFailedLogin(keyHash: string, now: Date) {
 }
 
 export const authRouter = Router();
+
+export async function authorizeRequest(
+  req: Request,
+  res: Response,
+  options: {
+    roles?: readonly UserRole[];
+    unsafe?: boolean;
+  } = {},
+): Promise<LiveSession | null> {
+  const live = await resolveLiveSession(req);
+  if (!live) {
+    clearAuthenticationCookies(req, res);
+    res.status(401).json(
+      errorBody("AUTHENTICATION_REQUIRED", "Authentication is required."),
+    );
+    return null;
+  }
+  if (live.user.mustChangePassword) {
+    res.status(403).json(
+      errorBody(
+        "PASSWORD_CHANGE_REQUIRED",
+        "Change your initial password before continuing.",
+      ),
+    );
+    return null;
+  }
+  if (options.roles && !options.roles.includes(live.user.role)) {
+    res.status(403).json(
+      errorBody("ROLE_FORBIDDEN", "You do not have permission to perform this action."),
+    );
+    return null;
+  }
+  if (options.unsafe && (!requireOrigin(req, res) || !requireCsrf(req, res, live))) {
+    return null;
+  }
+  return live;
+}
 
 authRouter.post("/api/auth/login", async (req, res) => {
   if (!requireOrigin(req, res)) return;

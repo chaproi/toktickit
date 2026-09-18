@@ -1,6 +1,7 @@
 import request from "supertest";
 import { afterEach, describe, expect, it } from "vitest";
 import { app } from "../../src/app.js";
+import { setAttachmentStorageForTests } from "../../src/attachments/attachment-storage.js";
 import { getPrisma } from "../../src/prisma.js";
 import {
   authenticatedFixture,
@@ -9,12 +10,19 @@ import {
   createTicketFixture,
 } from "./issue29-test-helpers.js";
 
-afterEach(cleanupIssue29Fixtures);
+afterEach(async () => {
+  setAttachmentStorageForTests(null);
+  await cleanupIssue29Fixtures();
+});
 
 describe("Issue 29 role-aware Attachments", () => {
-  it("allows the owning Requester and operational roles to read metadata", async () => {
+  it("allows the owning Requester and operational roles to read metadata and active content", async () => {
     const owner = await authenticatedFixture({ label: "attachment-owner" });
     const staff = await authenticatedFixture({ role: "IT_STAFF", label: "attachment-staff" });
+    const administrator = await authenticatedFixture({
+      role: "ADMINISTRATOR",
+      label: "attachment-admin-reader",
+    });
     const ticket = await createTicketFixture(owner.user.id);
     const attachment = await getPrisma().attachment.create({
       data: {
@@ -27,15 +35,37 @@ describe("Issue 29 role-aware Attachments", () => {
       },
     });
 
-    for (const fixture of [owner, staff]) {
+    setAttachmentStorageForTests({
+      async store() {},
+      async remove() {},
+      async read() { return Buffer.from("synthetic attachment content"); },
+    });
+
+    for (const fixture of [owner, staff, administrator]) {
       const response = await request(app)
         .get(`/api/tickets/${ticket.id}/attachments`)
         .set("Cookie", fixture.cookie);
       expect(response.status).toBe(200);
       expect(response.body.items[0]).toMatchObject({ id: attachment.id, ticketId: ticket.id });
       expect(response.body.items[0]).not.toHaveProperty("storageKey");
+
+      const content = await request(app)
+        .get(`/api/tickets/${ticket.id}/attachments/${attachment.id}/content`)
+        .set("Cookie", fixture.cookie);
+      expect(content.status).toBe(200);
+      expect(content.headers["x-content-type-options"]).toBe("nosniff");
     }
-  });
+
+    await getPrisma().attachment.update({
+      where: { id: attachment.id },
+      data: { isRemoved: true, removedAt: new Date(), removedByUserId: owner.user.id },
+    });
+    const removed = await request(app)
+      .get(`/api/tickets/${ticket.id}/attachments/${attachment.id}/content`)
+      .set("Cookie", staff.cookie);
+    expect(removed.status).toBe(410);
+    expect(removed.body.error.code).toBe("ATTACHMENT_REMOVED");
+  }, 15_000);
 
   it("keeps mutation Requester-only and hides foreign ownership", async () => {
     const owner = await authenticatedFixture({ label: "mutation-owner" });

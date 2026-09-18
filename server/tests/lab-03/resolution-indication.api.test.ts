@@ -56,5 +56,12 @@ describe("Issue 29 Problem Appears Resolved", () => {
     ).send({ confirm: true });
     expect(foreign.status).toBe(404);
     expect(foreign.body.error.code).toBe("TICKET_NOT_FOUND");
+
+    const missingConfirmation = await authenticatedUnsafe(
+      request(app).post(`/api/tickets/${ticket.id}/resolution-indication`),
+      owner,
+    ).send({ confirm: false });
+    expect(missingConfirmation.status).toBe(400);
+    expect(missingConfirmation.body.error.code).toBe("VALIDATION_ERROR");
   });
 });

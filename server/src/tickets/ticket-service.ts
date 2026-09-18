@@ -17,12 +17,18 @@ const ticketInclude = {
   relatedSystem: {
     select: { id: true, name: true },
   },
+  owner: {
+    select: { id: true, name: true, role: true },
+  },
 } satisfies Prisma.TicketInclude;
 
 const ticketListSelect = {
   id: true,
   ticketNumber: true,
   ticketDate: true,
+  requester: {
+    select: { id: true, name: true },
+  },
   category: {
     select: { id: true, name: true },
   },
@@ -30,7 +36,11 @@ const ticketListSelect = {
     select: { id: true, name: true },
   },
   requestedPriority: true,
+  itPriority: true,
   currentStatus: true,
+  owner: {
+    select: { id: true, name: true, role: true },
+  },
   summary: true,
   createdAt: true,
   updatedAt: true,
@@ -50,9 +60,14 @@ const ticketDetailSelect = {
     select: { id: true, name: true },
   },
   requestedPriority: true,
+  itPriority: true,
   currentStatus: true,
+  owner: {
+    select: { id: true, name: true, role: true },
+  },
   summary: true,
   description: true,
+  requesterResolutionIndicatedAt: true,
   createdAt: true,
   updatedAt: true,
 } satisfies Prisma.TicketSelect;

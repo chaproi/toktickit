@@ -6,7 +6,6 @@ afterEach(() => vi.unstubAllGlobals());
 
 describe("Issue 29 Requester UI regression", () => {
   it("lists authenticated Tickets with both priorities, owner, and no development identity", async () => {
-    sessionStorage.setItem("developmentRequesterId", "999");
     const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
       const url = requestUrl(input);
       if (url.pathname === "/api/auth/me") return jsonResponse(authResponse(requesterUser));
@@ -40,7 +39,7 @@ describe("Issue 29 Requester UI regression", () => {
     expect(await screen.findByText("TKT-2026-00088")).toBeInTheDocument();
     expect(screen.getByText("Medium")).toBeInTheDocument();
     expect(screen.getByText("Unassigned")).toBeInTheDocument();
-    await waitFor(() => expect(sessionStorage.getItem("developmentRequesterId")).toBeNull());
+    await waitFor(() => expect(sessionStorage.length).toBe(0));
     expect(fetchMock.mock.calls.some(([input]) => requestUrl(input).pathname === "/api/development-requesters")).toBe(false);
   });
 });

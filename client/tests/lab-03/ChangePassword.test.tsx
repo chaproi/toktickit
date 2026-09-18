@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { authResponse, jsonResponse, renderAt, requesterUser, requestUrl } from "./test-helpers.js";
@@ -42,5 +42,58 @@ describe("Issue 29 Change Password", () => {
     await user.click(screen.getByRole("button", { name: "Save Password" }));
     expect(await screen.findByText("Password changed successfully.")).toBeInTheDocument();
     expect(await screen.findByRole("heading", { name: "My Tickets" })).toBeInTheDocument();
+  });
+
+  it("shows the safe wrong-current failure and clears every password field", async () => {
+    document.cookie = "toktickit_csrf=issue29-csrf; path=/";
+    const forced = { ...requesterUser, mustChangePassword: true };
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const url = requestUrl(input);
+      if (url.pathname === "/api/auth/me") return jsonResponse(authResponse(forced));
+      return jsonResponse({
+        error: { code: "INVALID_CURRENT_PASSWORD", message: "Sensitive detail" },
+      }, 400);
+    }));
+    renderAt("/change-password");
+    const user = userEvent.setup();
+    const current = await screen.findByLabelText("Current Password") as HTMLInputElement;
+    const next = screen.getByLabelText("New Password") as HTMLInputElement;
+    const confirm = screen.getByLabelText("Confirm New Password") as HTMLInputElement;
+    await user.type(current, "Current1!Password");
+    await user.type(next, "NewSecure1!Password");
+    await user.type(confirm, "NewSecure1!Password");
+    await user.click(screen.getByRole("button", { name: "Save Password" }));
+    expect(await screen.findByText("Current password is incorrect.")).toBeInTheDocument();
+    expect(screen.queryByText("Sensitive detail")).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(current.value).toBe("");
+      expect(next.value).toBe("");
+      expect(confirm.value).toBe("");
+    });
+  });
+
+  it("locks controls while the password change is pending", async () => {
+    document.cookie = "toktickit_csrf=issue29-csrf; path=/";
+    const forced = { ...requesterUser, mustChangePassword: true };
+    let resolveChange!: (response: Response) => void;
+    const pendingChange = new Promise<Response>((resolve) => { resolveChange = resolve; });
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      if (requestUrl(input).pathname === "/api/auth/me") return jsonResponse(authResponse(forced));
+      return pendingChange;
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    renderAt("/change-password");
+    const user = userEvent.setup();
+    await user.type(await screen.findByLabelText("Current Password"), "Current1!Password");
+    await user.type(screen.getByLabelText("New Password"), "NewSecure1!Password");
+    await user.type(screen.getByLabelText("Confirm New Password"), "NewSecure1!Password");
+    await user.click(screen.getByRole("button", { name: "Save Password" }));
+    const busyButton = screen.getByRole("button", { name: "Saving password…" });
+    expect(busyButton).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Logout" })).toBeDisabled();
+    fireEvent.click(busyButton);
+    expect(fetchMock.mock.calls.filter(([input]) => requestUrl(input).pathname === "/api/auth/change-password")).toHaveLength(1);
+    resolveChange(jsonResponse({ error: { code: "SAFE_FAILURE" } }, 500));
+    expect(await screen.findByText("Something went wrong. Please try again.")).toBeInTheDocument();
   });
 });
