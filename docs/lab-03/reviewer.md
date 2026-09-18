@@ -65,10 +65,32 @@ This is an implementation handoff, not a peer review or approval record.
 | Starting commit | 597a621bd857252a17771f9dc4b3cbb0dd0c1712 |
 | RED commit | 22ce5426cae6ca1dbd8002c02f14428dc9a9546c |
 | Implemented scope | Lossless User/auth schema migration, guarded runtime credential mappings, idempotent seed foundation, four auth endpoints, exact Login/unsafe Origin controls, CSRF, sessions, throttling, and Lab 1/Lab 2 compatibility |
-| Automated evidence | All 72 focused Issue #27 tests and the complete 184-test server suite passed against the migrated shared test database; the 58-test client suite, six existing Lab 2 Playwright scenarios, both production builds, and compiled health smoke also passed locally |
+| Automated evidence | After the PR #28 concurrency correction, all 73 focused Issue #27 tests and the complete 185-test server suite passed against the migrated shared test database; the 58-test client suite, six existing Lab 2 Playwright scenarios, both production builds, and compiled health smoke also passed locally |
 | Shared test migration | Applied through the guarded runner to `toktickit_test/public` after private ignored runtime mappings were provided. The populated Lab 2 snapshot preserved 5 Users, 9 Tickets, 0 Attachments, 4 Categories, 7 Related Systems, and matching User/Ticket/Attachment checksums. Two seed runs remained stable at 10 Users, 17 Tickets, 1 Public Comment, and 1 Internal Note while preserving hashes. |
 | Development database | Read-only before/after evidence for `toktickit/public` remained 5 Users, 182 Tickets, 92 Attachments, 4 Categories, and 7 Related Systems with matching checksums |
 | GREEN commit | Authorized after final staged scope and secret checks; the exact local commit hash is reported from Git after creation rather than embedded in its own content |
 | Peer review / approval | Pending; neither performed nor claimed |
 
 One earlier verification command reached `toktickit_test/public` because its custom Vitest configuration flag was parsed incorrectly. The migration SQL failed and rolled back transactionally before tests ran, and the exact failed Prisma metadata entry was marked rolled back using the documented recovery action. After private mappings were supplied, the guarded migration later applied successfully to that validated shared test target. All disposable `issue27_*` schemas were removed after their runs; no development database mutation occurred.
+
+## 7. PR #28 Requested-Changes Record
+
+This section records the actual local response to the requested-changes review. It does not claim that the reviewer accepted the correction or that any GitHub review state changed.
+
+| Item | Current evidence |
+| --- | --- |
+| Pull Request | #28 |
+| Related implementation Issue | #27 |
+| Reviewer | Tanaboonnnnn |
+| Review status | Requested Changes |
+| Reviewed HEAD | e74334a62cbbd92ba2a1a105ebc912b51a764bb1 |
+| Finding | `recordFailedLogin()` used an unlocked read followed by a separate upsert, so two simultaneous failures for one normalized-email/IP key could both read count 3 and overwrite each other with count 4 instead of reaching count 5 and starting the required block. |
+| RED concurrency-test commit | 0fc0cd373ffa596276875aa1376ecb69561c5ba8 (`test(auth): cover concurrent login failures`) |
+| GREEN atomic-throttle commit | 0e606ac2cc9d52583db6bca0d4b95978dd3581e6 (`fix(auth): serialize failed-login updates`) |
+| Correction | A single PostgreSQL `INSERT ... ON CONFLICT ... DO UPDATE ... RETURNING` statement now calculates and commits the same-key count, active-window reset, and block deadline atomically at the unique throttle row. |
+| Regression coverage | A database lock barrier deterministically overlaps two real failed-login requests from stored count 3; the test asserts count 5, one throttle row, a valid 15-minute block, a safe following 429, an unchanged independent key, and redacted response bodies. |
+| Verification after correction | The focused concurrency case passed six consecutive runs; 73 focused Issue #27 tests, 185 server tests, 58 client tests, and six existing Lab 2 Playwright scenarios passed. Server/client production builds and the compiled health smoke passed, the smoke listener terminated, test sessions/throttles and disposable schemas were absent, and development counts/checksums remained unchanged. |
+| Re-review | Pending; not requested by this local correction |
+| Approval / resolution / merge / Issue closure | Not claimed or performed |
+
+The corrective commits remain local. No push, force-push, review-thread resolution, re-review request, approval, merge, Issue closure, or GitHub Project status change was performed.
