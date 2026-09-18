@@ -2,6 +2,7 @@ import { randomBytes } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import {
   ARGON2ID_OPTIONS,
+  getDummyPasswordHash,
   hashPassword,
   validateNewPassword,
   verifyPassword,
@@ -59,5 +60,12 @@ describe("UNIT-01 password validation and hashing", () => {
     expect(first).not.toContain(password);
     await expect(verifyPassword(first, password)).resolves.toBe(true);
     await expect(verifyPassword(first, `${password}x`)).resolves.toBe(false);
+  });
+
+  it("reuses one process-local encoded dummy hash for unknown-email verification", async () => {
+    const first = await getDummyPasswordHash();
+    const second = await getDummyPasswordHash();
+    expect(first).toBe(second);
+    expect(first).toMatch(/^\$argon2id\$/u);
   });
 });

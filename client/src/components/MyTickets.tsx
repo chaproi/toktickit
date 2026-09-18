@@ -53,11 +53,12 @@ const PRIORITIES: RequestedPriority[] = [
 
 const STATUSES: TicketStatus[] = [
   "NEW",
-  "ASSIGNED",
+  "OPEN",
   "IN_PROGRESS",
-  "PENDING_REQUESTER",
+  "WAITING_FOR_REQUESTER",
   "RESOLVED",
   "CLOSED",
+  "REOPENED",
   "CANCELLED",
 ];
 
@@ -97,7 +98,7 @@ function badgeClass(value: RequestedPriority | TicketStatus): string {
     return "text-bg-danger";
   }
 
-  if (value === "HIGH" || value === "PENDING_REQUESTER") {
+  if (value === "HIGH" || value === "WAITING_FOR_REQUESTER") {
     return "text-bg-warning";
   }
 

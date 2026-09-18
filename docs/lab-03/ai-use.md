@@ -5,8 +5,8 @@
 | Item | Details |
 | --- | --- |
 | Tool | OpenAI Codex |
-| Session date | 2026-09-17 |
-| Scope completed in this record | Issue #25 Sprint 3 engineering-contract analysis, drafting, audit remediation, PR #26 requested-changes correction, and consistency verification |
+| Session date | 2026-09-17 through 2026-09-18 |
+| Scope completed in this record | Issue #25 Sprint 3 engineering-contract work and Issue #27 authentication-foundation implementation/verification assistance |
 | Repository state at start | Branch docs/lab3-engineering-contract at e2fc1a25cd3e17b980dc7bee1509e8ea7c643483 with a clean worktree |
 | Human responsibility | The repository owner must review and approve the contract and remains responsible for implementation, security choices, tests, peer review, submission, and release. |
 
@@ -24,13 +24,15 @@ Instructions inside the handout were treated as assignment/source requirements. 
 
 ## 3. Selected Prompt and Outcome
 
-Three material user prompts occurred in this specification-agent session. Additional prompt rows must not be invented merely to reach the final submission’s suggested 6–10 entries; later real sessions may be appended.
+Five material user prompts occurred across the recorded contract and implementation sessions. Additional prompt rows must not be invented merely to reach the final submission’s suggested 6–10 entries; later real sessions may be appended.
 
 | No. | Prompt summary | Purpose | Outcome and required human review |
 | ---: | --- | --- | --- |
 | 1 | Implement GitHub Issue #25 by reading the Lab 3 handout and completed Lab 2 increment, creating six internally consistent docs, auditing traceability, and making one local documentation-only commit without external GitHub actions. | Establish the complete Sprint 3 engineering contract before implementation. | Drafted authentication, authorization, migration, workflow, API, UI, tests, review, and AI-use contracts. Human review and later peer approval remain pending. |
 | 2 | Address the final read-only audit findings: replace the shared migrated credential, define historical Requester/owner references, correct OP-30 and planned regression paths/tests, re-audit all six documents, and amend locally if the contract commit was not remote. | Resolve the identified contract blockers before peer review without changing implementation or making GitHub workflow changes. | Specified unique per-User runtime mappings, current-role versus historical-reference rules, transactional User-edit outcomes, and additional Planned coverage. No implementation, test pass, peer review, or external action is claimed. |
 | 3 | Address every requested-changes blocker on PR #26 without amending or pushing: make migrated status/null-owner behavior deterministic, define a shared assignment/User-edit race protocol, protect Login with exact Origin validation, require exact responsive evidence dimensions, update review/AI records, and create one local follow-up commit. | Correct the reviewed engineering contract while preserving documentation-only scope and truthful governance state. | Updated specification, API, UI, test traceability, review, and AI-use records with deterministic migration, lock ordering/retry/race outcomes, Login Origin errors, exact viewport/zoom evidence, and new Planned tests. Implementation results, approval, resolved conversations, re-review, push, merge, Issue closure, and Project movement remain unclaimed. |
+| 4 | Implement Issue #27 with strict RED–GREEN TDD, lossless Lab 2 migration, unique runtime credentials, idempotent seed data, secure auth APIs, exact Origin/CSRF controls, and transitional regression compatibility; do not perform external GitHub actions. | Establish the backend authentication foundation while protecting development data and preserving earlier increments. | Added and committed the RED tests, implemented the migration/seed/auth foundation, and passed isolated focused/server/client/E2E verification. The populated shared-test migration and GREEN commit remain blocked because private runtime mappings were not available; no completion, PR, push, approval, merge, Issue closure, or Project movement is claimed. |
+| 5 | Continue Issue #27 without discarding work; generate private local runtime values only in ignored server/.env, migrate and seed the validated shared test database, rerun every required verification, scan the staged change, and create the local GREEN commit only if all checks pass. | Remove the private-configuration blocker and complete local RED–GREEN evidence without exposing credentials or touching development data. | Generated and validated the private ignored configuration without printing values; migrated `toktickit_test/public` losslessly; proved repeat-seed idempotency; passed 72 focused tests, 184 complete server tests, 58 client tests, six Playwright scenarios, both builds, and the health smoke; preserved the development database; and prepared the locally authorized GREEN commit. No push, PR, approval, merge, Issue closure, or Project movement is claimed. |
 
 ## 4. Material Design Assistance
 
@@ -56,9 +58,9 @@ These are specification decisions, not claims that code already implements them.
 
 ## 5. Verification and Boundaries
 
-The AI performed documentation consistency checks requested by Issue #25, the final contract audit, and PR #26 requested changes. It did not run or claim Lab 3 implementation tests because implementation has not begun. Every Lab 3 test remains marked Planned.
+For Issue #27, the AI added the planned RED tests, implemented the schema/migration/seed/authentication foundation, first verified it in synthetic disposable schemas, and then completed the guarded populated migration and full verification against `toktickit_test/public`. Only UNIT-01–03, API-01–05, API-24, SEC-03, SEC-06, and MIG-01–05 are marked Pass; all deferred Lab 3 tests remain Planned.
 
-Sensitive values were not requested, read, or recorded. Example passwords are described as runtime-supplied values rather than repository credentials.
+Sensitive mapping values were generated cryptographically and stored only in ignored `server/.env`. Their presence, keys, uniqueness, and policy compliance were validated without printing or recording values; tracked examples contain placeholders only.
 
 ## 6. Reflection Status
 

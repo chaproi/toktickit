@@ -21,9 +21,10 @@ type TicketListQuery = {
     | null;
   currentStatus:
     | "NEW"
-    | "ASSIGNED"
+    | "OPEN"
     | "IN_PROGRESS"
-    | "PENDING_REQUESTER"
+    | "WAITING_FOR_REQUESTER"
+    | "REOPENED"
     | "RESOLVED"
     | "CLOSED"
     | "CANCELLED"
@@ -135,7 +136,7 @@ describe("Ticket-list query parsing", () => {
       categoryId: "17",
       relatedSystemId: "23",
       requestedPriority: "URGENT",
-      currentStatus: "PENDING_REQUESTER",
+      currentStatus: "WAITING_FOR_REQUESTER",
     });
 
     expectSuccess(result);
@@ -143,7 +144,7 @@ describe("Ticket-list query parsing", () => {
       categoryId: 17,
       relatedSystemId: 23,
       requestedPriority: "URGENT",
-      currentStatus: "PENDING_REQUESTER",
+      currentStatus: "WAITING_FOR_REQUESTER",
     });
   });
 

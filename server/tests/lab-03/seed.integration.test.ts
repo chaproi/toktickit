@@ -61,5 +61,72 @@ describe("MIG-04 idempotent Lab 3 seed", () => {
     expect(firstUsers.filter((user) => user.role === "ADMINISTRATOR" && user.isActive)).toHaveLength(1);
     expect(firstCounts.comments).toBeGreaterThan(0);
     expect(firstCounts.notes).toBeGreaterThan(0);
+
+    const seededTickets = await prisma.ticket.findMany({
+      where: { description: { startsWith: "Fictional seeded scenario:" } },
+      include: { owner: true },
+    });
+    expect(new Set(seededTickets.map((ticket) => ticket.currentStatus))).toEqual(
+      new Set([
+        "NEW",
+        "OPEN",
+        "IN_PROGRESS",
+        "WAITING_FOR_REQUESTER",
+        "RESOLVED",
+        "CLOSED",
+        "REOPENED",
+        "CANCELLED",
+      ]),
+    );
+    expect(new Set(seededTickets.map((ticket) => ticket.requestedPriority))).toEqual(
+      new Set(["LOW", "MEDIUM", "HIGH", "URGENT"]),
+    );
+    expect(seededTickets.some((ticket) => ticket.ownerId === null)).toBe(true);
+    expect(seededTickets.some((ticket) => ticket.ownerId !== null)).toBe(true);
+    expect(
+      seededTickets
+        .filter((ticket) => ticket.owner !== null)
+        .every(
+          (ticket) =>
+            ticket.owner!.isActive &&
+            ["IT_STAFF", "ADMINISTRATOR"].includes(ticket.owner!.role),
+        ),
+    ).toBe(true);
+
+    const year = new Date().getUTCFullYear();
+    const sequence = await prisma.ticketNumberSequence.findUniqueOrThrow({
+      where: { year },
+    });
+    const maximumTicketNumber = Math.max(
+      ...(
+        await prisma.ticket.findMany({
+          where: { ticketNumber: { startsWith: `TKT-${year}-` } },
+          select: { ticketNumber: true },
+        })
+      ).map(({ ticketNumber }) => Number(ticketNumber.slice(-5))),
+    );
+    expect(sequence.lastValue).toBeGreaterThanOrEqual(maximumTicketNumber);
+  });
+
+  it("rejects an incomplete seed mapping before any write", async () => {
+    const prisma = getPrisma();
+    const before = {
+      users: await prisma.user.count(),
+      categories: await prisma.category.count(),
+      tickets: await prisma.ticket.count(),
+    };
+    process.env.LAB3_SEED_INITIAL_CREDENTIALS = "{}";
+    try {
+      await expect(seedDatabase(prisma)).rejects.toThrow(/missing required keys/iu);
+      await expect(
+        Promise.all([
+          prisma.user.count(),
+          prisma.category.count(),
+          prisma.ticket.count(),
+        ]),
+      ).resolves.toEqual([before.users, before.categories, before.tickets]);
+    } finally {
+      process.env.LAB3_SEED_INITIAL_CREDENTIALS = JSON.stringify(mapping);
+    }
   });
 });

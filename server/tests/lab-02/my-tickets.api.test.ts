@@ -96,13 +96,13 @@ async function createIssue17Fixtures(): Promise<void> {
     categoryMaximum,
     systemMaximum,
   ] = await Promise.all([
-    prisma.developmentRequester.findUnique({
+    prisma.user.findUnique({
       where: { email: REQUESTER_A_EMAIL },
     }),
-    prisma.developmentRequester.findUnique({
+    prisma.user.findUnique({
       where: { email: REQUESTER_B_EMAIL },
     }),
-    prisma.developmentRequester.findUnique({
+    prisma.user.findUnique({
       where: { email: INACTIVE_REQUESTER_EMAIL },
     }),
     prisma.category.findUnique({ where: { name: "Hardware" } }),
@@ -189,9 +189,9 @@ async function createIssue17Fixtures(): Promise<void> {
   ];
   const statuses: Ticket["currentStatus"][] = [
     "NEW",
-    "ASSIGNED",
+    "OPEN",
     "IN_PROGRESS",
-    "PENDING_REQUESTER",
+    "WAITING_FOR_REQUESTER",
     "RESOLVED",
     "CLOSED",
     "CANCELLED",
@@ -232,6 +232,7 @@ async function createIssue17Fixtures(): Promise<void> {
             : references.systemBetaId,
         summary: `${RUN_MARKER} ${summaryLabels[index]}`,
         requestedPriority: priorities[index % priorities.length],
+        itPriority: priorities[index % priorities.length],
         description:
           "Deterministic Issue 17 Requester A test Ticket.",
         currentStatus: statuses[index % statuses.length],
@@ -253,6 +254,7 @@ async function createIssue17Fixtures(): Promise<void> {
         relatedSystemId: references.systemBetaId,
         summary: `${RUN_MARKER} Requester B Ticket ${index + 1}`,
         requestedPriority: priorities[index],
+        itPriority: priorities[index],
         description:
           "Deterministic Issue 17 Requester B test Ticket.",
         currentStatus: statuses[index],
@@ -546,9 +548,9 @@ describe("GET /api/tickets list behavior", () => {
           ticket.requestedPriority === "HIGH",
       ],
       [
-        "currentStatus=ASSIGNED",
+        "currentStatus=OPEN",
         (ticket: Ticket) =>
-          ticket.currentStatus === "ASSIGNED",
+          ticket.currentStatus === "OPEN",
       ],
     ] as const;
 
@@ -798,7 +800,7 @@ describe("GET /api/tickets list behavior", () => {
 
   it("API-06 returns a safe response for an unexpected database failure", async () => {
     vi.spyOn(
-      getPrisma().developmentRequester,
+      getPrisma().user,
       "findFirst",
     ).mockRejectedValueOnce(
       new Error(

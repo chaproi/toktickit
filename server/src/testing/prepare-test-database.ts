@@ -2,6 +2,10 @@ import { spawnSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { join } from "node:path";
 import { configureTestDatabaseEnvironment } from "./test-database.js";
+import {
+  inspectLegacySnapshot,
+  migrateLab3Database,
+} from "../migration/lab3-migration.js";
 
 const require = createRequire(import.meta.url);
 
@@ -33,6 +37,18 @@ export async function prepareTestDatabase(
     environment,
     environmentFilePath: join(serverDirectory, ".env"),
   });
+
+  const databaseUrl = environment.DATABASE_URL;
+  if (!databaseUrl) {
+    throw new Error("The isolated test database URL is unavailable.");
+  }
+  const snapshot = await inspectLegacySnapshot(databaseUrl);
+  if (snapshot.schemaState === "lab2") {
+    await migrateLab3Database({
+      databaseUrl,
+      rawCredentialMapping: environment.LAB3_MIGRATION_INITIAL_CREDENTIALS,
+    });
+  }
 
   runNodeModule(
     require.resolve("prisma/build/index.js"),

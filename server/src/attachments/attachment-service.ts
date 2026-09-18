@@ -17,11 +17,11 @@ const attachmentMetadataSelect = {
     originalFilename: true,
     mimeType: true,
     sizeBytes: true,
-    uploadedByRequesterId: true,
+    uploadedByUserId: true,
     isRemoved: true,
     createdAt: true,
     removedAt: true,
-    removedByRequesterId: true,
+    removedByUserId: true,
     removalReason: true,
 } satisfies Prisma.AttachmentSelect;
 
@@ -30,10 +30,32 @@ const attachmentContentSelect = {
     storageKey: true,
 } satisfies Prisma.AttachmentSelect;
 
-export type AttachmentMetadata =
-    Prisma.AttachmentGetPayload<{
-        select: typeof attachmentMetadataSelect;
-    }>;
+type StoredAttachmentMetadata = Prisma.AttachmentGetPayload<{
+    select: typeof attachmentMetadataSelect;
+}>;
+
+export type AttachmentMetadata = Omit<
+    StoredAttachmentMetadata,
+    "uploadedByUserId" | "removedByUserId"
+> & {
+    uploadedByRequesterId: number;
+    removedByRequesterId: number | null;
+};
+
+function compatibilityMetadata(
+    attachment: StoredAttachmentMetadata,
+): AttachmentMetadata {
+    const {
+        uploadedByUserId,
+        removedByUserId,
+        ...metadata
+    } = attachment;
+    return {
+        ...metadata,
+        uploadedByRequesterId: uploadedByUserId,
+        removedByRequesterId: removedByUserId,
+    };
+}
 
 type AttachmentRequesterFailure =
     | { kind: "invalid-requester" }
@@ -74,10 +96,11 @@ async function isActiveRequester(
     requesterId: number,
 ): Promise<boolean> {
     const requester =
-        await getPrisma().developmentRequester.findFirst({
+        await getPrisma().user.findFirst({
             where: {
                 id: requesterId,
                 isActive: true,
+                role: "REQUESTER",
             },
             select: {
                 id: true,
@@ -142,7 +165,7 @@ export async function listAttachmentsForRequester(
 
     return {
         kind: "success",
-        attachments,
+        attachments: attachments.map(compatibilityMetadata),
     };
 }
 
@@ -165,12 +188,12 @@ export async function getAttachmentForRequester(
         return { kind: "not-found" };
     }
 
-    const { storageKey: _storageKey, ...metadata } =
+    const { storageKey: _storageKey, ...storedMetadata } =
         attachment;
 
     return {
         kind: "success",
-        attachment: metadata,
+        attachment: compatibilityMetadata(storedMetadata),
     };
 }
 
@@ -204,12 +227,12 @@ export async function getAttachmentContentForRequester(
     }
 
     const content = await storage.read(attachment.storageKey);
-    const { storageKey: _storageKey, ...metadata } =
+    const { storageKey: _storageKey, ...storedMetadata } =
         attachment;
 
     return {
         kind: "success",
-        attachment: metadata,
+        attachment: compatibilityMetadata(storedMetadata),
         content,
     };
 }
@@ -248,7 +271,7 @@ export async function removeAttachmentForRequester(
         data: {
             isRemoved: true,
             removedAt: new Date(),
-            removedByRequesterId: requesterId,
+            removedByUserId: requesterId,
             removalReason,
         },
     });
@@ -271,14 +294,13 @@ export async function removeAttachmentForRequester(
         );
     } catch (error) {
         console.error(
-            "Unable to remove soft-removed Attachment content:",
-            error,
+            "Unable to remove soft-removed Attachment content.",
         );
     }
 
     return {
         kind: "success",
-        attachment: removedAttachment,
+        attachment: compatibilityMetadata(removedAttachment),
     };
 }
 
@@ -327,10 +349,11 @@ export async function uploadAttachmentForRequester(
 ): Promise<UploadAttachmentResult> {
     const prisma = getPrisma();
     const requester =
-        await prisma.developmentRequester.findFirst({
+        await prisma.user.findFirst({
             where: {
                 id: requesterId,
                 isActive: true,
+                role: "REQUESTER",
             },
             select: {
                 id: true,
@@ -404,14 +427,14 @@ export async function uploadAttachmentForRequester(
                         storageKey,
                         mimeType: validation.data.mimeType,
                         sizeBytes: validation.data.sizeBytes,
-                        uploadedByRequesterId: requesterId,
+                        uploadedByUserId: requesterId,
                     },
                     select: attachmentMetadataSelect,
                 });
 
             return {
                 kind: "uploaded" as const,
-                attachment,
+                attachment: compatibilityMetadata(attachment),
             };
         });
     } catch (error) {
@@ -420,8 +443,7 @@ export async function uploadAttachmentForRequester(
                 await storage.remove(storedKey);
             } catch (cleanupError) {
                 console.error(
-                    "Unable to remove an orphaned Attachment object:",
-                    cleanupError,
+                    "Unable to remove an orphaned Attachment object.",
                 );
             }
         }

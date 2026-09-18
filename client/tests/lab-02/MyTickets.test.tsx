@@ -388,9 +388,10 @@ describe("My Tickets", () => {
 
     for (const value of [
       "NEW",
-      "ASSIGNED",
+      "OPEN",
       "IN_PROGRESS",
-      "PENDING_REQUESTER",
+      "WAITING_FOR_REQUESTER",
+      "REOPENED",
       "RESOLVED",
       "CLOSED",
       "CANCELLED",
@@ -467,7 +468,7 @@ describe("My Tickets", () => {
     );
     await user.selectOptions(
       screen.getByRole("combobox", { name: /current status/i }),
-      "ASSIGNED",
+      "OPEN",
     );
 
     expect(ticketRequests(fetchMock)).toHaveLength(2);
@@ -487,7 +488,7 @@ describe("My Tickets", () => {
       "HIGH",
     );
     expect(appliedUrl.searchParams.get("currentStatus")).toBe(
-      "ASSIGNED",
+      "OPEN",
     );
     expect(appliedUrl.searchParams.get("page")).toBe("1");
   });

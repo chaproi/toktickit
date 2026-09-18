@@ -59,7 +59,7 @@ describe("API-01 through API-03 authentication lifecycle", () => {
     );
     expect(stored.tokenHash).not.toBe(rawSession);
     expect(JSON.stringify(response.body)).not.toMatch(
-      /password|token|hash|csrf/iu,
+      /passwordHash|tokenHash|csrfToken|sessionToken/iu,
     );
   });
 
@@ -77,6 +77,22 @@ describe("API-01 through API-03 authentication lifecycle", () => {
         message: "Email or password is incorrect.",
       },
     });
+    expect(await getPrisma().authSession.count()).toBe(0);
+  });
+
+  it.each([
+    {},
+    { email: 123, password: syntheticPassword() },
+    { email: syntheticEmail("extra"), password: syntheticPassword(), role: "REQUESTER" },
+    { email: `${"a".repeat(250)}@example.test`, password: syntheticPassword() },
+    { email: syntheticEmail("long-password"), password: "x".repeat(129) },
+  ])("rejects missing, non-string, unknown, or oversized Login fields", async (body) => {
+    const response = await request(app)
+      .post("/api/auth/login")
+      .set("Origin", APPROVED_ORIGIN)
+      .send(body);
+    expect(response.status).toBe(400);
+    expect(response.body.error.code).toBe("VALIDATION_ERROR");
     expect(await getPrisma().authSession.count()).toBe(0);
   });
 
@@ -105,6 +121,15 @@ describe("API-01 through API-03 authentication lifecycle", () => {
     expect(await getPrisma().loginThrottle.count()).toBe(1);
   });
 
+  it("clears the persistent throttle key after a successful login", async () => {
+    const { user, password } = await createAuthUser();
+    expect((await loginRequest(user.email, syntheticPassword())).status).toBe(401);
+    expect(await getPrisma().loginThrottle.count()).toBe(1);
+
+    expect((await loginRequest(user.email, password)).status).toBe(200);
+    expect(await getPrisma().loginThrottle.count()).toBe(0);
+  });
+
   it("returns current User, expires inactive sessions, logs out, and rejects reuse", async () => {
     const { user, password } = await createAuthUser();
     const login = await loginRequest(user.email, password);
@@ -127,4 +152,56 @@ describe("API-01 through API-03 authentication lifecycle", () => {
     expect(reused.status).toBe(401);
     expect(reused.body.error.code).toBe("AUTHENTICATION_REQUIRED");
   });
+
+  it("keeps Logout idempotent without a live session and clears both cookies", async () => {
+    const response = await request(app).post("/api/auth/logout");
+    expect(response.status).toBe(204);
+    expect(response.headers["set-cookie"]).toEqual(
+      expect.arrayContaining([
+        expect.stringMatching(/^toktickit_session=;/u),
+        expect.stringMatching(/^toktickit_csrf=;/u),
+      ]),
+    );
+  });
+
+  it.each(["idle", "absolute", "inactive"] as const)(
+    "rejects and removes an %s session without returning protected data",
+    async (condition) => {
+      const { user, password } = await createAuthUser();
+      const login = await loginRequest(user.email, password);
+      const cookies = cookieHeader(login.headers["set-cookie"]);
+      const session = await getPrisma().authSession.findFirstOrThrow({
+        where: { userId: user.id },
+      });
+
+      if (condition === "idle") {
+        await getPrisma().authSession.update({
+          where: { id: session.id },
+          data: { lastSeenAt: new Date(Date.now() - 31 * 60 * 1_000) },
+        });
+      } else if (condition === "absolute") {
+        await getPrisma().authSession.update({
+          where: { id: session.id },
+          data: { expiresAt: new Date(Date.now() - 1_000) },
+        });
+      } else {
+        await getPrisma().user.update({
+          where: { id: user.id },
+          data: { isActive: false },
+        });
+      }
+
+      const response = await request(app).get("/api/auth/me").set("Cookie", cookies);
+      expect(response.status).toBe(401);
+      expect(response.body).toEqual({
+        error: {
+          code: "AUTHENTICATION_REQUIRED",
+          message: "Authentication is required.",
+        },
+      });
+      expect(
+        await getPrisma().authSession.count({ where: { userId: user.id } }),
+      ).toBe(0);
+    },
+  );
 });

@@ -54,3 +54,21 @@ PR #26 has one requested-changes review from Chxtamos. The response column recor
 ## 5. Approval Record
 
 No approval, conversation resolution, re-review, merge, release, Issue closure, Done transition, or completion is claimed. This section must be updated only from later actual Pull Request evidence.
+
+## 6. Issue #27 Implementation Handoff
+
+This is an implementation handoff, not a peer review or approval record.
+
+| Item | Current evidence |
+| --- | --- |
+| Issue / branch | #27 / feat/27-authentication-foundation |
+| Starting commit | 597a621bd857252a17771f9dc4b3cbb0dd0c1712 |
+| RED commit | 22ce5426cae6ca1dbd8002c02f14428dc9a9546c |
+| Implemented scope | Lossless User/auth schema migration, guarded runtime credential mappings, idempotent seed foundation, four auth endpoints, exact Login/unsafe Origin controls, CSRF, sessions, throttling, and Lab 1/Lab 2 compatibility |
+| Automated evidence | All 72 focused Issue #27 tests and the complete 184-test server suite passed against the migrated shared test database; the 58-test client suite, six existing Lab 2 Playwright scenarios, both production builds, and compiled health smoke also passed locally |
+| Shared test migration | Applied through the guarded runner to `toktickit_test/public` after private ignored runtime mappings were provided. The populated Lab 2 snapshot preserved 5 Users, 9 Tickets, 0 Attachments, 4 Categories, 7 Related Systems, and matching User/Ticket/Attachment checksums. Two seed runs remained stable at 10 Users, 17 Tickets, 1 Public Comment, and 1 Internal Note while preserving hashes. |
+| Development database | Read-only before/after evidence for `toktickit/public` remained 5 Users, 182 Tickets, 92 Attachments, 4 Categories, and 7 Related Systems with matching checksums |
+| GREEN commit | Authorized after final staged scope and secret checks; the exact local commit hash is reported from Git after creation rather than embedded in its own content |
+| Peer review / approval | Pending; neither performed nor claimed |
+
+One earlier verification command reached `toktickit_test/public` because its custom Vitest configuration flag was parsed incorrectly. The migration SQL failed and rolled back transactionally before tests ran, and the exact failed Prisma metadata entry was marked rolled back using the documented recovery action. After private mappings were supplied, the guarded migration later applied successfully to that validated shared test target. All disposable `issue27_*` schemas were removed after their runs; no development database mutation occurred.

@@ -8,8 +8,10 @@
     "build": "tsc",
     "start": "node dist/src/index.js",
     "prisma:migrate": "prisma migrate dev",
+    "prisma:migrate:lab3": "tsx src/migration/run-lab3-migration.ts",
     "prisma:seed": "tsx prisma/seed.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:issue27": "vitest run --config vitest.issue27.config.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -17,16 +19,19 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1126.0",
     "@prisma/client": "^5.22.0",
+    "argon2": "^0.45.1",
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "file-type": "^20.5.0",
-    "multer": "^2.3.0"
+    "multer": "^2.3.0",
+    "pg": "^8.23.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/multer": "^2.2.0",
     "@types/node": "^22.10.2",
+    "@types/pg": "^8.23.1",
     "@types/supertest": "^6.0.2",
     "prisma": "^5.22.0",
     "supertest": "^7.0.0",

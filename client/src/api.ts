@@ -97,11 +97,12 @@ export type RequestedPriority =
 
 export type TicketStatus =
   | "NEW"
-  | "ASSIGNED"
+  | "OPEN"
   | "IN_PROGRESS"
-  | "PENDING_REQUESTER"
+  | "WAITING_FOR_REQUESTER"
   | "RESOLVED"
   | "CLOSED"
+  | "REOPENED"
   | "CANCELLED";
 
 export type TicketSortField =

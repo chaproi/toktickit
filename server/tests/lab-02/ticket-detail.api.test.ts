@@ -69,13 +69,13 @@ async function createFixtures(): Promise<void> {
     category,
     relatedSystem,
   ] = await Promise.all([
-    prisma.developmentRequester.findUnique({
+    prisma.user.findUnique({
       where: { email: ACTIVE_REQUESTER_EMAIL },
     }),
-    prisma.developmentRequester.findUnique({
+    prisma.user.findUnique({
       where: { email: OTHER_REQUESTER_EMAIL },
     }),
-    prisma.developmentRequester.findUnique({
+    prisma.user.findUnique({
       where: { email: INACTIVE_REQUESTER_EMAIL },
     }),
     prisma.category.findUnique({ where: { name: "Hardware" } }),
@@ -117,6 +117,7 @@ async function createFixtures(): Promise<void> {
         relatedSystemId,
         summary: `${RUN_MARKER} owned laptop display issue`,
         requestedPriority: "HIGH",
+        itPriority: "HIGH",
         description:
           "The corporate laptop display flickers after startup.",
         currentStatus: "IN_PROGRESS",
@@ -134,6 +135,7 @@ async function createFixtures(): Promise<void> {
         relatedSystemId,
         summary: `${RUN_MARKER} private other-requester issue`,
         requestedPriority: "URGENT",
+        itPriority: "URGENT",
         description:
           "This Ticket belongs only to the other Requester.",
         currentStatus: "NEW",

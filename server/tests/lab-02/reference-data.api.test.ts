@@ -109,7 +109,7 @@ describe("Lab 2 reference-data APIs", () => {
       "P1001",
     );
 
-    vi.spyOn(prisma.developmentRequester, "findMany").mockRejectedValueOnce(
+    vi.spyOn(prisma.user, "findMany").mockRejectedValueOnce(
       unavailableError,
     );
     vi.spyOn(console, "error").mockImplementation(() => undefined);

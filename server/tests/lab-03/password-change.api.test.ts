@@ -2,6 +2,7 @@ import request from "supertest";
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import { app } from "../../src/app.js";
 import { verifyPassword } from "../../src/auth/password.js";
+import { isAllowedDuringMandatoryPasswordChange } from "../../src/auth/auth-router.js";
 import { getPrisma } from "../../src/prisma.js";
 import {
   APPROVED_ORIGIN,
@@ -22,6 +23,15 @@ describe("API-04 mandatory password change", () => {
 
   afterEach(async () => {
     await cleanupAuthFixtures();
+  });
+
+  it("allows only current-user, logout, and password change through the forced-change gate", () => {
+    expect(isAllowedDuringMandatoryPasswordChange("GET", "/api/auth/me")).toBe(true);
+    expect(isAllowedDuringMandatoryPasswordChange("POST", "/api/auth/logout")).toBe(true);
+    expect(
+      isAllowedDuringMandatoryPasswordChange("POST", "/api/auth/change-password"),
+    ).toBe(true);
+    expect(isAllowedDuringMandatoryPasswordChange("GET", "/api/tickets")).toBe(false);
   });
 
   it("rejects wrong current, mismatch, weak, and reused passwords without mutation", async () => {

@@ -74,18 +74,20 @@ export function loginRequest(
 }
 
 export function cookieValue(
-  setCookie: string[] | undefined,
+  setCookie: string | string[] | undefined,
   name: string,
 ): string {
-  const cookie = setCookie?.find((value) => value.startsWith(`${name}=`));
+  const values = typeof setCookie === "string" ? [setCookie] : setCookie;
+  const cookie = values?.find((value) => value.startsWith(`${name}=`));
   if (!cookie) {
     throw new Error(`Expected ${name} cookie.`);
   }
   return cookie.slice(name.length + 1).split(";", 1)[0] ?? "";
 }
 
-export function cookieHeader(setCookie: string[] | undefined): string {
-  return (setCookie ?? [])
+export function cookieHeader(setCookie: string | string[] | undefined): string {
+  const values = typeof setCookie === "string" ? [setCookie] : (setCookie ?? []);
+  return values
     .map((value) => value.split(";", 1)[0])
     .join("; ");
 }

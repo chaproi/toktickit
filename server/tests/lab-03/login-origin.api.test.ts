@@ -27,7 +27,7 @@ describe("API-24 exact Login Origin contract", () => {
       .set("Referer", `${APPROVED_ORIGIN}/login`)
       .send({ email: "unknown@example.test", password: syntheticPassword() });
     if (origin !== undefined) {
-      call = call.set("Origin", origin);
+      call = call.set("Origin", origin as unknown as string);
     }
     return call;
   }
@@ -37,6 +37,18 @@ describe("API-24 exact Login Origin contract", () => {
     expect(response.status).toBe(403);
     expect(response.body.error.code).toBe("ORIGIN_REQUIRED");
     expect(response.headers["set-cookie"]).toBeUndefined();
+    expect(await getPrisma().authSession.count()).toBe(0);
+    expect(await getPrisma().loginThrottle.count()).toBe(0);
+  });
+
+  it("validates Origin before rejecting an invalid credential body", async () => {
+    const response = await request(app)
+      .post("/api/auth/login")
+      .set("Origin", "https://attacker.invalid")
+      .send({ unexpected: "field" });
+    expect(response.status).toBe(403);
+    expect(response.body.error.code).toBe("ORIGIN_FORBIDDEN");
+    expect(await getPrisma().loginThrottle.count()).toBe(0);
     expect(await getPrisma().authSession.count()).toBe(0);
   });
 

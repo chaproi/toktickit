@@ -94,4 +94,45 @@ describe("MIG-01 through MIG-03 lossless Lab 2 migration", () => {
       await fixture.cleanup();
     }
   });
+
+  it("produces identical preserved checksums and status results from equivalent snapshots", async () => {
+    const databaseUrl = process.env.TEST_DATABASE_URL;
+    expect(databaseUrl).toBeTruthy();
+    const fixtures = await Promise.all(
+      ["first", "second"].map((label) =>
+        buildSafeLegacySnapshot({
+          databaseUrl: databaseUrl!,
+          schema: `issue27_deterministic_${label}_${randomUUID().replaceAll("-", "")}`,
+        }),
+      ),
+    );
+
+    try {
+      const results = [];
+      for (const [index, fixture] of fixtures.entries()) {
+        const mapping = Object.fromEntries(
+          fixture.requesterIds.map((id) => [
+            String(id),
+            credential(`${index}-${id}`),
+          ]),
+        );
+        const migrated = await migrateLab3Database({
+          databaseUrl: fixture.databaseUrl,
+          rawCredentialMapping: JSON.stringify(mapping),
+          markPrismaMigration: false,
+        });
+        results.push(await verifyLab3Migration(fixture.databaseUrl, migrated.before));
+      }
+
+      expect(fixtures[0]!.before.checksums).toEqual(fixtures[1]!.before.checksums);
+      expect(results[0]!.statuses).toEqual(results[1]!.statuses);
+      expect(results[0]!.ownerIds).toEqual(results[1]!.ownerIds);
+      expect(results[0]!.itPrioritiesMatch).toBe(true);
+      expect(results[1]!.itPrioritiesMatch).toBe(true);
+      expect(results[0]!.preserved).toBe(true);
+      expect(results[1]!.preserved).toBe(true);
+    } finally {
+      await Promise.all(fixtures.map((fixture) => fixture.cleanup()));
+    }
+  });
 });
