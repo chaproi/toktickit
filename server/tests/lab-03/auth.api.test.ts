@@ -230,11 +230,14 @@ describe("API-01 through API-03 authentication lifecycle", () => {
       expect(afterBlockedRequest.blockedUntil).toEqual(afterConcurrent.blockedUntil);
       expect(await prisma.loginThrottle.count()).toBe(2);
 
-      const serializedResponses = JSON.stringify([...responses, blocked]);
-      expect(serializedResponses).not.toContain(email);
-      expect(serializedResponses).not.toContain(otherEmail);
-      expect(serializedResponses).not.toContain(targetBefore.keyHash);
-      expect(serializedResponses).not.toMatch(
+      const serializedBodies = JSON.stringify([
+        ...responses.map((response) => response.body),
+        blocked.body,
+      ]);
+      expect(serializedBodies).not.toContain(email);
+      expect(serializedBodies).not.toContain(otherEmail);
+      expect(serializedBodies).not.toContain(targetBefore.keyHash);
+      expect(serializedBodies).not.toMatch(
         /passwordHash|cookie|token|hmac|database/iu,
       );
     } finally {

@@ -22,8 +22,9 @@ import {
   sessionCookieOptions,
 } from "./session.js";
 import {
-  calculateFailedLogin,
   deriveThrottleKey,
+  LOGIN_FAILURE_LIMIT,
+  LOGIN_WINDOW_MILLISECONDS,
   normalizeEmail,
 } from "./throttle.js";
 
@@ -317,15 +318,62 @@ async function activeThrottle(keyHash: string, now: Date) {
     : null;
 }
 
-async function recordFailedLogin(keyHash: string, now: Date): Promise<void> {
+async function recordFailedLogin(keyHash: string, now: Date) {
   const prisma = getPrisma();
-  const current = await prisma.loginThrottle.findUnique({ where: { keyHash } });
-  const { state } = calculateFailedLogin(current, now);
-  await prisma.loginThrottle.upsert({
-    where: { keyHash },
-    create: { keyHash, ...state },
-    update: state,
-  });
+  const [state] = await prisma.$queryRaw<
+    Array<{
+      failureCount: number;
+      windowStartedAt: Date;
+      blockedUntil: Date | null;
+    }>
+  >`
+    INSERT INTO "LoginThrottle"
+      ("keyHash", "failureCount", "windowStartedAt", "blockedUntil", "updatedAt")
+    VALUES
+      (
+        ${keyHash},
+        1,
+        ${now}::timestamptz AT TIME ZONE 'UTC',
+        NULL,
+        ${now}::timestamptz AT TIME ZONE 'UTC'
+      )
+    ON CONFLICT ("keyHash") DO UPDATE
+    SET
+      "failureCount" = CASE
+        WHEN "LoginThrottle"."blockedUntil" > EXCLUDED."windowStartedAt"
+          THEN "LoginThrottle"."failureCount"
+        WHEN EXCLUDED."windowStartedAt" - "LoginThrottle"."windowStartedAt"
+             < ${LOGIN_WINDOW_MILLISECONDS} * INTERVAL '1 millisecond'
+          THEN "LoginThrottle"."failureCount" + 1
+        ELSE 1
+      END,
+      "windowStartedAt" = CASE
+        WHEN "LoginThrottle"."blockedUntil" > EXCLUDED."windowStartedAt"
+          THEN "LoginThrottle"."windowStartedAt"
+        WHEN EXCLUDED."windowStartedAt" - "LoginThrottle"."windowStartedAt"
+             < ${LOGIN_WINDOW_MILLISECONDS} * INTERVAL '1 millisecond'
+          THEN "LoginThrottle"."windowStartedAt"
+        ELSE EXCLUDED."windowStartedAt"
+      END,
+      "blockedUntil" = CASE
+        WHEN "LoginThrottle"."blockedUntil" > EXCLUDED."windowStartedAt"
+          THEN "LoginThrottle"."blockedUntil"
+        WHEN EXCLUDED."windowStartedAt" - "LoginThrottle"."windowStartedAt"
+             < ${LOGIN_WINDOW_MILLISECONDS} * INTERVAL '1 millisecond'
+             AND "LoginThrottle"."failureCount" + 1 >= ${LOGIN_FAILURE_LIMIT}
+          THEN EXCLUDED."windowStartedAt"
+               + ${LOGIN_WINDOW_MILLISECONDS} * INTERVAL '1 millisecond'
+        ELSE NULL
+      END,
+      "updatedAt" = CASE
+        WHEN "LoginThrottle"."blockedUntil" > EXCLUDED."windowStartedAt"
+          THEN "LoginThrottle"."updatedAt"
+        ELSE EXCLUDED."updatedAt"
+      END
+    RETURNING "failureCount", "windowStartedAt", "blockedUntil"
+  `;
+  if (!state) throw new Error("Failed-login throttle update did not return state.");
+  return state;
 }
 
 export const authRouter = Router();
