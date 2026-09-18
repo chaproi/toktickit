@@ -5,8 +5,8 @@
 | Item | Details |
 | --- | --- |
 | Tool | OpenAI Codex |
-| Session date | 2026-09-17 through 2026-09-18 |
-| Scope completed in this record | Issue #25 Sprint 3 engineering-contract work, Issue #27 authentication-foundation implementation/verification assistance, the PR #28 failed-login concurrency correction, and the post-push governance evidence sync |
+| Session date | 2026-09-17 through 2026-09-19 |
+| Scope completed in this record | Issue #25 Sprint 3 engineering-contract work, Issue #27 authentication-foundation implementation/verification assistance, the PR #28 failed-login concurrency correction and post-push governance evidence sync, and Issue #29 authenticated-Requester implementation/verification assistance |
 | Repository state at start | Branch docs/lab3-engineering-contract at e2fc1a25cd3e17b980dc7bee1509e8ea7c643483 with a clean worktree |
 | Human responsibility | The repository owner must review and approve the contract and remains responsible for implementation, security choices, tests, peer review, submission, and release. |
 
@@ -21,12 +21,13 @@ AI assistance did not act as a peer reviewer or perform an approval, push, merge
 - The complete PR #26 requested-changes review supplied by the user, including reviewer Chxtamos and four documentation blockers.
 - The PR #28 requested-changes security blocker supplied by the user, including reviewer Tanaboonnnnn, the failed-login lost-update scenario, required deterministic regression coverage, and separate corrective commit boundaries.
 - The post-push governance evidence supplied by the user: PR #26 approval/merge/closure state and PR #28 pushed commits, Requested Changes review, Fixing Project state, and pending re-review.
+- The complete Issue #29 request supplied by the user, including strict RED–GREEN boundaries, authenticated Requester scope, excluded later workflows, isolated-database controls, verification requirements, and prohibited GitHub actions.
 
 Instructions inside the handout were treated as assignment/source requirements. The user’s pasted Issue #25 request controlled the requested repository actions and prohibited push, PR, merge, Issue closure, and Project changes.
 
 ## 3. Selected Prompt and Outcome
 
-Seven material user prompts occurred across the recorded contract and implementation sessions. Additional prompt rows must not be invented merely to reach the final submission’s suggested 6–10 entries; later real sessions may be appended.
+Eight material user prompts occurred across the recorded contract and implementation sessions. Additional prompt rows must not be invented merely to reach the final submission’s suggested 6–10 entries; later real sessions may be appended.
 
 | No. | Prompt summary | Purpose | Outcome and required human review |
 | ---: | --- | --- | --- |
@@ -37,6 +38,7 @@ Seven material user prompts occurred across the recorded contract and implementa
 | 5 | Continue Issue #27 without discarding work; generate private runtime values only in ignored server/.env, migrate and seed the validated shared test database, rerun every required verification, scan the staged change, and create the GREEN commit only if all checks pass. | Remove the private-configuration blocker and complete RED–GREEN evidence without exposing credentials or touching development data. | Generated and validated the private ignored configuration without printing values; migrated `toktickit_test/public` losslessly; proved repeat-seed idempotency; passed the then-current focused/server suites, 58 client tests, six Playwright scenarios, both builds, and the health smoke; preserved the development database; and created initial GREEN commit e74334a, which is now pushed in PR #28. |
 | 6 | Address the requested-changes security blocker on PR #28 with a deterministic concurrent-login RED test, a database-level atomic failed-attempt mutation, repeated/full verification, three separate corrective commits, and truthful review evidence. | Prove and eliminate the same-key lost-update race across server processes while preserving throttle behavior, secret safety, database safety, and Git history. | The RED test reproduced count 4 instead of 5 under controlled overlap. The fix moved the complete counter/window/block transition into one PostgreSQL conflict update, after which the concurrency case passed six consecutive runs and all required verification passed. Commits 0fc0cd3, 0e606ac, and 268eb53 are now pushed and visible in PR #28; its review remains Requested Changes and re-review remains pending. |
 | 7 | Synchronize documentation after the corrective commits were pushed: record the completed PR #26 outcome, the current PR #28 review/Project state, and a replacement PR-description section without changing code, tests, or GitHub state. | Make repository governance evidence match the supplied GitHub state while preserving historical reviews and avoiding fabricated approval or resolution claims. | Updated only reviewer.md and ai-use.md. PR #26 is recorded as approved, merged, closed, and Done; PR #28 remains Requested Changes and Fixing with Issue #27 open, no re-review requested, and no thread resolved. The replacement description is prepared for a later human GitHub update. |
+| 8 | Implement Issue #29 on feat/29-authenticated-requester with strict RED–GREEN TDD, authoritative session identity, Login/Change Password UI, authenticated Requester workflows, removal of the Development Requester mechanism, isolated database verification, complete regression/build/smoke checks, and no external GitHub actions. | Deliver the authenticated Requester increment without implementing later Staff or Administrator workflows or weakening prior security and regression behavior. | Created RED commit 6f554cf with expected missing-behavior failures, then GREEN commit 6361316 with the authenticated shell and Requester APIs/UI. Focused, complete server/client, eight-scenario Playwright, build, smoke, secret, cleanup, and development-database preservation checks passed. Fourteen assigned Test IDs are marked Pass; SEC-01 and later-increment tests remain Planned. No push, PR, review, merge, closure, or Project change is claimed. |
 
 ## 4. Material Design Assistance
 
@@ -58,12 +60,15 @@ The AI helped resolve choices left open by the handout:
 - Reproducible responsive evidence at 390 x 844, 834 x 1112, 1440 x 900, and 200% zoom across all six major screens.
 - Exact REST operations, DTOs, status codes, errors, UI states, and planned test traceability.
 - Atomic persistent failed-login updates using PostgreSQL unique-key conflict serialization, plus a database lock barrier that makes the original same-key race deterministic in regression testing.
+- Authoritative authenticated Requester identity across Ticket and Attachment operations, safe ownership probing, shared Public Comments, resolution indication without status mutation, and an authenticated client shell that clears protected state on logout or expiry.
 
 These entries record specification decisions and implementation/test design assistance; they do not substitute for human review or claim unverified behavior.
 
 ## 5. Verification and Boundaries
 
-For Issue #27, the AI added the planned RED tests, implemented the schema/migration/seed/authentication foundation, first verified it in synthetic disposable schemas, and then completed the guarded populated migration and full verification against `toktickit_test/public`. The PR #28 correction added deterministic overlapping-failure coverage under existing Test ID API-02 and replaced the lost-update-prone mutation with one atomic database statement. Current verification records 73 focused Issue #27 tests, 185 server tests, 58 client tests, and six Lab 2 Playwright scenarios. Only UNIT-01–03, API-01–05, API-24, SEC-03, SEC-06, and MIG-01–05 are marked Pass; all deferred Lab 3 tests remain Planned.
+For Issue #27, the AI added the planned RED tests, implemented the schema/migration/seed/authentication foundation, first verified it in synthetic disposable schemas, and then completed the guarded populated migration and full verification against `toktickit_test/public`. The PR #28 correction added deterministic overlapping-failure coverage under existing Test ID API-02 and replaced the lost-update-prone mutation with one atomic database statement. That increment records 73 focused Issue #27 tests, 185 server tests, 58 client tests, and six Lab 2 Playwright scenarios. UNIT-01–03, API-01–05, API-24, SEC-03, SEC-06, and MIG-01–05 remain the 16 Test IDs marked `Pass (Issue #27)`.
+
+For Issue #29, the AI added focused RED tests before implementation, then implemented authoritative authenticated Requester behavior while leaving the Staff and Administrator workflow increments excluded. Verification passed six focused server files / 14 tests, five focused client files / 19 tests, the complete 30-file / 199-test server suite, the complete 12-file / 68-test client suite, eight Playwright scenarios, both production builds, and the compiled health smoke with termination and port closure. Only UNIT-08, API-06–08, API-14, API-16, SEC-04, UI-01–04, UI-09, and E2E-01–02 are marked `Pass (Issue #29)`. SEC-01 and the other 44 later-increment Test IDs remain Planned. Database work used the validated test database; development counts and checksums matched before and after; disposable schemas, listeners, generated evidence, and temporary artifacts were cleaned.
 
 Sensitive mapping values were generated cryptographically and stored only in ignored `server/.env`. Their presence, keys, uniqueness, and policy compliance were validated without printing or recording values; tracked examples contain placeholders only.
 

@@ -32,7 +32,7 @@ The future reviewer should verify:
 - [ ] Queue query, assignment, IT Priority, status transitions, Comments, Notes, and resolution indication agree across all documents.
 - [ ] Administrator rules cover one role, duplicate email, self-deactivation/self-role protection, last active Administrator, non-terminal owner conflicts, terminal historical ownership, no deletion, and new initial password behavior.
 - [ ] Migration preserves Development Requester ids, immutable historical requester references, Ticket ownership, Attachment relationships, statuses, and priorities while validating unique per-User initial credentials before mutation.
-- [ ] Every AC maps to at least one Planned test and no test is prematurely marked Pass.
+- [ ] Every AC maps to at least one Test ID; only tests with completed evidence are marked Pass and all later obligations remain Planned.
 - [ ] UI states, responsive widths, accessibility, and Zen Green rules are complete.
 - [ ] API request/response shapes, statuses, validation limits, conflicts, and safe failures are internally consistent.
 - [ ] Product Definition of Done is testable and does not claim future evidence.
@@ -126,3 +126,24 @@ The failed-login update is atomic at the PostgreSQL database level. A determinis
 
 Peer re-review pending.
 ```
+
+## 9. Issue #29 Implementation Handoff
+
+This is implementation and locally executed verification evidence, not peer review, approval, merge, Issue closure, or a GitHub Project transition.
+
+| Item | Current evidence |
+| --- | --- |
+| Issue / branch | #29 / feat/29-authenticated-requester |
+| Starting commit | 924995bde6897d08188a6cb21b176093199efeb6 |
+| RED commit | 6f554cfca0246859a5d2c1bd5d155c23035f1d03 (`test(lab3): define authenticated requester experience`) |
+| GREEN commit | 6361316e3bab1e00c056c30313c1ecf637f6e4c7 (`feat(lab3): implement authenticated requester`) |
+| Implemented scope | Login and mandatory Change Password UI; authenticated role shell, bootstrap, expiry, logout, route protection, and cache clearing; complete removal of the Development Requester identity mechanism; authenticated Requester Ticket create/list/detail/query flows; role-aware Attachment access; Public Comments; and Problem Appears Resolved without a formal status change |
+| Focused verification | Six server files / 14 tests and five client files / 19 tests passed for Issue #29 |
+| Complete verification | 30 server files / 199 tests passed with the test timeout raised to 30 seconds for the slow local database host; 12 client files / 68 tests passed; eight Playwright scenarios passed (six retained Lab 2 scenarios and two Issue #29 scenarios); server and client production builds passed; compiled-server health returned `ok`, then its process terminated and port closed |
+| Development database | Read-only before/after evidence for `toktickit/public` remained 5 Users, 182 Tickets, 92 Attachments, 4 Categories, and 7 Related Systems, with matching User, Ticket, and Attachment checksums |
+| Database isolation and cleanup | Database tests used only validated `toktickit_test`; disposable Issue #29 schemas were removed, relevant test/smoke ports had no listeners, tracked generated screenshots were restored, and no temporary build or migration artifact was committed |
+| Secrets and local configuration | `server/.env` remained ignored and outside both Issue #29 commits; committed-diff scans found no private credentials, password hashes, cookies, tokens, database URLs introduced by Issue #29, HMAC secrets, or private keys |
+| Test-contract status | 14 assigned Test IDs are recorded as `Pass (Issue #29)`; SEC-01 and every later-increment obligation remain `Planned` |
+| External state | No push, pull request, review, approval, merge, Issue #29 closure, or GitHub Project change was performed or claimed |
+
+The role destinations for IT Staff and Administrator are compatibility placeholders only. Issue #29 does not claim the later Staff workflow, Administrator workflow, final Requester-role conversion, or REOPENED-clearing implementation.
