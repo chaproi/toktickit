@@ -314,6 +314,26 @@ function replayResult(
   };
 }
 
+export function buildRequesterTicketCreateData(
+  requesterId: number,
+  ticketNumber: string,
+  input: CreateTicketInput,
+): Prisma.TicketUncheckedCreateInput {
+  return {
+    ticketNumber,
+    clientSubmissionId: input.clientSubmissionId,
+    requesterId,
+    categoryId: input.categoryId,
+    relatedSystemId: input.relatedSystemId,
+    requestedPriority: input.requestedPriority,
+    itPriority: input.requestedPriority,
+    currentStatus: "NEW",
+    ownerId: null,
+    summary: input.summary,
+    description: input.description,
+  };
+}
+
 export async function createTicketForRequester(
   requesterId: number,
   input: CreateTicketInput,
@@ -409,22 +429,11 @@ export async function createTicketForRequester(
           });
 
         return transaction.ticket.create({
-          data: {
-            ticketNumber: formatTicketNumber(
-              year,
-              sequence.lastValue,
-            ),
-            clientSubmissionId:
-              input.clientSubmissionId,
+          data: buildRequesterTicketCreateData(
             requesterId,
-            categoryId: input.categoryId,
-            relatedSystemId: input.relatedSystemId,
-            requestedPriority:
-              input.requestedPriority,
-            itPriority: input.requestedPriority,
-            summary: input.summary,
-            description: input.description,
-          },
+            formatTicketNumber(year, sequence.lastValue),
+            input,
+          ),
           include: ticketInclude,
         });
       },
