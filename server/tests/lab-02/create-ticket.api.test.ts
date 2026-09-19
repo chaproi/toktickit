@@ -368,8 +368,8 @@ describe("POST /api/tickets", () => {
     );
 
     vi.spyOn(
-        getPrisma().user,
-        "findFirst",
+        getPrisma(),
+        "$transaction",
     ).mockRejectedValueOnce(
         new Error(
         "DATABASE_URL=postgresql://secret-database",
