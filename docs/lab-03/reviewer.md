@@ -76,17 +76,17 @@ PR #28 originally received Requested Changes from Tanaboonnnnn at `e74334a`. The
 
 ## 8. PR #30 Requested-Changes Record
 
-This section records the PR #30 review history, the latest Requested Changes review at `3cf83e4`, and the local correction evidence as of this corrective commit. It does not claim reviewer acceptance of the new corrective commits.
+This section records the PR #30 review history through Tanaboonnnnn's re-review of exact HEAD `dc8f397b51bba04a69f974aa4f0c7c98e2a8e07a`. GitHub is the authoritative source for live state after this documentation-only correction.
 
 | Item | Current evidence |
 | --- | --- |
 | Pull Request / Issue | PR #30 / Issue #29 |
 | Base / source branch | `lab3-staging` / `feat/29-authenticated-requester` |
 | Initial reviewed HEAD | `1bf936af18518e4f1e5e9ad111d40cb7fc0cac3e` |
-| Latest re-reviewed HEAD | `3cf83e4870ec8f3ca84f19a415430f5a5f4761dd` |
-| Reviewer / review status | cottonlnwza / Requested Changes |
+| Latest re-reviewed HEAD | `dc8f397b51bba04a69f974aa4f0c7c98e2a8e07a` |
+| Latest reviewer / review status | Tanaboonnnnn / Requested Changes |
 | Earlier findings | Atomic current-role eligibility for Requester mutations; authoritative Ticket reload after resolution conflict; modal keyboard/focus behavior; newly created Public Comment pagination; truthful governance evidence |
-| Latest findings | Recovery after an initial Public Comment list failure and successful POST; authoritative page 3 after concurrent Comment growth; eligible retry guidance after `CONCURRENT_UPDATE`; stale governance evidence |
+| Latest findings | Standards: 0 blocking findings. Specification: 1 blocking finding, limited to stale governance evidence. The reviewer confirmed that all three client implementation blockers were fixed |
 | Corrective RED | `25e7c244ae83b30cd60ce2e7c43a5caebba26165` (`test(lab3): expose requested changes regressions`) |
 | Corrective GREEN | `5043200` (`fix(lab3): resolve requester review blockers`) |
 | Verification-coverage follow-up | `9b249b4` (`test(lab3): preserve verification coverage`) |
@@ -97,8 +97,9 @@ This section records the PR #30 review history, the latest Requested Changes rev
 | Transaction-gate GREEN | `31cada316564edc4940a539d5b26eeca2863a5e7` (`fix(lab3): scope mutation gate to serializable transaction`) |
 | Final requester-regression RED | `e5ebe38f8ca5a7194e683aaf9c907b24efe36d99` (`test(lab3): expose final requester review regressions`) |
 | Final requester-regression GREEN | `e98d52c4995f04388360541d8f75e2e0a9d2f36b` (`fix(lab3): resolve requester state regressions`) |
-| Commit visibility | Corrections through `b31654d5a4cf2a057be37d0034ef6a4c0838e4a9` and governance sync `3cf83e4870ec8f3ca84f19a415430f5a5f4761dd` were pushed. RED `e5ebe38`, GREEN `e98d52c`, and this documentation correction are local and pending push/re-review; no reviewer acceptance is claimed |
-| Current external state | As of this corrective commit, PR #30 still has Requested Changes and re-review of the new local correction has not been requested. PR #30 is not approved or merged; Issue #29 remains open; no review thread is resolved; and no GitHub Project Done transition has occurred |
+| Commit visibility | RED `e5ebe38f8ca5a7194e683aaf9c907b24efe36d99`, GREEN `e98d52c4995f04388360541d8f75e2e0a9d2f36b`, and documentation commit `dc8f397b51bba04a69f974aa4f0c7c98e2a8e07a` were pushed and are present in PR #30 |
+| Current external state at the `dc8f397` review event | PR #30 remained open with Requested Changes solely because its governance evidence still described the three pushed commits as local/pending. PR #30 was not approved or merged; Issue #29 remained open; and no GitHub Project Done transition had occurred |
+| Governance correction | This documentation-only correction addresses that sole remaining finding. The review outcome for the exact HEAD created by this correction remains pending; GitHub is authoritative for subsequent live review state |
 
 The RED server file deterministically covered Ticket creation, Public Comment creation, resolution indication, Attachment upload, and Attachment removal against both deactivation and role change in both meaningful commit orders. The RED client run exposed the four intended conflict-reload, reload-failure, modal-accessibility, and later-page Comment cases. GREEN uses the contract's SERIALIZABLE User-before-Ticket lock protocol and safe eligibility conflict; the client now reloads authoritative conflict state, implements modal focus containment/dismissal rules, and renders the server-created Comment on its authoritative final page. This documentation sync itself performs no GitHub action.
 
@@ -115,6 +116,8 @@ The client handles `RESOLUTION_INDICATION_NOT_ALLOWED` and `CONCURRENT_UPDATE` a
 The latest supplied review re-reviewed exact HEAD `3cf83e4` and returned Requested Changes for three client regressions plus stale governance evidence. RED `e5ebe38` added three focused tests without production changes. The two-file run had 18 passing tests and exactly three intended failures: the created Comment stayed hidden behind the initial list-error state, no authoritative page-3 request occurred after concurrent growth to 41 Comments, and an eligible authoritative Ticket received the unavailable message instead of retry guidance.
 
 GREEN `e98d52c` separates Comment-list, POST, and refresh failures; reconciles the exact POST DTO by id against authoritative pagination; prevents a page effect from dropping the retained created Comment; preserves a successful Comment with a safe non-blocking warning if refresh fails; and uses one eligibility predicate for both action rendering and post-conflict messaging. Local verification passed 2 focused client files / 21 tests, the ordinary client suite at 12 files / 101 tests, the ordinary server suite at 33 files / 225 tests against validated `toktickit_test/public`, all 8 Playwright scenarios, and both production builds. These are local results, not hosted GitHub Actions evidence. Generated output was removed, regenerated tracked screenshots were restored, no known test listener remained, and zero disposable schemas or E2E fixture Tickets remained.
+
+RED `e5ebe38`, GREEN `e98d52c`, and documentation commit `dc8f397` were subsequently pushed to PR #30. Tanaboonnnnn re-reviewed exact HEAD `dc8f397` and confirmed zero remaining substantive implementation blockers and zero Standards blockers. The review returned Requested Changes only for the stale governance statements corrected here; it did not approve or merge PR #30, close Issue #29, or move the GitHub Project item to Done. The recorded test counts remain local verification evidence and are not represented as hosted GitHub Actions results.
 
 ## 9. Issue #29 Implementation Handoff
 
@@ -138,7 +141,7 @@ This is implementation and locally executed verification evidence, not peer revi
 | Database isolation and cleanup | Database tests used only validated `toktickit_test`; disposable Issue #29 schemas were removed, relevant test/smoke ports had no listeners, tracked generated screenshots were restored, and no temporary build or migration artifact was committed |
 | Secrets and local configuration | `server/.env` remained ignored and outside every Issue #29 and corrective commit; committed-diff scans found no private credentials, password hashes, cookies, tokens, database URLs introduced by Issue #29, HMAC secrets, or private keys |
 | Test-contract status | 13 assigned Test IDs are recorded as `Pass (Issue #29)`. API-16 is returned to `Planned` because its full contract includes later REOPENED clearing; SEC-01 and every later-increment obligation also remain `Planned`. The matrix totals are 75 = 16 Issue #27 Pass + 13 Issue #29 Pass + 46 Planned. |
-| External state | Corrections through `b31654d5a4cf2a057be37d0034ef6a4c0838e4a9` and governance sync `3cf83e4870ec8f3ca84f19a415430f5a5f4761dd` were pushed and re-reviewed. That review returned Requested Changes. As of this corrective commit, RED `e5ebe38`, GREEN `e98d52c`, and this documentation commit remain local; re-review has not been requested; PR #30 is not approved or merged; Issue #29 remains open; no review thread is resolved; and no GitHub Project Done transition has occurred. |
+| External state | RED `e5ebe38`, GREEN `e98d52c`, and documentation commit `dc8f397` were pushed and are present in PR #30. Tanaboonnnnn re-reviewed exact HEAD `dc8f397`, confirmed all three client implementation blockers were fixed, and reported 0 Standards blockers and 1 Specification blocker: this stale governance evidence. PR #30 remains open with Requested Changes and is not approved or merged; Issue #29 remains open; no GitHub Project Done transition has occurred. The review outcome for the exact HEAD created by this documentation-only correction remains pending, with GitHub authoritative for live state. |
 
 The role destinations for IT Staff and Administrator are compatibility placeholders only. Issue #29 does not claim the later Staff workflow, Administrator workflow, final Requester-role conversion, or REOPENED-clearing implementation. The correction restores retained Lab 1 behavior without reviving any Development Requester mechanism.
 
