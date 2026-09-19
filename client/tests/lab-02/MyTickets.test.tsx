@@ -46,6 +46,8 @@ const REQUESTER_A_TICKET = {
   category: CATEGORIES[0],
   relatedSystem: RELATED_SYSTEMS[0],
   requestedPriority: "URGENT",
+  itPriority: "URGENT",
+  owner: null,
   currentStatus: "IN_PROGRESS",
   createdAt: "2026-09-04T08:30:00.000Z",
   updatedAt: "2026-09-05T09:45:00.000Z",
@@ -59,6 +61,8 @@ const REQUESTER_B_TICKET = {
   category: CATEGORIES[1],
   relatedSystem: RELATED_SYSTEMS[1],
   requestedPriority: "LOW",
+  itPriority: "LOW",
+  owner: null,
   currentStatus: "NEW",
   createdAt: "2026-09-06T10:15:00.000Z",
   updatedAt: "2026-09-06T11:20:00.000Z",
@@ -137,6 +141,17 @@ function installFetchMock(
       options?: RequestInit,
     ): Promise<Response> => {
       const url = new URL(String(input));
+
+      if (url.pathname === "/api/auth/me") {
+        return jsonResponse({
+          user: {
+            ...REQUESTERS[0],
+            role: "REQUESTER",
+            mustChangePassword: false,
+          },
+          session: { expiresAt: "2099-01-01T00:00:00.000Z" },
+        });
+      }
 
       if (url.pathname === "/api/development-requesters") {
         return jsonResponse(REQUESTERS);
@@ -222,22 +237,31 @@ describe("My Tickets", () => {
     window.history.replaceState({}, "", "/");
   });
 
-  it("UI-05 preserves protected-route behavior when no Requester is selected", async () => {
-    sessionStorage.clear();
-    const fetchMock = installFetchMock();
+  it("UI-05 preserves protected-route behavior when no authenticated Requester session exists", async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = new URL(String(input));
+      if (url.pathname === "/api/auth/me") {
+        return jsonResponse(
+          { error: { code: "AUTHENTICATION_REQUIRED", message: "Authentication is required." } },
+          401,
+        );
+      }
+      throw new Error(`Unexpected request: ${url.toString()}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
 
     render(<App />);
 
     expect(
       await screen.findByRole("heading", {
-        name: "Select Development Requester",
+        name: "Sign in",
       }),
     ).toBeInTheDocument();
-    expect(window.location.pathname).toBe("/select-requester");
+    expect(window.location.pathname).toBe("/login");
     expect(ticketRequests(fetchMock)).toHaveLength(0);
   });
 
-  it("UI-05 opens /tickets for the selected Requester, sends its context, and exposes a semantic loading state", async () => {
+  it("UI-05 opens /tickets for the authenticated Requester without a client-supplied identity and exposes a semantic loading state", async () => {
     let resolveTickets!: (response: Response) => void;
     const pendingTickets = new Promise<Response>((resolve) => {
       resolveTickets = resolve;
@@ -247,9 +271,7 @@ describe("My Tickets", () => {
     render(<App />);
 
     expect(
-      await screen.findByText(
-        "Current Requester: Issue 17 Requester A",
-      ),
+      await screen.findByText("Issue 17 Requester A"),
     ).toBeInTheDocument();
     expect(window.location.pathname).toBe("/tickets");
 
@@ -257,11 +279,8 @@ describe("My Tickets", () => {
       await screen.findByRole("status"),
     ).toHaveTextContent("Loading your Tickets");
     expect(ticketRequests(fetchMock)).toHaveLength(1);
-    expect(
-      ticketRequestHeaders(fetchMock).get(
-        "X-Development-Requester-Id",
-      ),
-    ).toBe("1");
+    expect(ticketRequestHeaders(fetchMock).get("X-Development-Requester-Id")).toBeNull();
+    expect((ticketRequests(fetchMock)[0][1] as RequestInit).credentials).toBe("include");
 
     resolveTickets(jsonResponse(listResponse()));
   });
@@ -286,7 +305,9 @@ describe("My Tickets", () => {
       "Summary",
       "Category",
       "Related System",
-      "Priority",
+      "Requested Priority",
+      "IT Priority",
+      "Owner",
       "Status",
       "Updated",
     ]) {
@@ -316,10 +337,10 @@ describe("My Tickets", () => {
       REQUESTER_A_TICKET.updatedAt,
     );
     expect(
-      within(table).getByText("URGENT"),
+      within(table).getAllByText("Urgent")[0],
     ).toHaveClass("badge");
     expect(
-      within(table).getByText("IN_PROGRESS"),
+      within(table).getByText("In Progress"),
     ).toHaveClass("badge");
 
     const detailLinks = screen.getAllByRole("link", {
@@ -343,7 +364,7 @@ describe("My Tickets", () => {
 
     expect(
       screen.getByRole("textbox", {
-        name: /search.*ticket number.*summary/i,
+        name: /search tickets/i,
       }),
     ).toBeInTheDocument();
 
@@ -448,7 +469,7 @@ describe("My Tickets", () => {
 
     await user.type(
       screen.getByRole("textbox", {
-        name: /search.*ticket number.*summary/i,
+        name: /search tickets/i,
       }),
       "  printer  ",
     );
@@ -502,7 +523,7 @@ describe("My Tickets", () => {
 
     await user.type(
       screen.getByRole("textbox", {
-        name: /search.*ticket number.*summary/i,
+        name: /search tickets/i,
       }),
       "battery",
     );
@@ -526,7 +547,7 @@ describe("My Tickets", () => {
 
     expect(
       screen.getByRole("textbox", {
-        name: /search.*ticket number.*summary/i,
+        name: /search tickets/i,
       }),
     ).toHaveValue("");
     expect(
@@ -606,7 +627,7 @@ describe("My Tickets", () => {
 
     await user.type(
       screen.getByRole("textbox", {
-        name: /search.*ticket number.*summary/i,
+        name: /search tickets/i,
       }),
       "battery",
     );
@@ -759,7 +780,7 @@ describe("My Tickets", () => {
 
     await user.type(
       screen.getByRole("textbox", {
-        name: /search.*ticket number.*summary/i,
+        name: /search tickets/i,
       }),
       "no match",
     );
@@ -814,7 +835,7 @@ describe("My Tickets", () => {
 
     await user.type(
       screen.getByRole("textbox", {
-        name: /search.*ticket number.*summary/i,
+        name: /search tickets/i,
       }),
       "battery",
     );
@@ -842,71 +863,18 @@ describe("My Tickets", () => {
     expect(ticketRequestUrl(fetchMock).toString()).toBe(failedUrl);
   });
 
-  it("UI-05 clears Requester A data before loading Requester B and never crosses request contexts", async () => {
-    const user = userEvent.setup();
-    let resolveRequesterB!: (response: Response) => void;
-    const requesterBPending = new Promise<Response>((resolve) => {
-      resolveRequesterB = resolve;
-    });
-    const fetchMock = installFetchMock((_url, options) => {
-      const requesterId = new Headers(options?.headers).get(
-        "X-Development-Requester-Id",
-      );
-
-      if (requesterId === "2") {
-        return requesterBPending;
-      }
-
-      return jsonResponse(listResponse([REQUESTER_A_TICKET]));
-    });
+  it("UI-05 clears Requester data immediately when the authenticated session expires", async () => {
+    installFetchMock(() => jsonResponse(listResponse([REQUESTER_A_TICKET])));
 
     render(<App />);
     await screen.findByText(REQUESTER_A_TICKET.ticketNumber);
 
-    await user.click(
-      screen.getByRole("button", { name: /change requester/i }),
-    );
-    const requesterSelect = await screen.findByRole("combobox", {
-      name: /development requester/i,
-    });
-    await user.selectOptions(requesterSelect, "2");
-    await user.click(
-      screen.getByRole("button", { name: /^continue$/i }),
-    );
+    window.dispatchEvent(new Event("toktickit:auth-expired"));
 
     expect(
-      await screen.findByText(
-        "Current Requester: Issue 17 Requester B",
-      ),
+      await screen.findByRole("heading", { name: "Sign in" }),
     ).toBeInTheDocument();
-    expect(
-      screen.queryByText(REQUESTER_A_TICKET.ticketNumber),
-    ).not.toBeInTheDocument();
-    expect(
-      await screen.findByRole("status"),
-    ).toHaveTextContent("Loading your Tickets");
-
-    const requesterHeaders = ticketRequests(fetchMock).map(
-      (_request, index) =>
-        ticketRequestHeaders(fetchMock, index).get(
-          "X-Development-Requester-Id",
-        ),
-    );
-    expect(requesterHeaders).toEqual(["1", "2"]);
-
-    resolveRequesterB(
-      jsonResponse(
-        listResponse([
-          REQUESTER_B_TICKET as TicketItem,
-        ]),
-      ),
-    );
-
-    expect(
-      await screen.findByText(REQUESTER_B_TICKET.ticketNumber),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByText(REQUESTER_A_TICKET.summary),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText(REQUESTER_A_TICKET.ticketNumber)).not.toBeInTheDocument();
+    expect(window.location.pathname).toBe("/login");
   });
 });

@@ -99,6 +99,29 @@ a:focus-visible {
     text-decoration-thickness: 0.15rem;
 }
 
+.auth-card {
+    width: min(100%, 36rem);
+}
+
+.public-comment-list {
+    display: grid;
+    gap: 1rem;
+    padding: 0;
+    list-style: none;
+}
+
+.public-comment-item {
+    padding: 1rem;
+    background: var(--pale-green);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.public-comment-content {
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
 .my-tickets-filter-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));

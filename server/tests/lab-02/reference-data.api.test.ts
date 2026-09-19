@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import request from "supertest";
-import { Prisma } from "@prisma/client";
 import { getPrisma } from "../../src/prisma.js";
 import { app } from "../../src/app.js";
 
@@ -39,42 +38,10 @@ describe("Lab 2 reference-data APIs", () => {
     ).toBe(true);
   });
 
-  it("returns only active Development Requesters ordered by name", async () => {
+  it("removes the temporary Development Requester reference endpoint", async () => {
     const response = await request(app).get("/api/development-requesters");
 
-    expect(response.status).toBe(200);
-    expect(
-      response.body.map(
-        (requester: { name: string; email: string }) => ({
-          name: requester.name,
-          email: requester.email,
-        }),
-      ),
-    ).toEqual([
-      {
-        name: "Alex Morgan",
-        email: "alex.morgan@example.com",
-      },
-      {
-        name: "Daniel Kim",
-        email: "daniel.kim@example.com",
-      },
-      {
-        name: "Jennifer Anderson",
-        email: "jennifer.anderson@example.com",
-      },
-      {
-        name: "Priya Shah",
-        email: "priya.shah@example.com",
-      },
-    ]);
-
-    expect(
-      response.body.some(
-        (requester: { email: string }) =>
-          requester.email === "emily.carter@example.com",
-      ),
-    ).toBe(false);
+    expect(response.status).toBe(404);
   });
     afterEach(() => {
     vi.restoreAllMocks();
@@ -100,31 +67,15 @@ describe("Lab 2 reference-data APIs", () => {
     expect(JSON.stringify(response.body)).not.toContain("secret-database");
   });
 
-  it("returns a safe 503 response when the database is unavailable", async () => {
+  it("does not query User records through the removed development endpoint", async () => {
     const prisma = getPrisma();
-
-    const unavailableError = new Prisma.PrismaClientInitializationError(
-      "Cannot reach the internal database.",
-      Prisma.prismaVersion.client,
-      "P1001",
-    );
-
-    vi.spyOn(prisma.user, "findMany").mockRejectedValueOnce(
-      unavailableError,
-    );
-    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const findMany = vi.spyOn(prisma.user, "findMany");
 
     const response = await request(app).get(
       "/api/development-requesters",
     );
 
-    expect(response.status).toBe(503);
-    expect(response.body).toEqual({
-      error: {
-        code: "SERVICE_UNAVAILABLE",
-        message: "Service is temporarily unavailable. Please try again.",
-      },
-    });
-    expect(JSON.stringify(response.body)).not.toContain("internal database");
+    expect(response.status).toBe(404);
+    expect(findMany).not.toHaveBeenCalled();
   });
 });

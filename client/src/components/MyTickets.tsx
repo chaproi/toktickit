@@ -21,10 +21,6 @@ import {
   type TicketStatus,
 } from "../api.js";
 
-interface MyTicketsProps {
-  requesterId: number;
-}
-
 type LoadState = "loading" | "success" | "error";
 type ReferenceState = "loading" | "ready" | "error";
 
@@ -109,9 +105,15 @@ function badgeClass(value: RequestedPriority | TicketStatus): string {
   return "text-bg-success";
 }
 
-export default function MyTickets({
-  requesterId,
-}: MyTicketsProps) {
+function enumLabel(value: string): string {
+  return value
+    .toLowerCase()
+    .split("_")
+    .map((part) => part[0]?.toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+export default function MyTickets() {
   const [draftFilters, setDraftFilters] =
     useState<FilterValues>(EMPTY_FILTERS);
   const [appliedFilters, setAppliedFilters] =
@@ -210,7 +212,7 @@ export default function MyTickets({
       pageSize,
     };
 
-    void getTickets(requesterId, query, controller.signal)
+    void getTickets(query, controller.signal)
       .then((response) => {
         if (activeRequest !== requestVersion.current) {
           return;
@@ -252,7 +254,6 @@ export default function MyTickets({
       controller.abort();
     };
   }, [
-    requesterId,
     appliedFilters,
     sortBy,
     sortOrder,
@@ -316,7 +317,7 @@ export default function MyTickets({
           <div className="my-tickets-filter-grid">
             <div className="my-tickets-search-field">
               <label className="form-label" htmlFor="ticket-search">
-                Search by Ticket Number or Summary
+                Search Tickets
               </label>
               <input
                 id="ticket-search"
@@ -533,7 +534,7 @@ export default function MyTickets({
                 className="spinner-border spinner-border-sm"
                 aria-hidden="true"
               />
-              <span>Loading your Ticketsโ€ฆ</span>
+              <span>Loading your Tickets…</span>
             </div>
           )}
 
@@ -570,7 +571,9 @@ export default function MyTickets({
                     <th scope="col">Summary</th>
                     <th scope="col">Category</th>
                     <th scope="col">Related System</th>
-                    <th scope="col">Priority</th>
+                    <th scope="col">Requested Priority</th>
+                    <th scope="col">IT Priority</th>
+                    <th scope="col">Owner</th>
                     <th scope="col">Status</th>
                     <th scope="col">Updated</th>
                   </tr>
@@ -603,22 +606,28 @@ export default function MyTickets({
                       <td data-label="Related System">
                         {ticket.relatedSystem.name}
                       </td>
-                      <td data-label="Priority">
+                      <td data-label="Requested Priority">
                         <span
                           className={`badge ${badgeClass(
                             ticket.requestedPriority,
                           )}`}
                         >
-                          {ticket.requestedPriority}
+                          {enumLabel(ticket.requestedPriority)}
                         </span>
                       </td>
+                      <td data-label="IT Priority">
+                        <span className={`badge ${badgeClass(ticket.itPriority)}`}>
+                          {enumLabel(ticket.itPriority)}
+                        </span>
+                      </td>
+                      <td data-label="Owner">{ticket.owner?.name ?? "Unassigned"}</td>
                       <td data-label="Status">
                         <span
                           className={`badge ${badgeClass(
                             ticket.currentStatus,
                           )}`}
                         >
-                          {ticket.currentStatus}
+                          {enumLabel(ticket.currentStatus)}
                         </span>
                       </td>
                       <td data-label="Updated">

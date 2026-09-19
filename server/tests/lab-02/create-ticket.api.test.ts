@@ -10,6 +10,12 @@ import {
 import { getPrisma } from "../../src/prisma.js";
 import request from "supertest";
 import { app } from "../../src/app.js";
+import {
+  authenticatedUnsafe,
+  createTestSession,
+  removeTestSessions,
+  type TestSession,
+} from "./authenticated-test-session.js";
 
 type ReferenceItem = {
   id: number;
@@ -17,6 +23,7 @@ type ReferenceItem = {
 };
 
 const createdTicketIds = new Set<number>();
+const sessions = new Map<number, TestSession>();
 
 function trackCreatedTicket(response: { body?: { ticket?: { id?: unknown } } }): void {
   const ticketId = response.body?.ticket?.id;
@@ -38,6 +45,16 @@ async function getReferenceId(
   endpoint: string,
   name: string,
 ): Promise<number> {
+  if (endpoint === "/api/development-requesters") {
+    const user = await getPrisma().user.findFirstOrThrow({
+      where: { name, isActive: true, role: "REQUESTER" },
+      select: { id: true },
+    });
+    if (!sessions.has(user.id)) {
+      sessions.set(user.id, await createTestSession(user.id));
+    }
+    return user.id;
+  }
   const response = await request(app).get(endpoint);
 
   expect(response.status).toBe(200);
@@ -50,12 +67,25 @@ async function getReferenceId(
   return item!.id;
 }
 
+function postTicket(requesterId?: number) {
+  const call = request(app).post("/api/tickets");
+  const session = requesterId === undefined ? undefined : sessions.get(requesterId);
+  return session
+    ? authenticatedUnsafe(call, session)
+    : requesterId === undefined
+      ? call
+      : call.set("X-Development-Requester-Id", String(requesterId));
+}
+
 describe("POST /api/tickets", () => {
     afterEach(() => {
         vi.restoreAllMocks();
     });
 
-    afterAll(cleanCreatedTickets, 30_000);
+    afterAll(async () => {
+        await cleanCreatedTickets();
+        await removeTestSessions(sessions.values());
+    }, 30_000);
 
     it("API-02 creates one valid Requester-owned Ticket", async () => {
         const [requesterId, categoryId, relatedSystemId] =
@@ -71,12 +101,7 @@ describe("POST /api/tickets", () => {
             ),
         ]);
 
-        const response = await request(app)
-        .post("/api/tickets")
-        .set(
-            "X-Development-Requester-Id",
-            String(requesterId),
-        )
+        const response = await postTicket(requesterId)
         .send({
             clientSubmissionId: randomUUID(),
             categoryId,
@@ -116,9 +141,8 @@ describe("POST /api/tickets", () => {
         expect(response.body.ticket.createdAt).toBeTruthy();
         expect(response.body.ticket.updatedAt).toBeTruthy();
     });
-    it("API-03 rejects a missing Requester header", async () => {
-    const response = await request(app)
-        .post("/api/tickets")
+    it("API-03 rejects a missing authenticated session", async () => {
+    const response = await postTicket()
         .send({
         clientSubmissionId: randomUUID(),
         categoryId: 1,
@@ -129,12 +153,11 @@ describe("POST /api/tickets", () => {
             "The battery decreases from full to empty quickly.",
         });
 
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(401);
     expect(response.body).toEqual({
         error: {
-        code: "REQUESTER_REQUIRED",
-        message:
-            "A valid Development Requester is required.",
+        code: "AUTHENTICATION_REQUIRED",
+        message: "Authentication is required.",
         },
     });
     });
@@ -145,12 +168,7 @@ describe("POST /api/tickets", () => {
         "Alex Morgan",
     );
 
-    const response = await request(app)
-        .post("/api/tickets")
-        .set(
-        "X-Development-Requester-Id",
-        String(requesterId),
-        )
+    const response = await postTicket(requesterId)
         .send({
         clientSubmissionId: "not-a-uuid",
         categoryId: 0,
@@ -183,7 +201,7 @@ describe("POST /api/tickets", () => {
     });
     });
 
-    it("API-03 rejects inactive and nonexistent Requesters", async () => {
+    it("API-03 does not accept inactive and nonexistent IDs as authentication", async () => {
     const inactiveRequester =
         await getPrisma().user.findUnique({
         where: {
@@ -200,12 +218,7 @@ describe("POST /api/tickets", () => {
         inactiveRequester!.id,
         999999,
     ]) {
-        const response = await request(app)
-        .post("/api/tickets")
-        .set(
-            "X-Development-Requester-Id",
-            String(requesterId),
-        )
+        const response = await postTicket(requesterId)
         .send({
             clientSubmissionId: randomUUID(),
             categoryId: 1,
@@ -216,9 +229,9 @@ describe("POST /api/tickets", () => {
             "The application displays an access error.",
         });
 
-        expect(response.status).toBe(400);
+        expect(response.status).toBe(401);
         expect(response.body.error.code).toBe(
-        "INVALID_REQUESTER",
+        "AUTHENTICATION_REQUIRED",
         );
     }
     });
@@ -229,12 +242,7 @@ describe("POST /api/tickets", () => {
         "Alex Morgan",
     );
 
-    const response = await request(app)
-        .post("/api/tickets")
-        .set(
-        "X-Development-Requester-Id",
-        String(requesterId),
-        )
+    const response = await postTicket(requesterId)
         .send({
         clientSubmissionId: randomUUID(),
         categoryId: 999999,
@@ -282,20 +290,10 @@ describe("POST /api/tickets", () => {
         "The application closes whenever a course is opened.",
     };
 
-    const firstResponse = await request(app)
-        .post("/api/tickets")
-        .set(
-        "X-Development-Requester-Id",
-        String(requesterId),
-        )
+    const firstResponse = await postTicket(requesterId)
         .send(payload);
 
-    const replayResponse = await request(app)
-        .post("/api/tickets")
-        .set(
-        "X-Development-Requester-Id",
-        String(requesterId),
-        )
+    const replayResponse = await postTicket(requesterId)
         .send(payload);
     trackCreatedTicket(firstResponse);
 
@@ -341,20 +339,10 @@ describe("POST /api/tickets", () => {
         "The connection drops several times every hour.",
     };
 
-    const firstResponse = await request(app)
-        .post("/api/tickets")
-        .set(
-        "X-Development-Requester-Id",
-        String(requesterId),
-        )
+    const firstResponse = await postTicket(requesterId)
         .send(payload);
 
-    const conflictResponse = await request(app)
-        .post("/api/tickets")
-        .set(
-        "X-Development-Requester-Id",
-        String(requesterId),
-        )
+    const conflictResponse = await postTicket(requesterId)
         .send({
         ...payload,
         summary: "Campus Wi-Fi cannot connect",
@@ -380,8 +368,8 @@ describe("POST /api/tickets", () => {
     );
 
     vi.spyOn(
-        getPrisma().user,
-        "findFirst",
+        getPrisma(),
+        "$transaction",
     ).mockRejectedValueOnce(
         new Error(
         "DATABASE_URL=postgresql://secret-database",
@@ -392,12 +380,7 @@ describe("POST /api/tickets", () => {
         () => undefined,
     );
 
-    const response = await request(app)
-        .post("/api/tickets")
-        .set(
-        "X-Development-Requester-Id",
-        String(requesterId),
-        )
+    const response = await postTicket(requesterId)
         .send({
         clientSubmissionId: randomUUID(),
         categoryId: 1,

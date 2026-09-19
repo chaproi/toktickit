@@ -40,6 +40,19 @@ describe("Create Ticket", () => {
             vi.fn(async (input: RequestInfo | URL) => {
                 const url = String(input);
 
+                if (url.endsWith("/api/auth/me")) {
+                    return jsonResponse({
+                        user: {
+                            id: 1,
+                            name: "Development Requester 1",
+                            email: "requester1@example.test",
+                            role: "REQUESTER",
+                            mustChangePassword: false,
+                        },
+                        session: { expiresAt: "2099-01-01T00:00:00.000Z" },
+                    });
+                }
+
                 if (
                     url.endsWith(
                         "/api/development-requesters",
@@ -134,7 +147,7 @@ describe("Create Ticket", () => {
         ).toBeInTheDocument();
 
         expect(
-            screen.getByText(
+            await screen.findByText(
                 "requester1@example.test",
             ),
         ).toBeInTheDocument();
@@ -222,6 +235,19 @@ describe("Create Ticket", () => {
         vi.mocked(fetch).mockImplementation(
             async (input: RequestInfo | URL) => {
                 const url = String(input);
+
+                if (url.endsWith("/api/auth/me")) {
+                    return jsonResponse({
+                        user: {
+                            id: 1,
+                            name: "Development Requester 1",
+                            email: "requester1@example.test",
+                            role: "REQUESTER",
+                            mustChangePassword: false,
+                        },
+                        session: { expiresAt: "2099-01-01T00:00:00.000Z" },
+                    });
+                }
 
                 if (
                     url.endsWith(
@@ -547,10 +573,10 @@ describe("Create Ticket", () => {
 
         expect(requestOptions?.method).toBe("POST");
 
-        expect(requestOptions?.headers).toMatchObject({
-            "Content-Type": "application/json",
-            "X-Development-Requester-Id": "1",
-        });
+        const requestHeaders = new Headers(requestOptions?.headers);
+        expect(requestHeaders.get("Content-Type")).toBe("application/json");
+        expect(requestHeaders.get("X-Development-Requester-Id")).toBeNull();
+        expect(requestOptions?.credentials).toBe("include");
 
         expect(requestBody).toMatchObject({
             categoryId: 2,
@@ -1041,9 +1067,10 @@ describe("Create Ticket", () => {
         const requestOptions = attachmentRequest?.[1];
 
         expect(requestOptions?.method).toBe("POST");
-        expect(requestOptions?.headers).toEqual({
-            "X-Development-Requester-Id": "1",
-        });
+        expect(new Headers(requestOptions?.headers).get(
+            "X-Development-Requester-Id",
+        )).toBeNull();
+        expect(requestOptions?.credentials).toBe("include");
         expect(requestOptions?.body).toBeInstanceOf(
             FormData,
         );

@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import {
+    afterAll,
     afterEach,
     describe,
     expect,
@@ -13,6 +14,12 @@ import {
     StorageUnavailableError,
     type AttachmentStorage,
 } from "../../src/attachments/attachment-storage.js";
+import {
+    authenticatedUnsafe,
+    createTestSession,
+    removeTestSessions,
+    type TestSession,
+} from "./authenticated-test-session.js";
 
 type ReferenceItem = {
     id: number;
@@ -37,6 +44,22 @@ const PDF_BUFFER = Buffer.from(
 );
 const RUN_MARKER = `Issue19-Attachment-${randomUUID()}`;
 const createdTicketIds: number[] = [];
+const sessions = new Map<number, TestSession>();
+
+function sessionFor(userId: number): TestSession {
+    const session = sessions.get(userId);
+    if (!session) throw new Error(`Missing test session for User ${userId}.`);
+    return session;
+}
+
+function requesterHeaders(userId: number): Record<string, string> {
+    const session = sessionFor(userId);
+    return {
+        Cookie: session.cookie,
+        Origin: "http://localhost:5173",
+        "X-CSRF-Token": session.csrf,
+    };
+}
 
 function expectSafeError(
     response: request.Response,
@@ -63,6 +86,16 @@ async function getReferenceId(
     endpoint: string,
     name: string,
 ): Promise<number> {
+    if (endpoint === "/api/development-requesters") {
+        const user = await getPrisma().user.findFirstOrThrow({
+            where: { name, isActive: true, role: "REQUESTER" },
+            select: { id: true },
+        });
+        if (!sessions.has(user.id)) {
+            sessions.set(user.id, await createTestSession(user.id));
+        }
+        return user.id;
+    }
     const response = await request(app).get(endpoint);
 
     expect(response.status).toBe(200);
@@ -92,12 +125,10 @@ async function createOwnedTicket(): Promise<{
             ),
         ]);
 
-    const response = await request(app)
-        .post("/api/tickets")
-        .set(
-            "X-Development-Requester-Id",
-            String(requesterId),
-        )
+    const response = await authenticatedUnsafe(
+        request(app).post("/api/tickets"),
+        sessionFor(requesterId),
+    )
         .send({
             clientSubmissionId: randomUUID(),
             categoryId,
@@ -158,12 +189,11 @@ async function uploadAttachment(
         content: PNG_BUFFER,
     },
 ) {
-    return request(app)
-        .post(`/api/tickets/${ticketId}/attachments`)
-        .set(
-            "X-Development-Requester-Id",
-            String(requesterId),
-        )
+    const call = request(app).post(`/api/tickets/${ticketId}/attachments`);
+    const session = sessions.get(requesterId);
+    return (session
+        ? authenticatedUnsafe(call, session)
+        : call.set("X-Development-Requester-Id", String(requesterId)))
         .attach("file", fixture.content, {
             filename: fixture.filename,
             contentType: fixture.contentType,
@@ -175,6 +205,10 @@ afterEach(async () => {
     await cleanCreatedTickets();
 });
 
+afterAll(async () => {
+    await removeTestSessions(sessions.values());
+});
+
 describe("POST /api/tickets/:ticketId/attachments", () => {
     it.each([
         { label: "missing", requesterId: undefined },
@@ -184,7 +218,7 @@ describe("POST /api/tickets/:ticketId/attachments", () => {
         { label: "zero", requesterId: "0" },
         { label: "negative", requesterId: "-1" },
     ])(
-        "API-08 rejects a $label Requester identifier with the Requester-required error",
+        "API-08 rejects a $label unauthenticated Requester identifier",
         async ({ requesterId }) => {
             const { ticketId } = await createOwnedTicket();
             const uploadRequest = request(app).post(
@@ -209,9 +243,9 @@ describe("POST /api/tickets/:ticketId/attachments", () => {
 
             expectSafeError(
                 response,
-                400,
-                "REQUESTER_REQUIRED",
-                "A valid Development Requester is required.",
+                401,
+                "AUTHENTICATION_REQUIRED",
+                "Authentication is required.",
             );
         },
     );
@@ -233,9 +267,9 @@ describe("POST /api/tickets/:ticketId/attachments", () => {
 
         expectSafeError(
             response,
-            400,
-            "REQUESTER_REQUIRED",
-            "A valid Development Requester is required.",
+            401,
+            "AUTHENTICATION_REQUIRED",
+            "Authentication is required.",
         );
     });
 
@@ -250,12 +284,10 @@ describe("POST /api/tickets/:ticketId/attachments", () => {
         async ({ ticketId }) => {
             const { requesterId } = await createOwnedTicket();
 
-            const response = await request(app)
-                .post(`/api/tickets/${ticketId}/attachments`)
-                .set(
-                    "X-Development-Requester-Id",
-                    String(requesterId),
-                )
+            const response = await authenticatedUnsafe(
+                request(app).post(`/api/tickets/${ticketId}/attachments`),
+                sessionFor(requesterId),
+            )
                 .attach("file", PNG_BUFFER, {
                     filename: "identifier-check.png",
                     contentType: "image/png",
@@ -274,12 +306,10 @@ describe("POST /api/tickets/:ticketId/attachments", () => {
         const { ticketId, requesterId } =
             await createOwnedTicket();
 
-        const response = await request(app)
-            .post(`/api/tickets/${ticketId}e0/attachments`)
-            .set(
-                "X-Development-Requester-Id",
-                String(requesterId),
-            )
+        const response = await authenticatedUnsafe(
+            request(app).post(`/api/tickets/${ticketId}e0/attachments`),
+            sessionFor(requesterId),
+        )
             .attach("file", PNG_BUFFER, {
                 filename: "ticket-syntax.png",
                 contentType: "image/png",
@@ -330,9 +360,9 @@ describe("POST /api/tickets/:ticketId/attachments", () => {
 
             expectSafeError(
                 response,
-                400,
-                "INVALID_REQUESTER",
-                "The selected Development Requester is invalid.",
+                401,
+                "AUTHENTICATION_REQUIRED",
+                "Authentication is required.",
             );
         }
     });
@@ -381,10 +411,7 @@ describe("POST /api/tickets/:ticketId/attachments", () => {
 
         const response = await request(app)
             .post(`/api/tickets/${ticketId}/attachments`)
-            .set(
-                "X-Development-Requester-Id",
-                String(requesterId),
-            )
+            .set(requesterHeaders(requesterId))
             .attach("file", PNG_BUFFER, {
                 filename: "evidence.png",
                 contentType: "image/png",
@@ -475,10 +502,7 @@ describe("POST /api/tickets/:ticketId/attachments", () => {
 
             const response = await request(app)
                 .post(`/api/tickets/${ticketId}/attachments`)
-                .set(
-                    "X-Development-Requester-Id",
-                    String(requesterId),
-                )
+                .set(requesterHeaders(requesterId))
                 .attach("file", content, {
                     filename,
                     contentType,
@@ -500,10 +524,7 @@ describe("POST /api/tickets/:ticketId/attachments", () => {
 
         const response = await request(app)
             .post(`/api/tickets/${ticketId}/attachments`)
-            .set(
-                "X-Development-Requester-Id",
-                String(requesterId),
-            )
+            .set(requesterHeaders(requesterId))
             .attach("file", Buffer.alloc(5_000_001), {
                 filename: "large.png",
                 contentType: "image/png",
@@ -525,10 +546,7 @@ describe("POST /api/tickets/:ticketId/attachments", () => {
 
         const response = await request(app)
             .post(`/api/tickets/${ticketId}/attachments`)
-            .set(
-                "X-Development-Requester-Id",
-                String(requesterId),
-            );
+            .set(requesterHeaders(requesterId));
 
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
@@ -549,10 +567,7 @@ describe("POST /api/tickets/:ticketId/attachments", () => {
 
         const response = await request(app)
             .post(`/api/tickets/${ticketId}/attachments`)
-            .set(
-                "X-Development-Requester-Id",
-                String(otherRequesterId),
-            )
+            .set(requesterHeaders(otherRequesterId))
             .attach("file", PNG_BUFFER, {
                 filename: "evidence.png",
                 contentType: "image/png",
@@ -566,7 +581,7 @@ describe("POST /api/tickets/:ticketId/attachments", () => {
             },
         });
     });
-    it("API-08 rejects an inactive Development Requester", async () => {
+    it("API-08 does not accept an inactive Requester ID as authentication", async () => {
         const { ticketId } = await createOwnedTicket();
 
         const inactiveRequester =
@@ -592,13 +607,12 @@ describe("POST /api/tickets/:ticketId/attachments", () => {
                 contentType: "image/png",
             });
 
-        expect(response.status).toBe(400);
+        expect(response.status).toBe(401);
 
         expect(response.body).toEqual({
             error: {
-                code: "INVALID_REQUESTER",
-                message:
-                    "The selected Development Requester is invalid.",
+                code: "AUTHENTICATION_REQUIRED",
+                message: "Authentication is required.",
             },
         });
     });
@@ -610,10 +624,7 @@ describe("POST /api/tickets/:ticketId/attachments", () => {
         for (let index = 1; index <= 5; index += 1) {
             const response = await request(app)
                 .post(`/api/tickets/${ticketId}/attachments`)
-                .set(
-                    "X-Development-Requester-Id",
-                    String(requesterId),
-                )
+                .set(requesterHeaders(requesterId))
                 .attach("file", PNG_BUFFER, {
                     filename: `evidence-${index}.png`,
                     contentType: "image/png",
@@ -624,10 +635,7 @@ describe("POST /api/tickets/:ticketId/attachments", () => {
 
         const sixthResponse = await request(app)
             .post(`/api/tickets/${ticketId}/attachments`)
-            .set(
-                "X-Development-Requester-Id",
-                String(requesterId),
-            )
+            .set(requesterHeaders(requesterId))
             .attach("file", PNG_BUFFER, {
                 filename: "evidence-6.png",
                 contentType: "image/png",
@@ -660,10 +668,7 @@ describe("POST /api/tickets/:ticketId/attachments", () => {
 
         const response = await request(app)
             .post(`/api/tickets/${ticketId}/attachments`)
-            .set(
-                "X-Development-Requester-Id",
-                String(requesterId),
-            )
+            .set(requesterHeaders(requesterId))
             .attach("file", PNG_BUFFER, {
                 filename: "evidence.png",
                 contentType: "image/png",
@@ -836,10 +841,7 @@ describe("owned Attachment metadata and content", () => {
 
         const response = await request(app)
             .get(`/api/tickets/${ticketId}/attachments`)
-            .set(
-                "X-Development-Requester-Id",
-                String(requesterId),
-            );
+            .set(requesterHeaders(requesterId));
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({
@@ -888,10 +890,7 @@ describe("owned Attachment metadata and content", () => {
             .get(
                 `/api/tickets/${ticketId}/attachments/${uploadResponse.body.id}`,
             )
-            .set(
-                "X-Development-Requester-Id",
-                String(requesterId),
-            );
+            .set(requesterHeaders(requesterId));
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual(uploadResponse.body);
@@ -913,10 +912,7 @@ describe("owned Attachment metadata and content", () => {
                 .get(
                     `/api/tickets/${ticketId}/attachments/${uploadResponse.body.id}/content?disposition=${disposition}`,
                 )
-                .set(
-                    "X-Development-Requester-Id",
-                    String(requesterId),
-                );
+                .set(requesterHeaders(requesterId));
 
             expect(response.status).toBe(200);
             expect(response.headers["content-type"]).toMatch(
@@ -949,10 +945,7 @@ describe("owned Attachment metadata and content", () => {
             ) =>
                 request(app)
                     .get(`/api/tickets/${ticketId}/attachments`)
-                    .set(
-                        "X-Development-Requester-Id",
-                        String(requesterId),
-                    ),
+                    .set(requesterHeaders(requesterId)),
         },
         {
             operation: "get metadata",
@@ -966,10 +959,7 @@ describe("owned Attachment metadata and content", () => {
                     .get(
                         `/api/tickets/${ticketId}/attachments/${attachmentId}`,
                     )
-                    .set(
-                        "X-Development-Requester-Id",
-                        String(requesterId),
-                    ),
+                    .set(requesterHeaders(requesterId)),
         },
         {
             operation: "download content",
@@ -983,10 +973,7 @@ describe("owned Attachment metadata and content", () => {
                     .get(
                         `/api/tickets/${ticketId}/attachments/${attachmentId}/content`,
                     )
-                    .set(
-                        "X-Development-Requester-Id",
-                        String(requesterId),
-                    ),
+                    .set(requesterHeaders(requesterId)),
         },
         {
             operation: "soft remove",
@@ -1000,10 +987,7 @@ describe("owned Attachment metadata and content", () => {
                     .delete(
                         `/api/tickets/${ticketId}/attachments/${attachmentId}`,
                     )
-                    .set(
-                        "X-Development-Requester-Id",
-                        String(requesterId),
-                    )
+                    .set(requesterHeaders(requesterId))
                     .send({
                         removalReason: "Uploaded the wrong file.",
                     }),
@@ -1067,10 +1051,7 @@ describe("owned Attachment soft removal", () => {
                 .delete(
                     `/api/tickets/${ticketId}/attachments/${uploadResponse.body.id}`,
                 )
-                .set(
-                    "X-Development-Requester-Id",
-                    String(requesterId),
-                )
+                .set(requesterHeaders(requesterId))
                 .send(body);
 
             expect(response.status).toBe(400);
@@ -1109,10 +1090,7 @@ describe("owned Attachment soft removal", () => {
             .delete(
                 `/api/tickets/${ticketId}/attachments/${uploadResponse.body.id}`,
             )
-            .set(
-                "X-Development-Requester-Id",
-                String(requesterId),
-            )
+            .set(requesterHeaders(requesterId))
             .send({
                 removalReason: "  Uploaded the wrong image.  ",
             });
@@ -1158,10 +1136,7 @@ describe("owned Attachment soft removal", () => {
             .delete(
                 `/api/tickets/${ticketId}/attachments/${uploadResponse.body.id}`,
             )
-            .set(
-                "X-Development-Requester-Id",
-                String(requesterId),
-            )
+            .set(requesterHeaders(requesterId))
             .send({ removalReason: "Uploaded the wrong image." });
         expect(firstResponse.status).toBe(200);
 
@@ -1169,10 +1144,7 @@ describe("owned Attachment soft removal", () => {
             .delete(
                 `/api/tickets/${ticketId}/attachments/${uploadResponse.body.id}`,
             )
-            .set(
-                "X-Development-Requester-Id",
-                String(requesterId),
-            )
+            .set(requesterHeaders(requesterId))
             .send({ removalReason: "A different removal reason." });
 
         expect(secondResponse.status).toBe(409);
@@ -1210,10 +1182,7 @@ describe("owned Attachment soft removal", () => {
                 .delete(
                     `/api/tickets/${ticketId}/attachments/${uploadResponse.body.id}`,
                 )
-                .set(
-                    "X-Development-Requester-Id",
-                    String(requesterId),
-                )
+                .set(requesterHeaders(requesterId))
                 .send({
                     removalReason: "Uploaded the wrong image.",
                 });
@@ -1223,10 +1192,7 @@ describe("owned Attachment soft removal", () => {
                 .get(
                     `/api/tickets/${ticketId}/attachments/${uploadResponse.body.id}/content?disposition=${disposition}`,
                 )
-                .set(
-                    "X-Development-Requester-Id",
-                    String(requesterId),
-                );
+                .set(requesterHeaders(requesterId));
 
             expect(response.status).toBe(410);
             expect(response.body).toEqual({

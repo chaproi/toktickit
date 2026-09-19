@@ -38,10 +38,13 @@ const TICKET = {
     name: "Corporate Laptop",
   },
   requestedPriority: "HIGH",
+  itPriority: "HIGH",
+  owner: null,
   currentStatus: "IN_PROGRESS",
   summary: "Laptop display flickers after startup",
   description:
     "The corporate laptop display flickers for several minutes after startup.",
+  requesterResolutionIndicatedAt: null,
   createdAt: "2026-09-06T08:30:00.000Z",
   updatedAt: "2026-09-06T09:45:00.000Z",
 };
@@ -92,6 +95,13 @@ function installFetchMock({
     ): Promise<Response> => {
       const url = new URL(String(input));
 
+      if (url.pathname === "/api/auth/me") {
+        return jsonResponse({
+          user: { ...REQUESTER, role: "REQUESTER", mustChangePassword: false },
+          session: { expiresAt: "2099-01-01T00:00:00.000Z" },
+        });
+      }
+
       if (url.pathname === "/api/development-requesters") {
         return jsonResponse([REQUESTER]);
       }
@@ -111,18 +121,20 @@ function installFetchMock({
         return attachments(url, options);
       }
 
+      if (url.pathname === `/api/tickets/${TICKET.id}/comments`) {
+        return jsonResponse({
+          items: [],
+          pagination: { page: 1, pageSize: 20, totalItems: 0, totalPages: 0,
+            hasPreviousPage: false, hasNextPage: false },
+        });
+      }
+
       throw new Error(`Unexpected request: ${url.toString()}`);
     },
   );
 
   vi.stubGlobal("fetch", fetchMock);
   return fetchMock;
-}
-
-function requesterHeader(options?: RequestInit): string | null {
-  return new Headers(options?.headers).get(
-    "X-Development-Requester-Id",
-  );
 }
 
 describe("Requester Ticket Detail", () => {
@@ -151,7 +163,7 @@ describe("Requester Ticket Detail", () => {
     render(<App />);
 
     expect(
-      await screen.findByText("Current Requester: Alex Morgan"),
+      await screen.findByText("Alex Morgan"),
     ).toBeInTheDocument();
     expect(await screen.findByRole("status")).toHaveTextContent(
       /loading.*ticket/i,
@@ -163,8 +175,11 @@ describe("Requester Ticket Detail", () => {
     });
     expect(detailRequest).toBeDefined();
     expect(
-      requesterHeader(detailRequest?.[1] as RequestInit | undefined),
-    ).toBe("1");
+      new Headers((detailRequest?.[1] as RequestInit | undefined)?.headers).get(
+        "X-Development-Requester-Id",
+      ),
+    ).toBeNull();
+    expect((detailRequest?.[1] as RequestInit | undefined)?.credentials).toBe("include");
 
     resolveDetail(jsonResponse(TICKET));
   });
@@ -181,20 +196,24 @@ describe("Requester Ticket Detail", () => {
     ).toBeInTheDocument();
 
     const main = screen.getByRole("main");
+    const detailList = main.querySelector("dl");
+    expect(detailList).not.toBeNull();
     for (const label of [
       "Ticket Number",
       "Ticket Date",
-      "Development Requester",
+      "Requester",
       "Category",
       "Related System",
-      "Priority",
+      "Requested Priority",
+      "IT Priority",
+      "Owner",
       "Status",
       "Summary",
       "Description",
       "Created",
       "Updated",
     ]) {
-      expect(within(main).getByText(label)).toBeInTheDocument();
+      expect(within(detailList as HTMLElement).getByText(label)).toBeInTheDocument();
     }
 
     for (const value of [
@@ -202,14 +221,16 @@ describe("Requester Ticket Detail", () => {
       TICKET.requester.name,
       TICKET.category.name,
       TICKET.relatedSystem.name,
-      TICKET.requestedPriority,
-      TICKET.currentStatus,
+      "In Progress",
       TICKET.summary,
       TICKET.description,
     ]) {
-      expect(within(main).getByText(value)).toBeInTheDocument();
+      expect(within(detailList as HTMLElement).getByText(value)).toBeInTheDocument();
     }
+    expect(within(detailList as HTMLElement).getAllByText("High")).toHaveLength(2);
+    expect(within(detailList as HTMLElement).getByText("Unassigned")).toBeInTheDocument();
 
+    await screen.findByText(ATTACHMENTS.items[0].originalFilename);
     const timestamps = main.querySelectorAll("time");
     expect(
       Array.from(timestamps).map((time) =>
@@ -222,11 +243,11 @@ describe("Requester Ticket Detail", () => {
       ATTACHMENTS.items[0].createdAt,
     ]);
 
-    expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+    expect(screen.getByRole("textbox", { name: /add a public comment/i })).toBeInTheDocument();
     expect(screen.queryByRole("combobox")).not.toBeInTheDocument();
     expect(
       screen.queryByRole("button", {
-        name: /status|priority|claim|assign|comment|note|action taken/i,
+        name: /change status|change priority|claim|assign|internal note|action taken/i,
       }),
     ).not.toBeInTheDocument();
 
@@ -240,14 +261,12 @@ describe("Requester Ticket Detail", () => {
     );
     expect(detailRequest).toBeDefined();
     expect(attachmentRequest).toBeDefined();
-    expect(
-      requesterHeader(detailRequest?.[1] as RequestInit | undefined),
-    ).toBe("1");
-    expect(
-      requesterHeader(
-        attachmentRequest?.[1] as RequestInit | undefined,
-      ),
-    ).toBe("1");
+    expect(new Headers((detailRequest?.[1] as RequestInit | undefined)?.headers).get(
+      "X-Development-Requester-Id",
+    )).toBeNull();
+    expect(new Headers((attachmentRequest?.[1] as RequestInit | undefined)?.headers).get(
+      "X-Development-Requester-Id",
+    )).toBeNull();
   });
 
   it.each(["missing", "owned by another Requester"])(
@@ -316,9 +335,7 @@ describe("Requester Ticket Detail", () => {
       screen.getByRole("button", { name: "Try Again" }),
     );
 
-    expect(
-      await screen.findByText(TICKET.ticketNumber),
-    ).toBeInTheDocument();
+    expect(await screen.findAllByText(TICKET.ticketNumber)).toHaveLength(2);
     expect(detailCalls).toBe(2);
   });
 

@@ -2,7 +2,7 @@
 
 ## 1. Status and Strategy
 
-The matrix contains 75 Test IDs. Following completion and verification of Issue #27, 16 Test IDs are recorded as `Pass (Issue #27)`. The remaining 59 Test IDs remain `Planned` for later Sprint 3 increments.
+The matrix contains 75 Test IDs. Following completion and verification of Issues #27 and #29, 16 Test IDs are recorded as `Pass (Issue #27)` and 13 as `Pass (Issue #29)`. The remaining 46 Test IDs remain `Planned` for later Sprint 3 increments.
 
 The suite uses an isolated PostgreSQL TEST_DATABASE_URL protected by the existing structural database guard. Tests must be deterministic, independent of execution order, use unique fixture keys, and clean up only their own data. Authentication tests use non-production fixture credentials supplied at runtime. Cookies and password material must never appear in snapshots, logs, or retained artifacts.
 
@@ -28,7 +28,7 @@ Test levels:
 | UNIT-05 | BR-34–BR-48, AC-24–AC-30, AC-60 | Nullable owner in every status, non-null eligibility, unassign rules, complete status matrix, confirmations, and reasons | Unassigned stored states remain valid; mutation prerequisites and every allowed/forbidden edge are exact | server/tests/lab-03/ticket-workflow.unit.test.ts | Planned |
 | UNIT-06 | BR-49–BR-57, AC-31–AC-37 | Comment, Note, and resolution-indication validation | Trimmed boundaries and eligible statuses are enforced | server/tests/lab-03/ticket-communication.unit.test.ts | Planned |
 | UNIT-07 | BR-34, BR-41, BR-58–BR-68, AC-42–AC-48, AC-57, AC-58, AC-60 | User validation, one-role rule, self/last-admin/non-terminal-owner guards, lock ordering, bounded serialization retry, and history | Approved changes preserve history; deterministic User/Ticket lock sets and every safety violation are exact | server/tests/lab-03/admin-user-validation.unit.test.ts | Planned |
-| UNIT-08 | BR-28–BR-33, BR-80, AC-14, AC-15, AC-39 | Authenticated Requester creation defaults and retained Lab 2 validation adapters | Session identity is used and Lab 2 business limits remain unchanged | server/tests/lab-03/requester-regression.unit.test.ts | Planned |
+| UNIT-08 | BR-28–BR-33, BR-80, AC-14, AC-15, AC-39 | Authenticated Requester creation defaults and retained Lab 2 validation adapters | Session identity is used and Lab 2 business limits remain unchanged | server/tests/lab-03/requester-regression.unit.test.ts | Pass (Issue #29) |
 
 ### 2.2 API and Integration Tests
 
@@ -39,15 +39,15 @@ Test levels:
 | API-03 | FR-03, FR-04, AC-07, AC-08 | Current User, idle/absolute expiry, inactivation, logout deletion, and cookie clearing | Safe User returned only for a live active session; revoked access cannot be reused | server/tests/lab-03/auth.api.test.ts | Pass (Issue #27) |
 | API-04 | FR-05, AC-05, AC-06 | Forced-password route restriction and successful/invalid password changes | Only permitted auth endpoints work until valid change; session rotates afterward | server/tests/lab-03/password-change.api.test.ts | Pass (Issue #27) |
 | API-05 | FR-06, AC-09, AC-61 | CSRF cookie/header/digest and exact Origin validation on authenticated unsafe endpoints and Login distinction | Authenticated failures and Login Origin failures return exact 403 codes with no write/session | server/tests/lab-03/csrf.api.test.ts | Pass (Issue #27) |
-| API-06 | FR-10–FR-12, AC-12, AC-14, AC-15 | Authenticated Ticket creation/list, ignored spoof headers, defaults, and idempotency | Session User owns the Ticket; NEW/null owner/copied priority are atomic | server/tests/lab-03/requester-tickets.api.test.ts | Planned |
-| API-07 | FR-13, FR-15, AC-13, AC-14 | Requester Detail DTO and missing/non-owned equivalence | Owned Detail includes Lab 3 public fields; foreign resource returns safe 404 | server/tests/lab-03/requester-tickets.api.test.ts | Planned |
-| API-08 | FR-14, FR-21, AC-13, AC-38, AC-39 | Role-aware Attachment listing/content and Requester-only upload/removal | Existing files persist; role/ownership/mutation rules and 410 behavior hold | server/tests/lab-03/attachments.api.test.ts | Planned |
+| API-06 | FR-10–FR-12, AC-12, AC-14, AC-15 | Authenticated Ticket creation/list, ignored spoof headers, defaults, and idempotency | Session User owns the Ticket; NEW/null owner/copied priority are atomic | server/tests/lab-03/requester-tickets.api.test.ts | Pass (Issue #29) |
+| API-07 | FR-13, FR-15, AC-13, AC-14 | Requester Detail DTO and missing/non-owned equivalence | Owned Detail includes Lab 3 public fields; foreign resource returns safe 404 | server/tests/lab-03/requester-tickets.api.test.ts | Pass (Issue #29) |
+| API-08 | FR-14, FR-21, AC-13, AC-38, AC-39 | Role-aware Attachment listing/content and Requester-only upload/removal | Existing files persist; role/ownership/mutation rules and 410 behavior hold | server/tests/lab-03/attachments.api.test.ts | Pass (Issue #29) |
 | API-09 | FR-18, FR-19, AC-17–AC-21 | Queue fields, search, all filters/sorts/pages, empty/no-results data, and invalid queries | Stable correct pages or documented 400 response | server/tests/lab-03/staff-queue.api.test.ts | Planned |
 | API-10 | FR-20, FR-21, AC-22, AC-23 | Operational Detail and eligible-assignee DTO for Staff/Admin versus Requester | Permitted roles receive grouped data; Requester receives 403 | server/tests/lab-03/staff-ticket-detail.api.test.ts | Planned |
 | API-11 | FR-22, FR-23, AC-24–AC-26, AC-60 | Claim including any migrated non-terminal status, idempotent own claim, competing claim, assignment/reassignment/unassign, target eligibility | Nullable states remain valid; committed non-null owner is eligible; all conflicts are safe | server/tests/lab-03/staff-ticket-ownership.api.test.ts | Planned |
 | API-12 | FR-24, AC-27, AC-30 | IT Priority update, terminal rejection, optimistic concurrency, Requested Priority immutability | Only IT Priority changes on a current eligible Ticket | server/tests/lab-03/staff-ticket-workflow.api.test.ts | Planned |
 | API-13 | FR-25, FR-26, AC-28–AC-30, AC-60 | Every transition, unassigned stored states, owner eligibility at commit, confirmation, reason, history, stale/concurrent write | Matrix and append-only history are exact with no partial writes or ineligible owner | server/tests/lab-03/staff-ticket-workflow.api.test.ts | Planned |
-| API-14 | FR-27, FR-28, AC-33–AC-35 | Public Comment creation/list pagination, ownership, author, timestamp, validation, inert content | One safe append-only Comment or documented rejection | server/tests/lab-03/comments-notes.api.test.ts | Planned |
+| API-14 | FR-27, FR-28, AC-33–AC-35 | Public Comment creation/list pagination, ownership, author, timestamp, validation, inert content | One safe append-only Comment or documented rejection | server/tests/lab-03/comments-notes.api.test.ts | Pass (Issue #29) |
 | API-15 | FR-29, AC-36, AC-37 | Internal Note creation/list and Requester denial-before-lookup | Staff/Admin see safe Notes; Requester receives 403 and no content | server/tests/lab-03/comments-notes.api.test.ts | Planned |
 | API-16 | FR-17, AC-31, AC-32 | Requester resolution indication, eligible status, owner protection, repeated request, reopen clearing | Status unchanged; one current-cycle indication; safe rejection otherwise | server/tests/lab-03/resolution-indication.api.test.ts | Planned |
 | API-17 | FR-31, AC-40, AC-41 | Admin User list DTO, deterministic order, search, optional role, invalid queries, role denial | Safe non-credential summaries or 403/400 | server/tests/lab-03/users-admin.api.test.ts | Planned |
@@ -66,7 +66,7 @@ Test levels:
 | SEC-01 | FR-06, FR-08, AC-07–AC-11 | Every protected endpoint without, after-expiry, after-logout, and forced-change session | 401 or PASSWORD_CHANGE_REQUIRED; no protected DTO | server/tests/lab-03/authorization.api.test.ts | Planned |
 | SEC-02 | FR-08, authorization matrix, AC-10, AC-11, AC-22, AC-41 | Complete role-operation matrix including direct URL/API access | Every allowed cell succeeds and every forbidden cell is 403 | server/tests/lab-03/authorization.api.test.ts | Planned |
 | SEC-03 | BR-03, BR-04, BR-07, AC-02–AC-04, AC-52 | Enumeration resistance and credential/token/hash redaction | Equivalent invalid responses and no secret output/log capture | server/tests/lab-03/auth-security.api.test.ts | Pass (Issue #27) |
-| SEC-04 | BR-21–BR-25, AC-12, AC-13 | Header/body identity spoofing and Ticket/Attachment ownership probing | Authenticated identity wins; protected existence is hidden | server/tests/lab-03/requester-ownership.api.test.ts | Planned |
+| SEC-04 | BR-21–BR-25, AC-12, AC-13 | Header/body identity spoofing and Ticket/Attachment ownership probing | Authenticated identity wins; protected existence is hidden | server/tests/lab-03/requester-ownership.api.test.ts | Pass (Issue #29) |
 | SEC-05 | BR-25, BR-52, AC-37, AC-52 | Requester probing Internal Notes with valid/invalid Ticket and Note identifiers | Identical role denial occurs before lookup and never includes content | server/tests/lab-03/authorization.api.test.ts | Planned |
 | SEC-06 | BR-14–BR-16, AC-09, AC-61 | Cross-site authenticated unsafe requests, Login Origin attacks, exact allowlist tuples, no Referer fallback, and cookie attributes | CSRF/Origin controls prevent mutation or session creation without leaking account existence | server/tests/lab-03/csrf.api.test.ts | Pass (Issue #27) |
 | SEC-07 | FR-43, BR-40, BR-41, BR-64, BR-68, AC-24–AC-30, AC-44–AC-47, AC-58, AC-60 | Lock-order and bounded-retry harness for claims, workflow, duplicate email, last-admin, and owner-eligibility concurrency | User locks precede Ticket locks in ascending ids; only 40001 retries at most twice; final rows satisfy invariants | server/tests/lab-03/concurrency.api.test.ts | Planned |
@@ -91,21 +91,21 @@ Test levels:
 | MIG-06 | FR-38, FR-39, BR-34, BR-35, AC-49, AC-50, AC-59 | Two migrations from equivalent populated snapshots containing every legacy status, followed by Queue/claim fixture checks | Postflight checksums are identical; every ownerId is null; all mapped Tickets are visible; every non-terminal Ticket is claimable without status rewrite | server/tests/lab-03/lab2-to-lab3-repeatability.migration.test.ts | Planned |
 | REG-01 | BR-81, AC-55 | Original Lab 1 health and Category API/client behavior | All original Lab 1 tests remain regression obligations | `server/tests/lab-01/categories.test.ts`<br>`server/tests/lab-01/health.test.ts`<br>`client/tests/lab-01/App.test.tsx` | Planned |
 | REG-02 | FR-44, BR-28–BR-33, BR-80, AC-14, AC-39, AC-55 | Lab 2 server Ticket, query, validation, number, Attachment, and safe-error behavior under session identity | All non-identity behavior remains a regression obligation; approved identity assertions move to the planned Lab 3 file | Existing: `server/tests/lab-02/attachment-validation.unit.test.ts`<br>`server/tests/lab-02/attachments.api.test.ts`<br>`server/tests/lab-02/create-ticket.api.test.ts`<br>`server/tests/lab-02/error-handling.api.test.ts`<br>`server/tests/lab-02/my-tickets.api.test.ts`<br>`server/tests/lab-02/reference-data.api.test.ts`<br>`server/tests/lab-02/test-database.unit.test.ts`<br>`server/tests/lab-02/ticket-detail.api.test.ts`<br>`server/tests/lab-02/ticket-number.unit.test.ts`<br>`server/tests/lab-02/ticket-query.unit.test.ts`<br>`server/tests/lab-02/ticket-validation.unit.test.ts`<br>Planned: `server/tests/lab-03/requester-tickets.api.test.ts` | Planned |
-| REG-03 | FR-44, AC-14, AC-16, AC-55 | Lab 2 Requester client flows and E2E without selector/Change Requester | Existing flows remain regression obligations; equivalent authenticated Lab 3 workflow is planned with no obsolete state | Existing: `client/tests/lab-02/AttachmentSection.test.tsx`<br>`client/tests/lab-02/AttachmentUploadApi.test.tsx`<br>`client/tests/lab-02/CreateTicket.test.tsx`<br>`client/tests/lab-02/DevelopmentRequesterSelection.test.tsx`<br>`client/tests/lab-02/MyTickets.test.tsx`<br>`client/tests/lab-02/RequesterTicketDetail.test.tsx`<br>`client/tests/lab-02/UiStyleAccessibility.test.tsx`<br>`e2e/lab-02/requester-ticket-flow.spec.ts`<br>Planned: `e2e/lab-03/requester-regression.spec.ts` | Planned |
+| REG-03 | FR-44, AC-14, AC-16, AC-55 | Lab 2 Requester client flows and E2E without selector/Change Requester | Existing flows remain regression obligations; equivalent authenticated Lab 3 workflow is planned with no obsolete state | Existing: `client/tests/lab-02/AttachmentSection.test.tsx`<br>`client/tests/lab-02/AttachmentUploadApi.test.tsx`<br>`client/tests/lab-02/CreateTicket.test.tsx`<br>`client/tests/lab-02/MyTickets.test.tsx`<br>`client/tests/lab-02/RequesterTicketDetail.test.tsx`<br>`client/tests/lab-02/UiStyleAccessibility.test.tsx`<br>`e2e/lab-02/requester-ticket-flow.spec.ts`<br>Planned: `e2e/lab-03/requester-regression.spec.ts` | Planned |
 
 ### 2.5 UI, Style, and Responsive Tests
 
 | Test ID | Requirement / AC | What It Tests | Expected Result | Planned Automated Test File | Status |
 | --- | --- | --- | --- | --- | --- |
-| UI-01 | FR-01, FR-06, AC-01–AC-04, AC-61 | Login initial, validation, busy, success, invalid, inactive, throttle, Origin-required/forbidden, and safe-failure states | Approved safe copy, cleared password, and no duplicate submission or account enumeration | client/tests/lab-03/Login.test.tsx | Planned |
-| UI-02 | FR-05, AC-05, AC-06 | Forced Change Password fields, rules, mismatch, busy, failure, success, and route gate | Normal app opens only after successful rotation | client/tests/lab-03/ChangePassword.test.tsx | Planned |
-| UI-03 | FR-07–FR-09, AC-08, AC-10, AC-11, AC-16 | Current User loading, role navigation, logout, protected routes, obsolete selector redirect | Exact destinations per role and direct access blocked | client/tests/lab-03/AuthenticatedShell.test.tsx | Planned |
-| UI-04 | FR-11–FR-17, AC-12–AC-16, AC-31–AC-35, AC-39 | Requester screens use session identity, show Lab 3 fields/Comments/indication, preserve Attachments, omit Notes | Complete owned workflow with all relevant states | client/tests/lab-03/RequesterTicketFlow.test.tsx | Planned |
+| UI-01 | FR-01, FR-06, AC-01–AC-04, AC-61 | Login initial, validation, busy, success, invalid, inactive, throttle, Origin-required/forbidden, and safe-failure states | Approved safe copy, cleared password, and no duplicate submission or account enumeration | client/tests/lab-03/Login.test.tsx | Pass (Issue #29) |
+| UI-02 | FR-05, AC-05, AC-06 | Forced Change Password fields, rules, mismatch, busy, failure, success, and route gate | Normal app opens only after successful rotation | client/tests/lab-03/ChangePassword.test.tsx | Pass (Issue #29) |
+| UI-03 | FR-07–FR-09, AC-08, AC-10, AC-11, AC-16 | Current User loading, role navigation, logout, protected routes, obsolete selector redirect | Exact destinations per role and direct access blocked | client/tests/lab-03/AuthenticatedShell.test.tsx | Pass (Issue #29) |
+| UI-04 | FR-11–FR-17, AC-12–AC-16, AC-31–AC-35, AC-39 | Requester screens use session identity, show Lab 3 fields/Comments/indication, preserve Attachments, omit Notes | Complete owned workflow with all relevant states | client/tests/lab-03/RequesterTicketFlow.test.tsx | Pass (Issue #29) |
 | UI-05 | FR-18, FR-19, AC-17–AC-22, AC-59 | Queue controls, all mapped migrated unassigned statuses, applied query, table/cards, pagination, and states | Migrated Tickets remain visible as Unassigned and query/state behavior matches contract | client/tests/lab-03/StaffTicketQueue.test.tsx | Planned |
 | UI-06 | FR-20, FR-21, AC-23, AC-38, AC-59 | Operational Detail groups, unassigned status validity, Claim availability, read-only/editable distinction, Attachments, and states | Every non-terminal migrated unassigned Detail offers Claim without status rewrite | client/tests/lab-03/StaffTicketDetail.test.tsx | Planned |
 | UI-07 | FR-22–FR-26, AC-24–AC-30, AC-60 | Claim/assign/priority/status dialogs, owner-eligibility/concurrent/stale/terminal conflicts, and success refresh | Only permitted actions appear; safe race conflict reloads exact committed server state | client/tests/lab-03/StaffTicketActions.test.tsx | Planned |
 | UI-08 | FR-27–FR-30, AC-33–AC-37 | Public versus Internal visual distinction, validation, pagination, safe rendering, announcements | Private composer is unmistakable; content is inert text | client/tests/lab-03/CommentsNotes.test.tsx | Planned |
-| UI-09 | FR-17, AC-31, AC-32 | Resolution-indication confirmation, eligible controls, success, repeated, conflict, safe failure | Formal status is not represented as changed | client/tests/lab-03/ResolutionIndication.test.tsx | Planned |
+| UI-09 | FR-17, AC-31, AC-32 | Resolution-indication confirmation, eligible controls, success, repeated, conflict, safe failure | Formal status is not represented as changed | client/tests/lab-03/ResolutionIndication.test.tsx | Pass (Issue #29) |
 | UI-10 | FR-31, AC-40, AC-41 | Admin User list/search/filter and all meaningful screen states | Required columns and Edit action; role denial safe | client/tests/lab-03/UserManagement.test.tsx | Planned |
 | UI-11 | FR-32–FR-37, AC-42–AC-48, AC-57, AC-58, AC-60 | Admin create/edit/reset forms, historical-reference guidance, field errors, owner/concurrent/stale/safety conflicts, success, focus return | Minimal operations complete without excluded controls, history rewrites, or misleading race success | client/tests/lab-03/UserManagement.test.tsx | Planned |
 | STYLE-01 | FR-41, AC-53, AC-54 | Zen Green tokens, badges, editable/read-only fields, focus, labels, live regions, non-color cues | Shared accessible visual contract is present | client/tests/lab-03/UiStyleAccessibility.test.tsx | Planned |
@@ -116,17 +116,17 @@ Test levels:
 
 | Test ID | Requirement / AC | What It Tests | Expected Result | Planned Automated Test File | Status |
 | --- | --- | --- | --- | --- | --- |
-| E2E-01 | AC-01–AC-09, AC-61 | Approved-Origin valid/invalid/inactive/throttled Login, Origin-safe UI failure, mandatory change, reload, logout, blocked reuse | Complete secure authentication lifecycle with session creation only after approved Origin | e2e/lab-03/authentication.spec.ts | Planned |
-| E2E-02 | AC-10–AC-16, AC-31–AC-35, AC-39 | Requester role shell, create/list/detail/Attachment, Public Comment, resolution indication, ownership attack | Existing workflow continues under authenticated identity | e2e/lab-03/requester-regression.spec.ts | Planned |
+| E2E-01 | AC-01–AC-09, AC-61 | Approved-Origin valid/invalid/inactive/throttled Login, Origin-safe UI failure, mandatory change, reload, logout, blocked reuse | Complete secure authentication lifecycle with session creation only after approved Origin | e2e/lab-03/authentication.spec.ts | Pass (Issue #29) |
+| E2E-02 | AC-10–AC-16, AC-31–AC-35, AC-39 | Requester role shell, create/list/detail/Attachment, Public Comment, resolution indication, ownership attack | Existing workflow continues under authenticated identity | e2e/lab-03/requester-regression.spec.ts | Pass (Issue #29) |
 | E2E-03 | AC-17–AC-30, AC-36–AC-38, AC-59 | Queue query, migrated unassigned Detail/claim, Attachment read, reassign, priority, transitions, Comment, Note | Complete operational Staff workflow with preserved migrated status and privacy distinction | e2e/lab-03/staff-ticket-flow.spec.ts | Planned |
 | E2E-04 | AC-40–AC-48, AC-57, AC-58, AC-60 | Admin list/search/filter, create, duplicate error, role/history edits, owner/admin/concurrent safety conflicts, reset, forced change | Complete minimal User Management workflow with preserved history and fresh-state race feedback | e2e/lab-03/user-administration.spec.ts | Planned |
 | E2E-05 | AC-10, AC-11, AC-13, AC-22, AC-37, AC-41, AC-52 | Direct navigation/API role and ownership matrix plus safe browser-visible failures | No unauthorized content appears before or after navigation | e2e/lab-03/authorization.spec.ts | Planned |
 
 ## 3. Acceptance-Criterion Traceability
 
-Every Acceptance Criterion maps to at least one planned test.
+Every Acceptance Criterion maps to at least one Test ID in the current status matrix.
 
-| AC | Planned Test IDs |
+| AC | Test IDs |
 | --- | --- |
 | AC-01 | API-01, API-24, UI-01, E2E-01 |
 | AC-02 | UNIT-03, API-01, API-24, SEC-03, UI-01, E2E-01 |
@@ -238,3 +238,34 @@ Required visual states include:
 ## 7. Completion Rule
 
 No Planned entry may be changed to Pass until its file exists, the asserted behavior matches the approved contract, and the command has passed on the implementation branch. Skipped, commented-out, quarantined, or weakened tests do not satisfy an AC.
+
+## 8. Issue #29 Semantic-Coverage Correction Evidence
+
+The four Issue #29 Pass rows challenged by the final audit now have direct coverage in their designated files:
+
+- `UNIT-08` asserts authenticated Requester ownership, `NEW`, `ownerId = null`, copied Requested/IT Priority, and rejection of submitted current or legacy ownership fields.
+- `API-08` performs a successful owning-Requester upload and soft removal, verifies the persisted relationship and metadata, checks response redaction, and retains Staff/Administrator mutation denials.
+- `SEC-04` proves that a spoofed legacy identity header cannot replace the authenticated Requester and that foreign and missing Ticket probes have the same safe response without protected details; the existing body-spoof and Attachment-probe cases remain.
+- `UI-04` exercises Public Comment submission/rendering, Attachment upload/removal, resolution indication without formal status mutation, and loading, empty, no-results, validation, dependency-failure, and safe not-found states.
+
+Tests-only RED commit `6dd78d4` failed only the new `UNIT-08` creation-data assertion because the pure builder was not yet exported; the other newly asserted production behavior already existed and passed. GREEN commit `8fd1e16` introduced and used the smallest pure creation-data builder without changing the API. Test-only commit `815155e` made the existing password boundary tables deterministic under the ordinary full client run by setting exact field values through change events; it retained the same boundary, Unicode, internal-whitespace, submission, and rejection assertions.
+
+After these commits, the focused server run passed 3 files / 10 tests and the focused Requester UI run passed 1 file / 8 tests. The ordinary complete commands passed 30 server files / 203 tests and 12 client files / 94 tests. All 8 Playwright scenarios, both production builds, and the compiled-server health smoke passed. No Test ID status changed: the matrix remains 75 = 16 `Pass (Issue #27)` + 13 `Pass (Issue #29)` + 46 `Planned`; `API-16` and `SEC-01` remain `Planned`.
+
+## 9. PR #30 Requested-Changes Regression Evidence
+
+Corrective RED commit `25e7c24` added deterministic database-lock/barrier coverage in `server/tests/lab-03/requester-mutation-concurrency.api.test.ts` for Ticket creation, Public Comment creation, resolution indication, Attachment upload, and Attachment removal. Each mutation is covered against both Requester deactivation and role change in both meaningful commit orders. The 10 cases initially failed only because stale eligibility could commit or because a committed eligibility change did not produce the safe conflict. The focused client RED run covered 17 tests; 13 passed and four failed for the intended missing authoritative conflict reload, safe reload-failure state, modal keyboard/focus behavior, and later-page Comment success flow.
+
+GREEN commit `5043200` made the 5-file / 21-test focused server run and 2-file / 17-test focused client run pass. The 10-test concurrency file also passed three further consecutive stress runs after the combined focused run. Follow-up `9b249b4` preserved the Lab 2 safe-unexpected-error assertion at the new transaction boundary and applied a narrow 30-second timeout to the existing credential-preflight parameterized cases without changing their assertions.
+
+Plain `npm test` then passed 31 server files / 213 tests with no command-line or global timeout override, and plain client `npm test` passed 12 files / 97 tests. All 8 Playwright scenarios, both production builds, and the compiled-server health smoke passed. No Test ID status changed: the matrix remains 75 = 16 `Pass (Issue #27)` + 13 `Pass (Issue #29)` + 46 `Planned`; `API-16` and `SEC-01` remain `Planned`.
+
+## 10. Transaction-Scoped Gate Correction Evidence
+
+Tests-only RED commit `bad31ad` added three focused database assertions without adding a Test ID or changing a matrix status. The same-session assertion failed against the previous implementation because the granted advisory lock and mutation transaction reported different PostgreSQL backend PIDs. The rollback-release and second-callback exclusion assertions passed, confirming that the RED failure isolated the transaction-boundary defect.
+
+GREEN commit `31cada3` moved ordered coordination into each Prisma SERIALIZABLE attempt. The gate and mutation now use the same `Prisma.TransactionClient`; PostgreSQL transaction-scoped locks release on commit or rollback without explicit unlock. A transaction that waits for a gate raises structured SQLSTATE `40001` before its mutation callback, rolls back its stale snapshot, and restarts within the existing three-attempt bound. The subsequent callback executes once, after the fresh transaction has acquired its gates. User locking still precedes Ticket locking, and Attachment upload staging/rollback cleanup and post-commit physical removal are unchanged.
+
+The gate file passed 3 tests. A combined focused run passed 5 files / 67 tests, including all 10 eligibility races, all 9 retry/exhaustion and storage-cleanup cases, all 3 role-aware Attachment cases, and all 42 retained Attachment cases including the concurrent fifth-file limit. The eligibility file passed five further consecutive 10-test runs. Plain server `npm test` passed 33 files / 225 tests with no global or command-line timeout override; plain client `npm test` passed 12 files / 98 tests. All 8 Playwright scenarios, both builds, and the compiled-server health smoke passed.
+
+No Test ID status changed. The matrix remains 75 = 16 `Pass (Issue #27)` + 13 `Pass (Issue #29)` + 46 `Planned`; `API-16` and `SEC-01` remain `Planned`, and all 61 Acceptance Criteria retain valid traceability.

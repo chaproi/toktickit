@@ -12,6 +12,12 @@ import {
 } from "vitest";
 import { app } from "../../src/app.js";
 import { getPrisma } from "../../src/prisma.js";
+import {
+  authenticated,
+  createTestSession,
+  removeTestSessions,
+  type TestSession,
+} from "./authenticated-test-session.js";
 
 const REQUESTER_A_EMAIL = "alex.morgan@example.com";
 const REQUESTER_B_EMAIL = "daniel.kim@example.com";
@@ -43,6 +49,7 @@ let references: TestReferences;
 let requesters: TestRequesters;
 let requesterATickets: Ticket[] = [];
 let requesterBTickets: Ticket[] = [];
+const sessions = new Map<number, TestSession>();
 
 async function cleanIssue17Tickets(): Promise<void> {
   const prisma = getPrisma();
@@ -285,12 +292,9 @@ async function createIssue17Fixtures(): Promise<void> {
 }
 
 function listTickets(requesterId: number, query = "") {
-  return request(app)
-    .get(`/api/tickets${query}`)
-    .set(
-      "X-Development-Requester-Id",
-      String(requesterId),
-    );
+  const call = request(app).get(`/api/tickets${query}`);
+  const session = sessions.get(requesterId);
+  return session ? authenticated(call, session) : call;
 }
 
 function comparePrimitive(
@@ -366,6 +370,8 @@ function prioritySortedTicketIds(
 
 beforeAll(async () => {
   await createIssue17Fixtures();
+  sessions.set(requesters.requesterAId, await createTestSession(requesters.requesterAId));
+  sessions.set(requesters.requesterBId, await createTestSession(requesters.requesterBId));
 }, 30_000);
 
 afterEach(() => {
@@ -373,16 +379,17 @@ afterEach(() => {
 });
 
 afterAll(async () => {
+  await removeTestSessions(sessions.values());
   await cleanIssue17Tickets();
 }, 30_000);
 
 describe("GET /api/tickets Requester ownership", () => {
-  it("API-05 rejects a missing or malformed Requester header", async () => {
+  it("API-05 requires an authenticated Requester session and ignores spoofed headers", async () => {
     const missing = await request(app).get("/api/tickets");
 
-    expect(missing.status).toBe(400);
+    expect(missing.status).toBe(401);
     expect(missing.body.error.code).toBe(
-      "REQUESTER_REQUIRED",
+      "AUTHENTICATION_REQUIRED",
     );
 
     for (const value of ["not-an-id", "1.5", "0", "-1"]) {
@@ -390,23 +397,23 @@ describe("GET /api/tickets Requester ownership", () => {
         .get("/api/tickets")
         .set("X-Development-Requester-Id", value);
 
-      expect(malformed.status).toBe(400);
+      expect(malformed.status).toBe(401);
       expect(malformed.body.error.code).toBe(
-        "REQUESTER_REQUIRED",
+        "AUTHENTICATION_REQUIRED",
       );
     }
   });
 
-  it("API-05 rejects an unknown or inactive Requester", async () => {
+  it("API-05 does not accept inactive or unknown IDs as authentication", async () => {
     for (const requesterId of [
       requesters.inactiveRequesterId,
       2_147_483_647,
     ]) {
       const response = await listTickets(requesterId);
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(401);
       expect(response.body.error.code).toBe(
-        "INVALID_REQUESTER",
+        "AUTHENTICATION_REQUIRED",
       );
     }
   });
@@ -438,7 +445,10 @@ describe("GET /api/tickets Requester ownership", () => {
           "ticketDate",
           "category",
           "relatedSystem",
+          "requester",
           "requestedPriority",
+          "itPriority",
+          "owner",
           "currentStatus",
           "summary",
           "createdAt",

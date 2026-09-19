@@ -1,120 +1,164 @@
-const API_URL =
-  import.meta.env.VITE_API_URL ?? "http://localhost:3000";
+const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
 
-export interface Category {
-  id: number;
-  name: string;
-}
-
-export interface RelatedSystem {
-  id: number;
-  name: string;
-}
-
-export interface DevelopmentRequester {
+export interface Category { id: number; name: string }
+export interface RelatedSystem { id: number; name: string }
+export type UserRole = "REQUESTER" | "IT_STAFF" | "ADMINISTRATOR";
+export interface AuthUser {
   id: number;
   name: string;
   email: string;
+  role: UserRole;
+  mustChangePassword: boolean;
 }
-
-export interface SystemStatus {
-  online: boolean;
-  categories: Category[];
+export interface AuthenticationResponse {
+  user: AuthUser;
+  session: { expiresAt: string };
 }
+export interface HealthStatus { status: string; service: string }
+export interface SystemStatus { online: boolean; categories: Category[] }
 
-export interface HealthStatus {
-  status: string;
-  service: string;
-}
-
-export async function checkHealth(): Promise<HealthStatus> {
-  const response = await fetch(`${API_URL}/api/health`);
-
-  if (!response.ok) {
-    throw new Error("Backend is unavailable");
-  }
-
-  return (await response.json()) as HealthStatus;
-}
-
-export async function getCategories(): Promise<Category[]> {
-  const response = await fetch(`${API_URL}/api/categories`);
-
-  if (!response.ok) {
-    throw new Error("Unable to load categories");
-  }
-
-  return (await response.json()) as Category[];
-}
-
-export async function getRelatedSystems(): Promise<
-  RelatedSystem[]
-> {
-  const response = await fetch(
-    `${API_URL}/api/related-systems`,
-  );
-
-  if (!response.ok) {
-    throw new Error("Unable to load Related Systems");
-  }
-
-  return (await response.json()) as RelatedSystem[];
-}
-
-export async function getDevelopmentRequesters(): Promise<
-  DevelopmentRequester[]
-> {
-  const response = await fetch(
-    `${API_URL}/api/development-requesters`,
-  );
-
-  if (!response.ok) {
-    throw new Error(
-      "Failed to fetch Development Requesters",
-    );
-  }
-
-  return (await response.json()) as DevelopmentRequester[];
-}
-
-// Preserve the Lab 1 system-check behavior.
-export async function checkSystem(): Promise<SystemStatus> {
-  await checkHealth();
-
-  const categories = await getCategories();
-
-  return {
-    online: true,
-    categories,
+interface ErrorResponse {
+  error?: {
+    code?: string;
+    message?: string;
+    fields?: Record<string, string>;
+    retryAfterSeconds?: number;
   };
 }
 
-export type RequestedPriority =
-  | "LOW"
-  | "MEDIUM"
-  | "HIGH"
-  | "URGENT";
+export class ApiRequestError extends Error {
+  constructor(
+    message: string,
+    public readonly status: number,
+    public readonly code?: string,
+    public readonly fields?: Record<string, string>,
+    public readonly retryAfterSeconds?: number,
+  ) {
+    super(message);
+    this.name = "ApiRequestError";
+  }
+}
 
+function csrfToken(): string | undefined {
+  for (const segment of document.cookie.split(";")) {
+    const [name, ...value] = segment.trim().split("=");
+    if (name === "toktickit_csrf") return decodeURIComponent(value.join("="));
+  }
+  return undefined;
+}
+
+async function apiFetch(
+  path: string,
+  init: RequestInit = {},
+  unsafe = false,
+  notifyOnUnauthorized = true,
+): Promise<Response> {
+  const headers = new Headers(init.headers);
+  if (unsafe) {
+    const token = csrfToken();
+    if (token) headers.set("X-CSRF-Token", token);
+  }
+  const response = await fetch(`${API_URL}${path}`, {
+    ...init,
+    headers,
+    credentials: "include",
+  });
+  if (response.status === 401 && notifyOnUnauthorized && path !== "/api/auth/login") {
+    window.dispatchEvent(new Event("toktickit:auth-expired"));
+  }
+  return response;
+}
+
+async function requestError(response: Response, fallback: string): Promise<ApiRequestError> {
+  const body = await response.json().catch(() => null) as ErrorResponse | null;
+  return new ApiRequestError(
+    body?.error?.message ?? fallback,
+    response.status,
+    body?.error?.code,
+    body?.error?.fields,
+    body?.error?.retryAfterSeconds,
+  );
+}
+
+async function jsonRequest<T>(
+  path: string,
+  init: RequestInit = {},
+  unsafe = false,
+  fallback = "Something went wrong. Please try again.",
+): Promise<T> {
+  const response = await apiFetch(path, init, unsafe);
+  if (!response.ok) throw await requestError(response, fallback);
+  return await response.json() as T;
+}
+
+export async function checkHealth(): Promise<HealthStatus> {
+  return jsonRequest<HealthStatus>("/api/health", {}, false, "Backend is unavailable");
+}
+export async function getCategories(): Promise<Category[]> {
+  return jsonRequest<Category[]>("/api/categories", {}, false, "Unable to load categories");
+}
+export async function getRelatedSystems(): Promise<RelatedSystem[]> {
+  return jsonRequest<RelatedSystem[]>(
+    "/api/related-systems",
+    {},
+    false,
+    "Unable to load Related Systems",
+  );
+}
+export async function checkSystem(): Promise<SystemStatus> {
+  await checkHealth();
+  return { online: true, categories: await getCategories() };
+}
+
+export async function getCurrentUser(): Promise<AuthenticationResponse> {
+  const response = await apiFetch("/api/auth/me", {}, false, false);
+  if (!response.ok) {
+    throw await requestError(response, "Unable to load the current User.");
+  }
+  return await response.json() as AuthenticationResponse;
+}
+export async function login(email: string, password: string): Promise<AuthenticationResponse> {
+  return jsonRequest<AuthenticationResponse>(
+    "/api/auth/login",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    },
+    false,
+    "Unable to sign in. Please try again.",
+  );
+}
+export async function logout(): Promise<void> {
+  const response = await apiFetch("/api/auth/logout", { method: "POST" }, true);
+  if (!response.ok) throw await requestError(response, "Unable to complete logout safely.");
+}
+export async function changePassword(input: {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}): Promise<AuthenticationResponse> {
+  return jsonRequest<AuthenticationResponse>(
+    "/api/auth/change-password",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    },
+    true,
+    "Unable to change the password. Please try again.",
+  );
+}
+
+export type RequestedPriority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
 export type TicketStatus =
-  | "NEW"
-  | "OPEN"
-  | "IN_PROGRESS"
-  | "WAITING_FOR_REQUESTER"
-  | "RESOLVED"
-  | "CLOSED"
-  | "REOPENED"
-  | "CANCELLED";
-
+  | "NEW" | "OPEN" | "IN_PROGRESS" | "WAITING_FOR_REQUESTER"
+  | "RESOLVED" | "CLOSED" | "REOPENED" | "CANCELLED";
 export type TicketSortField =
-  | "ticketNumber"
-  | "ticketDate"
-  | "updatedAt"
-  | "summary"
-  | "requestedPriority";
-
+  | "ticketNumber" | "ticketDate" | "updatedAt" | "summary" | "requestedPriority";
 export type TicketSortOrder = "asc" | "desc";
 export type TicketPageSize = 10 | 25 | 50;
-
+export interface OwnerSummary { id: number; name: string; role: "IT_STAFF" | "ADMINISTRATOR" }
 export interface TicketListQuery {
   search?: string;
   categoryId?: number;
@@ -126,20 +170,21 @@ export interface TicketListQuery {
   page: number;
   pageSize: TicketPageSize;
 }
-
 export interface TicketListItem {
   id: number;
   ticketNumber: string;
   ticketDate: string;
+  requester: { id: number; name: string };
   category: Category;
   relatedSystem: RelatedSystem;
   requestedPriority: RequestedPriority;
+  itPriority: RequestedPriority;
   currentStatus: TicketStatus;
+  owner: OwnerSummary | null;
   summary: string;
   createdAt: string;
   updatedAt: string;
 }
-
 export interface TicketListPagination {
   page: number;
   pageSize: number;
@@ -148,12 +193,10 @@ export interface TicketListPagination {
   hasPreviousPage: boolean;
   hasNextPage: boolean;
 }
-
 export interface TicketListResponse {
   items: TicketListItem[];
   pagination: TicketListPagination;
 }
-
 export interface CreateTicketInput {
   clientSubmissionId: string;
   categoryId: number;
@@ -162,89 +205,48 @@ export interface CreateTicketInput {
   summary: string;
   description: string;
 }
-
-export interface CreatedTicket {
-  id: number;
-  ticketNumber: string;
-  ticketDate: string;
-  requester: {
-    id: number;
-    name: string;
-  };
-  category: {
-    id: number;
-    name: string;
-  };
-  relatedSystem: {
-    id: number;
-    name: string;
-  };
-  requestedPriority: RequestedPriority;
-  currentStatus: "NEW";
-  summary: string;
+export interface TicketDetail extends TicketListItem {
   description: string;
-  createdAt: string;
-  updatedAt: string;
+  requesterResolutionIndicatedAt: string | null;
 }
+export type CreatedTicket = TicketDetail;
+export interface CreateTicketResponse { ticket: CreatedTicket; replayed: boolean }
 
-export interface CreateTicketResponse {
-  ticket: CreatedTicket;
-  replayed: boolean;
-}
-
-interface ErrorResponse {
-  error?: {
-    code?: string;
-    message?: string;
-  };
-}
-
-export class ApiRequestError extends Error {
-  constructor(
-    message: string,
-    public readonly status: number,
-    public readonly code?: string,
-  ) {
-    super(message);
-    this.name = "ApiRequestError";
-  }
-}
-
-export async function createTicket(
-  requesterId: number,
-  input: CreateTicketInput,
-): Promise<CreateTicketResponse> {
-  const response = await fetch(`${API_URL}/api/tickets`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Development-Requester-Id":
-        String(requesterId),
+export async function createTicket(input: CreateTicketInput): Promise<CreateTicketResponse> {
+  return jsonRequest<CreateTicketResponse>(
+    "/api/tickets",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
     },
-    body: JSON.stringify(input),
-  });
-
-  const responseBody = (await response
-    .json()
-    .catch(() => null)) as
-    | CreateTicketResponse
-    | ErrorResponse
-    | null;
-
-  if (!response.ok) {
-    const errorResponse =
-      responseBody as ErrorResponse | null;
-
-    throw new ApiRequestError(
-      errorResponse?.error?.message ??
-      "Unable to create the Ticket. Please try again.",
-      response.status,
-      errorResponse?.error?.code,
-    );
-  }
-
-  return responseBody as CreateTicketResponse;
+    true,
+    "Unable to create the Ticket. Please try again.",
+  );
 }
+
+export async function getTickets(
+  query: TicketListQuery,
+  signal?: AbortSignal,
+): Promise<TicketListResponse> {
+  const parameters = new URLSearchParams();
+  const search = query.search?.trim();
+  if (search) parameters.set("search", search);
+  if (query.categoryId !== undefined) parameters.set("categoryId", String(query.categoryId));
+  if (query.relatedSystemId !== undefined) parameters.set("relatedSystemId", String(query.relatedSystemId));
+  if (query.requestedPriority !== undefined) parameters.set("requestedPriority", query.requestedPriority);
+  if (query.currentStatus !== undefined) parameters.set("currentStatus", query.currentStatus);
+  parameters.set("sortBy", query.sortBy);
+  parameters.set("sortOrder", query.sortOrder);
+  parameters.set("page", String(query.page));
+  parameters.set("pageSize", String(query.pageSize));
+  return jsonRequest<TicketListResponse>(`/api/tickets?${parameters}`, { signal });
+}
+
+export async function getTicketDetail(ticketId: number, signal?: AbortSignal): Promise<TicketDetail> {
+  return jsonRequest<TicketDetail>(`/api/tickets/${ticketId}`, { signal });
+}
+
 export interface Attachment {
   id: number;
   ticketId: number;
@@ -258,242 +260,98 @@ export interface Attachment {
   removedByRequesterId: number | null;
   removalReason: string | null;
 }
+export interface AttachmentListResponse { items: Attachment[] }
 
-export interface TicketDetail {
-  id: number;
-  ticketNumber: string;
-  ticketDate: string;
-  requester: {
-    id: number;
-    name: string;
-  };
-  category: Category;
-  relatedSystem: RelatedSystem;
-  requestedPriority: RequestedPriority;
-  currentStatus: TicketStatus;
-  summary: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface AttachmentListResponse {
-  items: Attachment[];
-}
-
-async function readErrorResponse(
-  response: Response,
-  fallbackMessage: string,
-): Promise<ApiRequestError> {
-  const responseBody = (await response
-    .json()
-    .catch(() => null)) as ErrorResponse | null;
-
-  return new ApiRequestError(
-    responseBody?.error?.message ?? fallbackMessage,
-    response.status,
-    responseBody?.error?.code,
+export async function uploadAttachment(ticketId: number, file: File): Promise<Attachment> {
+  const body = new FormData();
+  body.append("file", file);
+  return jsonRequest<Attachment>(
+    `/api/tickets/${ticketId}/attachments`,
+    { method: "POST", body },
+    true,
   );
 }
-
-export async function uploadAttachment(
-  requesterId: number,
-  ticketId: number,
-  file: File,
-): Promise<Attachment> {
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const response = await fetch(
-    `${API_URL}/api/tickets/${ticketId}/attachments`,
-    {
-      method: "POST",
-      headers: {
-        "X-Development-Requester-Id": String(requesterId),
-      },
-      body: formData,
-    },
-  );
-
-  if (!response.ok) {
-    throw await readErrorResponse(
-      response,
-      "Something went wrong. Please try again.",
-    );
-  }
-
-  return (await response.json()) as Attachment;
-}
-
-export async function getTicketDetail(
-  requesterId: number,
-  ticketId: number,
-  signal?: AbortSignal,
-): Promise<TicketDetail> {
-  const response = await fetch(
-    `${API_URL}/api/tickets/${ticketId}`,
-    {
-      headers: {
-        "X-Development-Requester-Id": String(requesterId),
-      },
-      signal,
-    },
-  );
-
-  if (!response.ok) {
-    throw await readErrorResponse(
-      response,
-      "Something went wrong. Please try again.",
-    );
-  }
-
-  return (await response.json()) as TicketDetail;
-}
-
 export async function getAttachments(
-  requesterId: number,
   ticketId: number,
   signal?: AbortSignal,
 ): Promise<AttachmentListResponse> {
-  const response = await fetch(
-    `${API_URL}/api/tickets/${ticketId}/attachments`,
-    {
-      headers: {
-        "X-Development-Requester-Id": String(requesterId),
-      },
-      signal,
-    },
+  return jsonRequest<AttachmentListResponse>(
+    `/api/tickets/${ticketId}/attachments`,
+    { signal },
   );
-
-  if (!response.ok) {
-    throw await readErrorResponse(
-      response,
-      "Something went wrong. Please try again.",
-    );
-  }
-
-  return (await response.json()) as AttachmentListResponse;
 }
-
 export async function getAttachmentContent(
-  requesterId: number,
   ticketId: number,
   attachmentId: number,
   disposition: "inline" | "attachment",
 ): Promise<Blob> {
-  const response = await fetch(
-    `${API_URL}/api/tickets/${ticketId}/attachments/${attachmentId}/content?disposition=${disposition}`,
-    {
-      headers: {
-        "X-Development-Requester-Id": String(requesterId),
-      },
-    },
+  const response = await apiFetch(
+    `/api/tickets/${ticketId}/attachments/${attachmentId}/content?disposition=${disposition}`,
   );
-
-  if (!response.ok) {
-    throw await readErrorResponse(
-      response,
-      "Something went wrong. Please try again.",
-    );
-  }
-
+  if (!response.ok) throw await requestError(response, "Something went wrong. Please try again.");
   return response.blob();
 }
-
 export async function removeAttachment(
-  requesterId: number,
   ticketId: number,
   attachmentId: number,
   removalReason: string,
 ): Promise<Attachment> {
-  const response = await fetch(
-    `${API_URL}/api/tickets/${ticketId}/attachments/${attachmentId}`,
+  return jsonRequest<Attachment>(
+    `/api/tickets/${ticketId}/attachments/${attachmentId}`,
     {
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Development-Requester-Id": String(requesterId),
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ removalReason }),
     },
+    true,
   );
-
-  if (!response.ok) {
-    throw await readErrorResponse(
-      response,
-      "Something went wrong. Please try again.",
-    );
-  }
-
-  return (await response.json()) as Attachment;
 }
 
-export async function getTickets(
-  requesterId: number,
-  query: TicketListQuery,
+export interface PublicComment {
+  id: number;
+  ticketId: number;
+  author: { id: number; name: string; role: UserRole };
+  content: string;
+  createdAt: string;
+}
+export interface PublicCommentResponse {
+  items: PublicComment[];
+  pagination: TicketListPagination;
+}
+export async function getPublicComments(
+  ticketId: number,
+  page = 1,
+  pageSize: 20 | 50 | 100 = 20,
   signal?: AbortSignal,
-): Promise<TicketListResponse> {
-  const parameters = new URLSearchParams();
-
-  const search = query.search?.trim();
-  if (search) {
-    parameters.set("search", search);
-  }
-
-  if (query.categoryId !== undefined) {
-    parameters.set("categoryId", String(query.categoryId));
-  }
-
-  if (query.relatedSystemId !== undefined) {
-    parameters.set(
-      "relatedSystemId",
-      String(query.relatedSystemId),
-    );
-  }
-
-  if (query.requestedPriority !== undefined) {
-    parameters.set(
-      "requestedPriority",
-      query.requestedPriority,
-    );
-  }
-
-  if (query.currentStatus !== undefined) {
-    parameters.set("currentStatus", query.currentStatus);
-  }
-
-  parameters.set("sortBy", query.sortBy);
-  parameters.set("sortOrder", query.sortOrder);
-  parameters.set("page", String(query.page));
-  parameters.set("pageSize", String(query.pageSize));
-
-  const response = await fetch(
-    `${API_URL}/api/tickets?${parameters.toString()}`,
-    {
-      headers: {
-        "X-Development-Requester-Id": String(requesterId),
-      },
-      signal,
-    },
+): Promise<PublicCommentResponse> {
+  return jsonRequest<PublicCommentResponse>(
+    `/api/tickets/${ticketId}/comments?page=${page}&pageSize=${pageSize}`,
+    { signal },
   );
-
-  const responseBody = (await response
-    .json()
-    .catch(() => null)) as
-    | TicketListResponse
-    | ErrorResponse
-    | null;
-
-  if (!response.ok) {
-    const errorResponse = responseBody as ErrorResponse | null;
-
-    throw new ApiRequestError(
-      errorResponse?.error?.message ??
-        "Something went wrong. Please try again.",
-      response.status,
-      errorResponse?.error?.code,
-    );
-  }
-
-  return responseBody as TicketListResponse;
+}
+export async function addPublicComment(ticketId: number, content: string): Promise<PublicComment> {
+  return jsonRequest<PublicComment>(
+    `/api/tickets/${ticketId}/comments`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content }),
+    },
+    true,
+  );
+}
+export async function indicateResolution(ticketId: number): Promise<{
+  ticketId: number;
+  currentStatus: TicketStatus;
+  requesterResolutionIndicatedAt: string;
+}> {
+  return jsonRequest(
+    `/api/tickets/${ticketId}/resolution-indication`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ confirm: true }),
+    },
+    true,
+  );
 }

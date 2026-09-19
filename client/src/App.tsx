@@ -1,8 +1,4 @@
-import {
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   BrowserRouter,
   Link,
@@ -12,444 +8,356 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
+import {
+  ApiRequestError,
+  checkSystem,
+  getCurrentUser,
+  logout,
+  type AuthenticationResponse,
+  type AuthUser,
+  type Category,
+} from "./api.js";
+import ChangePassword from "./components/ChangePassword.js";
 import CreateTicket from "./components/CreateTicket.js";
-import DevelopmentRequesterSelection from "./components/DevelopmentRequesterSelection.js";
+import Login from "./components/Login.js";
 import MyTickets from "./components/MyTickets.js";
 import RequesterTicketDetail from "./components/RequesterTicketDetail.js";
-import {
-  checkSystem,
-  getDevelopmentRequesters,
-  type Category,
-  type DevelopmentRequester,
-} from "./api.js";
 
-const REQUESTER_STORAGE_KEY = "developmentRequesterId";
 const MOBILE_NAVIGATION_QUERY = "(max-width: 767.98px)";
 
-type UiState = "idle" | "loading" | "success" | "error";
+function roleHome(user: AuthUser): string {
+  if (user.role === "REQUESTER") return "/tickets";
+  if (user.role === "IT_STAFF") return "/staff/tickets";
+  return "/admin/users";
+}
 
-interface AppShellProps {
-  requester: DevelopmentRequester;
-  onChangeRequester: () => void;
-  children?: ReactNode;
+function roleLabel(user: AuthUser): string {
+  if (user.role === "IT_STAFF") return "IT Staff";
+  if (user.role === "ADMINISTRATOR") return "Administrator";
+  return "Requester";
 }
 
 function useMediaQuery(query: string): boolean {
-  const readMatch = () =>
-    typeof window.matchMedia === "function" &&
-    window.matchMedia(query).matches;
-  const [matches, setMatches] = useState(readMatch);
-
+  const read = () => typeof window.matchMedia === "function" && window.matchMedia(query).matches;
+  const [matches, setMatches] = useState(read);
   useEffect(() => {
-    if (typeof window.matchMedia !== "function") {
-      return;
-    }
-
-    const mediaQuery = window.matchMedia(query);
-    const updateMatch = () => setMatches(mediaQuery.matches);
-
-    updateMatch();
-    mediaQuery.addEventListener("change", updateMatch);
-    return () => mediaQuery.removeEventListener("change", updateMatch);
+    if (typeof window.matchMedia !== "function") return;
+    const media = window.matchMedia(query);
+    const update = () => setMatches(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
   }, [query]);
-
   return matches;
 }
 
 function SystemCheck() {
-  const [state, setState] = useState<UiState>("idle");
+  const [state, setState] = useState<"idle" | "checking" | "online" | "offline">("idle");
   const [categories, setCategories] = useState<Category[]>([]);
 
-  async function handleCheck() {
-    setState("loading");
-
+  async function runCheck() {
+    if (state === "checking") return;
+    setState("checking");
+    setCategories([]);
     try {
-      const systemStatus = await checkSystem();
-      setCategories(systemStatus.categories);
-      setState("success");
-    } catch (error) {
-      console.error("Error checking system:", error);
-      setCategories([]);
-      setState("error");
+      const result = await checkSystem();
+      setCategories(result.categories);
+      setState("online");
+    } catch {
+      setState("offline");
     }
   }
 
   return (
-    <section className="container pb-5" style={{ maxWidth: 720 }}>
-      <div className="card border-0 shadow-sm">
-        <div className="card-body">
-          <h2 className="h6">Development system check</h2>
-
+    <section className="card border-0 shadow-sm mb-4" aria-labelledby="system-check-heading">
+      <div className="card-body p-3">
+        <div className="d-flex flex-wrap align-items-center gap-3">
+          <h2 id="system-check-heading" className="h5 mb-0">System Status</h2>
           <button
             type="button"
-            className="btn btn-outline-success"
-            onClick={handleCheck}
-            disabled={state === "loading"}
+            className="btn btn-outline-success btn-sm"
+            disabled={state === "checking"}
+            onClick={() => void runCheck()}
           >
-            {state === "loading" ? "Loading…" : "Check System"}
+            {state === "checking" ? "Checking…" : "Check System"}
           </button>
-
-          {state === "success" && (
-            <div className="mt-3">
-              <p className="text-success">
-                System Status: Online
-              </p>
-
-              <p>Supported Request Categories:</p>
-
-              <ul>
-                {categories.map((category) => (
-                  <li key={category.id}>{category.name}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {state === "error" && (
-            <div className="mt-3">
-              <p className="text-danger">
-                System Status: Offline
-              </p>
-
-              <p>
-                Unable to connect to the backend or load categories.
-              </p>
-            </div>
-          )}
+          {state === "online" && <strong className="text-success" role="status">Online</strong>}
+          {state === "offline" && <strong className="text-danger" role="alert">Offline</strong>}
         </div>
+        {state === "online" && (
+          <ul className="mb-0 mt-3" aria-label="Available support categories">
+            {categories.map((category) => <li key={category.id}>{category.name}</li>)}
+          </ul>
+        )}
       </div>
     </section>
   );
 }
 
-function RequesterPage({
-  onContinue,
-}: {
-  onContinue: (requester: DevelopmentRequester) => void;
-}) {
-  return (
-    <div className="min-vh-100 bg-body-tertiary">
-      <DevelopmentRequesterSelection
-        onContinue={onContinue}
-      />
-
-      <SystemCheck />
-    </div>
-  );
-}
-
-function RootRequesterRedirect({
+function AppShell({
+  user,
+  notice,
+  onLogout,
   children,
 }: {
+  user: AuthUser;
+  notice: string;
+  onLogout: () => Promise<void>;
   children: ReactNode;
 }) {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    navigate("/select-requester", { replace: true });
-  }, [navigate]);
-
-  return children;
-}
-
-function AppShell({
-  requester,
-  onChangeRequester,
-  children,
-}: AppShellProps) {
   const location = useLocation();
-  const isMobileNavigation = useMediaQuery(
-    MOBILE_NAVIGATION_QUERY,
-  );
-  const [isNavigationOpen, setIsNavigationOpen] = useState(false);
-  const myTicketsIsActive =
-    location.pathname === "/tickets" ||
-    (/^\/tickets\/[^/]+$/.test(location.pathname) &&
-      location.pathname !== "/tickets/new");
-  const createTicketIsActive = location.pathname === "/tickets/new";
-  const navigationIsVisible =
-    !isMobileNavigation || isNavigationOpen;
+  const mobile = useMediaQuery(MOBILE_NAVIGATION_QUERY);
+  const [open, setOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+  useEffect(() => setOpen(false), [location.pathname, mobile]);
+  const nav = user.role === "REQUESTER"
+    ? [["/tickets", "My Tickets"], ["/tickets/new", "Create Ticket"]]
+    : user.role === "IT_STAFF"
+      ? [["/staff/tickets", "Ticket Queue"]]
+      : [["/admin/users", "User Management"], ["/staff/tickets", "Ticket Queue"]];
 
-  useEffect(() => {
-    setIsNavigationOpen(false);
-  }, [isMobileNavigation, location.pathname]);
-
-  function closeMobileNavigation() {
-    if (isMobileNavigation) {
-      setIsNavigationOpen(false);
-    }
+  async function handleLogout() {
+    if (loggingOut) return;
+    setLoggingOut(true);
+    await onLogout();
   }
 
   return (
     <div className="min-vh-100 bg-body-tertiary">
       <header className="navbar navbar-expand-md bg-success navbar-dark shadow-sm">
         <div className="container">
-          <Link
-            className="navbar-brand fw-semibold"
-            to="/tickets"
-          >
-            TokTickIT
-          </Link>
-
+          <Link className="navbar-brand fw-semibold" to={roleHome(user)}>TokTickIT</Link>
           <button
             type="button"
             className="navbar-toggler app-navigation-toggle"
-            hidden={!isMobileNavigation}
+            hidden={!mobile}
             aria-label="Toggle primary navigation"
-            aria-expanded={isNavigationOpen}
+            aria-expanded={open}
             aria-controls="primary-navigation"
-            onClick={() =>
-              setIsNavigationOpen((current) => !current)
-            }
+            onClick={() => setOpen((value) => !value)}
           >
             <span className="navbar-toggler-icon" aria-hidden="true" />
           </button>
-
           <nav
             id="primary-navigation"
-            className={`app-navigation align-items-center gap-3 ${
-              navigationIsVisible ? "d-flex" : "d-none"
-            }`}
-            hidden={!navigationIsVisible}
+            className={`app-navigation align-items-center gap-3 ${!mobile || open ? "d-flex" : "d-none"}`}
+            hidden={mobile && !open}
             aria-label="Primary navigation"
           >
-            <Link
-              className={`link-light ${
-                myTicketsIsActive ? "active fw-semibold" : ""
-              }`}
-              aria-current={myTicketsIsActive ? "page" : undefined}
-              to="/tickets"
-              onClick={closeMobileNavigation}
-            >
-              My Tickets
-            </Link>
-
-            <Link
-              className={`link-light ${
-                createTicketIsActive ? "active fw-semibold" : ""
-              }`}
-              aria-current={createTicketIsActive ? "page" : undefined}
-              to="/tickets/new"
-              onClick={closeMobileNavigation}
-            >
-              Create Ticket
-            </Link>
+            {nav.map(([to, label]) => (
+              <Link
+                key={to}
+                className={`link-light ${location.pathname === to ? "active fw-semibold" : ""}`}
+                aria-current={location.pathname === to ? "page" : undefined}
+                to={to}
+              >
+                {label}
+              </Link>
+            ))}
+            <Link className="link-light" to="/change-password">Change Password</Link>
           </nav>
         </div>
       </header>
-
       <main className="container py-4">
         <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
           <p className="mb-0 fw-semibold">
-            Current Requester: {requester.name}
+            {user.name} <span className="badge text-bg-light">{roleLabel(user)}</span>
           </p>
-
           <button
             type="button"
             className="btn btn-outline-success"
-            onClick={onChangeRequester}
+            disabled={loggingOut}
+            onClick={() => void handleLogout()}
           >
-            Change Requester
+            {loggingOut ? "Logging out…" : "Logout"}
           </button>
         </div>
-
-        {children ?? (
-          <section className="card border-0 shadow-sm">
-            <div className="card-body p-4">
-              <h1 className="h3">My Tickets</h1>
-
-              <p className="text-secondary mb-0">
-                Ticket features will be implemented in the next
-                Lab 2 issue.
-              </p>
-            </div>
-          </section>
-        )}
+        {notice && <div className="alert alert-success" role="status">{notice}</div>}
+        <SystemCheck />
+        {children}
       </main>
     </div>
   );
 }
 
-function AppRoutes() {
+function Placeholder({ heading }: { heading: string }) {
+  return (
+    <section className="card border-0 shadow-sm">
+      <div className="card-body p-4">
+        <h1 className="h2">{heading}</h1>
+        <p className="text-secondary mb-0">This role destination is reserved for a later Sprint 3 increment.</p>
+      </div>
+    </section>
+  );
+}
+
+function Forbidden({ user }: { user: AuthUser }) {
+  return (
+    <section className="ticket-detail-state" role="alert">
+      <div>
+        <h1 className="h2">Forbidden</h1>
+        <p>This page is not available for your role.</p>
+        <Link className="btn btn-success" to={roleHome(user)}>Go to role home</Link>
+      </div>
+    </section>
+  );
+}
+
+function AuthenticatedRoutes() {
   const navigate = useNavigate();
-
-  const storedRequesterId = sessionStorage.getItem(
-    REQUESTER_STORAGE_KEY,
-  );
-
-  const [currentRequester, setCurrentRequester] =
-    useState<DevelopmentRequester | null>(null);
-
-  const [isRestoring, setIsRestoring] = useState(
-    Boolean(storedRequesterId),
-  );
+  const [state, setState] = useState<"loading" | "signed-out" | "signed-in" | "error">("loading");
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [notice, setNotice] = useState("");
+  const [sessionMessage, setSessionMessage] = useState("");
+  const [retry, setRetry] = useState(0);
 
   useEffect(() => {
-    if (!storedRequesterId) {
-      return;
-    }
-
     let active = true;
+    setState("loading");
+    void getCurrentUser()
+      .then((response) => {
+        if (!active) return;
+        setUser(response.user);
+        setState("signed-in");
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        setUser(null);
+        setState(error instanceof ApiRequestError && error.status === 401 ? "signed-out" : "error");
+      });
+    return () => { active = false; };
+  }, [retry]);
 
-    async function restoreRequester() {
-      try {
-        const requesters =
-          await getDevelopmentRequesters();
-
-        const requester = requesters.find(
-          (candidate) =>
-            candidate.id === Number(storedRequesterId),
-        );
-
-        if (!active) {
-          return;
-        }
-
-        if (requester) {
-          setCurrentRequester(requester);
-        } else {
-          sessionStorage.removeItem(
-            REQUESTER_STORAGE_KEY,
-          );
-        }
-      } catch (error) {
-        console.error(
-          "Unable to restore Development Requester:",
-          error,
-        );
-
-        sessionStorage.removeItem(REQUESTER_STORAGE_KEY);
-      } finally {
-        if (active) {
-          setIsRestoring(false);
-        }
-      }
-    }
-
-    void restoreRequester();
-
-    return () => {
-      active = false;
+  useEffect(() => {
+    const expire = () => {
+      setUser(null);
+      setNotice("");
+      setSessionMessage("Your session has expired. Please sign in again.");
+      setState("signed-out");
+      navigate("/login", { replace: true });
     };
-  }, [storedRequesterId]);
+    window.addEventListener("toktickit:auth-expired", expire);
+    return () => window.removeEventListener("toktickit:auth-expired", expire);
+  }, [navigate]);
 
-  function selectRequester(
-    requester: DevelopmentRequester,
-  ) {
-    setCurrentRequester(requester);
-    navigate("/tickets", { replace: true });
+  function authenticated(response: AuthenticationResponse) {
+    setUser(response.user);
+    setState("signed-in");
+    setSessionMessage("");
+    navigate(response.user.mustChangePassword ? "/change-password" : roleHome(response.user), {
+      replace: true,
+    });
   }
 
-  function changeRequester() {
-    sessionStorage.removeItem(REQUESTER_STORAGE_KEY);
-    setCurrentRequester(null);
-    navigate("/select-requester", { replace: true });
+  async function endSession() {
+    try {
+      await logout();
+    } catch {
+      // Local protected state is still removed after the server response.
+    } finally {
+      setUser(null);
+      setNotice("");
+      setState("signed-out");
+      navigate("/login", { replace: true });
+    }
   }
 
-  if (isRestoring) {
+  if (state === "loading") {
+    return <main className="container py-5"><h1 className="h3">TokTickIT</h1><p role="status">Loading your session…</p></main>;
+  }
+  if (state === "error") {
     return (
       <main className="container py-5">
-        <h1 className="h3 text-success">TokTickIT</h1>
-
-        <p role="status">
-          Restoring Development Requester…
-        </p>
+        <h1 className="h2">TokTickIT</h1>
+        <div className="alert alert-danger" role="alert">Something went wrong. Please try again.</div>
+        <button className="btn btn-success" type="button" onClick={() => setRetry((value) => value + 1)}>Try Again</button>
       </main>
     );
   }
+  if (state === "signed-out" || !user) {
+    return (
+      <Routes>
+        <Route path="/login" element={<Login onAuthenticated={authenticated} sessionMessage={sessionMessage} />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    );
+  }
+  if (user.mustChangePassword) {
+    return (
+      <Routes>
+        <Route
+          path="*"
+          element={(
+            <ChangePassword
+              mandatory
+              onLogout={() => void endSession()}
+              onChanged={(response) => {
+                setUser(response.user);
+                setNotice("Password changed successfully.");
+                navigate(roleHome(response.user), { replace: true });
+              }}
+            />
+          )}
+        />
+      </Routes>
+    );
+  }
 
-  const requesterPage = (
-    <RequesterPage onContinue={selectRequester} />
+  const shell = (children: ReactNode) => (
+    <AppShell user={user} notice={notice} onLogout={endSession}>{children}</AppShell>
   );
-
-  const myTicketsPage = currentRequester ? (
-    <AppShell
-      requester={currentRequester}
-      onChangeRequester={changeRequester}
-    >
-      <MyTickets
-        key={currentRequester.id}
-        requesterId={currentRequester.id}
-      />
-    </AppShell>
-  ) : (
-    <Navigate to="/select-requester" replace />
-  );
-
-  const createTicketPage = currentRequester ? (
-    <AppShell
-      requester={currentRequester}
-      onChangeRequester={changeRequester}
-    >
-      <CreateTicket requester={currentRequester} />
-    </AppShell>
-  ) : (
-    <Navigate to="/select-requester" replace />
-  );
-
-  const ticketDetailPage = currentRequester ? (
-    <AppShell
-      requester={currentRequester}
-      onChangeRequester={changeRequester}
-    >
-      <RequesterTicketDetail requester={currentRequester} />
-    </AppShell>
-  ) : (
-    <Navigate to="/select-requester" replace />
-  );
-
   return (
     <Routes>
+      <Route path="/" element={<Navigate to={roleHome(user)} replace />} />
+      <Route path="/login" element={<Navigate to={roleHome(user)} replace />} />
+      <Route path="/select-requester" element={<Navigate to={roleHome(user)} replace />} />
       <Route
-        path="/"
-        element={
-          currentRequester ? (
-            <Navigate to="/tickets" replace />
-          ) : (
-            <RootRequesterRedirect>
-              {requesterPage}
-            </RootRequesterRedirect>
-          )
-        }
+        path="/change-password"
+        element={(
+          <ChangePassword
+            mandatory={false}
+            onLogout={() => void endSession()}
+            onChanged={(response) => {
+              setUser(response.user);
+              setNotice("Password changed successfully.");
+              navigate(roleHome(response.user), { replace: true });
+            }}
+          />
+        )}
       />
-
-      <Route
-        path="/select-requester"
-        element={requesterPage}
-      />
-
       <Route
         path="/tickets"
-        element={myTicketsPage}
+        element={user.role === "REQUESTER" ? shell(<MyTickets />) : shell(<Forbidden user={user} />)}
       />
-
       <Route
         path="/tickets/new"
-        element={createTicketPage}
+        element={user.role === "REQUESTER" ? shell(<CreateTicket requester={user} />) : shell(<Forbidden user={user} />)}
       />
-
       <Route
         path="/tickets/:ticketId"
-        element={ticketDetailPage}
+        element={user.role === "REQUESTER" ? shell(<RequesterTicketDetail />) : shell(<Forbidden user={user} />)}
       />
-
       <Route
-        path="*"
-        element={<Navigate to="/" replace />}
+        path="/staff/tickets"
+        element={user.role !== "REQUESTER" ? shell(<Placeholder heading="Ticket Queue" />) : shell(<Forbidden user={user} />)}
       />
+      <Route
+        path="/staff/tickets/:ticketId"
+        element={user.role !== "REQUESTER" ? shell(<Placeholder heading="Operational Ticket Detail" />) : shell(<Forbidden user={user} />)}
+      />
+      <Route
+        path="/admin/users"
+        element={user.role === "ADMINISTRATOR" ? shell(<Placeholder heading="User Management" />) : shell(<Forbidden user={user} />)}
+      />
+      <Route path="*" element={shell(<section className="ticket-detail-state"><h1 className="h2">Page not found</h1></section>)} />
     </Routes>
   );
 }
 
 export default function App() {
   return (
-    <BrowserRouter
-      future={{
-        v7_startTransition: true,
-        v7_relativeSplatPath: true,
-      }}
-    >
-      <AppRoutes />
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <AuthenticatedRoutes />
     </BrowserRouter>
   );
 }

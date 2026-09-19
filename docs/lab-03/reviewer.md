@@ -32,7 +32,7 @@ The future reviewer should verify:
 - [ ] Queue query, assignment, IT Priority, status transitions, Comments, Notes, and resolution indication agree across all documents.
 - [ ] Administrator rules cover one role, duplicate email, self-deactivation/self-role protection, last active Administrator, non-terminal owner conflicts, terminal historical ownership, no deletion, and new initial password behavior.
 - [ ] Migration preserves Development Requester ids, immutable historical requester references, Ticket ownership, Attachment relationships, statuses, and priorities while validating unique per-User initial credentials before mutation.
-- [ ] Every AC maps to at least one Planned test and no test is prematurely marked Pass.
+- [ ] Every AC maps to at least one Test ID; only tests with completed evidence are marked Pass and all later obligations remain Planned.
 - [ ] UI states, responsive widths, accessibility, and Zen Green rules are complete.
 - [ ] API request/response shapes, statuses, validation limits, conflicts, and safe failures are internally consistent.
 - [ ] Product Definition of Done is testable and does not claim future evidence.
@@ -66,63 +66,83 @@ This is an implementation handoff, not a peer review or approval record.
 | Shared test migration | Applied through the guarded runner to `toktickit_test/public` after private ignored runtime mappings were provided. The populated Lab 2 snapshot preserved 5 Users, 9 Tickets, 0 Attachments, 4 Categories, 7 Related Systems, and matching User/Ticket/Attachment checksums. Two seed runs remained stable at 10 Users, 17 Tickets, 1 Public Comment, and 1 Internal Note while preserving hashes. |
 | Development database | Read-only before/after evidence for `toktickit/public` remained 5 Users, 182 Tickets, 92 Attachments, 4 Categories, and 7 Related Systems with matching checksums |
 | Initial GREEN commit | e74334a62cbbd92ba2a1a105ebc912b51a764bb1 |
-| PR #28 governance | Requested Changes; Project status Fixing; Issue #27 open; re-review not requested |
+| PR #28 governance | Approved at reviewed HEAD `6c9cbe6`; merged into `lab3-staging` as `924995bde6897d08188a6cb21b176093199efeb6`; Issue #27 closed |
 
 One earlier verification command reached `toktickit_test/public` because its custom Vitest configuration flag was parsed incorrectly. The migration SQL failed and rolled back transactionally before tests ran, and the exact failed Prisma metadata entry was marked rolled back using the documented recovery action. After private mappings were supplied, the guarded migration later applied successfully to that validated shared test target. All disposable `issue27_*` schemas were removed after their runs; no development database mutation occurred.
 
-## 7. PR #28 Requested-Changes Record
+## 7. PR #28 Final Outcome
 
-This section records the corrective commits now pushed and visible in PR #28 together with the current review and Project state. It does not claim that the reviewer accepted the correction.
+PR #28 originally received Requested Changes from Tanaboonnnnn at `e74334a`. The deterministic concurrency correction was committed as `0fc0cd3` (RED), `0e606ac` (GREEN), and `268eb53` (evidence), then pushed and reviewed. Tanaboonnnnn subsequently approved reviewed HEAD `6c9cbe6`. PR #28 was merged into `lab3-staging` as `924995bde6897d08188a6cb21b176093199efeb6`, and Issue #27 is closed. The earlier Requested Changes remains historical evidence rather than the current PR state.
+
+## 8. PR #30 Requested-Changes Record
+
+This section records the PR #30 review history through Tanaboonnnnn's re-review of exact HEAD `dc8f397b51bba04a69f974aa4f0c7c98e2a8e07a`. GitHub is the authoritative source for live state after this documentation-only correction.
 
 | Item | Current evidence |
 | --- | --- |
-| Pull Request | #28 |
-| Related implementation Issue | #27 |
-| Reviewer | Tanaboonnnnn |
-| Review status | Requested Changes |
-| GitHub Project status | Fixing |
-| Issue #27 | Open |
-| Reviewed HEAD | e74334a62cbbd92ba2a1a105ebc912b51a764bb1 |
-| Finding | `recordFailedLogin()` used an unlocked read followed by a separate upsert, so two simultaneous failures for one normalized-email/IP key could both read count 3 and overwrite each other with count 4 instead of reaching count 5 and starting the required block. |
-| RED concurrency-test commit | 0fc0cd373ffa596276875aa1376ecb69561c5ba8 (`test(auth): cover concurrent login failures`) |
-| GREEN atomic-throttle commit | 0e606ac2cc9d52583db6bca0d4b95978dd3581e6 (`fix(auth): serialize failed-login updates`) |
-| Documentation-evidence commit | 268eb53a6935528aee005ef9ec8cc54c53cf2cbe (`docs(lab3): record throttle concurrency review`) |
-| Commit visibility | The implementation and corrective commits through `268eb53` are pushed and visible in PR #28. The containing governance-sync commit is identified by Git history. |
-| Correction | A single PostgreSQL `INSERT ... ON CONFLICT ... DO UPDATE ... RETURNING` statement now calculates and commits the same-key count, active-window reset, and block deadline atomically at the unique throttle row. |
-| Regression coverage | A database lock barrier deterministically overlaps two real failed-login requests from stored count 3; the test asserts count 5, one throttle row, a valid 15-minute block, a safe following 429, an unchanged independent key, and redacted response bodies. |
-| Verification after correction | The focused concurrency case passed six consecutive runs; 73 focused Issue #27 tests, 185 server tests, 58 client tests, and six existing Lab 2 Playwright scenarios passed. Server/client production builds and the compiled health smoke passed, the smoke listener terminated, test sessions/throttles and disposable schemas were absent, and development counts/checksums remained unchanged. |
-| Re-review | Pending and not requested |
-| Review thread | No inline review thread exists; the submitted `Changes Requested` review remains active. |
-| Approval / merge / Issue #27 closure / Done transition | None occurred |
+| Pull Request / Issue | PR #30 / Issue #29 |
+| Base / source branch | `lab3-staging` / `feat/29-authenticated-requester` |
+| Initial reviewed HEAD | `1bf936af18518e4f1e5e9ad111d40cb7fc0cac3e` |
+| Latest re-reviewed HEAD | `dc8f397b51bba04a69f974aa4f0c7c98e2a8e07a` |
+| Latest reviewer / review status | Tanaboonnnnn / Requested Changes |
+| Earlier findings | Atomic current-role eligibility for Requester mutations; authoritative Ticket reload after resolution conflict; modal keyboard/focus behavior; newly created Public Comment pagination; truthful governance evidence |
+| Latest findings | Standards: 0 blocking findings. Specification: 1 blocking finding, limited to stale governance evidence. The reviewer confirmed that all three client implementation blockers were fixed |
+| Corrective RED | `25e7c244ae83b30cd60ce2e7c43a5caebba26165` (`test(lab3): expose requested changes regressions`) |
+| Corrective GREEN | `5043200` (`fix(lab3): resolve requester review blockers`) |
+| Verification-coverage follow-up | `9b249b4` (`test(lab3): preserve verification coverage`) |
+| Independent-audit retry/focus RED | `af0df90` (`test(lab3): expose retry and conflict focus gaps`) |
+| Independent-audit retry/focus GREEN | `c68aab3` (`fix(lab3): handle serialization exhaustion safely`) |
+| Serializable-entry compatibility follow-up | `370e8e4` (`fix(lab3): gate serializable requester mutations`), superseded by the transaction-boundary correction below |
+| Transaction-gate RED | `bad31adb9523ee0823e8405bc7c93cb384aa2611` (`test(lab3): expose transaction gate boundary`) |
+| Transaction-gate GREEN | `31cada316564edc4940a539d5b26eeca2863a5e7` (`fix(lab3): scope mutation gate to serializable transaction`) |
+| Final requester-regression RED | `e5ebe38f8ca5a7194e683aaf9c907b24efe36d99` (`test(lab3): expose final requester review regressions`) |
+| Final requester-regression GREEN | `e98d52c4995f04388360541d8f75e2e0a9d2f36b` (`fix(lab3): resolve requester state regressions`) |
+| Commit visibility | RED `e5ebe38f8ca5a7194e683aaf9c907b24efe36d99`, GREEN `e98d52c4995f04388360541d8f75e2e0a9d2f36b`, and documentation commit `dc8f397b51bba04a69f974aa4f0c7c98e2a8e07a` were pushed and are present in PR #30 |
+| Current external state at the `dc8f397` review event | PR #30 remained open with Requested Changes solely because its governance evidence still described the three pushed commits as local/pending. PR #30 was not approved or merged; Issue #29 remained open; and no GitHub Project Done transition had occurred |
+| Governance correction | This documentation-only correction addresses that sole remaining finding. The review outcome for the exact HEAD created by this correction remains pending; GitHub is authoritative for subsequent live review state |
 
-The three corrective commits listed above are pushed and visible in PR #28. This documentation sync performs no GitHub action: it does not request re-review, resolve a review thread, approve or merge the PR, close Issue #27, or move the Project item from Fixing to Done.
+The RED server file deterministically covered Ticket creation, Public Comment creation, resolution indication, Attachment upload, and Attachment removal against both deactivation and role change in both meaningful commit orders. The RED client run exposed the four intended conflict-reload, reload-failure, modal-accessibility, and later-page Comment cases. GREEN uses the contract's SERIALIZABLE User-before-Ticket lock protocol and safe eligibility conflict; the client now reloads authoritative conflict state, implements modal focus containment/dismissal rules, and renders the server-created Comment on its authoritative final page. This documentation sync itself performs no GitHub action.
 
-## 8. PR #28 Description Replacement
+The independent follow-up audit identified three remaining blockers: an unqualified Prisma `P2034` was treated as retryable, exhausted confirmed serialization failures reached generic 500 handling, and resolution conflict/focus recovery covered only one conflict code and could focus an element that was about to unmount. RED `af0df90` added route-level transactional failure injection after each real operation, storage-effect tracking, and separate UI conflict/focus assertions. It failed six of nine server cases and two of nine client cases for exactly those missing behaviors; no failure came from syntax, setup, dependency, or database-target configuration.
 
-Replace the implementation-evidence section of the PR #28 description with the following text. Applying it on GitHub is outside this documentation-only task.
+GREEN `c68aab3` inspects structured error fields only. The configured-stack probe produced Prisma `P2010` with PostgreSQL SQLSTATE in `meta.code`; natural commit-time `P2034` exposed only `meta.modelName` and no SQLSTATE/cause, so `P2034` alone remains non-retryable. Confirmed `40001` receives exactly three total attempts and exhaustion becomes a typed internal condition mapped by all five Requester mutation routes to the existing safe `409 CONCURRENT_UPDATE` body. `40P01`, ambiguous `P2034`, and unrelated SQLSTATE failures receive one attempt and existing generic handling. Follow-up `370e8e4` restored the retained atomic five-Attachment regression, but its separate session-level gate was later found not to participate in the Prisma transaction and is superseded by `31cada3`.
 
-```markdown
-## Issue #27 authentication foundation
+Transaction-gate RED `bad31ad` added direct PostgreSQL lock-owner evidence. Against the separate-session implementation, one of three focused tests failed because the advisory-lock holder and mutation transaction had different backend PIDs; rollback release and callback exclusion otherwise behaved as expected. GREEN `31cada3` removed the standalone `pg.Client`, explicit connection teardown, and session-level lock. Each attempt now begins one Prisma SERIALIZABLE transaction, tries ordered `pg_advisory_xact_lock` keys through that exact `Prisma.TransactionClient`, and invokes the mutation callback only after the gates are held. If a gate is busy, that same transaction waits for it and raises a structured PostgreSQL `40001`; rollback releases every xact lock automatically, and the bounded retry starts a fresh transaction and snapshot. The final order is transaction-scoped coordination, ascending User locks, Ticket locks, revalidation, mutation, and commit. Ticket creation also coordinates its year sequence. No lock spans retry transactions and no explicit advisory unlock remains.
 
-Closes #27
+The focused gate test passed 3 tests. The combined gate, eligibility, retry/cleanup, Lab 3 Attachment, and retained Lab 2 Attachment run passed 5 files / 67 tests. The 10-test eligibility file then passed five consecutive complete runs. Plain server `npm test` passed 33 files / 225 tests with no global or command-line timeout override; plain client `npm test` passed 12 files / 98 tests. All eight Playwright scenarios, both production builds, and the compiled health smoke passed. The smoke listener was terminated and port 3199 was closed. Generated builds/test output were removed, regenerated tracked Lab 2 screenshots were restored, and zero disposable test schemas remained.
 
-### Key commits
+The client handles `RESOLUTION_INDICATION_NOT_ALLOWED` and `CONCURRENT_UPDATE` as separate authoritative-reload conflicts. Either closes the settled dialog, replaces the complete Ticket DTO, applies current status/owner/updated state and eligibility, presents only the safe conflict message, and focuses the refreshed Ticket Detail heading. If reload fails, the replacement error view receives focus on its meaningful `Ticket Detail` heading with `tabIndex={-1}`; focus is never restored into the unmounted dialog. Existing initial focus, Tab/Shift+Tab containment, Escape, processing protection, inert background, Cancel restoration, and normal-success heading focus remain covered.
 
-- Initial RED: `22ce542`
-- Initial GREEN: `e74334a`
-- Concurrency RED: `0fc0cd3`
-- Concurrency GREEN: `0e606ac`
-- Documentation evidence: `268eb53`
-- Governance evidence sync: `8f370d6`
+The latest supplied review re-reviewed exact HEAD `3cf83e4` and returned Requested Changes for three client regressions plus stale governance evidence. RED `e5ebe38` added three focused tests without production changes. The two-file run had 18 passing tests and exactly three intended failures: the created Comment stayed hidden behind the initial list-error state, no authoritative page-3 request occurred after concurrent growth to 41 Comments, and an eligible authoritative Ticket received the unavailable message instead of retry guidance.
 
-### Verification
+GREEN `e98d52c` separates Comment-list, POST, and refresh failures; reconciles the exact POST DTO by id against authoritative pagination; prevents a page effect from dropping the retained created Comment; preserves a successful Comment with a safe non-blocking warning if refresh fails; and uses one eligibility predicate for both action rendering and post-conflict messaging. Local verification passed 2 focused client files / 21 tests, the ordinary client suite at 12 files / 101 tests, the ordinary server suite at 33 files / 225 tests against validated `toktickit_test/public`, all 8 Playwright scenarios, and both production builds. These are local results, not hosted GitHub Actions evidence. Generated output was removed, regenerated tracked screenshots were restored, no known test listener remained, and zero disposable schemas or E2E fixture Tickets remained.
 
-- Focused Issue #27: 11 files, 73 tests
-- Complete server: 24 files, 185 tests
-- Client: 8 files, 58 tests
-- Lab 2 Playwright: 6 scenarios
+RED `e5ebe38`, GREEN `e98d52c`, and documentation commit `dc8f397` were subsequently pushed to PR #30. Tanaboonnnnn re-reviewed exact HEAD `dc8f397` and confirmed zero remaining substantive implementation blockers and zero Standards blockers. The review returned Requested Changes only for the stale governance statements corrected here; it did not approve or merge PR #30, close Issue #29, or move the GitHub Project item to Done. The recorded test counts remain local verification evidence and are not represented as hosted GitHub Actions results.
 
-The failed-login update is atomic at the PostgreSQL database level. A deterministic concurrency regression verifies that simultaneous same-key failures cannot overwrite each other and that the threshold establishes the required block.
+## 9. Issue #29 Implementation Handoff
 
-Peer re-review pending.
-```
+This is implementation and locally executed verification evidence, not peer review, approval, merge, Issue closure, or a GitHub Project transition.
+
+| Item | Current evidence |
+| --- | --- |
+| Issue / branch | #29 / feat/29-authenticated-requester |
+| Starting commit | 924995bde6897d08188a6cb21b176093199efeb6 |
+| RED commit | 6f554cfca0246859a5d2c1bd5d155c23035f1d03 (`test(lab3): define authenticated requester experience`) |
+| GREEN commit | 6361316e3bab1e00c056c30313c1ecf637f6e4c7 (`feat(lab3): implement authenticated requester`) |
+| Audit-correction commits | Corrective RED fba93c41d6825e1ed0fbabff55b23526089da72d; corrective GREEN f739337; deterministic browser-verification follow-up fd93ae8; TypeScript test-signature follow-up 49c5c31; semantic-coverage RED 6dd78d4; creation-defaults GREEN 8fd1e16; password-boundary input stabilization 815155e; PR #30 requested-changes RED 25e7c24; GREEN 5043200; verification-coverage follow-up 9b249b4; independent-audit retry/focus RED af0df90; typed-exhaustion/UI GREEN c68aab3; serializable-entry compatibility follow-up 370e8e4; transaction-gate RED bad31ad; transaction-scoped GREEN 31cada3; final requester-regression RED e5ebe38; final requester-state GREEN e98d52c. These commits follow the original Issue #29 documentation commit 46a460f without rewriting prior history. |
+| Implemented scope | Login and mandatory Change Password UI; authenticated role shell, bootstrap, expiry, logout, route protection, and cache clearing; complete removal of the Development Requester identity mechanism; authenticated Requester Ticket create/list/detail/query flows; role-aware Attachment access; Public Comments; Problem Appears Resolved without a formal status change; Unicode-consistent Change Password validation; and the authenticated Lab 1 Check System Online/category/Offline workflow |
+| Corrective RED evidence | Six server files / 16 tests passed because the covered backend behavior already existed. The focused client run failed only the four intended missing cases: Unicode password categories, internal whitespace, authenticated Lab 1 Online, and authenticated Lab 1 Offline. |
+| Focused GREEN verification | The latest semantic-coverage run passed 3 server files / 10 tests and 1 client file / 8 tests. `UNIT-08`, `API-08`, `SEC-04`, and `UI-04` now directly assert every behavior claimed by their matrix rows. |
+| PR #30 RED evidence | The new server concurrency file failed all 10 cases for the intended stale-eligibility behavior, covering 20 operation/change permutations. The two focused client files ran 17 tests: 13 passed and the four intended missing conflict-reload, safe reload-failure, modal-accessibility, and later-page Comment behaviors failed. No RED failure was a syntax, setup, dependency, or unsafe-database error. |
+| PR #30 focused GREEN evidence | The latest retry file and resolution UI file each passed 9 tests initially and in three additional consecutive runs. A combined 3-file server regression passed 61 tests: all 9 retry/cleanup cases, all 10 deterministic eligibility cases representing 20 operation/change/commit-order combinations, and all 42 retained Attachment cases including the concurrent fifth-file limit. Confirmed `40001` then success used 2 attempts; exhausted `40001` used 3; `40P01`, ambiguous `P2034`, and unrelated SQLSTATE each used 1. All five exhausted routes returned the exact safe `409 CONCURRENT_UPDATE` body with no retained database/history/storage effect. |
+| Complete verification | Plain `npm test` passed 32 server files / 222 tests with no command-line or global timeout override; three measured migration cases retain explicit 30-second per-test limits. Plain client `npm test` passed 12 files / 98 tests. Eight Playwright scenarios passed (six retained Lab 2 and two Issue #29), both production builds passed, and the compiled-server health endpoint returned status `ok` before the process was terminated and port 31029 was confirmed closed. |
+| Latest client-regression verification | RED produced exactly 3 intended failures with 18 existing focused tests passing. GREEN passed 2 focused files / 21 tests, 12 client files / 101 tests, 33 server files / 225 tests with ordinary commands and no timeout override, all 8 Playwright scenarios, and both production builds. Results were executed locally, not by hosted GitHub Actions. |
+| Development database | Read-only before/after evidence for `toktickit/public` remained 5 DevelopmentRequester rows, 182 Tickets, 92 Attachments, 4 Categories, 7 Related Systems, 1 TicketNumberSequence row, and 3 migration-history rows; every table count and SHA-256 row-set checksum matched. |
+| Database isolation and cleanup | Database tests used only validated `toktickit_test`; disposable Issue #29 schemas were removed, relevant test/smoke ports had no listeners, tracked generated screenshots were restored, and no temporary build or migration artifact was committed |
+| Secrets and local configuration | `server/.env` remained ignored and outside every Issue #29 and corrective commit; committed-diff scans found no private credentials, password hashes, cookies, tokens, database URLs introduced by Issue #29, HMAC secrets, or private keys |
+| Test-contract status | 13 assigned Test IDs are recorded as `Pass (Issue #29)`. API-16 is returned to `Planned` because its full contract includes later REOPENED clearing; SEC-01 and every later-increment obligation also remain `Planned`. The matrix totals are 75 = 16 Issue #27 Pass + 13 Issue #29 Pass + 46 Planned. |
+| External state | RED `e5ebe38`, GREEN `e98d52c`, and documentation commit `dc8f397` were pushed and are present in PR #30. Tanaboonnnnn re-reviewed exact HEAD `dc8f397`, confirmed all three client implementation blockers were fixed, and reported 0 Standards blockers and 1 Specification blocker: this stale governance evidence. PR #30 remains open with Requested Changes and is not approved or merged; Issue #29 remains open; no GitHub Project Done transition has occurred. The review outcome for the exact HEAD created by this documentation-only correction remains pending, with GitHub authoritative for live state. |
+
+The role destinations for IT Staff and Administrator are compatibility placeholders only. Issue #29 does not claim the later Staff workflow, Administrator workflow, final Requester-role conversion, or REOPENED-clearing implementation. The correction restores retained Lab 1 behavior without reviving any Development Requester mechanism.
+
+The requested-changes verification used only the validated `toktickit_test` target for mutation. Read-only development evidence before and after remained exactly 92 Attachments, 4 Categories, 5 DevelopmentRequesters, 7 RelatedSystems, 182 Tickets, 1 TicketNumberSequence row, and 3 migration-history rows, with every previously recorded SHA-256 row-set checksum unchanged. Playwright-regenerated tracked Lab 2 screenshots were restored; build/test output was removed; no disposable Issue #27/Issue #29/Lab 3/E2E schema, verification listener, or repository Node process remained. This is execution evidence; the pushed state recorded above does not imply reviewer acceptance.

@@ -34,6 +34,14 @@ export async function prepareIssue27TestDatabase(
   const migrationCredentials = Object.fromEntries(
     fixture.requesterIds.map((id) => [String(id), syntheticCredential(String(id))]),
   );
+  process.env.TOKTICKIT_E2E_MIGRATED_REQUESTER_CREDENTIALS = JSON.stringify(
+    Object.fromEntries(
+      fixture.requesterIds.map((id, index) => [
+        LAB3_SEEDED_USERS[index]!.email,
+        migrationCredentials[String(id)],
+      ]),
+    ),
+  );
 
   try {
     await migrateLab3Database({
@@ -69,6 +77,7 @@ export async function prepareIssue27TestDatabase(
     await fixture.cleanup();
     delete process.env.TOKTICKIT_ISSUE27_TEST_BASE_URL;
     delete process.env.TOKTICKIT_ISSUE27_TEST_SCHEMA;
+    delete process.env.TOKTICKIT_E2E_MIGRATED_REQUESTER_CREDENTIALS;
     throw error;
   }
 
@@ -76,6 +85,7 @@ export async function prepareIssue27TestDatabase(
     await fixture.cleanup();
     delete process.env.TOKTICKIT_ISSUE27_TEST_BASE_URL;
     delete process.env.TOKTICKIT_ISSUE27_TEST_SCHEMA;
+    delete process.env.TOKTICKIT_E2E_MIGRATED_REQUESTER_CREDENTIALS;
   };
 }
 
@@ -99,5 +109,6 @@ export async function cleanupPreparedIssue27TestDatabase(): Promise<void> {
     await client.end();
     delete process.env.TOKTICKIT_ISSUE27_TEST_BASE_URL;
     delete process.env.TOKTICKIT_ISSUE27_TEST_SCHEMA;
+    delete process.env.TOKTICKIT_E2E_MIGRATED_REQUESTER_CREDENTIALS;
   }
 }

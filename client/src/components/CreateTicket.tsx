@@ -15,13 +15,13 @@ import {
     uploadAttachment,
     type Category,
     type CreatedTicket,
-    type DevelopmentRequester,
+    type AuthUser,
     type RelatedSystem,
     type RequestedPriority,
 } from "../api.js";
 
 interface CreateTicketProps {
-    requester: DevelopmentRequester;
+    requester: AuthUser;
 }
 
 type ReferenceState = "loading" | "ready" | "error";
@@ -304,7 +304,7 @@ export default function CreateTicket({
         submissionIdRef.current = clientSubmissionId;
 
         try {
-            const response = await createTicket(requester.id, {
+            const response = await createTicket({
                 clientSubmissionId,
                 categoryId: Number(form.categoryId),
                 relatedSystemId: Number(
@@ -320,11 +320,7 @@ export default function CreateTicket({
 
             for (const file of selectedFiles) {
                 try {
-                    await uploadAttachment(
-                        requester.id,
-                        response.ticket.id,
-                        file,
-                    );
+                    await uploadAttachment(response.ticket.id, file);
                 } catch {
                     failedFiles.push(file.name);
                 }

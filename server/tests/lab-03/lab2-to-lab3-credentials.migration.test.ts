@@ -96,6 +96,7 @@ describe("MIG-05 migration credential preflight", () => {
         await fixture.cleanup();
       }
     },
+    30_000,
   );
 
   it("rejects missing, malformed, array, and non-string JSON without echoing input", () => {

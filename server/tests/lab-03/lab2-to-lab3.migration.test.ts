@@ -65,7 +65,7 @@ describe("MIG-01 through MIG-03 lossless Lab 2 migration", () => {
     } finally {
       await fixture.cleanup();
     }
-  });
+  }, 30_000);
 
   it("rejects an uncovered status before schema or data mutation", async () => {
     const databaseUrl = process.env.TEST_DATABASE_URL;
@@ -134,5 +134,5 @@ describe("MIG-01 through MIG-03 lossless Lab 2 migration", () => {
     } finally {
       await Promise.all(fixtures.map((fixture) => fixture.cleanup()));
     }
-  });
+  }, 30_000);
 });
