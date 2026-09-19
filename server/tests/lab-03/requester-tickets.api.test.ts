@@ -47,6 +47,26 @@ describe("Issue 29 authenticated Requester Tickets", () => {
       where: { id: created.body.ticket.id },
     });
     expect(persisted.requesterId).toBe(owner.user.id);
+    expect(persisted).toMatchObject({
+      currentStatus: "NEW",
+      ownerId: null,
+      requestedPriority: "HIGH",
+      itPriority: "HIGH",
+    });
+
+    const identicalReplay = await authenticatedUnsafe(
+      request(app).post("/api/tickets"),
+      owner,
+    ).send(payload);
+    expect(identicalReplay.status).toBe(200);
+    expect(identicalReplay.body.ticket.id).toBe(persisted.id);
+
+    const changedReplay = await authenticatedUnsafe(
+      request(app).post("/api/tickets"),
+      owner,
+    ).send({ ...payload, summary: "Changed replay must conflict" });
+    expect(changedReplay.status).toBe(409);
+    expect(changedReplay.body.error.code).toBe("IDEMPOTENCY_CONFLICT");
 
     const list = await request(app)
       .get("/api/tickets")
@@ -59,7 +79,18 @@ describe("Issue 29 authenticated Requester Tickets", () => {
       .get(`/api/tickets/${persisted.id}`)
       .set("Cookie", owner.cookie);
     expect(detail.status).toBe(200);
-    expect(detail.body).toMatchObject({ id: persisted.id, itPriority: "HIGH", owner: null });
+    expect(detail.body).toMatchObject({
+      id: persisted.id,
+      requester: { id: owner.user.id, name: owner.user.name },
+      category: { id: references.categoryId },
+      relatedSystem: { id: references.relatedSystemId },
+      requestedPriority: "HIGH",
+      itPriority: "HIGH",
+      currentStatus: "NEW",
+      owner: null,
+      requesterResolutionIndicatedAt: null,
+    });
+    expect(detail.body).not.toHaveProperty("internalNotes");
   });
 
   it("returns the same safe 404 for a missing and another Requester's Ticket", async () => {

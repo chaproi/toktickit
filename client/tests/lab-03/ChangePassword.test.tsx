@@ -6,6 +6,71 @@ import { authResponse, jsonResponse, renderAt, requesterUser, requestUrl } from 
 afterEach(() => vi.unstubAllGlobals());
 
 describe("Issue 29 Change Password", () => {
+  it.each([
+    { caseName: "the exact 12-character boundary", password: "Aa1!bcdefghi" },
+    { caseName: "the exact 128-character boundary", password: `Aa1!${"x".repeat(124)}` },
+    { caseName: "Unicode letter and number categories", password: "ÄÖÜäöü１２３!xyz" },
+    { caseName: "internal whitespace", password: "Abcd 1234!xyz" },
+  ])("accepts $caseName without exposing password values", async ({ password }) => {
+    document.cookie = "toktickit_csrf=issue29-csrf; path=/";
+    const forced = { ...requesterUser, mustChangePassword: true };
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = requestUrl(input);
+      if (url.pathname === "/api/auth/me") return jsonResponse(authResponse(forced));
+      if (url.pathname === "/api/auth/change-password") {
+        return new Promise<Response>(() => undefined);
+      }
+      throw new Error(`Unexpected request: ${url.pathname}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    renderAt("/change-password");
+    const user = userEvent.setup();
+    await user.type(await screen.findByLabelText("Current Password"), "Current1!Password");
+    await user.type(screen.getByLabelText("New Password"), password);
+    await user.type(screen.getByLabelText("Confirm New Password"), password);
+    await user.click(screen.getByRole("button", { name: "Save Password" }));
+
+    await waitFor(() => expect(fetchMock.mock.calls.filter(
+      ([input]) => requestUrl(input).pathname === "/api/auth/change-password",
+    )).toHaveLength(1));
+  });
+
+  it.each([
+    { caseName: "11 characters", password: "Aa1!bcdefgh" },
+    { caseName: "129 characters", password: `Aa1!${"x".repeat(125)}` },
+    { caseName: "fewer than three categories", password: "abcdefghijkl" },
+    { caseName: "whitespace-only content", password: "            " },
+  ])("rejects $caseName before sending a request", async ({ password }) => {
+    const forced = { ...requesterUser, mustChangePassword: true };
+    const fetchMock = vi.fn(async () => jsonResponse(authResponse(forced)));
+    vi.stubGlobal("fetch", fetchMock);
+    renderAt("/change-password");
+    const user = userEvent.setup();
+    await user.type(await screen.findByLabelText("Current Password"), "Current1!Password");
+    await user.type(screen.getByLabelText("New Password"), password);
+    await user.type(screen.getByLabelText("Confirm New Password"), password);
+    await user.click(screen.getByRole("button", { name: "Save Password" }));
+
+    expect(fetchMock.mock.calls.filter(
+      ([input]) => requestUrl(input).pathname === "/api/auth/change-password",
+    )).toHaveLength(0);
+    expect(screen.getByRole("alert")).toHaveTextContent("Please correct the highlighted fields.");
+  });
+
+  it("rejects a new password equal to the current password", async () => {
+    const forced = { ...requesterUser, mustChangePassword: true };
+    const fetchMock = vi.fn(async () => jsonResponse(authResponse(forced)));
+    vi.stubGlobal("fetch", fetchMock);
+    renderAt("/change-password");
+    const user = userEvent.setup();
+    for (const label of ["Current Password", "New Password", "Confirm New Password"]) {
+      await user.type(await screen.findByLabelText(label), "SameSecure1!Password");
+    }
+    await user.click(screen.getByRole("button", { name: "Save Password" }));
+    expect(await screen.findByText("New password must be different from the current password.")).toBeInTheDocument();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   it("forces initial rotation, validates matching policy, and opens the role home", async () => {
     document.cookie = "toktickit_csrf=issue29-csrf; path=/";
     const forced = { ...requesterUser, mustChangePassword: true };

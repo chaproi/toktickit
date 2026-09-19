@@ -47,8 +47,16 @@ test("E2E-01 authenticates, forces rotation, preserves reload, and logs out", as
   await expect(page.getByRole("heading", { name: "My Tickets" })).toBeVisible();
   await page.reload();
   await expect(page.getByRole("heading", { name: "My Tickets" })).toBeVisible();
+  const sessionCookie = (await page.context().cookies())
+    .find((cookie) => cookie.name === "toktickit_session");
+  expect(sessionCookie).toBeDefined();
   await page.getByRole("button", { name: "Logout" }).click();
   await expect(page.getByRole("heading", { name: "Sign in" })).toBeVisible();
+  const blockedReuse = await request.get("http://127.0.0.1:3100/api/auth/me", {
+    headers: { Cookie: `toktickit_session=${sessionCookie?.value ?? ""}` },
+  });
+  expect(blockedReuse.status()).toBe(401);
+  expect((await blockedReuse.json()).error.code).toBe("AUTHENTICATION_REQUIRED");
 
   await page.getByLabel("Email").fill("unknown@example.test");
   await page.getByLabel("Password", { exact: true }).fill("Incorrect1!Password");

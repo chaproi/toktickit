@@ -33,4 +33,33 @@ describe("Issue 29 Requester regression adapters", () => {
       fields: { body: "Unknown fields are not allowed: requesterId." },
     });
   });
+
+  it("accepts exact Lab 2 boundaries and rejects values immediately outside them", () => {
+    const valid = {
+      clientSubmissionId: "df2bea34-ddb5-4aa6-b2c8-286ed38d6085",
+      categoryId: 1,
+      relatedSystemId: 1,
+      requestedPriority: "URGENT",
+      summary: "s".repeat(5),
+      description: "d".repeat(10),
+    };
+
+    expect(validateCreateTicketInput(valid)).toMatchObject({ success: true });
+    expect(validateCreateTicketInput({
+      ...valid,
+      summary: "s".repeat(150),
+      description: "d".repeat(5_000),
+    })).toMatchObject({ success: true });
+
+    for (const [field, value] of [
+      ["summary", "s".repeat(4)],
+      ["summary", "s".repeat(151)],
+      ["description", "d".repeat(9)],
+      ["description", "d".repeat(5_001)],
+    ] as const) {
+      const result = validateCreateTicketInput({ ...valid, [field]: value });
+      expect(result.success).toBe(false);
+      if (!result.success) expect(result.fields[field]).toEqual(expect.any(String));
+    }
+  });
 });

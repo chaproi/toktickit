@@ -94,4 +94,28 @@ describe("Issue 29 authenticated shell", () => {
     expect(await screen.findByRole("heading", { name: "Sign in" })).toBeInTheDocument();
     expect(window.location.pathname).toBe("/login");
   });
+
+  it("blocks signed-out direct access before protected content renders", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => jsonResponse({
+      error: { code: "AUTHENTICATION_REQUIRED", message: "Authentication is required." },
+    }, 401)));
+    renderAt("/tickets/88");
+    expect(await screen.findByRole("heading", { name: "Sign in" })).toBeInTheDocument();
+    expect(screen.queryByText("Ticket Detail")).not.toBeInTheDocument();
+    expect(window.location.pathname).toBe("/login");
+  });
+
+  it.each([
+    ["REQUESTER", "/staff/tickets"],
+    ["REQUESTER", "/admin/users"],
+    ["IT_STAFF", "/tickets"],
+  ] as const)("blocks %s direct access to %s", async (role, path) => {
+    vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(authResponse({
+      ...requesterUser,
+      role,
+    }))));
+    renderAt(path);
+    expect(await screen.findByRole("heading", { name: "Forbidden" })).toBeInTheDocument();
+    expect(screen.queryByText("This role destination is reserved for a later Sprint 3 increment.")).not.toBeInTheDocument();
+  });
 });

@@ -98,5 +98,25 @@ describe("Issue 29 role-aware Attachments", () => {
     ).send({ removalReason: "Not permitted for this role." });
     expect(denied.status).toBe(403);
     expect(denied.body.error.code).toBe("ROLE_FORBIDDEN");
+
+    const staff = await authenticatedFixture({ role: "IT_STAFF", label: "mutation-staff" });
+    for (const fixture of [staff, administrator]) {
+      const deniedUpload = await authenticatedUnsafe(
+        request(app).post(`/api/tickets/${ticket.id}/attachments`),
+        fixture,
+      ).attach("file", Buffer.from("synthetic"), {
+        filename: "synthetic.txt",
+        contentType: "text/plain",
+      });
+      expect(deniedUpload.status).toBe(403);
+      expect(deniedUpload.body.error.code).toBe("ROLE_FORBIDDEN");
+
+      const deniedRemoval = await authenticatedUnsafe(
+        request(app).delete(`/api/tickets/${ticket.id}/attachments/${attachment.id}`),
+        fixture,
+      ).send({ removalReason: "Operational roles cannot remove Requester attachments." });
+      expect(deniedRemoval.status).toBe(403);
+      expect(deniedRemoval.body.error.code).toBe("ROLE_FORBIDDEN");
+    }
   });
 });

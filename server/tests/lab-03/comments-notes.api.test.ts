@@ -34,6 +34,7 @@ describe("Issue 29 Public Comments", () => {
     expect(list.status).toBe(200);
     expect(list.body.items.map((item: { content: string }) => item.content)).toEqual([content]);
     expect(list.body.pagination).toMatchObject({ page: 1, pageSize: 20, totalItems: 1 });
+    expect(list.body.items[0]).not.toHaveProperty("internalNotes");
   });
 
   it("rejects invalid content and hides a foreign Ticket", async () => {
@@ -54,6 +55,13 @@ describe("Issue 29 Public Comments", () => {
     ).send({ content: "x".repeat(2_001) });
     expect(tooLong.status).toBe(400);
     expect(tooLong.body.error.code).toBe("VALIDATION_ERROR");
+
+    const unknownField = await authenticatedUnsafe(
+      request(app).post(`/api/tickets/${ticket.id}/comments`),
+      owner,
+    ).send({ content: "Visible update", internal: true });
+    expect(unknownField.status).toBe(400);
+    expect(unknownField.body.error.code).toBe("VALIDATION_ERROR");
 
     const foreign = await request(app)
       .get(`/api/tickets/${ticket.id}/comments`)
