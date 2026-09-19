@@ -6,13 +6,16 @@ import {
 } from "../api.js";
 
 function policyError(value: string): string | undefined {
-  const categories = [/[a-z]/u, /[A-Z]/u, /\d/u, /[^\p{L}\p{N}\s]/u]
+  const categories = [/\p{Ll}/u, /\p{Lu}/u, /\p{Nd}/u, /[^\p{L}\p{N}\s]/u]
     .filter((pattern) => pattern.test(value)).length;
   if (Array.from(value).length < 12 || Array.from(value).length > 128) {
     return "Password must contain between 12 and 128 characters.";
   }
-  if (/\s/u.test(value) || categories < 3) {
-    return "Use at least three of lowercase, uppercase, number, and symbol, with no whitespace.";
+  if (value.trim().length === 0) {
+    return "Password cannot contain only whitespace.";
+  }
+  if (categories < 3) {
+    return "Use at least three of lowercase, uppercase, number, and symbol.";
   }
   return undefined;
 }

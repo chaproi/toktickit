@@ -10,10 +10,12 @@ import {
 } from "react-router-dom";
 import {
   ApiRequestError,
+  checkSystem,
   getCurrentUser,
   logout,
   type AuthenticationResponse,
   type AuthUser,
+  type Category,
 } from "./api.js";
 import ChangePassword from "./components/ChangePassword.js";
 import CreateTicket from "./components/CreateTicket.js";
@@ -47,6 +49,49 @@ function useMediaQuery(query: string): boolean {
     return () => media.removeEventListener("change", update);
   }, [query]);
   return matches;
+}
+
+function SystemCheck() {
+  const [state, setState] = useState<"idle" | "checking" | "online" | "offline">("idle");
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  async function runCheck() {
+    if (state === "checking") return;
+    setState("checking");
+    setCategories([]);
+    try {
+      const result = await checkSystem();
+      setCategories(result.categories);
+      setState("online");
+    } catch {
+      setState("offline");
+    }
+  }
+
+  return (
+    <section className="card border-0 shadow-sm mb-4" aria-labelledby="system-check-heading">
+      <div className="card-body p-3">
+        <div className="d-flex flex-wrap align-items-center gap-3">
+          <h2 id="system-check-heading" className="h5 mb-0">System Status</h2>
+          <button
+            type="button"
+            className="btn btn-outline-success btn-sm"
+            disabled={state === "checking"}
+            onClick={() => void runCheck()}
+          >
+            {state === "checking" ? "Checking…" : "Check System"}
+          </button>
+          {state === "online" && <strong className="text-success" role="status">Online</strong>}
+          {state === "offline" && <strong className="text-danger" role="alert">Offline</strong>}
+        </div>
+        {state === "online" && (
+          <ul className="mb-0 mt-3" aria-label="Available support categories">
+            {categories.map((category) => <li key={category.id}>{category.name}</li>)}
+          </ul>
+        )}
+      </div>
+    </section>
+  );
 }
 
 function AppShell({
@@ -128,6 +173,7 @@ function AppShell({
           </button>
         </div>
         {notice && <div className="alert alert-success" role="status">{notice}</div>}
+        <SystemCheck />
         {children}
       </main>
     </div>

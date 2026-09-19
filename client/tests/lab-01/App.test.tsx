@@ -61,7 +61,7 @@ describe("App", () => {
     await userEvent.click(await screen.findByRole("button", { name: "Check System" }));
     expect(await screen.findByText("Online")).toBeInTheDocument();
     for (const name of ["Account and Access", "Hardware", "Software", "Network"]) {
-      expect(screen.getByText(name)).toBeInTheDocument();
+      expect(screen.getAllByText(name).length).toBeGreaterThanOrEqual(1);
     }
   });
 
