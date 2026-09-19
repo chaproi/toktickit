@@ -217,8 +217,11 @@ export default function RequesterTicketDetail() {
   const resolutionDialogRef = useRef<HTMLDivElement>(null);
   const resolutionCancelRef = useRef<HTMLButtonElement>(null);
   const detailHeadingRef = useRef<HTMLHeadingElement>(null);
+  const errorHeadingRef = useRef<HTMLHeadingElement>(null);
   const backgroundRef = useRef<HTMLDivElement>(null);
-  const restoreFocusRef = useRef<"trigger" | "heading" | null>(null);
+  const [restoreFocusTarget, setRestoreFocusTarget] = useState<
+    "trigger" | "heading" | "error" | null
+  >(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -245,17 +248,17 @@ export default function RequesterTicketDetail() {
       resolutionCancelRef.current?.focus();
     } else {
       background?.removeAttribute("inert");
-      const target = restoreFocusRef.current;
-      restoreFocusRef.current = null;
-      if (target === "trigger") resolutionTriggerRef.current?.focus();
-      if (target === "heading") detailHeadingRef.current?.focus();
+      if (restoreFocusTarget === "trigger") resolutionTriggerRef.current?.focus();
+      if (restoreFocusTarget === "heading") detailHeadingRef.current?.focus();
+      if (restoreFocusTarget === "error") errorHeadingRef.current?.focus();
+      if (restoreFocusTarget !== null) setRestoreFocusTarget(null);
     }
     return () => background?.removeAttribute("inert");
-  }, [dialogOpen]);
+  }, [dialogOpen, restoreFocusTarget, state, ticket]);
 
   function closeResolutionDialog(): void {
     if (indicating) return;
-    restoreFocusRef.current = "trigger";
+    setRestoreFocusTarget("trigger");
     setDialogOpen(false);
   }
 
@@ -292,20 +295,25 @@ export default function RequesterTicketDetail() {
         currentStatus: result.currentStatus,
         requesterResolutionIndicatedAt: result.requesterResolutionIndicatedAt,
       });
-      restoreFocusRef.current = "heading";
+      setRestoreFocusTarget("heading");
       setDialogOpen(false);
     } catch (caught) {
-      if (caught instanceof ApiRequestError && caught.code === "RESOLUTION_INDICATION_NOT_ALLOWED") {
-        restoreFocusRef.current = "heading";
+      if (caught instanceof ApiRequestError && [
+        "RESOLUTION_INDICATION_NOT_ALLOWED",
+        "CONCURRENT_UPDATE",
+      ].includes(caught.code ?? "")) {
+        setRestoreFocusTarget(null);
         setDialogOpen(false);
         try {
           const authoritative = await getTicketDetail(ticket.id);
           setTicket(authoritative);
           setIndicationError("The Ticket changed and this action is no longer available.");
+          setRestoreFocusTarget("heading");
         } catch {
           setTicket(null);
           setError("Something went wrong. Please try again.");
           setState("error");
+          setRestoreFocusTarget("error");
         }
       } else {
         setIndicationError("Something went wrong. Please try again.");
@@ -321,7 +329,7 @@ export default function RequesterTicketDetail() {
   if (state === "error" || !ticket) {
     return (
       <section>
-        <h1 className="h2">Ticket Detail</h1>
+        <h1 ref={errorHeadingRef} className="h2" tabIndex={-1}>Ticket Detail</h1>
         <div className="ticket-detail-state" role="alert">
           <div>
             <p>{error}</p>

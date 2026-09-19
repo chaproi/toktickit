@@ -7,13 +7,30 @@ export type LockedActor = {
   isActive: boolean;
 };
 
-function isSerializationFailure(error: unknown): boolean {
-  if (error instanceof Prisma.PrismaClientKnownRequestError) {
-    return error.code === "P2034" ||
-      (error.code === "P2010" && error.meta?.code === "40001");
+export class ConcurrentUpdateError extends Error {
+  constructor() {
+    super("A confirmed serialization failure exhausted its retry limit.");
+    this.name = "ConcurrentUpdateError";
   }
-  return typeof error === "object" && error !== null &&
-    "code" in error && (error as { code?: unknown }).code === "40001";
+}
+
+function hasConfirmedPostgresSqlState(
+  error: unknown,
+  expected: string,
+  visited = new Set<object>(),
+): boolean {
+  if (typeof error !== "object" || error === null || visited.has(error)) {
+    return false;
+  }
+  visited.add(error);
+  const candidate = error as {
+    code?: unknown;
+    meta?: unknown;
+    cause?: unknown;
+  };
+  if (candidate.code === expected) return true;
+  return hasConfirmedPostgresSqlState(candidate.meta, expected, visited) ||
+    hasConfirmedPostgresSqlState(candidate.cause, expected, visited);
 }
 
 export async function runSerializableMutation<T>(
@@ -28,7 +45,8 @@ export async function runSerializableMutation<T>(
       });
     } catch (error) {
       await onAttemptFailure?.(error);
-      if (!isSerializationFailure(error) || attempt === 2) throw error;
+      if (!hasConfirmedPostgresSqlState(error, "40001")) throw error;
+      if (attempt === 2) throw new ConcurrentUpdateError();
     }
   }
   throw new Error("Serializable mutation retry loop exhausted unexpectedly.");

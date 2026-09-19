@@ -16,6 +16,7 @@ import {
   authorizeRequest,
   type LiveSession,
 } from "./auth/auth-router.js";
+import { ConcurrentUpdateError } from "./auth/eligibility-transaction.js";
 import { parseAllowedOrigins, validateOriginHeader } from "./auth/origin.js";
 import { parseCommentPageQuery } from "./comments/comment-query.js";
 import {
@@ -117,6 +118,14 @@ function sendEligibilityConflict(res: Response): void {
     "CONCURRENT_UPDATE",
     "Your account eligibility changed. Reload and try again.",
   ));
+}
+
+function sendMutationError(res: Response, error: unknown, operation: string): void {
+  if (error instanceof ConcurrentUpdateError) {
+    sendEligibilityConflict(res);
+    return;
+  }
+  sendDatabaseError(res, error, operation);
 }
 
 function buildContentDisposition(
@@ -287,7 +296,7 @@ app.post("/api/tickets", async (req, res) => {
       replayed: result.kind === "replayed",
     });
   } catch (error) {
-    sendDatabaseError(res, error, "creating a Ticket");
+    sendMutationError(res, error, "creating a Ticket");
   }
 });
 
@@ -456,7 +465,7 @@ app.delete("/api/tickets/:ticketId/attachments/:attachmentId", async (req, res) 
     }
     res.status(200).json(result.attachment);
   } catch (error) {
-    sendDatabaseError(res, error, "soft-removing an Attachment");
+    sendMutationError(res, error, "soft-removing an Attachment");
   }
 });
 
@@ -524,7 +533,7 @@ app.post("/api/tickets/:ticketId/attachments", async (req, res) => {
         ));
         return;
       }
-      sendDatabaseError(res, error, "uploading an Attachment");
+      sendMutationError(res, error, "uploading an Attachment");
     }
   });
 });
@@ -602,7 +611,7 @@ app.post("/api/tickets/:ticketId/comments", async (req, res) => {
     }
     res.status(201).json(result.comment);
   } catch (error) {
-    sendDatabaseError(res, error, "adding a Public Comment");
+    sendMutationError(res, error, "adding a Public Comment");
   }
 });
 
@@ -647,7 +656,7 @@ app.post("/api/tickets/:ticketId/resolution-indication", async (req, res) => {
       requesterResolutionIndicatedAt: result.requesterResolutionIndicatedAt,
     });
   } catch (error) {
-    sendDatabaseError(res, error, "recording a resolution indication");
+    sendMutationError(res, error, "recording a resolution indication");
   }
 });
 
