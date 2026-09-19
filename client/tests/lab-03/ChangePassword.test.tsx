@@ -25,9 +25,15 @@ describe("Issue 29 Change Password", () => {
     vi.stubGlobal("fetch", fetchMock);
     renderAt("/change-password");
     const user = userEvent.setup();
-    await user.type(await screen.findByLabelText("Current Password"), "Current1!Password");
-    await user.type(screen.getByLabelText("New Password"), password);
-    await user.type(screen.getByLabelText("Confirm New Password"), password);
+    fireEvent.change(await screen.findByLabelText("Current Password"), {
+      target: { value: "Current1!Password" },
+    });
+    fireEvent.change(screen.getByLabelText("New Password"), {
+      target: { value: password },
+    });
+    fireEvent.change(screen.getByLabelText("Confirm New Password"), {
+      target: { value: password },
+    });
     await user.click(screen.getByRole("button", { name: "Save Password" }));
 
     await waitFor(() => expect(fetchMock.mock.calls.filter(
@@ -46,9 +52,15 @@ describe("Issue 29 Change Password", () => {
     vi.stubGlobal("fetch", fetchMock);
     renderAt("/change-password");
     const user = userEvent.setup();
-    await user.type(await screen.findByLabelText("Current Password"), "Current1!Password");
-    await user.type(screen.getByLabelText("New Password"), password);
-    await user.type(screen.getByLabelText("Confirm New Password"), password);
+    fireEvent.change(await screen.findByLabelText("Current Password"), {
+      target: { value: "Current1!Password" },
+    });
+    fireEvent.change(screen.getByLabelText("New Password"), {
+      target: { value: password },
+    });
+    fireEvent.change(screen.getByLabelText("Confirm New Password"), {
+      target: { value: password },
+    });
     await user.click(screen.getByRole("button", { name: "Save Password" }));
 
     expect(fetchMock.mock.calls.filter(
