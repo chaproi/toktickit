@@ -238,3 +238,16 @@ Required visual states include:
 ## 7. Completion Rule
 
 No Planned entry may be changed to Pass until its file exists, the asserted behavior matches the approved contract, and the command has passed on the implementation branch. Skipped, commented-out, quarantined, or weakened tests do not satisfy an AC.
+
+## 8. Issue #29 Semantic-Coverage Correction Evidence
+
+The four Issue #29 Pass rows challenged by the final audit now have direct coverage in their designated files:
+
+- `UNIT-08` asserts authenticated Requester ownership, `NEW`, `ownerId = null`, copied Requested/IT Priority, and rejection of submitted current or legacy ownership fields.
+- `API-08` performs a successful owning-Requester upload and soft removal, verifies the persisted relationship and metadata, checks response redaction, and retains Staff/Administrator mutation denials.
+- `SEC-04` proves that a spoofed legacy identity header cannot replace the authenticated Requester and that foreign and missing Ticket probes have the same safe response without protected details; the existing body-spoof and Attachment-probe cases remain.
+- `UI-04` exercises Public Comment submission/rendering, Attachment upload/removal, resolution indication without formal status mutation, and loading, empty, no-results, validation, dependency-failure, and safe not-found states.
+
+Tests-only RED commit `6dd78d4` failed only the new `UNIT-08` creation-data assertion because the pure builder was not yet exported; the other newly asserted production behavior already existed and passed. GREEN commit `8fd1e16` introduced and used the smallest pure creation-data builder without changing the API. Test-only commit `815155e` made the existing password boundary tables deterministic under the ordinary full client run by setting exact field values through change events; it retained the same boundary, Unicode, internal-whitespace, submission, and rejection assertions.
+
+After these commits, the focused server run passed 3 files / 10 tests and the focused Requester UI run passed 1 file / 8 tests. The ordinary complete commands passed 30 server files / 203 tests and 12 client files / 94 tests. All 8 Playwright scenarios, both production builds, and the compiled-server health smoke passed. No Test ID status changed: the matrix remains 75 = 16 `Pass (Issue #27)` + 13 `Pass (Issue #29)` + 46 `Planned`; `API-16` and `SEC-01` remain `Planned`.
