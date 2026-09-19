@@ -179,6 +179,71 @@ describe("Issue 29 resolution indication UI", () => {
     expect(document.activeElement?.closest('[role="dialog"]')).toBeNull();
   });
 
+  it("keeps the resolution action and gives retry guidance when CONCURRENT_UPDATE reload remains eligible", async () => {
+    document.cookie = "toktickit_csrf=resolution-csrf; path=/";
+    const initial = {
+      id: 98,
+      ticketNumber: "TKT-2026-00098",
+      ticketDate: "2026-09-18T08:00:00.000Z",
+      requester: { id: requesterUser.id, name: requesterUser.name },
+      category: { id: 1, name: "Hardware" },
+      relatedSystem: { id: 2, name: "Laptop" },
+      requestedPriority: "MEDIUM",
+      itPriority: "MEDIUM",
+      currentStatus: "OPEN",
+      owner: null,
+      summary: "Stale eligible detail",
+      description: "A concurrent write changes non-eligibility fields.",
+      requesterResolutionIndicatedAt: null,
+      createdAt: "2026-09-18T08:00:00.000Z",
+      updatedAt: "2026-09-18T08:00:00.000Z",
+    };
+    const authoritative = {
+      ...initial,
+      owner: { id: 303, name: "Current Owner", role: "IT_STAFF" },
+      summary: "Authoritative eligible detail",
+      description: "The refreshed Ticket remains eligible for another attempt.",
+      updatedAt: "2026-09-18T13:00:00.000Z",
+    };
+    let detailRequests = 0;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const url = requestUrl(input);
+      if (url.pathname === "/api/auth/me") return jsonResponse(authResponse(requesterUser));
+      if (url.pathname === "/api/tickets/98") {
+        detailRequests += 1;
+        return jsonResponse(detailRequests === 1 ? initial : authoritative);
+      }
+      if (url.pathname === "/api/tickets/98/attachments") return jsonResponse({ items: [] });
+      if (url.pathname === "/api/tickets/98/comments") return jsonResponse({ items: [], pagination: {
+        page: 1, pageSize: 20, totalItems: 0, totalPages: 0,
+        hasPreviousPage: false, hasNextPage: false,
+      } });
+      if (url.pathname === "/api/tickets/98/resolution-indication") return jsonResponse({
+        error: { code: "CONCURRENT_UPDATE", message: "Sensitive transaction detail" },
+      }, 409);
+      throw new Error(`Unexpected request: ${url.pathname}`);
+    }));
+
+    renderAt("/tickets/98");
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole("button", { name: "Problem Appears Resolved" }));
+    await user.click(screen.getByRole("button", { name: "Yes, it appears resolved" }));
+
+    expect(await screen.findByText("The Ticket changed. Review the latest details and try again.")).toBeInTheDocument();
+    expect(screen.queryByText("The Ticket changed and this action is no longer available.")).not.toBeInTheDocument();
+    expect(screen.queryByText("Sensitive transaction detail")).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByText("Authoritative eligible detail")).toBeInTheDocument();
+    expect(screen.getByText("The refreshed Ticket remains eligible for another attempt.")).toBeInTheDocument();
+    expect(screen.getByText("Current Owner")).toBeInTheDocument();
+    expect(document.querySelector('time[datetime="2026-09-18T13:00:00.000Z"]')).toBeInTheDocument();
+    expect(screen.getByText("Open")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Problem Appears Resolved" })).toBeEnabled();
+    expect(detailRequests).toBe(2);
+    await waitFor(() => expect(screen.getByRole("heading", { name: "Ticket Detail" })).toHaveFocus());
+    expect(document.activeElement?.closest('[role="dialog"]')).toBeNull();
+  });
+
   it("shows the approved safe failure when conflict-state reload fails", async () => {
     document.cookie = "toktickit_csrf=resolution-csrf; path=/";
     let detailRequests = 0;

@@ -408,6 +408,175 @@ describe("Issue 29 Requester UI regression", () => {
     expect(composer).toHaveValue("Keep this draft after failure");
   });
 
+  it("recovers from an initial Comment-list failure after a successful POST", async () => {
+    document.cookie = "toktickit_csrf=requester-flow-csrf; path=/";
+    const detail = {
+      id: 96,
+      ticketNumber: "TKT-2026-00096",
+      ticketDate: "2026-09-18T08:00:00.000Z",
+      requester: { id: requesterUser.id, name: requesterUser.name },
+      category: { id: 1, name: "Hardware" },
+      relatedSystem: { id: 2, name: "Laptop" },
+      requestedPriority: "MEDIUM",
+      itPriority: "MEDIUM",
+      currentStatus: "OPEN",
+      owner: null,
+      summary: "Comment recovery",
+      description: "The composer remains usable after a safe list failure.",
+      requesterResolutionIndicatedAt: null,
+      createdAt: "2026-09-18T08:00:00.000Z",
+      updatedAt: "2026-09-18T08:00:00.000Z",
+    };
+    const created = {
+      id: 601,
+      ticketId: 96,
+      author: { id: requesterUser.id, name: "Server-confirmed Author", role: "REQUESTER" },
+      content: "Visible after list recovery",
+      createdAt: "2026-09-19T06:00:00.000Z",
+    };
+    let listRequests = 0;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = requestUrl(input);
+      if (url.pathname === "/api/auth/me") return jsonResponse(authResponse(requesterUser));
+      if (url.pathname === "/api/tickets/96") return jsonResponse(detail);
+      if (url.pathname === "/api/tickets/96/attachments") return jsonResponse({ items: [] });
+      if (url.pathname === "/api/tickets/96/comments" && init?.method === "POST") {
+        expect(JSON.parse(String(init.body))).toEqual({ content: "Visible after list recovery" });
+        return jsonResponse(created, 201);
+      }
+      if (url.pathname === "/api/tickets/96/comments") {
+        listRequests += 1;
+        if (listRequests === 1) {
+          return jsonResponse({
+            error: {
+              code: "DEPENDENCY_FAILURE",
+              message: "Something went wrong. Please try again.",
+              debug: "private database detail",
+            },
+          }, 503);
+        }
+        return jsonResponse({
+          items: [created],
+          pagination: {
+            page: 1,
+            pageSize: 20,
+            totalItems: 1,
+            totalPages: 1,
+            hasPreviousPage: false,
+            hasNextPage: false,
+          },
+        });
+      }
+      throw new Error(`Unexpected request: ${url.pathname} ${init?.method ?? "GET"}`);
+    }));
+
+    renderAt("/tickets/96");
+    const user = userEvent.setup();
+    expect(await screen.findByText("Something went wrong. Please try again.")).toBeInTheDocument();
+    const composer = screen.getByLabelText("Add a public comment") as HTMLTextAreaElement;
+    expect(composer).toBeEnabled();
+    await user.type(composer, "Visible after list recovery");
+    await user.click(screen.getByRole("button", { name: "Post comment" }));
+
+    expect(await screen.findByText("Visible after list recovery")).toBeInTheDocument();
+    expect(screen.getByText("Server-confirmed Author")).toBeInTheDocument();
+    expect(composer).toHaveValue("");
+    expect(screen.queryByRole("button", { name: "Try Again" })).not.toBeInTheDocument();
+    expect(screen.queryByText("private database detail")).not.toBeInTheDocument();
+    expect(listRequests).toBeGreaterThanOrEqual(2);
+  });
+
+  it("locates a concurrently shifted created Comment on authoritative page 3", async () => {
+    document.cookie = "toktickit_csrf=requester-flow-csrf; path=/";
+    const detail = {
+      id: 97,
+      ticketNumber: "TKT-2026-00097",
+      ticketDate: "2026-09-18T08:00:00.000Z",
+      requester: { id: requesterUser.id, name: requesterUser.name },
+      category: { id: 1, name: "Hardware" },
+      relatedSystem: { id: 2, name: "Laptop" },
+      requestedPriority: "HIGH",
+      itPriority: "HIGH",
+      currentStatus: "OPEN",
+      owner: null,
+      summary: "Concurrent Comment pagination",
+      description: "Authoritative pagination must replace stale local totals.",
+      requesterResolutionIndicatedAt: null,
+      createdAt: "2026-09-18T08:00:00.000Z",
+      updatedAt: "2026-09-18T08:00:00.000Z",
+    };
+    const comment = (id: number) => ({
+      id,
+      ticketId: 97,
+      author: { id: 500 + id, name: `Author ${id}`, role: "REQUESTER" },
+      content: `Comment ${id}`,
+      createdAt: `2026-09-${String(id < 20 ? 18 : 19).padStart(2, "0")}T${String(id % 20).padStart(2, "0")}:00:00.000Z`,
+    });
+    const created = {
+      ...comment(41),
+      author: { id: requesterUser.id, name: "Authoritative Poster", role: "REQUESTER" },
+      content: "Concurrent created comment 41",
+      createdAt: "2026-09-20T00:00:00.000Z",
+    };
+    let posted = false;
+    const pagesAfterPost: number[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = requestUrl(input);
+      if (url.pathname === "/api/auth/me") return jsonResponse(authResponse(requesterUser));
+      if (url.pathname === "/api/tickets/97") return jsonResponse(detail);
+      if (url.pathname === "/api/tickets/97/attachments") return jsonResponse({ items: [] });
+      if (url.pathname === "/api/tickets/97/comments" && init?.method === "POST") {
+        posted = true;
+        return jsonResponse(created, 201);
+      }
+      if (url.pathname === "/api/tickets/97/comments") {
+        const page = Number(url.searchParams.get("page"));
+        if (!posted) {
+          return jsonResponse({
+            items: Array.from({ length: 20 }, (_, index) => comment(index + 1)),
+            pagination: { page: 1, pageSize: 20, totalItems: 20, totalPages: 1, hasPreviousPage: false, hasNextPage: false },
+          });
+        }
+        pagesAfterPost.push(page);
+        if (page === 3) {
+          return jsonResponse({
+            items: [created],
+            pagination: { page: 3, pageSize: 20, totalItems: 41, totalPages: 3, hasPreviousPage: true, hasNextPage: false },
+          });
+        }
+        return jsonResponse({
+          items: page === 1
+            ? Array.from({ length: 20 }, (_, index) => comment(index + 1))
+            : Array.from({ length: 20 }, (_, index) => comment(index + 21)),
+          pagination: {
+            page,
+            pageSize: 20,
+            totalItems: 41,
+            totalPages: 3,
+            hasPreviousPage: page > 1,
+            hasNextPage: page < 3,
+          },
+        });
+      }
+      throw new Error(`Unexpected request: ${url.pathname} ${init?.method ?? "GET"}`);
+    }));
+
+    renderAt("/tickets/97");
+    const user = userEvent.setup();
+    await screen.findByText("Comment 20");
+    const composer = screen.getByLabelText("Add a public comment") as HTMLTextAreaElement;
+    await user.type(composer, "Concurrent created comment 41");
+    await user.click(screen.getByRole("button", { name: "Post comment" }));
+
+    await waitFor(() => expect(pagesAfterPost.filter((page) => page === 3).length).toBeGreaterThanOrEqual(2));
+    expect(screen.getByText("Concurrent created comment 41")).toBeInTheDocument();
+    expect(screen.getAllByText("Concurrent created comment 41")).toHaveLength(1);
+    expect(screen.getByText("Authoritative Poster")).toBeInTheDocument();
+    expect(screen.getByText(/Page 3 of 3.*41 comments/u)).toBeInTheDocument();
+    expect(composer).toHaveValue("");
+    expect(pagesAfterPost).not.toContain(2);
+  });
+
   it("shows deterministic loading, empty, no-results, validation, and dependency-failure states", async () => {
     let resolveInitialTickets: ((response: Response) => void) | undefined;
     let ticketRequests = 0;
