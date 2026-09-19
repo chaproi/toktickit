@@ -42,7 +42,7 @@ describe("Issue 29 Change Password", () => {
     { caseName: "whitespace-only content", password: "            " },
   ])("rejects $caseName before sending a request", async ({ password }) => {
     const forced = { ...requesterUser, mustChangePassword: true };
-    const fetchMock = vi.fn(async () => jsonResponse(authResponse(forced)));
+    const fetchMock = vi.fn(async (_input: RequestInfo | URL) => jsonResponse(authResponse(forced)));
     vi.stubGlobal("fetch", fetchMock);
     renderAt("/change-password");
     const user = userEvent.setup();
