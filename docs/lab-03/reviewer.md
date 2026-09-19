@@ -76,7 +76,7 @@ PR #28 originally received Requested Changes from Tanaboonnnnn at `e74334a`. The
 
 ## 8. PR #30 Requested-Changes Record
 
-This section records the current PR #30 review and the local correction. It does not claim remote visibility or reviewer acceptance of the local commits.
+This section records the current PR #30 review and the pushed correction evidence. It does not claim reviewer acceptance of the corrective commits.
 
 | Item | Current evidence |
 | --- | --- |
@@ -93,8 +93,8 @@ This section records the current PR #30 review and the local correction. It does
 | Serializable-entry compatibility follow-up | `370e8e4` (`fix(lab3): gate serializable requester mutations`), superseded by the transaction-boundary correction below |
 | Transaction-gate RED | `bad31adb9523ee0823e8405bc7c93cb384aa2611` (`test(lab3): expose transaction gate boundary`) |
 | Transaction-gate GREEN | `31cada316564edc4940a539d5b26eeca2863a5e7` (`fix(lab3): scope mutation gate to serializable transaction`) |
-| Commit visibility | The corrective commits are local and pending push/re-review; no reviewer acceptance is claimed |
-| Current external state | No approval, merge, Issue #29 closure, review-thread resolution, re-review request, or GitHub Project transition occurred during this correction |
+| Commit visibility | The PR #30 requested-change corrections through `b31654d5a4cf2a057be37d0034ef6a4c0838e4a9` were pushed and are present on `origin/feat/29-authenticated-requester`; no reviewer acceptance is claimed |
+| Current external state | PR #30 still has Requested Changes, and re-review has not been requested. No approval, merge, Issue #29 closure, review-thread resolution, or GitHub Project Done transition has occurred |
 
 The RED server file deterministically covered Ticket creation, Public Comment creation, resolution indication, Attachment upload, and Attachment removal against both deactivation and role change in both meaningful commit orders. The RED client run exposed the four intended conflict-reload, reload-failure, modal-accessibility, and later-page Comment cases. GREEN uses the contract's SERIALIZABLE User-before-Ticket lock protocol and safe eligibility conflict; the client now reloads authoritative conflict state, implements modal focus containment/dismissal rules, and renders the server-created Comment on its authoritative final page. This documentation sync itself performs no GitHub action.
 
@@ -129,8 +129,8 @@ This is implementation and locally executed verification evidence, not peer revi
 | Database isolation and cleanup | Database tests used only validated `toktickit_test`; disposable Issue #29 schemas were removed, relevant test/smoke ports had no listeners, tracked generated screenshots were restored, and no temporary build or migration artifact was committed |
 | Secrets and local configuration | `server/.env` remained ignored and outside every Issue #29 and corrective commit; committed-diff scans found no private credentials, password hashes, cookies, tokens, database URLs introduced by Issue #29, HMAC secrets, or private keys |
 | Test-contract status | 13 assigned Test IDs are recorded as `Pass (Issue #29)`. API-16 is returned to `Planned` because its full contract includes later REOPENED clearing; SEC-01 and every later-increment obligation also remain `Planned`. The matrix totals are 75 = 16 Issue #27 Pass + 13 Issue #29 Pass + 46 Planned. |
-| External state | PR #30 and its Requested Changes review pre-existed this correction. No corrective commit was pushed, no re-review was requested, and no approval, merge, Issue #29 closure, review-thread resolution, or GitHub Project change was performed or claimed. |
+| External state | The PR #30 corrections through `b31654d5a4cf2a057be37d0034ef6a4c0838e4a9` were pushed. PR #30 still has Requested Changes, and re-review has not been requested. No approval, merge, Issue #29 closure, review-thread resolution, or GitHub Project Done transition has occurred or is claimed. |
 
 The role destinations for IT Staff and Administrator are compatibility placeholders only. Issue #29 does not claim the later Staff workflow, Administrator workflow, final Requester-role conversion, or REOPENED-clearing implementation. The correction restores retained Lab 1 behavior without reviving any Development Requester mechanism.
 
-The requested-changes verification used only the validated `toktickit_test` target for mutation. Read-only development evidence before and after remained exactly 92 Attachments, 4 Categories, 5 DevelopmentRequesters, 7 RelatedSystems, 182 Tickets, 1 TicketNumberSequence row, and 3 migration-history rows, with every previously recorded SHA-256 row-set checksum unchanged. Playwright-regenerated tracked Lab 2 screenshots were restored; build/test output was removed; no disposable Issue #27/Issue #29/Lab 3/E2E schema, verification listener, or repository Node process remained. This is local implementation evidence only and makes no new GitHub-state claim.
+The requested-changes verification used only the validated `toktickit_test` target for mutation. Read-only development evidence before and after remained exactly 92 Attachments, 4 Categories, 5 DevelopmentRequesters, 7 RelatedSystems, 182 Tickets, 1 TicketNumberSequence row, and 3 migration-history rows, with every previously recorded SHA-256 row-set checksum unchanged. Playwright-regenerated tracked Lab 2 screenshots were restored; build/test output was removed; no disposable Issue #27/Issue #29/Lab 3/E2E schema, verification listener, or repository Node process remained. This is execution evidence; the pushed state recorded above does not imply reviewer acceptance.
