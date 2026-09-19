@@ -2,7 +2,7 @@
 
 ## 1. Status and Strategy
 
-The matrix contains 75 Test IDs. Following completion and verification of Issues #27 and #29, 16 Test IDs are recorded as `Pass (Issue #27)` and 14 as `Pass (Issue #29)`. The remaining 45 Test IDs remain `Planned` for later Sprint 3 increments.
+The matrix contains 75 Test IDs. Following completion and verification of Issues #27 and #29, 16 Test IDs are recorded as `Pass (Issue #27)` and 13 as `Pass (Issue #29)`. The remaining 46 Test IDs remain `Planned` for later Sprint 3 increments.
 
 The suite uses an isolated PostgreSQL TEST_DATABASE_URL protected by the existing structural database guard. Tests must be deterministic, independent of execution order, use unique fixture keys, and clean up only their own data. Authentication tests use non-production fixture credentials supplied at runtime. Cookies and password material must never appear in snapshots, logs, or retained artifacts.
 
@@ -49,7 +49,7 @@ Test levels:
 | API-13 | FR-25, FR-26, AC-28–AC-30, AC-60 | Every transition, unassigned stored states, owner eligibility at commit, confirmation, reason, history, stale/concurrent write | Matrix and append-only history are exact with no partial writes or ineligible owner | server/tests/lab-03/staff-ticket-workflow.api.test.ts | Planned |
 | API-14 | FR-27, FR-28, AC-33–AC-35 | Public Comment creation/list pagination, ownership, author, timestamp, validation, inert content | One safe append-only Comment or documented rejection | server/tests/lab-03/comments-notes.api.test.ts | Pass (Issue #29) |
 | API-15 | FR-29, AC-36, AC-37 | Internal Note creation/list and Requester denial-before-lookup | Staff/Admin see safe Notes; Requester receives 403 and no content | server/tests/lab-03/comments-notes.api.test.ts | Planned |
-| API-16 | FR-17, AC-31, AC-32 | Requester resolution indication, eligible status, owner protection, repeated request, reopen clearing | Status unchanged; one current-cycle indication; safe rejection otherwise | server/tests/lab-03/resolution-indication.api.test.ts | Pass (Issue #29) |
+| API-16 | FR-17, AC-31, AC-32 | Requester resolution indication, eligible status, owner protection, repeated request, reopen clearing | Status unchanged; one current-cycle indication; safe rejection otherwise | server/tests/lab-03/resolution-indication.api.test.ts | Planned |
 | API-17 | FR-31, AC-40, AC-41 | Admin User list DTO, deterministic order, search, optional role, invalid queries, role denial | Safe non-credential summaries or 403/400 | server/tests/lab-03/users-admin.api.test.ts | Planned |
 | API-18 | FR-32, FR-37, AC-42, AC-43 | User creation, normalized duplicate email, one role, password hashing, unknown fields | Atomic 201 with mustChangePassword true or documented safe rejection | server/tests/lab-03/users-admin.api.test.ts | Planned |
 | API-19 | FR-33, FR-35, FR-36, AC-44–AC-47, AC-60 | User edit, stale write, self/last-admin/non-terminal-owner guards, shared locks, and session invalidation | Only valid approved fields and session changes commit; final User/Ticket invariants always hold | server/tests/lab-03/users-admin.api.test.ts | Planned |
