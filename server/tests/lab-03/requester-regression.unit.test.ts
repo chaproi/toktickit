@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parseTicketListQuery } from "../../src/tickets/ticket-query.js";
+import { buildRequesterTicketCreateData } from "../../src/tickets/ticket-service.js";
 import { validateCreateTicketInput } from "../../src/tickets/ticket-validation.js";
 
 describe("Issue 29 Requester regression adapters", () => {
@@ -19,19 +20,42 @@ describe("Issue 29 Requester regression adapters", () => {
   });
 
   it("rejects client-supplied ownership while retaining Lab 2 limits", () => {
-    const result = validateCreateTicketInput({
+    const input = {
       clientSubmissionId: "df2bea34-ddb5-4aa6-b2c8-286ed38d6085",
       categoryId: 1,
       relatedSystemId: 1,
       requestedPriority: "HIGH",
       summary: "Valid summary",
       description: "A valid Ticket description.",
-      requesterId: 999,
+    } as const;
+
+    const createData = buildRequesterTicketCreateData(
+      41,
+      "TKT-2026-00041",
+      input,
+    );
+    expect(createData).toMatchObject({
+      requesterId: 41,
+      currentStatus: "NEW",
+      ownerId: null,
+      requestedPriority: "HIGH",
+      itPriority: "HIGH",
     });
-    expect(result).toEqual({
-      success: false,
-      fields: { body: "Unknown fields are not allowed: requesterId." },
-    });
+
+    for (const spoofedField of [
+      "requesterId",
+      "developmentRequesterId",
+      "X-Development-Requester-Id",
+    ]) {
+      const result = validateCreateTicketInput({
+        ...input,
+        [spoofedField]: 999,
+      });
+      expect(result).toEqual({
+        success: false,
+        fields: { body: `Unknown fields are not allowed: ${spoofedField}.` },
+      });
+    }
   });
 
   it("accepts exact Lab 2 boundaries and rejects values immediately outside them", () => {

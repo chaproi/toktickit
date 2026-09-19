@@ -16,6 +16,95 @@ afterEach(async () => {
 });
 
 describe("Issue 29 role-aware Attachments", () => {
+  it("persists an owning Requester's upload and soft removal without exposing storage data", async () => {
+    const owner = await authenticatedFixture({ label: "attachment-mutation-owner" });
+    const staff = await authenticatedFixture({ role: "IT_STAFF", label: "attachment-mutation-staff" });
+    const administrator = await authenticatedFixture({
+      role: "ADMINISTRATOR",
+      label: "attachment-mutation-admin",
+    });
+    const ticket = await createTicketFixture(owner.user.id);
+    const removedStorageKeys: string[] = [];
+
+    setAttachmentStorageForTests({
+      async store() {},
+      async remove(storageKey) { removedStorageKeys.push(storageKey); },
+      async read() { return Buffer.from("synthetic attachment content"); },
+    });
+
+    const upload = await authenticatedUnsafe(
+      request(app).post(`/api/tickets/${ticket.id}/attachments`),
+      owner,
+    ).attach(
+      "file",
+      Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl2nFQAAAAASUVORK5CYII=", "base64"),
+      { filename: "requester-evidence.png", contentType: "image/png" },
+    );
+
+    expect(upload.status).toBe(201);
+    expect(upload.body).toMatchObject({
+      ticketId: ticket.id,
+      originalFilename: "requester-evidence.png",
+      mimeType: "image/png",
+      uploadedByRequesterId: owner.user.id,
+      isRemoved: false,
+    });
+    expect(upload.body).not.toHaveProperty("storageKey");
+
+    const attachmentId = upload.body.id as number;
+    const persisted = await getPrisma().attachment.findUniqueOrThrow({
+      where: { id: attachmentId },
+    });
+    expect(persisted).toMatchObject({
+      ticketId: ticket.id,
+      uploadedByUserId: owner.user.id,
+      isRemoved: false,
+    });
+
+    for (const fixture of [staff, administrator]) {
+      const deniedUpload = await authenticatedUnsafe(
+        request(app).post(`/api/tickets/${ticket.id}/attachments`),
+        fixture,
+      ).attach("file", Buffer.from("synthetic"), {
+        filename: "denied.txt",
+        contentType: "text/plain",
+      });
+      expect(deniedUpload.status).toBe(403);
+      expect(deniedUpload.body.error.code).toBe("ROLE_FORBIDDEN");
+
+      const deniedRemoval = await authenticatedUnsafe(
+        request(app).delete(`/api/tickets/${ticket.id}/attachments/${attachmentId}`),
+        fixture,
+      ).send({ removalReason: "Operational roles cannot remove it." });
+      expect(deniedRemoval.status).toBe(403);
+      expect(deniedRemoval.body.error.code).toBe("ROLE_FORBIDDEN");
+    }
+
+    const removalReason = "The evidence is no longer relevant.";
+    const removal = await authenticatedUnsafe(
+      request(app).delete(`/api/tickets/${ticket.id}/attachments/${attachmentId}`),
+      owner,
+    ).send({ removalReason });
+    expect(removal.status).toBe(200);
+    expect(removal.body).toMatchObject({
+      id: attachmentId,
+      ticketId: ticket.id,
+      isRemoved: true,
+      removedByRequesterId: owner.user.id,
+      removalReason,
+    });
+    expect(removal.body).not.toHaveProperty("storageKey");
+
+    const removed = await getPrisma().attachment.findUniqueOrThrow({
+      where: { id: attachmentId },
+    });
+    expect(removed.isRemoved).toBe(true);
+    expect(removed.removedByUserId).toBe(owner.user.id);
+    expect(removed.removalReason).toBe(removalReason);
+    expect(removed.removedAt).toBeInstanceOf(Date);
+    expect(removedStorageKeys).toEqual([persisted.storageKey]);
+  }, 15_000);
+
   it("allows the owning Requester and operational roles to read metadata and active content", async () => {
     const owner = await authenticatedFixture({ label: "attachment-owner" });
     const staff = await authenticatedFixture({ role: "IT_STAFF", label: "attachment-staff" });

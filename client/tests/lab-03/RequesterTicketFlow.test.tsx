@@ -1,4 +1,4 @@
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { authResponse, jsonResponse, renderAt, requesterUser, requestUrl } from "./test-helpers.js";
@@ -194,6 +194,200 @@ describe("Issue 29 Requester UI regression", () => {
     expect(screen.getByText("Unassigned")).toBeInTheDocument();
     expect(await screen.findByText("Visible public update")).toBeInTheDocument();
     expect(await screen.findByText("evidence.pdf")).toBeInTheDocument();
+    expect(screen.queryByText(/Internal Notes/u)).not.toBeInTheDocument();
+  });
+
+  it("completes public Comment, Attachment, and resolution-indication actions without changing formal status", async () => {
+    document.cookie = "toktickit_csrf=requester-flow-csrf; path=/";
+    let commentPosted = false;
+    let uploadedAttachment: Record<string, unknown> | null = null;
+    const detail = {
+      id: 88,
+      ticketNumber: "TKT-2026-00088",
+      ticketDate: "2026-09-18T08:00:00.000Z",
+      requester: { id: requesterUser.id, name: requesterUser.name },
+      category: { id: 1, name: "Hardware" },
+      relatedSystem: { id: 2, name: "Laptop" },
+      requestedPriority: "HIGH",
+      itPriority: "MEDIUM",
+      currentStatus: "OPEN",
+      owner: null,
+      summary: "Complete Requester workflow",
+      description: "Exercise each authenticated Requester detail action.",
+      requesterResolutionIndicatedAt: null,
+      createdAt: "2026-09-18T08:00:00.000Z",
+      updatedAt: "2026-09-18T08:00:00.000Z",
+    };
+    const attachment = {
+      id: 7,
+      ticketId: 88,
+      originalFilename: "requester-evidence.png",
+      mimeType: "image/png",
+      sizeBytes: 68,
+      uploadedByRequesterId: requesterUser.id,
+      isRemoved: false,
+      createdAt: "2026-09-18T09:00:00.000Z",
+      removedAt: null,
+      removedByRequesterId: null,
+      removalReason: null,
+    };
+
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = requestUrl(input);
+      if (url.pathname === "/api/auth/me") return jsonResponse(authResponse(requesterUser));
+      if (url.pathname === "/api/tickets/88") return jsonResponse(detail);
+      if (url.pathname === "/api/tickets/88/comments" && init?.method === "POST") {
+        expect(new Headers(init.headers).get("X-CSRF-Token")).toBe("requester-flow-csrf");
+        expect(JSON.parse(String(init.body))).toEqual({ content: "The issue now works for me." });
+        commentPosted = true;
+        return jsonResponse({
+          id: 10,
+          ticketId: 88,
+          author: { id: requesterUser.id, name: requesterUser.name, role: "REQUESTER" },
+          content: "The issue now works for me.",
+          createdAt: "2026-09-18T09:15:00.000Z",
+        }, 201);
+      }
+      if (url.pathname === "/api/tickets/88/comments") {
+        return jsonResponse({
+          items: commentPosted ? [{
+            id: 10,
+            ticketId: 88,
+            author: { id: requesterUser.id, name: requesterUser.name, role: "REQUESTER" },
+            content: "The issue now works for me.",
+            createdAt: "2026-09-18T09:15:00.000Z",
+          }] : [],
+          pagination: {
+            page: 1,
+            pageSize: 20,
+            totalItems: commentPosted ? 1 : 0,
+            totalPages: commentPosted ? 1 : 0,
+            hasPreviousPage: false,
+            hasNextPage: false,
+          },
+        });
+      }
+      if (url.pathname === "/api/tickets/88/attachments" && init?.method === "POST") {
+        expect(new Headers(init.headers).get("X-CSRF-Token")).toBe("requester-flow-csrf");
+        expect(init.body).toBeInstanceOf(FormData);
+        uploadedAttachment = attachment;
+        return jsonResponse(attachment, 201);
+      }
+      if (url.pathname === "/api/tickets/88/attachments") {
+        return jsonResponse({ items: uploadedAttachment ? [uploadedAttachment] : [] });
+      }
+      if (url.pathname === "/api/tickets/88/attachments/7" && init?.method === "DELETE") {
+        expect(new Headers(init.headers).get("X-CSRF-Token")).toBe("requester-flow-csrf");
+        expect(JSON.parse(String(init.body))).toEqual({ removalReason: "No longer needed for diagnosis." });
+        uploadedAttachment = {
+          ...attachment,
+          isRemoved: true,
+          removedAt: "2026-09-18T09:30:00.000Z",
+          removedByRequesterId: requesterUser.id,
+          removalReason: "No longer needed for diagnosis.",
+        };
+        return jsonResponse(uploadedAttachment);
+      }
+      if (url.pathname === "/api/tickets/88/resolution-indication" && init?.method === "POST") {
+        expect(new Headers(init.headers).get("X-CSRF-Token")).toBe("requester-flow-csrf");
+        expect(JSON.parse(String(init.body))).toEqual({ confirm: true });
+        return jsonResponse({
+          ticketId: 88,
+          currentStatus: "OPEN",
+          requesterResolutionIndicatedAt: "2026-09-18T09:45:00.000Z",
+        });
+      }
+      throw new Error(`Unexpected request: ${url.pathname} ${init?.method ?? "GET"}`);
+    }));
+
+    renderAt("/tickets/88");
+    const user = userEvent.setup();
+    expect(await screen.findByText("Complete Requester workflow")).toBeInTheDocument();
+    expect(await screen.findByText("No public comments yet.")).toBeInTheDocument();
+    expect(await screen.findByText("This Ticket has no active attachments.")).toBeInTheDocument();
+
+    await user.type(screen.getByLabelText("Add a public comment"), "The issue now works for me.");
+    await user.click(screen.getByRole("button", { name: "Post comment" }));
+    expect(await screen.findByText("The issue now works for me.")).toBeInTheDocument();
+
+    const file = new File([new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10])], "requester-evidence.png", {
+      type: "image/png",
+    });
+    await user.upload(screen.getByLabelText("Add Attachment"), file);
+    await user.click(screen.getByRole("button", { name: "Upload" }));
+    expect(await screen.findByText("Attachment uploaded successfully. File: requester-evidence.png.")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Remove requester-evidence.png" }));
+    const removalDialog = screen.getByRole("dialog", { name: "Remove Attachment" });
+    await user.type(within(removalDialog).getByLabelText("Removal reason"), "No longer needed for diagnosis.");
+    await user.click(within(removalDialog).getByRole("button", { name: "Remove Attachment" }));
+    expect(await screen.findByText("Attachment removed successfully. File: requester-evidence.png.")).toBeInTheDocument();
+    expect(screen.getAllByText("Removed", { exact: true }).length).toBeGreaterThan(0);
+
+    await user.click(screen.getByRole("button", { name: "Problem Appears Resolved" }));
+    const resolutionDialog = screen.getByRole("dialog", { name: "Does the problem appear resolved?" });
+    await user.click(within(resolutionDialog).getByRole("button", { name: "Yes, it appears resolved" }));
+    expect(await screen.findByText(/Waiting for the support team to formally resolve this Ticket/u)).toBeInTheDocument();
+    expect(screen.getByText("Open", { exact: true })).toBeInTheDocument();
+    expect(screen.queryByText("Resolved", { exact: true })).not.toBeInTheDocument();
+  });
+
+  it("shows deterministic loading, empty, no-results, validation, and dependency-failure states", async () => {
+    let resolveInitialTickets: ((response: Response) => void) | undefined;
+    let ticketRequests = 0;
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = requestUrl(input);
+      if (url.pathname === "/api/auth/me") return jsonResponse(authResponse(requesterUser));
+      if (url.pathname === "/api/categories") return jsonResponse([{ id: 1, name: "Hardware" }]);
+      if (url.pathname === "/api/related-systems") return jsonResponse([{ id: 2, name: "Laptop" }]);
+      if (url.pathname === "/api/tickets") {
+        ticketRequests += 1;
+        if (ticketRequests === 1) {
+          return new Promise<Response>((resolve) => { resolveInitialTickets = resolve; });
+        }
+        return jsonResponse({
+          items: [],
+          pagination: { page: 1, pageSize: 10, totalItems: 0, totalPages: 0, hasPreviousPage: false, hasNextPage: false },
+        });
+      }
+      throw new Error(`Unexpected request: ${url.pathname}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const view = renderAt("/tickets");
+    expect(await screen.findByText(/Loading your Tickets/u)).toBeInTheDocument();
+    resolveInitialTickets?.(jsonResponse({
+      items: [],
+      pagination: { page: 1, pageSize: 10, totalItems: 0, totalPages: 0, hasPreviousPage: false, hasNextPage: false },
+    }));
+    expect(await screen.findByText("You have not created any Tickets yet.")).toBeInTheDocument();
+    const user = userEvent.setup();
+    await user.type(screen.getByLabelText("Search Tickets"), "missing");
+    await user.click(screen.getByRole("button", { name: "Apply Filters" }));
+    expect(await screen.findByText("No Tickets match the current search and filters.")).toBeInTheDocument();
+
+    view.unmount();
+    renderAt("/tickets/new");
+    expect(await screen.findByLabelText(/Category/u)).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Create Ticket" }));
+    expect(await screen.findByText(/Please correct the highlighted fields before creating the Ticket/u)).toBeInTheDocument();
+    expect(screen.getByText("Summary is required")).toBeInTheDocument();
+  });
+
+  it("renders a safe retryable dependency failure without protected detail", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const url = requestUrl(input);
+      if (url.pathname === "/api/auth/me") return jsonResponse(authResponse(requesterUser));
+      if (url.pathname === "/api/tickets/500") {
+        return jsonResponse({
+          error: { code: "SERVICE_UNAVAILABLE", message: "Something went wrong. Please try again." },
+        }, 503);
+      }
+      throw new Error(`Unexpected request: ${url.pathname}`);
+    }));
+    renderAt("/tickets/500");
+    expect(await screen.findByText("Something went wrong. Please try again.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Try Again" })).toBeInTheDocument();
+    expect(screen.queryByText("Requester-visible description.")).not.toBeInTheDocument();
     expect(screen.queryByText(/Internal Notes/u)).not.toBeInTheDocument();
   });
 

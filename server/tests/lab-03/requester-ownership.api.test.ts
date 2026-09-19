@@ -40,6 +40,52 @@ describe("Issue 29 identity and probing resistance", () => {
     expect(response.body.error.code).toBe("AUTHENTICATION_REQUIRED");
   });
 
+  it("uses the authenticated Requester despite a spoofed legacy header and hides Ticket existence", async () => {
+    const owner = await authenticatedFixture({ label: "ticket-probe-owner" });
+    const other = await authenticatedFixture({ label: "ticket-probe-other" });
+    const ownerTicketResponse = await authenticatedUnsafe(request(app).post("/api/tickets"), owner).send({
+      clientSubmissionId: randomUUID(),
+      ...(await referenceIds()),
+      requestedPriority: "LOW",
+      summary: "Authenticated owner Ticket",
+      description: "Visible only to the authenticated owner.",
+    });
+    const otherTicketResponse = await authenticatedUnsafe(request(app).post("/api/tickets"), other).send({
+      clientSubmissionId: randomUUID(),
+      ...(await referenceIds()),
+      requestedPriority: "HIGH",
+      summary: "Foreign protected Ticket",
+      description: "Must never be disclosed to another Requester.",
+    });
+    const ownerTicket = ownerTicketResponse.body.ticket as { id: number; ticketNumber: string };
+    const otherTicket = otherTicketResponse.body.ticket as { id: number; ticketNumber: string };
+
+    const list = await request(app)
+      .get("/api/tickets")
+      .set("Cookie", owner.cookie)
+      .set("X-Development-Requester-Id", String(other.user.id));
+    expect(list.status).toBe(200);
+    expect(list.body.items.map((item: { id: number }) => item.id)).toContain(ownerTicket.id);
+    expect(list.body.items.map((item: { id: number }) => item.id)).not.toContain(otherTicket.id);
+
+    const denials = [];
+    for (const ticketId of [otherTicket.id, 2_147_483_647]) {
+      const response = await request(app)
+        .get(`/api/tickets/${ticketId}`)
+        .set("Cookie", owner.cookie)
+        .set("X-Development-Requester-Id", String(other.user.id));
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({
+        error: { code: "TICKET_NOT_FOUND", message: "Ticket not found." },
+      });
+      const serialized = JSON.stringify(response.body);
+      expect(serialized).not.toContain(otherTicket.ticketNumber);
+      expect(serialized).not.toContain("Foreign protected Ticket");
+      denials.push(response.body);
+    }
+    expect(denials[0]).toEqual(denials[1]);
+  });
+
   it("makes foreign and missing Attachment probes indistinguishable", async () => {
     const owner = await authenticatedFixture({ label: "attachment-probe-owner" });
     const other = await authenticatedFixture({ label: "attachment-probe-other" });
