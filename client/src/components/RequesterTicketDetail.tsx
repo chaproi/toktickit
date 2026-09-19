@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type KeyboardEvent,
+} from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   ApiRequestError,
@@ -64,6 +71,7 @@ function PublicComments({ ticketId }: { ticketId: number }) {
   const [items, setItems] = useState<PublicComment[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
   const [posting, setPosting] = useState(false);
@@ -77,6 +85,7 @@ function PublicComments({ ticketId }: { ticketId: number }) {
       const response = await getPublicComments(ticketId, page, 20, signal);
       setItems(response.items);
       setTotalPages(response.pagination.totalPages);
+      setTotalItems(response.pagination.totalItems);
       setState("success");
     } catch (caught) {
       if (caught instanceof DOMException && caught.name === "AbortError") return;
@@ -103,9 +112,32 @@ function PublicComments({ ticketId }: { ticketId: number }) {
     setPosting(true);
     setError("");
     try {
-      await addPublicComment(ticketId, trimmed);
+      const created = await addPublicComment(ticketId, trimmed);
+      const nextTotalItems = totalItems + 1;
+      const finalPage = Math.max(1, Math.ceil(nextTotalItems / 20));
+      if (finalPage === page) {
+        setItems((current) => current.some(({ id }) => id === created.id)
+          ? current
+          : [...current, created]);
+        setTotalItems(nextTotalItems);
+        setTotalPages(finalPage);
+      } else {
+        try {
+          const finalResponse = await getPublicComments(ticketId, finalPage, 20);
+          setItems(finalResponse.items.some(({ id }) => id === created.id)
+            ? finalResponse.items
+            : [...finalResponse.items, created].sort((left, right) =>
+              left.createdAt.localeCompare(right.createdAt) || left.id - right.id));
+          setTotalItems(finalResponse.pagination.totalItems);
+          setTotalPages(finalResponse.pagination.totalPages);
+        } catch {
+          setItems([created]);
+          setTotalItems(nextTotalItems);
+          setTotalPages(finalPage);
+        }
+        setPage(finalPage);
+      }
       setContent("");
-      await load();
     } catch (caught) {
       setError(caught instanceof ApiRequestError ? caught.message : "Something went wrong. Please try again.");
     } finally {
@@ -139,7 +171,7 @@ function PublicComments({ ticketId }: { ticketId: number }) {
         {totalPages > 1 && (
           <div className="d-flex gap-2 mb-4">
             <button className="btn btn-outline-success" type="button" disabled={page === 1} onClick={() => setPage((value) => value - 1)}>Previous comments</button>
-            <span className="align-self-center">Page {page} of {totalPages}</span>
+            <span className="align-self-center">Page {page} of {totalPages} · {totalItems} comments</span>
             <button className="btn btn-outline-success" type="button" disabled={page >= totalPages} onClick={() => setPage((value) => value + 1)}>Next comments</button>
           </div>
         )}
@@ -181,6 +213,12 @@ export default function RequesterTicketDetail() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [indicating, setIndicating] = useState(false);
   const [indicationError, setIndicationError] = useState("");
+  const resolutionTriggerRef = useRef<HTMLButtonElement>(null);
+  const resolutionDialogRef = useRef<HTMLDivElement>(null);
+  const resolutionCancelRef = useRef<HTMLButtonElement>(null);
+  const detailHeadingRef = useRef<HTMLHeadingElement>(null);
+  const backgroundRef = useRef<HTMLDivElement>(null);
+  const restoreFocusRef = useRef<"trigger" | "heading" | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -200,6 +238,49 @@ export default function RequesterTicketDetail() {
     return () => controller.abort();
   }, [retry, ticketId]);
 
+  useEffect(() => {
+    const background = backgroundRef.current;
+    if (dialogOpen) {
+      background?.setAttribute("inert", "");
+      resolutionCancelRef.current?.focus();
+    } else {
+      background?.removeAttribute("inert");
+      const target = restoreFocusRef.current;
+      restoreFocusRef.current = null;
+      if (target === "trigger") resolutionTriggerRef.current?.focus();
+      if (target === "heading") detailHeadingRef.current?.focus();
+    }
+    return () => background?.removeAttribute("inert");
+  }, [dialogOpen]);
+
+  function closeResolutionDialog(): void {
+    if (indicating) return;
+    restoreFocusRef.current = "trigger";
+    setDialogOpen(false);
+  }
+
+  function handleResolutionDialogKeyDown(event: KeyboardEvent<HTMLDivElement>): void {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeResolutionDialog();
+      return;
+    }
+    if (event.key !== "Tab" || indicating) return;
+    const buttons = Array.from(
+      resolutionDialogRef.current?.querySelectorAll<HTMLButtonElement>("button:not(:disabled)") ?? [],
+    );
+    if (buttons.length === 0) return;
+    const first = buttons[0]!;
+    const last = buttons.at(-1)!;
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
   async function confirmResolution() {
     if (!ticket || indicating) return;
     setIndicating(true);
@@ -211,11 +292,21 @@ export default function RequesterTicketDetail() {
         currentStatus: result.currentStatus,
         requesterResolutionIndicatedAt: result.requesterResolutionIndicatedAt,
       });
+      restoreFocusRef.current = "heading";
       setDialogOpen(false);
     } catch (caught) {
       if (caught instanceof ApiRequestError && caught.code === "RESOLUTION_INDICATION_NOT_ALLOWED") {
+        restoreFocusRef.current = "heading";
         setDialogOpen(false);
-        setIndicationError("The Ticket changed and this action is no longer available. Reload the latest detail.");
+        try {
+          const authoritative = await getTicketDetail(ticket.id);
+          setTicket(authoritative);
+          setIndicationError("The Ticket changed and this action is no longer available.");
+        } catch {
+          setTicket(null);
+          setError("Something went wrong. Please try again.");
+          setState("error");
+        }
       } else {
         setIndicationError("Something went wrong. Please try again.");
       }
@@ -243,12 +334,13 @@ export default function RequesterTicketDetail() {
   }
 
   const mayIndicate = RESOLUTION_STATUSES.has(ticket.currentStatus) &&
-    ticket.requesterResolutionIndicatedAt === null;
+    ticket.requesterResolutionIndicatedAt === null && !indicating;
   return (
     <section className="ticket-detail-page" aria-labelledby="ticket-detail-heading">
+      <div ref={backgroundRef} aria-hidden={dialogOpen ? true : undefined}>
       <div className="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
         <div>
-          <h1 id="ticket-detail-heading" className="h2 mb-2">Ticket Detail</h1>
+          <h1 ref={detailHeadingRef} id="ticket-detail-heading" className="h2 mb-2" tabIndex={-1}>Ticket Detail</h1>
           <p className="ticket-detail-number mb-0">{ticket.ticketNumber}</p>
         </div>
         <Link className="btn btn-outline-success" to="/tickets">Back to My Tickets</Link>
@@ -279,7 +371,7 @@ export default function RequesterTicketDetail() {
             <ReadOnlyValue label="Description" className="ticket-detail-wide"><span className="ticket-detail-description">{ticket.description}</span></ReadOnlyValue>
           </dl>
           {mayIndicate && (
-            <button className="btn btn-outline-success mt-4" type="button" onClick={() => setDialogOpen(true)}>
+            <button ref={resolutionTriggerRef} className="btn btn-outline-success mt-4" type="button" onClick={() => setDialogOpen(true)}>
               Problem Appears Resolved
             </button>
           )}
@@ -287,13 +379,22 @@ export default function RequesterTicketDetail() {
       </div>
       <PublicComments ticketId={ticket.id} />
       <AttachmentSection ticketId={ticket.id} />
+      </div>
       {dialogOpen && (
         <div className="attachment-dialog-backdrop">
-          <div className="attachment-dialog" role="dialog" aria-modal="true" aria-labelledby="resolution-heading">
+          <div
+            ref={resolutionDialogRef}
+            className="attachment-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="resolution-heading"
+            aria-describedby="resolution-description"
+            onKeyDown={handleResolutionDialogKeyDown}
+          >
             <h2 id="resolution-heading" className="h4">Does the problem appear resolved?</h2>
-            <p>This tells the support team the problem appears resolved. It does not formally resolve or close the Ticket.</p>
+            <p id="resolution-description">This tells the support team the problem appears resolved. It does not formally resolve or close the Ticket.</p>
             <div className="d-flex justify-content-end gap-2">
-              <button className="btn btn-outline-secondary" type="button" disabled={indicating} onClick={() => setDialogOpen(false)}>Cancel</button>
+              <button ref={resolutionCancelRef} className="btn btn-outline-secondary" type="button" disabled={indicating} onClick={closeResolutionDialog}>Cancel</button>
               <button className="btn btn-success" type="button" disabled={indicating} onClick={() => void confirmResolution()}>
                 {indicating ? "Saving…" : "Yes, it appears resolved"}
               </button>

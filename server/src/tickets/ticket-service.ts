@@ -1,4 +1,8 @@
 import { Prisma, type Ticket } from "@prisma/client";
+import {
+  lockCurrentActor,
+  runSerializableMutation,
+} from "../auth/eligibility-transaction.js";
 import { getPrisma } from "../prisma.js";
 import { formatTicketNumber } from "./ticket-number.js";
 import type { CreateTicketInput } from "./ticket-validation.js";
@@ -88,6 +92,9 @@ export type CreateTicketResult =
     }
   | {
       kind: "invalid-requester";
+    }
+  | {
+      kind: "eligibility-conflict";
     }
   | {
       kind: "invalid-reference";
@@ -284,10 +291,11 @@ function payloadMatches(
 }
 
 async function findExistingTicket(
+  database: Pick<Prisma.TransactionClient, "ticket">,
   requesterId: number,
   clientSubmissionId: string,
 ): Promise<TicketWithReferences | null> {
-  return getPrisma().ticket.findUnique({
+  return database.ticket.findUnique({
     where: {
       requesterId_clientSubmissionId: {
         requesterId,
@@ -340,76 +348,36 @@ export async function createTicketForRequester(
 ): Promise<CreateTicketResult> {
   const prisma = getPrisma();
 
-  const requester =
-    await prisma.user.findFirst({
-      where: {
-        id: requesterId,
-        isActive: true,
-        role: "REQUESTER",
-      },
-      select: {
-        id: true,
-      },
-    });
-
-  if (!requester) {
-    return {
-      kind: "invalid-requester",
-    };
-  }
-
-  const existing = await findExistingTicket(
-    requesterId,
-    input.clientSubmissionId,
-  );
-
-  if (existing) {
-    return replayResult(existing, input);
-  }
-
-  const [category, relatedSystem] = await Promise.all([
-    prisma.category.findFirst({
-      where: {
-        id: input.categoryId,
-        isActive: true,
-      },
-      select: {
-        id: true,
-      },
-    }),
-    prisma.relatedSystem.findFirst({
-      where: {
-        id: input.relatedSystemId,
-        isActive: true,
-      },
-      select: {
-        id: true,
-      },
-    }),
-  ]);
-
-  const fields: Record<string, string> = {};
-
-  if (!category) {
-    fields.categoryId =
-      "Category must identify an active Category.";
-  }
-
-  if (!relatedSystem) {
-    fields.relatedSystemId =
-      "Related System must identify an active Related System.";
-  }
-
-  if (Object.keys(fields).length > 0) {
-    return {
-      kind: "invalid-reference",
-      fields,
-    };
-  }
-
   try {
-    const ticket = await prisma.$transaction(
-      async (transaction) => {
+    return await runSerializableMutation(async (transaction) => {
+        if (!(await lockCurrentActor(transaction, requesterId, "REQUESTER"))) {
+          return { kind: "eligibility-conflict" as const };
+        }
+
+        const existing = await findExistingTicket(
+          transaction,
+          requesterId,
+          input.clientSubmissionId,
+        );
+        if (existing) return replayResult(existing, input);
+
+        const [category, relatedSystem] = await Promise.all([
+          transaction.category.findFirst({
+            where: { id: input.categoryId, isActive: true },
+            select: { id: true },
+          }),
+          transaction.relatedSystem.findFirst({
+            where: { id: input.relatedSystemId, isActive: true },
+            select: { id: true },
+          }),
+        ]);
+        const fields: Record<string, string> = {};
+        if (!category) fields.categoryId = "Category must identify an active Category.";
+        if (!relatedSystem) fields.relatedSystemId = "Related System must identify an active Related System.";
+        if (Object.keys(fields).length > 0) {
+          return { kind: "invalid-reference" as const, fields };
+        }
+
         const year = new Date().getUTCFullYear();
 
         const sequence =
@@ -428,7 +396,7 @@ export async function createTicketForRequester(
             },
           });
 
-        return transaction.ticket.create({
+        const ticket = await transaction.ticket.create({
           data: buildRequesterTicketCreateData(
             requesterId,
             formatTicketNumber(year, sequence.lastValue),
@@ -436,13 +404,8 @@ export async function createTicketForRequester(
           ),
           include: ticketInclude,
         });
-      },
-    );
-
-    return {
-      kind: "created",
-      ticket,
-    };
+        return { kind: "created" as const, ticket };
+      });
   } catch (error) {
     if (
       error instanceof
@@ -450,6 +413,7 @@ export async function createTicketForRequester(
       error.code === "P2002"
     ) {
       const replayed = await findExistingTicket(
+        prisma,
         requesterId,
         input.clientSubmissionId,
       );

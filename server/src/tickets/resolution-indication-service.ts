@@ -1,5 +1,8 @@
 import type { TicketStatus } from "@prisma/client";
-import { getPrisma } from "../prisma.js";
+import {
+  lockCurrentActor,
+  runSerializableMutation,
+} from "../auth/eligibility-transaction.js";
 
 const ELIGIBLE = new Set<TicketStatus>([
   "OPEN",
@@ -18,7 +21,10 @@ export async function indicateRequesterResolution(
   requesterId: number,
   ticketId: number,
 ) {
-  return getPrisma().$transaction(async (transaction) => {
+  return runSerializableMutation(async (transaction) => {
+    if (!(await lockCurrentActor(transaction, requesterId, "REQUESTER"))) {
+      return { kind: "eligibility-conflict" as const };
+    }
     const [ticket] = await transaction.$queryRaw<LockedTicket[]>`
       SELECT "id", "currentStatus", "requesterResolutionIndicatedAt"
       FROM "Ticket"

@@ -1,4 +1,8 @@
 import { Prisma, type UserRole } from "@prisma/client";
+import {
+  lockCurrentActor,
+  runSerializableMutation,
+} from "../auth/eligibility-transaction.js";
 import { getPrisma } from "../prisma.js";
 import type { CommentPageQuery } from "./comment-query.js";
 
@@ -80,15 +84,22 @@ export async function addPublicComment(
   ticketId: number,
   content: string,
 ) {
-  const prisma = getPrisma();
-  const ticket = await prisma.ticket.findFirst({
-    where: { id: ticketId, ...visibleTicketWhere(userId, role) },
-    select: { id: true },
+  return runSerializableMutation(async (transaction) => {
+    if (!(await lockCurrentActor(transaction, userId, role))) {
+      return { kind: "eligibility-conflict" as const };
+    }
+    const tickets = await transaction.$queryRaw<Array<{ id: number }>>`
+      SELECT "id"
+      FROM "Ticket"
+      WHERE "id" = ${ticketId}
+        AND (${role}::"UserRole" <> 'REQUESTER'::"UserRole" OR "requesterId" = ${userId})
+      FOR UPDATE
+    `;
+    if (tickets.length === 0) return { kind: "not-found" as const };
+    const comment = await transaction.publicComment.create({
+      data: { ticketId, authorId: userId, content },
+      select: commentSelect,
+    });
+    return { kind: "created" as const, comment };
   });
-  if (!ticket) return { kind: "not-found" as const };
-  const comment = await prisma.publicComment.create({
-    data: { ticketId, authorId: userId, content },
-    select: commentSelect,
-  });
-  return { kind: "created" as const, comment };
 }

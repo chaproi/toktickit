@@ -225,7 +225,7 @@ describe("Issue 29 resolution indication UI", () => {
       requesterResolutionIndicatedAt: "2026-09-18T11:00:00.000Z",
     }));
     expect(await screen.findByText(/Waiting for the support team to formally resolve/u)).toBeInTheDocument();
-    expect(trigger).toHaveFocus();
+    expect(screen.getByRole("heading", { name: "Ticket Detail" })).toHaveFocus();
   });
 
   it.each([

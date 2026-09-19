@@ -112,6 +112,13 @@ function sendAttachmentNotFound(res: Response): void {
   res.status(404).json(errorBody("ATTACHMENT_NOT_FOUND", "Attachment not found."));
 }
 
+function sendEligibilityConflict(res: Response): void {
+  res.status(409).json(errorBody(
+    "CONCURRENT_UPDATE",
+    "Your account eligibility changed. Reload and try again.",
+  ));
+}
+
 function buildContentDisposition(
   disposition: "inline" | "attachment",
   filename: string,
@@ -252,6 +259,10 @@ app.post("/api/tickets", async (req, res) => {
   }
   try {
     const result = await createTicketForRequester(live.user.id, validation.data);
+    if (result.kind === "eligibility-conflict") {
+      sendEligibilityConflict(res);
+      return;
+    }
     if (result.kind === "invalid-requester") {
       res.status(401).json(errorBody("AUTHENTICATION_REQUIRED", "Authentication is required."));
       return;
@@ -428,6 +439,10 @@ app.delete("/api/tickets/:ticketId/attachments/:attachmentId", async (req, res) 
       attachmentId,
       removalReason,
     );
+    if (result.kind === "eligibility-conflict") {
+      sendEligibilityConflict(res);
+      return;
+    }
     if (result.kind === "not-found" || result.kind === "invalid-requester") {
       sendAttachmentNotFound(res);
       return;
@@ -479,6 +494,10 @@ app.post("/api/tickets/:ticketId/attachments", async (req, res) => {
         size: req.file.size,
         buffer: req.file.buffer,
       });
+      if (result.kind === "eligibility-conflict") {
+        sendEligibilityConflict(res);
+        return;
+      }
       if (result.kind === "not-found" || result.kind === "invalid-requester") {
         sendTicketNotFound(res);
         return;
@@ -573,6 +592,10 @@ app.post("/api/tickets/:ticketId/comments", async (req, res) => {
       ticketId,
       validation.content,
     );
+    if (result.kind === "eligibility-conflict") {
+      sendEligibilityConflict(res);
+      return;
+    }
     if (result.kind === "not-found") {
       sendTicketNotFound(res);
       return;
@@ -603,6 +626,10 @@ app.post("/api/tickets/:ticketId/resolution-indication", async (req, res) => {
   }
   try {
     const result = await indicateRequesterResolution(live.user.id, ticketId);
+    if (result.kind === "eligibility-conflict") {
+      sendEligibilityConflict(res);
+      return;
+    }
     if (result.kind === "not-found") {
       sendTicketNotFound(res);
       return;

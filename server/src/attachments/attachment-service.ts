@@ -3,6 +3,10 @@ import { Prisma, type UserRole } from "@prisma/client";
 import { fileTypeFromBuffer } from "file-type";
 import { getPrisma } from "../prisma.js";
 import {
+    lockCurrentActor,
+    runSerializableMutation,
+} from "../auth/eligibility-transaction.js";
+import {
     validateAttachmentInput,
     type AttachmentValidationResult,
 } from "./attachment-validation.js";
@@ -90,6 +94,7 @@ export type RemoveAttachmentResult =
         attachment: AttachmentMetadata;
     }
     | { kind: "already-removed" }
+    | { kind: "eligibility-conflict" }
     | AttachmentRequesterFailure;
 
 async function isActiveActor(
@@ -267,65 +272,54 @@ export async function removeAttachmentForRequester(
     attachmentId: number,
     removalReason: string,
 ): Promise<RemoveAttachmentResult> {
-    const prisma = getPrisma();
+    const result = await runSerializableMutation(async (transaction) => {
+        if (!(await lockCurrentActor(transaction, requesterId, "REQUESTER"))) {
+            return { kind: "eligibility-conflict" as const };
+        }
+        const tickets = await transaction.$queryRaw<Array<{ id: number }>>`
+            SELECT "id"
+            FROM "Ticket"
+            WHERE "id" = ${ticketId} AND "requesterId" = ${requesterId}
+            FOR UPDATE
+        `;
+        if (tickets.length === 0) return { kind: "not-found" as const };
 
-    if (!(await isActiveActor(requesterId, "REQUESTER"))) {
-        return { kind: "invalid-requester" };
-    }
+        const attachment = await transaction.attachment.findFirst({
+            where: { id: attachmentId, ticketId },
+            select: attachmentContentSelect,
+        });
+        if (!attachment) return { kind: "not-found" as const };
+        if (attachment.isRemoved) return { kind: "already-removed" as const };
 
-    const attachment = await findOwnedAttachment(
-        requesterId,
-        ticketId,
-        attachmentId,
-    );
-
-    if (!attachment) {
-        return { kind: "not-found" };
-    }
-
-    if (attachment.isRemoved) {
-        return { kind: "already-removed" };
-    }
-
-    const removal = await prisma.attachment.updateMany({
-        where: {
-            id: attachment.id,
-            isRemoved: false,
-        },
-        data: {
-            isRemoved: true,
-            removedAt: new Date(),
-            removedByUserId: requesterId,
-            removalReason,
-        },
-    });
-
-    if (removal.count === 0) {
-        return { kind: "already-removed" };
-    }
-
-    const removedAttachment =
-        await prisma.attachment.findUniqueOrThrow({
-            where: {
-                id: attachment.id,
+        const removal = await transaction.attachment.updateMany({
+            where: { id: attachment.id, isRemoved: false },
+            data: {
+                isRemoved: true,
+                removedAt: new Date(),
+                removedByUserId: requesterId,
+                removalReason,
             },
+        });
+        if (removal.count === 0) return { kind: "already-removed" as const };
+
+        const removedAttachment = await transaction.attachment.findUniqueOrThrow({
+            where: { id: attachment.id },
             select: attachmentMetadataSelect,
         });
+        return {
+            kind: "success" as const,
+            attachment: compatibilityMetadata(removedAttachment),
+            storageKey: attachment.storageKey,
+        };
+    });
 
+    if (result.kind !== "success") return result;
     try {
-        await getAttachmentStorage().remove(
-            attachment.storageKey,
-        );
+        await getAttachmentStorage().remove(result.storageKey);
     } catch (error) {
-        console.error(
-            "Unable to remove soft-removed Attachment content.",
-        );
+        console.error("Unable to remove soft-removed Attachment content.");
     }
-
-    return {
-        kind: "success",
-        attachment: compatibilityMetadata(removedAttachment),
-    };
+    return { kind: "success", attachment: result.attachment };
 }
 
 export type UploadedAttachmentFile = {
@@ -356,6 +350,9 @@ export type UploadAttachmentResult =
         kind: "invalid-requester";
     }
     | {
+        kind: "eligibility-conflict";
+    }
+    | {
         kind: "not-found";
     }
     | {
@@ -371,31 +368,16 @@ export async function uploadAttachmentForRequester(
     ticketId: number,
     file: UploadedAttachmentFile,
 ): Promise<UploadAttachmentResult> {
-    const prisma = getPrisma();
-    const requester =
-        await prisma.user.findFirst({
-            where: {
-                id: requesterId,
-                isActive: true,
-                role: "REQUESTER",
-            },
-            select: {
-                id: true,
-            },
-        });
-
-    if (!requester) {
-        return {
-            kind: "invalid-requester",
-        };
-    }
     const detectedFileType =
         await fileTypeFromBuffer(file.buffer);
     const storage = getAttachmentStorage();
-    let storedKey: string | null = null;
+    let attemptStoredKey: string | null = null;
 
-    try {
-        return await prisma.$transaction(async (transaction) => {
+    return runSerializableMutation(async (transaction) => {
+            attemptStoredKey = null;
+            if (!(await lockCurrentActor(transaction, requesterId, "REQUESTER"))) {
+                return { kind: "eligibility-conflict" as const };
+            }
             const ownedTickets = await transaction.$queryRaw<
                 Array<{ id: number }>
             >`
@@ -440,7 +422,7 @@ export async function uploadAttachmentForRequester(
                 content: file.buffer,
                 mimeType: validation.data.mimeType,
             });
-            storedKey = storageKey;
+            attemptStoredKey = storageKey;
 
             const attachment =
                 await transaction.attachment.create({
@@ -460,18 +442,16 @@ export async function uploadAttachmentForRequester(
                 kind: "uploaded" as const,
                 attachment: compatibilityMetadata(attachment),
             };
-        });
-    } catch (error) {
-        if (storedKey !== null) {
+        }, async () => {
+        if (attemptStoredKey !== null) {
             try {
-                await storage.remove(storedKey);
+                await storage.remove(attemptStoredKey);
             } catch (cleanupError) {
                 console.error(
                     "Unable to remove an orphaned Attachment object.",
                 );
             }
+            attemptStoredKey = null;
         }
-
-        throw error;
-    }
+    });
 }
