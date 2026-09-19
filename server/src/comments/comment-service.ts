@@ -101,5 +101,8 @@ export async function addPublicComment(
       select: commentSelect,
     });
     return { kind: "created" as const, comment };
-  });
+  }, undefined, [
+    { scope: 1, id: userId },
+    { scope: 2, id: ticketId },
+  ]);
 }

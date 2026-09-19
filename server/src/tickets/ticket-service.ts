@@ -347,6 +347,7 @@ export async function createTicketForRequester(
   input: CreateTicketInput,
 ): Promise<CreateTicketResult> {
   const prisma = getPrisma();
+  const year = new Date().getUTCFullYear();
 
   try {
     return await runSerializableMutation(async (transaction) => {
@@ -378,8 +379,6 @@ export async function createTicketForRequester(
           return { kind: "invalid-reference" as const, fields };
         }
 
-        const year = new Date().getUTCFullYear();
-
         const sequence =
           await transaction.ticketNumberSequence.upsert({
             where: {
@@ -405,7 +404,10 @@ export async function createTicketForRequester(
           include: ticketInclude,
         });
         return { kind: "created" as const, ticket };
-      });
+      }, undefined, [
+        { scope: 1, id: requesterId },
+        { scope: 3, id: year },
+      ]);
   } catch (error) {
     if (
       error instanceof

@@ -311,7 +311,10 @@ export async function removeAttachmentForRequester(
             attachment: compatibilityMetadata(removedAttachment),
             storageKey: attachment.storageKey,
         };
-    });
+    }, undefined, [
+        { scope: 1, id: requesterId },
+        { scope: 2, id: ticketId },
+    ]);
 
     if (result.kind !== "success") return result;
     try {
@@ -453,5 +456,8 @@ export async function uploadAttachmentForRequester(
             }
             attemptStoredKey = null;
         }
-    });
+    }, [
+        { scope: 1, id: requesterId },
+        { scope: 2, id: ticketId },
+    ]);
 }

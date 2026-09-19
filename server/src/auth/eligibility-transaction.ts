@@ -1,4 +1,5 @@
 import { Prisma, type UserRole } from "@prisma/client";
+import { Client } from "pg";
 import { getPrisma } from "../prisma.js";
 
 export type LockedActor = {
@@ -11,6 +12,40 @@ export class ConcurrentUpdateError extends Error {
   constructor() {
     super("A confirmed serialization failure exhausted its retry limit.");
     this.name = "ConcurrentUpdateError";
+  }
+}
+
+export type MutationGateKey = {
+  scope: 1 | 2 | 3;
+  id: number;
+};
+
+async function withMutationGate<T>(
+  keys: readonly MutationGateKey[],
+  operation: () => Promise<T>,
+): Promise<T> {
+  if (keys.length === 0) return operation();
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) {
+    throw new Error("DATABASE_URL is required for mutation serialization.");
+  }
+  const ordered = [...keys].sort((left, right) =>
+    left.scope - right.scope || left.id - right.id);
+  const client = new Client({
+    connectionString,
+    application_name: "toktickit-mutation-gate",
+  });
+  await client.connect();
+  try {
+    for (const key of ordered) {
+      await client.query(
+        "SELECT pg_advisory_lock($1::integer, $2::integer)",
+        [key.scope, key.id],
+      );
+    }
+    return await operation();
+  } finally {
+    await client.end();
   }
 }
 
@@ -36,20 +71,23 @@ function hasConfirmedPostgresSqlState(
 export async function runSerializableMutation<T>(
   operation: (transaction: Prisma.TransactionClient) => Promise<T>,
   onAttemptFailure?: (error: unknown) => Promise<void>,
+  gateKeys: readonly MutationGateKey[] = [],
 ): Promise<T> {
-  const prisma = getPrisma();
-  for (let attempt = 0; attempt < 3; attempt += 1) {
-    try {
-      return await prisma.$transaction(operation, {
-        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-      });
-    } catch (error) {
-      await onAttemptFailure?.(error);
-      if (!hasConfirmedPostgresSqlState(error, "40001")) throw error;
-      if (attempt === 2) throw new ConcurrentUpdateError();
+  return withMutationGate(gateKeys, async () => {
+    const prisma = getPrisma();
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      try {
+        return await prisma.$transaction(operation, {
+          isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+        });
+      } catch (error) {
+        await onAttemptFailure?.(error);
+        if (!hasConfirmedPostgresSqlState(error, "40001")) throw error;
+        if (attempt === 2) throw new ConcurrentUpdateError();
+      }
     }
-  }
-  throw new Error("Serializable mutation retry loop exhausted unexpectedly.");
+    throw new Error("Serializable mutation retry loop exhausted unexpectedly.");
+  });
 }
 
 export async function lockCurrentActor(

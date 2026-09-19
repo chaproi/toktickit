@@ -62,5 +62,8 @@ export async function indicateRequesterResolution(
       currentStatus: updated.currentStatus,
       requesterResolutionIndicatedAt: updated.requesterResolutionIndicatedAt!,
     };
-  });
+  }, undefined, [
+    { scope: 1, id: requesterId },
+    { scope: 2, id: ticketId },
+  ]);
 }
