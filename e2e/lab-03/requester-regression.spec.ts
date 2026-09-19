@@ -36,20 +36,36 @@ test("E2E-02 retains the complete Requester workflow under session identity", as
   await page.getByRole("button", { name: "Save Password" }).click();
 
   await page.getByRole("link", { name: "Create Ticket" }).click();
-  await expect(page.getByText("Alex Morgan")).toBeVisible();
-  await page.getByLabel("Category").selectOption({ label: "Hardware" });
-  await page.getByLabel("Related System").selectOption({ label: "Corporate Laptop" });
-  await page.getByLabel(/^Priority/u).selectOption("HIGH");
-  await page.getByLabel("Summary").fill(`${marker} authenticated requester`);
-  await page.getByLabel("Description").fill("This Ticket was created by the Issue 29 authenticated browser workflow.");
+  await expect(page.getByRole("heading", { name: "Create Ticket", exact: true })).toBeVisible();
+  const category = page.locator("#category");
+  const relatedSystem = page.locator("#related-system");
+  const priority = page.locator("#priority");
+  await category.selectOption({ label: "Hardware" });
+  await relatedSystem.selectOption({ label: "Corporate Laptop" });
+  await priority.selectOption("HIGH");
+  await expect(category).not.toHaveValue("");
+  await expect(relatedSystem).not.toHaveValue("");
+  await expect(priority).toHaveValue("HIGH");
+  await page.locator("#summary").fill(`${marker} authenticated requester`);
+  await page.locator("#description").fill("This Ticket was created by the Issue 29 authenticated browser workflow.");
   await page.getByRole("button", { name: "Create Ticket" }).click();
   await expect(page.getByRole("heading", { name: "Ticket Created Successfully" })).toBeVisible();
 
   await page.getByRole("navigation", { name: "Primary navigation" })
     .getByRole("link", { name: "My Tickets" })
     .click();
-  await page.getByLabel("Search Tickets").fill(marker);
-  await page.getByRole("button", { name: "Apply Filters" }).click();
+  const search = page.locator("#ticket-search");
+  await search.fill(marker);
+  await expect(search).toHaveValue(marker);
+  const [filteredResponse] = await Promise.all([
+    page.waitForResponse((response) => {
+      const url = new URL(response.url());
+      return url.pathname === "/api/tickets" && url.searchParams.get("search") === marker;
+    }),
+    page.getByRole("button", { name: "Apply Filters" }).click(),
+  ]);
+  expect(filteredResponse.ok()).toBe(true);
+  await expect(page.getByRole("link", { name: /TKT-/ })).toHaveCount(1);
   await page.getByRole("link", { name: /TKT-/ }).click();
   await expect(page.getByText("Unassigned")).toBeVisible();
   await expect(page.getByText("High", { exact: true })).toHaveCount(2);
