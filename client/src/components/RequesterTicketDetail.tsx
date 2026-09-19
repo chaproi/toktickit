@@ -14,6 +14,7 @@ import {
   getTicketDetail,
   indicateResolution,
   type PublicComment,
+  type PublicCommentResponse,
   type RequestedPriority,
   type TicketDetail,
   type TicketStatus,
@@ -66,6 +67,19 @@ function ReadOnlyValue({
   );
 }
 
+const COMMENT_PAGE_SIZE = 20;
+const SAFE_COMMENT_ERROR = "Something went wrong. Please try again.";
+const COMMENT_REFRESH_WARNING =
+  "Your comment was posted, but the latest comments could not be refreshed. Please try again.";
+
+function includeCreatedComment(
+  items: PublicComment[],
+  created: PublicComment,
+): PublicComment[] {
+  return [...items.filter(({ id }) => id !== created.id), created].sort((left, right) =>
+    left.createdAt.localeCompare(right.createdAt) || left.id - right.id);
+}
+
 function PublicComments({ ticketId }: { ticketId: number }) {
   const [state, setState] = useState<LoadState>("loading");
   const [items, setItems] = useState<PublicComment[]>([]);
@@ -73,24 +87,47 @@ function PublicComments({ ticketId }: { ticketId: number }) {
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const [content, setContent] = useState("");
-  const [error, setError] = useState("");
+  const [listError, setListError] = useState("");
+  const [postError, setPostError] = useState("");
+  const [refreshWarning, setRefreshWarning] = useState("");
   const [posting, setPosting] = useState(false);
   const [retry, setRetry] = useState(0);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const loadSequenceRef = useRef(0);
+  const retainedCreatedRef = useRef<{
+    comment: PublicComment;
+    page: number;
+  } | null>(null);
 
   const load = useCallback(async (signal?: AbortSignal) => {
+    const sequence = ++loadSequenceRef.current;
     setState("loading");
-    setError("");
+    setListError("");
+    setRefreshWarning("");
     try {
-      const response = await getPublicComments(ticketId, page, 20, signal);
-      setItems(response.items);
+      const response = await getPublicComments(ticketId, page, COMMENT_PAGE_SIZE, signal);
+      if (sequence !== loadSequenceRef.current) return;
+      const retained = retainedCreatedRef.current?.page === page
+        ? retainedCreatedRef.current.comment
+        : null;
+      setItems(retained ? includeCreatedComment(response.items, retained) : response.items);
       setTotalPages(response.pagination.totalPages);
       setTotalItems(response.pagination.totalItems);
       setState("success");
     } catch (caught) {
       if (caught instanceof DOMException && caught.name === "AbortError") return;
-      setError(caught instanceof ApiRequestError ? caught.message : "Something went wrong. Please try again.");
-      setState("error");
+      if (sequence !== loadSequenceRef.current) return;
+      const retained = retainedCreatedRef.current?.page === page
+        ? retainedCreatedRef.current.comment
+        : null;
+      if (retained) {
+        setItems((current) => includeCreatedComment(current, retained));
+        setRefreshWarning(COMMENT_REFRESH_WARNING);
+        setState("success");
+      } else {
+        setListError(SAFE_COMMENT_ERROR);
+        setState("error");
+      }
     }
   }, [page, ticketId]);
 
@@ -105,41 +142,61 @@ function PublicComments({ ticketId }: { ticketId: number }) {
     if (posting) return;
     const trimmed = content.trim();
     if (trimmed.length < 1 || trimmed.length > 2_000) {
-      setError("Comment must contain between 1 and 2000 characters.");
+      setPostError("Comment must contain between 1 and 2000 characters.");
       inputRef.current?.focus();
       return;
     }
     setPosting(true);
-    setError("");
+    setPostError("");
+    setRefreshWarning("");
     try {
       const created = await addPublicComment(ticketId, trimmed);
-      const nextTotalItems = totalItems + 1;
-      const finalPage = Math.max(1, Math.ceil(nextTotalItems / 20));
-      if (finalPage === page) {
-        setItems((current) => current.some(({ id }) => id === created.id)
-          ? current
-          : [...current, created]);
-        setTotalItems(nextTotalItems);
-        setTotalPages(finalPage);
-      } else {
-        try {
-          const finalResponse = await getPublicComments(ticketId, finalPage, 20);
-          setItems(finalResponse.items.some(({ id }) => id === created.id)
-            ? finalResponse.items
-            : [...finalResponse.items, created].sort((left, right) =>
-              left.createdAt.localeCompare(right.createdAt) || left.id - right.id));
-          setTotalItems(finalResponse.pagination.totalItems);
-          setTotalPages(finalResponse.pagination.totalPages);
-        } catch {
-          setItems([created]);
-          setTotalItems(nextTotalItems);
-          setTotalPages(finalPage);
-        }
-        setPage(finalPage);
-      }
       setContent("");
-    } catch (caught) {
-      setError(caught instanceof ApiRequestError ? caught.message : "Something went wrong. Please try again.");
+      const sequence = ++loadSequenceRef.current;
+      try {
+        const firstResponse = await getPublicComments(ticketId, 1, COMMENT_PAGE_SIZE);
+        let locatedResponse: PublicCommentResponse | null = firstResponse.items.some(({ id }) => id === created.id)
+          ? firstResponse
+          : null;
+
+        for (
+          let candidatePage = firstResponse.pagination.totalPages;
+          locatedResponse === null && candidatePage >= 2;
+          candidatePage -= 1
+        ) {
+          const candidate = await getPublicComments(ticketId, candidatePage, COMMENT_PAGE_SIZE);
+          if (candidate.items.some(({ id }) => id === created.id)) locatedResponse = candidate;
+        }
+
+        if (locatedResponse === null) {
+          const nextAuthoritativePage = Math.max(2, firstResponse.pagination.totalPages + 1);
+          const candidate = await getPublicComments(ticketId, nextAuthoritativePage, COMMENT_PAGE_SIZE);
+          if (candidate.items.some(({ id }) => id === created.id)) locatedResponse = candidate;
+        }
+
+        if (locatedResponse === null) throw new Error("Created Comment was not found in authoritative pagination.");
+        if (sequence !== loadSequenceRef.current) return;
+
+        const authoritativePage = locatedResponse.pagination.page;
+        retainedCreatedRef.current = { comment: created, page: authoritativePage };
+        setItems(includeCreatedComment(locatedResponse.items, created));
+        setTotalItems(locatedResponse.pagination.totalItems);
+        setTotalPages(locatedResponse.pagination.totalPages);
+        setListError("");
+        setState("success");
+        setPage(authoritativePage);
+      } catch {
+        if (sequence !== loadSequenceRef.current) return;
+        retainedCreatedRef.current = { comment: created, page };
+        setItems((current) => includeCreatedComment(current, created));
+        setTotalItems((current) => Math.max(current + 1, 1));
+        setTotalPages((current) => Math.max(current, page, 1));
+        setListError("");
+        setRefreshWarning(COMMENT_REFRESH_WARNING);
+        setState("success");
+      }
+    } catch {
+      setPostError(SAFE_COMMENT_ERROR);
     } finally {
       setPosting(false);
     }
@@ -152,10 +209,11 @@ function PublicComments({ ticketId }: { ticketId: number }) {
         {state === "loading" && <p role="status">Loading public comments…</p>}
         {state === "error" && (
           <div className="alert alert-danger" role="alert">
-            <p>{error}</p>
+            <p>{listError}</p>
             <button className="btn btn-outline-danger" type="button" onClick={() => setRetry((value) => value + 1)}>Try Again</button>
           </div>
         )}
+        {refreshWarning && <div className="alert alert-warning" role="status">{refreshWarning}</div>}
         {state === "success" && items.length === 0 && <p>No public comments yet.</p>}
         {state === "success" && items.length > 0 && (
           <ol className="public-comment-list">
@@ -189,7 +247,7 @@ function PublicComments({ ticketId }: { ticketId: number }) {
             onChange={(event) => setContent(event.target.value)}
           />
           <p className="form-text">{content.length}/2000 characters</p>
-          {error && state !== "error" && <div className="alert alert-danger" role="alert">{error}</div>}
+          {postError && <div className="alert alert-danger" role="alert">{postError}</div>}
           <button className="btn btn-success" type="submit" disabled={posting}>
             {posting ? "Posting…" : "Post comment"}
           </button>
@@ -202,6 +260,11 @@ function PublicComments({ ticketId }: { ticketId: number }) {
 const RESOLUTION_STATUSES = new Set<TicketStatus>([
   "OPEN", "IN_PROGRESS", "WAITING_FOR_REQUESTER", "REOPENED",
 ]);
+
+function isResolutionEligible(ticket: TicketDetail): boolean {
+  return RESOLUTION_STATUSES.has(ticket.currentStatus) &&
+    ticket.requesterResolutionIndicatedAt === null;
+}
 
 export default function RequesterTicketDetail() {
   const { ticketId: parameter = "" } = useParams();
@@ -307,7 +370,9 @@ export default function RequesterTicketDetail() {
         try {
           const authoritative = await getTicketDetail(ticket.id);
           setTicket(authoritative);
-          setIndicationError("The Ticket changed and this action is no longer available.");
+          setIndicationError(isResolutionEligible(authoritative)
+            ? "The Ticket changed. Review the latest details and try again."
+            : "The Ticket changed and this action is no longer available.");
           setRestoreFocusTarget("heading");
         } catch {
           setTicket(null);
@@ -341,8 +406,7 @@ export default function RequesterTicketDetail() {
     );
   }
 
-  const mayIndicate = RESOLUTION_STATUSES.has(ticket.currentStatus) &&
-    ticket.requesterResolutionIndicatedAt === null && !indicating;
+  const mayIndicate = isResolutionEligible(ticket) && !indicating;
   return (
     <section className="ticket-detail-page" aria-labelledby="ticket-detail-heading">
       <div ref={backgroundRef} aria-hidden={dialogOpen ? true : undefined}>
