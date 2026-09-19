@@ -22,6 +22,7 @@ import CreateTicket from "./components/CreateTicket.js";
 import Login from "./components/Login.js";
 import MyTickets from "./components/MyTickets.js";
 import RequesterTicketDetail from "./components/RequesterTicketDetail.js";
+import StaffTicketQueue from "./components/StaffTicketQueue.js";
 
 const MOBILE_NAVIGATION_QUERY = "(max-width: 767.98px)";
 
@@ -191,12 +192,12 @@ function Placeholder({ heading }: { heading: string }) {
   );
 }
 
-function Forbidden({ user }: { user: AuthUser }) {
+function Forbidden({ user, message = "This page is not available for your role." }: { user: AuthUser; message?: string }) {
   return (
     <section className="ticket-detail-state" role="alert">
       <div>
         <h1 className="h2">Forbidden</h1>
-        <p>This page is not available for your role.</p>
+        <p>{message}</p>
         <Link className="btn btn-success" to={roleHome(user)}>Go to role home</Link>
       </div>
     </section>
@@ -339,7 +340,9 @@ function AuthenticatedRoutes() {
       />
       <Route
         path="/staff/tickets"
-        element={user.role !== "REQUESTER" ? shell(<Placeholder heading="Ticket Queue" />) : shell(<Forbidden user={user} />)}
+        element={user.role !== "REQUESTER"
+          ? shell(<StaffTicketQueue />)
+          : shell(<Forbidden user={user} message="You do not have permission to view the Ticket Queue." />)}
       />
       <Route
         path="/staff/tickets/:ticketId"

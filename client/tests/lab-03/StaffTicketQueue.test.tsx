@@ -148,6 +148,40 @@ describe("UI-05 IT Staff Ticket Queue", () => {
     expect(cleared.searchParams.get("page")).toBe("1");
   });
 
+  it("renders every mapped migrated status as Unassigned without rewriting it", async () => {
+    const statuses = [
+      "NEW", "OPEN", "IN_PROGRESS", "WAITING_FOR_REQUESTER",
+      "REOPENED", "RESOLVED", "CLOSED", "CANCELLED",
+    ] as const;
+    const items = statuses.map((currentStatus, index) => ({
+      ...ticket,
+      id: ticket.id + index,
+      ticketNumber: `TKT-2026-${String(301 + index).padStart(5, "0")}`,
+      summary: `Migrated ${currentStatus} Ticket`,
+      currentStatus,
+      owner: null,
+      requesterResolutionIndicatedAt: null,
+    }));
+    installFetch({ queue: async () => jsonResponse({
+      items,
+      counts: { matching: 8, unassigned: 8, mine: 0 },
+      pagination: {
+        page: 1, pageSize: 10, totalItems: 8, totalPages: 1,
+        hasPreviousPage: false, hasNextPage: false,
+      },
+    }) });
+    renderAt("/staff/tickets");
+    const table = await screen.findByRole("table", { name: "Ticket Queue" });
+    for (const label of [
+      "New", "Open", "In Progress", "Waiting for Requester",
+      "Reopened", "Resolved", "Closed", "Cancelled",
+    ]) {
+      expect(within(table).getByText(label)).toBeInTheDocument();
+    }
+    expect(within(table).getAllByText("Unassigned")).toHaveLength(8);
+    expect(within(table).getAllByRole("link", { name: "Open Ticket" })).toHaveLength(8);
+  });
+
   it("applies sort, direction, and page size immediately with page reset and accessible pagination", async () => {
     const responses = (url: URL) => Promise.resolve(jsonResponse({
       ...populated,

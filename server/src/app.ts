@@ -26,7 +26,11 @@ import {
 } from "./comments/comment-service.js";
 import { getPrisma } from "./prisma.js";
 import { indicateRequesterResolution } from "./tickets/resolution-indication-service.js";
-import { parseTicketListQuery } from "./tickets/ticket-query.js";
+import { parseStaffQueueQuery, parseTicketListQuery } from "./tickets/ticket-query.js";
+import {
+  listEligibleAssignees,
+  listStaffQueue,
+} from "./tickets/staff-queue-service.js";
 import {
   createTicketForRequester,
   getTicketDetailForRequester,
@@ -204,6 +208,35 @@ app.get("/api/related-systems", async (_req, res) => {
     res.status(200).json(systems);
   } catch (error) {
     sendDatabaseError(res, error, "fetching related systems");
+  }
+});
+
+app.get("/api/staff/tickets", async (req, res) => {
+  const live = await authenticated(req, res, ["IT_STAFF", "ADMINISTRATOR"]);
+  if (!live) return;
+  const validation = parseStaffQueueQuery(req.query as Record<string, unknown>);
+  if (!validation.success) {
+    res.status(400).json(errorBody(
+      "INVALID_QUERY",
+      "One or more query parameters are invalid.",
+      validation.fields,
+    ));
+    return;
+  }
+  try {
+    res.status(200).json(await listStaffQueue(live.user.id, validation.data));
+  } catch (error) {
+    sendDatabaseError(res, error, "listing the Staff Ticket Queue");
+  }
+});
+
+app.get("/api/staff/assignees", async (req, res) => {
+  const live = await authenticated(req, res, ["IT_STAFF", "ADMINISTRATOR"]);
+  if (!live) return;
+  try {
+    res.status(200).json({ items: await listEligibleAssignees() });
+  } catch (error) {
+    sendDatabaseError(res, error, "listing eligible assignees");
   }
 });
 

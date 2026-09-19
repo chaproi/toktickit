@@ -11,6 +11,7 @@ import {
   type AuthenticatedFixture,
 } from "./issue29-test-helpers.js";
 import { syntheticPassword } from "./auth-test-helpers.js";
+import { listEligibleAssignees } from "../../src/tickets/staff-queue-service.js";
 
 const marker = `issue31-${randomUUID().slice(0, 8)}`;
 const statusOrder: TicketStatus[] = [
@@ -299,12 +300,11 @@ describe("API-09 Staff Ticket Queue and OP-21 assignees", () => {
     expect(items).toEqual([...items].sort((left, right) =>
       String(left.name).localeCompare(String(right.name)) || Number(left.id) - Number(right.id)));
 
-    const prisma = getPrisma();
-    const findMany = vi.spyOn(prisma.user, "findMany").mockResolvedValueOnce([] as never);
-    const empty = await authenticatedGet("/api/staff/assignees", staff);
-    findMany.mockRestore();
-    expect(empty.status).toBe(200);
-    expect(empty.body).toEqual({ items: [] });
+    const findMany = vi.fn().mockResolvedValue([]);
+    expect(await listEligibleAssignees({ user: { findMany } } as never)).toEqual([]);
+    expect(findMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: { isActive: true, role: { in: ["IT_STAFF", "ADMINISTRATOR"] } },
+    }));
 
     const requesterDenied = await authenticatedGet("/api/staff/assignees", requesterA);
     expect(requesterDenied.status).toBe(403);
