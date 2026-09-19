@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { authResponse, jsonResponse, renderAt, requesterUser, requestUrl } from "./test-helpers.js";
@@ -54,7 +54,7 @@ describe("Issue 29 resolution indication UI", () => {
     expect(screen.queryByText("Resolved", { exact: true })).not.toBeInTheDocument();
   });
 
-  it("closes the dialog and explains a concurrent eligibility conflict safely", async () => {
+  it("reloads authoritative Ticket state after a concurrent eligibility conflict", async () => {
     document.cookie = "toktickit_csrf=resolution-csrf; path=/";
     const detail = {
       id: 89,
@@ -73,10 +73,19 @@ describe("Issue 29 resolution indication UI", () => {
       createdAt: "2026-09-18T08:00:00.000Z",
       updatedAt: "2026-09-18T08:00:00.000Z",
     };
+    let detailRequests = 0;
     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
       const url = requestUrl(input);
       if (url.pathname === "/api/auth/me") return jsonResponse(authResponse(requesterUser));
-      if (url.pathname === "/api/tickets/89") return jsonResponse(detail);
+      if (url.pathname === "/api/tickets/89") {
+        detailRequests += 1;
+        return jsonResponse(detailRequests === 1 ? detail : {
+          ...detail,
+          currentStatus: "RESOLVED",
+          owner: { id: 301, name: "Authoritative Owner", role: "IT_STAFF" },
+          updatedAt: "2026-09-18T11:00:00.000Z",
+        });
+      }
       if (url.pathname === "/api/tickets/89/attachments") return jsonResponse({ items: [] });
       if (url.pathname === "/api/tickets/89/comments") return jsonResponse({ items: [], pagination: {
         page: 1, pageSize: 20, totalItems: 0, totalPages: 0,
@@ -94,10 +103,129 @@ describe("Issue 29 resolution indication UI", () => {
     const user = userEvent.setup();
     await user.click(await screen.findByRole("button", { name: "Problem Appears Resolved" }));
     await user.click(screen.getByRole("button", { name: "Yes, it appears resolved" }));
-    expect(await screen.findByText("The Ticket changed and this action is no longer available. Reload the latest detail.")).toBeInTheDocument();
+    expect(await screen.findByText("The Ticket changed and this action is no longer available.")).toBeInTheDocument();
     expect(screen.queryByText("Sensitive state detail")).not.toBeInTheDocument();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    expect(screen.getByText("Waiting For Requester")).toBeInTheDocument();
+    expect(screen.getByText("Resolved")).toBeInTheDocument();
+    expect(screen.getByText("Authoritative Owner")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Problem Appears Resolved" })).not.toBeInTheDocument();
+    expect(screen.queryByText(/Waiting for the support team to formally resolve/u)).not.toBeInTheDocument();
+    expect(detailRequests).toBe(2);
+  });
+
+  it("shows the approved safe failure when conflict-state reload fails", async () => {
+    document.cookie = "toktickit_csrf=resolution-csrf; path=/";
+    let detailRequests = 0;
+    const detail = {
+      id: 93,
+      ticketNumber: "TKT-2026-00093",
+      ticketDate: "2026-09-18T08:00:00.000Z",
+      requester: { id: requesterUser.id, name: requesterUser.name },
+      category: { id: 1, name: "Hardware" },
+      relatedSystem: { id: 2, name: "Laptop" },
+      requestedPriority: "MEDIUM",
+      itPriority: "MEDIUM",
+      currentStatus: "OPEN",
+      owner: null,
+      summary: "Reload failure",
+      description: "Authoritative reload becomes unavailable.",
+      requesterResolutionIndicatedAt: null,
+      createdAt: "2026-09-18T08:00:00.000Z",
+      updatedAt: "2026-09-18T08:00:00.000Z",
+    };
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const url = requestUrl(input);
+      if (url.pathname === "/api/auth/me") return jsonResponse(authResponse(requesterUser));
+      if (url.pathname === "/api/tickets/93") {
+        detailRequests += 1;
+        return detailRequests === 1
+          ? jsonResponse(detail)
+          : jsonResponse({ error: { code: "SERVICE_UNAVAILABLE", message: "Sensitive detail" } }, 503);
+      }
+      if (url.pathname === "/api/tickets/93/attachments") return jsonResponse({ items: [] });
+      if (url.pathname === "/api/tickets/93/comments") return jsonResponse({ items: [], pagination: {
+        page: 1, pageSize: 20, totalItems: 0, totalPages: 0,
+        hasPreviousPage: false, hasNextPage: false,
+      } });
+      if (url.pathname === "/api/tickets/93/resolution-indication") return jsonResponse({
+        error: { code: "RESOLUTION_INDICATION_NOT_ALLOWED", message: "Sensitive state detail" },
+      }, 409);
+      throw new Error(`Unexpected request: ${url.pathname}`);
+    }));
+    renderAt("/tickets/93");
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole("button", { name: "Problem Appears Resolved" }));
+    await user.click(screen.getByRole("button", { name: "Yes, it appears resolved" }));
+    expect(await screen.findByText("Something went wrong. Please try again.")).toBeInTheDocument();
+    expect(screen.queryByText("Sensitive detail")).not.toBeInTheDocument();
+    expect(screen.queryByText("Sensitive state detail")).not.toBeInTheDocument();
+    expect(screen.queryByText("Problem appears resolved as of", { exact: false })).not.toBeInTheDocument();
+  });
+
+  it("traps focus, handles Escape safely, and restores focus to the trigger", async () => {
+    document.cookie = "toktickit_csrf=resolution-csrf; path=/";
+    let resolveIndication!: (response: Response) => void;
+    const pendingIndication = new Promise<Response>((resolve) => { resolveIndication = resolve; });
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const url = requestUrl(input);
+      if (url.pathname === "/api/auth/me") return jsonResponse(authResponse(requesterUser));
+      if (url.pathname === "/api/tickets/94") return jsonResponse({
+        id: 94,
+        ticketNumber: "TKT-2026-00094",
+        ticketDate: "2026-09-18T08:00:00.000Z",
+        requester: { id: requesterUser.id, name: requesterUser.name },
+        category: { id: 1, name: "Hardware" },
+        relatedSystem: { id: 2, name: "Laptop" },
+        requestedPriority: "MEDIUM",
+        itPriority: "MEDIUM",
+        currentStatus: "OPEN",
+        owner: null,
+        summary: "Accessible confirmation",
+        description: "Keyboard focus remains inside the modal.",
+        requesterResolutionIndicatedAt: null,
+        createdAt: "2026-09-18T08:00:00.000Z",
+        updatedAt: "2026-09-18T08:00:00.000Z",
+      });
+      if (url.pathname === "/api/tickets/94/attachments") return jsonResponse({ items: [] });
+      if (url.pathname === "/api/tickets/94/comments") return jsonResponse({ items: [], pagination: {
+        page: 1, pageSize: 20, totalItems: 0, totalPages: 0,
+        hasPreviousPage: false, hasNextPage: false,
+      } });
+      if (url.pathname === "/api/tickets/94/resolution-indication") return pendingIndication;
+      throw new Error(`Unexpected request: ${url.pathname}`);
+    }));
+    renderAt("/tickets/94");
+    const user = userEvent.setup();
+    const trigger = await screen.findByRole("button", { name: "Problem Appears Resolved" });
+    await user.click(trigger);
+    const dialog = screen.getByRole("dialog", { name: "Does the problem appear resolved?" });
+    expect(dialog).toHaveAccessibleDescription(
+      "This tells the support team the problem appears resolved. It does not formally resolve or close the Ticket.",
+    );
+    const cancel = within(dialog).getByRole("button", { name: "Cancel" });
+    const confirm = within(dialog).getByRole("button", { name: "Yes, it appears resolved" });
+    await waitFor(() => expect(cancel).toHaveFocus());
+    await user.tab({ shift: true });
+    expect(confirm).toHaveFocus();
+    await user.tab();
+    expect(cancel).toHaveFocus();
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
+
+    await user.click(trigger);
+    const reopened = screen.getByRole("dialog", { name: "Does the problem appear resolved?" });
+    await user.click(within(reopened).getByRole("button", { name: "Yes, it appears resolved" }));
+    expect(within(reopened).getByRole("button", { name: "Saving…" })).toBeDisabled();
+    fireEvent.keyDown(reopened, { key: "Escape" });
+    expect(screen.getByRole("dialog", { name: "Does the problem appear resolved?" })).toBeInTheDocument();
+    resolveIndication(jsonResponse({
+      ticketId: 94,
+      currentStatus: "OPEN",
+      requesterResolutionIndicatedAt: "2026-09-18T11:00:00.000Z",
+    }));
+    expect(await screen.findByText(/Waiting for the support team to formally resolve/u)).toBeInTheDocument();
+    expect(trigger).toHaveFocus();
   });
 
   it.each([

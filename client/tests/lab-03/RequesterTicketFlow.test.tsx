@@ -332,6 +332,82 @@ describe("Issue 29 Requester UI regression", () => {
     expect(screen.queryByText("Resolved", { exact: true })).not.toBeInTheDocument();
   });
 
+  it("shows a newly posted Comment on its authoritative final page without clearing failed drafts", async () => {
+    document.cookie = "toktickit_csrf=requester-flow-csrf; path=/";
+    const detail = {
+      id: 95,
+      ticketNumber: "TKT-2026-00095",
+      ticketDate: "2026-09-18T08:00:00.000Z",
+      requester: { id: requesterUser.id, name: requesterUser.name },
+      category: { id: 1, name: "Hardware" },
+      relatedSystem: { id: 2, name: "Laptop" },
+      requestedPriority: "HIGH",
+      itPriority: "HIGH",
+      currentStatus: "OPEN",
+      owner: null,
+      summary: "Paginated Comments",
+      description: "New server Comments must remain visible beyond page one.",
+      requesterResolutionIndicatedAt: null,
+      createdAt: "2026-09-18T08:00:00.000Z",
+      updatedAt: "2026-09-18T08:00:00.000Z",
+    };
+    const firstPage = Array.from({ length: 20 }, (_, index) => ({
+      id: index + 1,
+      ticketId: 95,
+      author: { id: requesterUser.id, name: `Author ${index + 1}`, role: "REQUESTER" },
+      content: `Older comment ${index + 1}`,
+      createdAt: `2026-09-18T${String(index).padStart(2, "0")}:00:00.000Z`,
+    }));
+    const created = {
+      id: 21,
+      ticketId: 95,
+      author: { id: 501, name: "Server Author", role: "REQUESTER" },
+      content: "Newest server comment",
+      createdAt: "2026-09-19T05:06:07.000Z",
+    };
+    let postCount = 0;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = requestUrl(input);
+      if (url.pathname === "/api/auth/me") return jsonResponse(authResponse(requesterUser));
+      if (url.pathname === "/api/tickets/95") return jsonResponse(detail);
+      if (url.pathname === "/api/tickets/95/attachments") return jsonResponse({ items: [] });
+      if (url.pathname === "/api/tickets/95/comments" && init?.method === "POST") {
+        postCount += 1;
+        if (postCount === 1) return jsonResponse(created, 201);
+        return jsonResponse({ error: { code: "SERVICE_UNAVAILABLE", message: "Something went wrong. Please try again." } }, 503);
+      }
+      if (url.pathname === "/api/tickets/95/comments") {
+        const page = Number(url.searchParams.get("page"));
+        return jsonResponse(page === 2 ? {
+          items: [created],
+          pagination: { page: 2, pageSize: 20, totalItems: 21, totalPages: 2, hasPreviousPage: true, hasNextPage: false },
+        } : {
+          items: firstPage,
+          pagination: { page: 1, pageSize: 20, totalItems: 20, totalPages: 1, hasPreviousPage: false, hasNextPage: false },
+        });
+      }
+      throw new Error(`Unexpected request: ${url.pathname}`);
+    }));
+    renderAt("/tickets/95");
+    const user = userEvent.setup();
+    await screen.findByText("Older comment 20");
+    const composer = screen.getByLabelText("Add a public comment") as HTMLTextAreaElement;
+    await user.type(composer, "Newest server comment");
+    await user.click(screen.getByRole("button", { name: "Post comment" }));
+    expect(await screen.findByText("Newest server comment")).toBeInTheDocument();
+    expect(screen.getByText("Server Author")).toBeInTheDocument();
+    expect(screen.getByText("Page 2 of 2 · 21 comments")).toBeInTheDocument();
+    expect(screen.getAllByText("Newest server comment")).toHaveLength(1);
+    expect(composer).toHaveValue("");
+    expect(screen.getByRole("button", { name: "Previous comments" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Next comments" })).toBeDisabled();
+
+    await user.type(composer, "Keep this draft after failure");
+    await user.click(screen.getByRole("button", { name: "Post comment" }));
+    expect(await screen.findByText("Something went wrong. Please try again.")).toBeInTheDocument();
+    expect(composer).toHaveValue("Keep this draft after failure");
+  });
+
   it("shows deterministic loading, empty, no-results, validation, and dependency-failure states", async () => {
     let resolveInitialTickets: ((response: Response) => void) | undefined;
     let ticketRequests = 0;
