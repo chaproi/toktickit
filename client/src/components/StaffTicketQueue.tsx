@@ -94,6 +94,7 @@ function QueueTable({ items }: { items: StaffQueueItem[] }) {
   return (
     <div className="staff-queue-table-wrap" role="region" aria-label="Scrollable Ticket Queue table" tabIndex={0}>
       <table className="table align-middle staff-queue-table" aria-label="Ticket Queue">
+        <caption className="visually-hidden">Ticket Queue results</caption>
         <thead><tr>
           <th scope="col">Ticket</th><th scope="col">Summary</th><th scope="col">Requester</th>
           <th scope="col">Priorities</th><th scope="col">Status</th><th scope="col">Owner</th>
@@ -127,9 +128,9 @@ function QueueCards({ items }: { items: StaffQueueItem[] }) {
               <div><dt>Summary</dt><dd>{words.map((word, index) => <span key={`${word}-${index}`}>{word}{index < words.length - 1 ? " " : ""}</span>)}</dd></div>
               <div><dt>Category / Related System</dt><dd>{ticket.category.name} / {ticket.relatedSystem.name}</dd></div>
               <div><dt>Requester</dt><dd>{ticket.requester.name}<span className="visually-hidden"> {ticket.requester.email}</span></dd></div>
-              <div><dt>Requested Priority</dt><dd>{enumLabel(ticket.requestedPriority)}</dd></div>
-              <div><dt>IT Priority</dt><dd>{enumLabel(ticket.itPriority)}</dd></div>
-              <div><dt>Status</dt><dd>{enumLabel(ticket.currentStatus)}{ticket.requesterResolutionIndicatedAt && <small>Requester reports problem appears resolved</small>}</dd></div>
+              <div><dt>Requested Priority</dt><dd><span className={`badge ${badgeClass(ticket.requestedPriority)}`}>Requested {enumLabel(ticket.requestedPriority)}</span></dd></div>
+              <div><dt>IT Priority</dt><dd><span className={`badge ${badgeClass(ticket.itPriority)}`}>IT {enumLabel(ticket.itPriority)}</span></dd></div>
+              <div><dt>Status</dt><dd><span className={`badge ${badgeClass(ticket.currentStatus)}`}>{enumLabel(ticket.currentStatus)}</span>{ticket.requesterResolutionIndicatedAt && <small>Requester reports problem appears resolved</small>}</dd></div>
               <div><dt>Owner</dt><dd>{ownerLabel(ticket)}</dd></div>
               <div><dt>Updated</dt><dd>{formatDate(ticket.updatedAt)}</dd></div>
             </dl>

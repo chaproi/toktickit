@@ -129,8 +129,9 @@ describe("UI-05 IT Staff Ticket Queue", () => {
     expect(mobile.getByText("Status")).toBeInTheDocument();
     expect(mobile.getByText("Waiting for Requester")).toHaveClass("badge", "text-bg-warning");
     expect(mobile.getByText("Requester reports problem appears resolved")).toBeInTheDocument();
+    expect(mobile.getByText("Summary").parentElement).toHaveTextContent(ticket.summary);
     for (const text of [
-      "Summary", ticket.summary, "Category / Related System", "Network / VPN",
+      "Summary", "Category / Related System", "Network / VPN",
       "Requester", "Rina Requester", "Owner", "Unassigned", "Updated",
     ]) expect(mobile.getByText(text)).toBeInTheDocument();
   });

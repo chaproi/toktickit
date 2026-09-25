@@ -111,6 +111,13 @@ export type StaffQueueQueryResult =
   | { success: true; data: StaffQueueQuery }
   | { success: false; fields: Record<string, string> };
 
+export function escapePostgresLikePattern(value: string): string {
+  return value
+    .replace(/\\/gu, "\\\\")
+    .replace(/%/gu, "\\%")
+    .replace(/_/gu, "\\_");
+}
+
 function isSingleString(value: unknown): value is string {
   return typeof value === "string";
 }

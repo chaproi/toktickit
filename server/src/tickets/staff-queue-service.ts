@@ -2,6 +2,7 @@ import { Prisma, type PrismaClient } from "@prisma/client";
 import { getPrisma } from "../prisma.js";
 import {
   compareStaffQueueTickets,
+  escapePostgresLikePattern,
   type StaffQueueQuery,
 } from "./ticket-query.js";
 
@@ -26,6 +27,7 @@ export type StaffQueueItem = Prisma.TicketGetPayload<{
 }>;
 
 function baseWhere(query: StaffQueueQuery): Prisma.TicketWhereInput {
+  const literalSearch = escapePostgresLikePattern(query.search);
   return {
     ...(query.categoryId === null ? {} : { categoryId: query.categoryId }),
     ...(query.relatedSystemId === null ? {} : { relatedSystemId: query.relatedSystemId }),
@@ -34,10 +36,10 @@ function baseWhere(query: StaffQueueQuery): Prisma.TicketWhereInput {
     ...(query.currentStatus === null ? {} : { currentStatus: query.currentStatus }),
     ...(query.search === "" ? {} : {
       OR: [
-        { ticketNumber: { contains: query.search, mode: "insensitive" as const } },
-        { summary: { contains: query.search, mode: "insensitive" as const } },
-        { requester: { name: { contains: query.search, mode: "insensitive" as const } } },
-        { requester: { email: { contains: query.search, mode: "insensitive" as const } } },
+        { ticketNumber: { contains: literalSearch, mode: "insensitive" as const } },
+        { summary: { contains: literalSearch, mode: "insensitive" as const } },
+        { requester: { name: { contains: literalSearch, mode: "insensitive" as const } } },
+        { requester: { email: { contains: literalSearch, mode: "insensitive" as const } } },
       ],
     }),
   };
