@@ -146,3 +146,22 @@ This is implementation and locally executed verification evidence, not peer revi
 The role destinations for IT Staff and Administrator are compatibility placeholders only. Issue #29 does not claim the later Staff workflow, Administrator workflow, final Requester-role conversion, or REOPENED-clearing implementation. The correction restores retained Lab 1 behavior without reviving any Development Requester mechanism.
 
 The requested-changes verification used only the validated `toktickit_test` target for mutation. Read-only development evidence before and after remained exactly 92 Attachments, 4 Categories, 5 DevelopmentRequesters, 7 RelatedSystems, 182 Tickets, 1 TicketNumberSequence row, and 3 migration-history rows, with every previously recorded SHA-256 row-set checksum unchanged. Playwright-regenerated tracked Lab 2 screenshots were restored; build/test output was removed; no disposable Issue #27/Issue #29/Lab 3/E2E schema, verification listener, or repository Node process remained. This is execution evidence; the pushed state recorded above does not imply reviewer acceptance.
+
+## 10. Issue #31 IT Staff Queue Handoff
+
+This is local implementation and verification evidence, not peer review, approval, push, merge, Issue closure, or a GitHub Project transition.
+
+| Item | Current evidence |
+| --- | --- |
+| Issue / branch | #31 / feat/31-it-staff-queue |
+| Starting commit | f8eb6029f74134ca245e896464f09af001e9e8c8 |
+| RED commit | d95abc1 (`test(lab3): define IT Staff queue`) |
+| GREEN commit | 5e77396 (`feat(lab3): implement IT Staff queue`) |
+| Implemented scope | Secure Staff/Administrator shared Queue; approved four-field search; Category, Related System, Requested Priority, IT Priority, status, and owner filters; business sorting; pagination; matching/unassigned/mine counts; exact safe Queue DTO; read-only active Staff/Admin assignee summaries; responsive table/cards and documented Queue states |
+| Excluded scope preserved | No operational Ticket Detail, claim/assignment, IT Priority mutation, status transition, Internal Note workflow, Staff Attachment mutation, Administrator workflow, REOPENED clearing, E2E-03 workflow, or final responsive screenshot evidence was implemented |
+| Focused verification | `UNIT-04`: 1 file / 18 tests; `API-09`: 1 file / 21 tests against validated `toktickit_test/public`; `UI-05`: 1 file / 10 tests. All passed. |
+| Complete verification | Plain server `npm test`: 35 files / 264 tests; plain client `npm test`: 13 files / 111 tests; retained Lab 2 Playwright: 6 scenarios; server and client production builds: passed; compiled health smoke: passed, terminated, port 3199 closed |
+| Development database | Read-only before/after evidence remained Lab 2 with 5 Development Requesters, 182 Tickets, 92 Attachments, 4 Categories, and 7 Related Systems; 182 NEW status total and all three SHA-256 row-set checksums matched exactly |
+| Cleanup and secrets | Regenerated tracked Lab 2 screenshots were restored; generated build/test output and the temporary read-only snapshot helper were removed; `server/.env` remained ignored and outside commits; no private value was printed or recorded |
+| Test-contract status | `UNIT-04`, `API-09`, and `UI-05` are `Pass (Issue #31)`. Totals are 75 = 16 Issue #27 Pass + 13 Issue #29 Pass + 3 Issue #31 Pass + 43 Planned. `API-10`, `SEC-01`, `SEC-02`, and `E2E-03` remain Planned. |
+| External state | Nothing was pushed; no PR was created; no review, approval, merge, Issue #31 closure, review-thread resolution, or GitHub Project transition is claimed |
