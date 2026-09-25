@@ -100,7 +100,8 @@ describe("UI-05 IT Staff Ticket Queue", () => {
     expect(within(screen.getByLabelText("Owner")).getByRole("option", { name: /Queue Staff.*IT Staff/i })).toBeInTheDocument();
 
     const table = screen.getByRole("table", { name: "Ticket Queue" });
-    expect(within(table).getByText(ticket.ticketNumber)).toBeInTheDocument();
+    expect(within(table).getByRole("link", { name: ticket.ticketNumber }))
+      .toHaveAttribute("href", "/staff/tickets/301");
     expect(within(table).getByText(ticket.summary)).toBeInTheDocument();
     expect(within(table).getByText("Network / VPN")).toBeInTheDocument();
     expect(within(table).getByText("Rina Requester")).toBeInTheDocument();
@@ -114,8 +115,34 @@ describe("UI-05 IT Staff Ticket Queue", () => {
 
     const cards = container.querySelector(".staff-queue-cards");
     expect(cards).not.toBeNull();
-    expect(within(cards as HTMLElement).getByText(ticket.ticketNumber)).toBeInTheDocument();
+    expect(within(cards as HTMLElement).getByRole("link", { name: ticket.ticketNumber }))
+      .toHaveAttribute("href", "/staff/tickets/301");
+    expect(within(cards as HTMLElement).getByRole("link", { name: "Open Ticket" }))
+      .toHaveAttribute("href", "/staff/tickets/301");
     expect(within(cards as HTMLElement).getByText("Owner")).toBeInTheDocument();
+  });
+
+  it("renders a terminal historical Requester owner accurately without adding them to assignees", async () => {
+    const historicalOwner = { id: 83, name: "Historical Owner", role: "REQUESTER" };
+    installFetch({ queue: async () => jsonResponse({
+      ...populated,
+      items: [{
+        ...ticket,
+        id: 302,
+        ticketNumber: "TKT-2026-00302",
+        currentStatus: "CLOSED",
+        owner: historicalOwner,
+      }],
+      counts: { matching: 1, unassigned: 0, mine: 0 },
+    }) });
+    const { container } = renderAt("/staff/tickets");
+    const table = await screen.findByRole("table", { name: "Ticket Queue" });
+    expect(within(table).getByText("Historical Owner (Requester)")).toBeInTheDocument();
+    expect(within(table).queryByText("Historical Owner (Administrator)")).not.toBeInTheDocument();
+    expect(within(container.querySelector(".staff-queue-cards") as HTMLElement)
+      .getByText("Historical Owner (Requester)")).toBeInTheDocument();
+    expect(within(screen.getByLabelText("Owner")).queryByRole("option", { name: /Historical Owner/u }))
+      .not.toBeInTheDocument();
   });
 
   it("keeps search and filters draft until Apply, then clears them and resets page one", async () => {
@@ -216,7 +243,16 @@ describe("UI-05 IT Staff Ticket Queue", () => {
     const deferred = new Promise<Response>((resolve) => { release = resolve; });
     installFetch({ queue: async () => deferred });
     renderAt("/staff/tickets");
-    expect(await screen.findByText("Loading Ticket Queue…")).toHaveAttribute("role", "status");
+    const region = await screen.findByRole("region", { name: "Ticket Queue" });
+    expect(within(region).getByRole("heading", { name: "Ticket Queue" })).toBeInTheDocument();
+    expect(within(region).getByText("Loading Ticket Queue…")).toHaveAttribute("role", "status");
+    expect(within(region).getByTestId("staff-queue-skeleton")).toHaveAttribute("aria-hidden", "true");
+    expect(within(region).queryByText("No Tickets are available in the Queue.")).not.toBeInTheDocument();
+    expect(within(region).queryByText("No Tickets match the current Queue filters.")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Apply Filters" })).toBeDisabled();
+    expect(screen.getByLabelText("Sort Field")).toBeDisabled();
+    expect(screen.getByLabelText("Sort Direction")).toBeDisabled();
+    expect(screen.getByLabelText("Page Size")).toBeDisabled();
     release!(jsonResponse({
       items: [], counts: { matching: 0, unassigned: 0, mine: 0 },
       pagination: { page: 1, pageSize: 10, totalItems: 0, totalPages: 0, hasPreviousPage: false, hasNextPage: false },

@@ -92,6 +92,26 @@ beforeAll(async () => {
     });
     ticketIds.push(ticket.id);
   }
+
+  const historicalOwnerTicket = await prisma.ticket.create({
+    data: {
+      ticketNumber: `Q31-HIST-${marker.slice(-8)}`,
+      ticketDate: new Date(Date.UTC(2026, 0, 20)),
+      clientSubmissionId: randomUUID(),
+      requesterId: requesterB.user.id,
+      categoryId: categoryIds[0]!,
+      relatedSystemId: systemIds[0]!,
+      requestedPriority: "LOW",
+      itPriority: "MEDIUM",
+      currentStatus: "CLOSED",
+      ownerId: requesterA.user.id,
+      summary: `${marker} Historical Requester owner`,
+      description: "Synthetic terminal historical-owner Queue fixture.",
+      createdAt: new Date(Date.UTC(2026, 1, 20)),
+      updatedAt: new Date(Date.UTC(2026, 2, 20)),
+    },
+  });
+  ticketIds.push(historicalOwnerTicket.id);
 });
 
 afterAll(async () => {
@@ -121,7 +141,7 @@ describe("API-09 Staff Ticket Queue and OP-21 assignees", () => {
     for (const actor of [staff, administrator]) {
       const response = await authenticatedGet(`/api/staff/tickets?search=${marker}&pageSize=50`, actor);
       expect(response.status).toBe(200);
-      expect(response.body.items).toHaveLength(12);
+      expect(response.body.items).toHaveLength(13);
     }
   });
 
@@ -131,12 +151,12 @@ describe("API-09 Staff Ticket Queue and OP-21 assignees", () => {
     expect(response.body.pagination).toEqual({
       page: 1,
       pageSize: 10,
-      totalItems: 12,
+      totalItems: 13,
       totalPages: 2,
       hasPreviousPage: false,
       hasNextPage: true,
     });
-    expect(response.body.counts).toEqual({ matching: 12, unassigned: 4, mine: 4 });
+    expect(response.body.counts).toEqual({ matching: 13, unassigned: 4, mine: 4 });
     expect(response.body.items).toHaveLength(10);
     const ids = response.body.items.map((item: { id: number }) => item.id);
     const expected = [...ticketIds].sort((a, b) => b - a).slice(0, 10);
@@ -153,6 +173,33 @@ describe("API-09 Staff Ticket Queue and OP-21 assignees", () => {
     if (item.owner) expect(Object.keys(item.owner).sort()).toEqual(["id", "name", "role"]);
     expect(item).not.toHaveProperty("description");
     expect(JSON.stringify(item)).not.toMatch(/password|hash|session|cookie|token|internalNote|storageKey/i);
+  });
+
+  it("preserves a terminal historical Requester owner as a safe Queue summary without making them eligible", async () => {
+    const response = await authenticatedGet(
+      `/api/staff/tickets?search=${encodeURIComponent("Historical Requester owner")}&pageSize=50`,
+      staff,
+    );
+    expect(response.status).toBe(200);
+    expect(response.body.items).toHaveLength(1);
+    expect(response.body.items[0]).toMatchObject({
+      currentStatus: "CLOSED",
+      owner: {
+        id: requesterA.user.id,
+        name: requesterA.user.name,
+        role: "REQUESTER",
+      },
+    });
+    expect(Object.keys(response.body.items[0].owner).sort()).toEqual(["id", "name", "role"]);
+    expect(JSON.stringify(response.body.items[0].owner)).not.toMatch(
+      /email|password|hash|session|cookie|token|mustChangePassword|isActive/i,
+    );
+
+    const assignees = await authenticatedGet("/api/staff/assignees", staff);
+    expect(assignees.status).toBe(200);
+    expect(assignees.body.items).not.toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: requesterA.user.id }),
+    ]));
   });
 
   it("searches Ticket Number, Summary, Requester name, and Requester email case-insensitively", async () => {
@@ -244,9 +291,9 @@ describe("API-09 Staff Ticket Queue and OP-21 assignees", () => {
       `/api/staff/tickets?search=${marker}&page=2&pageSize=10`, staff,
     );
     expect(secondPage.status).toBe(200);
-    expect(secondPage.body.items).toHaveLength(2);
+    expect(secondPage.body.items).toHaveLength(3);
     expect(secondPage.body.pagination).toEqual({
-      page: 2, pageSize: 10, totalItems: 12, totalPages: 2,
+      page: 2, pageSize: 10, totalItems: 13, totalPages: 2,
       hasPreviousPage: true, hasNextPage: false,
     });
 
@@ -255,7 +302,7 @@ describe("API-09 Staff Ticket Queue and OP-21 assignees", () => {
     );
     expect(beyond.status).toBe(200);
     expect(beyond.body.items).toEqual([]);
-    expect(beyond.body.pagination).toMatchObject({ page: 9, totalItems: 12, totalPages: 2 });
+    expect(beyond.body.pagination).toMatchObject({ page: 9, totalItems: 13, totalPages: 2 });
 
     const unmatched = await authenticatedGet(
       `/api/staff/tickets?categoryId=2147483647`, staff,
@@ -310,6 +357,31 @@ describe("API-09 Staff Ticket Queue and OP-21 assignees", () => {
     expect(requesterDenied.status).toBe(403);
     expect(JSON.stringify(requesterDenied.body)).not.toContain(staff.user.email);
     expect((await request(app).get("/api/staff/assignees")).status).toBe(401);
+  });
+
+  it.each([
+    ["unknown parameter", "unknown=value"],
+    ["repeated parameter", "unknown=first&unknown=second"],
+  ])("rejects an OP-21 %s without disclosing assignee or User data", async (_case, query) => {
+    const response = await authenticatedGet(`/api/staff/assignees?${query}`, staff);
+    expect(response.status).toBe(400);
+    expect(response.body.error).toMatchObject({
+      code: "INVALID_QUERY",
+      message: "One or more query parameters are invalid.",
+    });
+    expect(response.body).not.toHaveProperty("items");
+    const serialized = JSON.stringify(response.body);
+    for (const protectedValue of [
+      staff.user.name,
+      staff.user.email,
+      administrator.user.name,
+      administrator.user.email,
+      requesterA.user.name,
+      requesterA.user.email,
+    ]) {
+      expect(serialized).not.toContain(protectedValue);
+    }
+    expect(serialized).not.toMatch(/password|hash|session|cookie|token/i);
   });
 
   it("performs no Ticket mutation while loading, searching, filtering, sorting, or paging", async () => {
