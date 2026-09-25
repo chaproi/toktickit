@@ -141,7 +141,7 @@ This is implementation and locally executed verification evidence, not peer revi
 | Database isolation and cleanup | Database tests used only validated `toktickit_test`; disposable Issue #29 schemas were removed, relevant test/smoke ports had no listeners, tracked generated screenshots were restored, and no temporary build or migration artifact was committed |
 | Secrets and local configuration | `server/.env` remained ignored and outside every Issue #29 and corrective commit; committed-diff scans found no private credentials, password hashes, cookies, tokens, database URLs introduced by Issue #29, HMAC secrets, or private keys |
 | Test-contract status | 13 assigned Test IDs are recorded as `Pass (Issue #29)`. API-16 is returned to `Planned` because its full contract includes later REOPENED clearing; SEC-01 and every later-increment obligation also remain `Planned`. The matrix totals are 75 = 16 Issue #27 Pass + 13 Issue #29 Pass + 46 Planned. |
-| External state | RED `e5ebe38`, GREEN `e98d52c`, and documentation commit `dc8f397` were pushed and are present in PR #30. Tanaboonnnnn re-reviewed exact HEAD `dc8f397`, confirmed all three client implementation blockers were fixed, and reported 0 Standards blockers and 1 Specification blocker: this stale governance evidence. PR #30 remains open with Requested Changes and is not approved or merged; Issue #29 remains open; no GitHub Project Done transition has occurred. The review outcome for the exact HEAD created by this documentation-only correction remains pending, with GitHub authoritative for live state. |
+| External state | RED `e5ebe38`, GREEN `e98d52c`, and documentation commit `dc8f397` were pushed in PR #30. Tanaboonnnnn re-reviewed exact HEAD `dc8f397`, confirmed all three client implementation blockers were fixed, and reported 0 Standards blockers and 1 Specification blocker for then-stale governance evidence. After that historical review event and its documentation correction, PR #30 was approved and merged into `lab3-staging` as `f8eb6029f74134ca245e896464f09af001e9e8c8`, and Issue #29 was closed as completed. |
 
 The role destinations for IT Staff and Administrator are compatibility placeholders only. Issue #29 does not claim the later Staff workflow, Administrator workflow, final Requester-role conversion, or REOPENED-clearing implementation. The correction restores retained Lab 1 behavior without reviving any Development Requester mechanism.
 
@@ -149,7 +149,7 @@ The requested-changes verification used only the validated `toktickit_test` targ
 
 ## 10. Issue #31 IT Staff Queue Handoff
 
-This is local implementation and verification evidence, not peer review, approval, push, merge, Issue closure, or a GitHub Project transition.
+This section records local execution evidence and supplied governance facts. PR #30 was approved and merged and Issue #29 was closed before Issue #31 began. The Issue #31 chain through `9c831d5` was pushed before the pre-PR correction; no Issue #31 PR existed when that correction began.
 
 | Item | Current evidence |
 | --- | --- |
@@ -157,11 +157,18 @@ This is local implementation and verification evidence, not peer review, approva
 | Starting commit | f8eb6029f74134ca245e896464f09af001e9e8c8 |
 | RED commit | d95abc1 (`test(lab3): define IT Staff queue`) |
 | GREEN commit | 5e77396 (`feat(lab3): implement IT Staff queue`) |
+| Initial evidence commit | 9c831d5 (`docs(lab3): record IT Staff queue evidence`) |
+| Corrective RED / GREEN | `e84dc71` (`test(lab3): expose IT Staff queue contract gaps`) / `0bded01` (`fix(lab3): close IT Staff queue contract gaps`) |
 | Implemented scope | Secure Staff/Administrator shared Queue; approved four-field search; Category, Related System, Requested Priority, IT Priority, status, and owner filters; business sorting; pagination; matching/unassigned/mine counts; exact safe Queue DTO; read-only active Staff/Admin assignee summaries; responsive table/cards and documented Queue states |
 | Excluded scope preserved | No operational Ticket Detail, claim/assignment, IT Priority mutation, status transition, Internal Note workflow, Staff Attachment mutation, Administrator workflow, REOPENED clearing, E2E-03 workflow, or final responsive screenshot evidence was implemented |
 | Focused verification | `UNIT-04`: 1 file / 18 tests; `API-09`: 1 file / 21 tests against validated `toktickit_test/public`; `UI-05`: 1 file / 10 tests. All passed. |
-| Complete verification | Plain server `npm test`: 35 files / 264 tests; plain client `npm test`: 13 files / 111 tests; retained Lab 2 Playwright: 6 scenarios; server and client production builds: passed; compiled health smoke: passed, terminated, port 3199 closed |
+| Initial complete verification | Plain server `npm test`: 35 files / 264 tests; plain client `npm test`: 13 files / 111 tests; retained Lab 2 Playwright: 6 scenarios; server and client production builds: passed; compiled health smoke: passed, terminated, port 3199 closed |
+| Later unfiltered Playwright follow-up | After the initial audit, the ordinary repository command discovered and passed all 8 existing scenarios in 3 specs: 6 Lab 2 plus the existing Lab 3 Authentication and authenticated Requester scenarios. This supplements rather than rewrites the earlier six-scenario event. |
+| Corrective scope | OP-21 rejects unknown/repeated query parameters; terminal historical Requester ownership remains visible and safely summarized without assignee eligibility; Ticket Numbers link to the later Detail route; the accessible Queue heading, status, inert skeleton, and disabled dependent controls persist during loading |
+| Corrective focused verification | `UNIT-04` + `API-09`: 2 files / 42 tests; `UI-05`: 1 file / 11 tests. All passed against the validated test configuration. |
+| Corrective complete verification | Plain server `npm test`: 35 files / 267 tests; plain client `npm test`: 13 files / 112 tests; ordinary unfiltered Playwright: 8 scenarios in 3 specs; both production builds and compiled health smoke: passed; smoke process terminated and port 3199 closed |
 | Development database | Read-only before/after evidence remained Lab 2 with 5 Development Requesters, 182 Tickets, 92 Attachments, 4 Categories, and 7 Related Systems; 182 NEW status total and all three SHA-256 row-set checksums matched exactly |
 | Cleanup and secrets | Regenerated tracked Lab 2 screenshots were restored; generated build/test output and the temporary read-only snapshot helper were removed; `server/.env` remained ignored and outside commits; no private value was printed or recorded |
 | Test-contract status | `UNIT-04`, `API-09`, and `UI-05` are `Pass (Issue #31)`. Totals are 75 = 16 Issue #27 Pass + 13 Issue #29 Pass + 3 Issue #31 Pass + 43 Planned. `API-10`, `SEC-01`, `SEC-02`, and `E2E-03` remain Planned. |
-| External state | Nothing was pushed; no PR was created; no review, approval, merge, Issue #31 closure, review-thread resolution, or GitHub Project transition is claimed |
+| Prior completed governance | PR #30 was approved and merged into `lab3-staging` as `f8eb6029f74134ca245e896464f09af001e9e8c8`; Issue #29 was closed as completed. |
+| Issue #31 external state | Commits through `9c831d5` were pushed before this correction. No Issue #31 PR existed when correction work began. Corrective RED `e84dc71`, GREEN `0bded01`, and the documentation commit created after this record remain local pending push/PR. No hosted CI, peer approval, review, merge, Issue #31 closure, or Project Done transition is claimed. |
