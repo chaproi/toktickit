@@ -16,6 +16,7 @@ import {
   type TicketPageSize,
   type TicketSortOrder,
   type TicketStatus,
+  type UserRole,
 } from "../api.js";
 
 type Filters = {
@@ -60,8 +61,10 @@ function enumLabel(value: string): string {
       : part[0]?.toUpperCase() + part.slice(1)).join(" ");
 }
 
-function roleLabel(role: EligibleAssignee["role"]): string {
-  return role === "IT_STAFF" ? "IT Staff" : "Administrator";
+function roleLabel(role: UserRole): string {
+  if (role === "REQUESTER") return "Requester";
+  if (role === "IT_STAFF") return "IT Staff";
+  return "Administrator";
 }
 
 function badgeClass(value: RequestedPriority | TicketStatus): string {
@@ -98,7 +101,7 @@ function QueueTable({ items }: { items: StaffQueueItem[] }) {
         </tr></thead>
         <tbody>{items.map((ticket) => (
           <tr key={ticket.id}>
-            <td><span className="ticket-number-link">{ticket.ticketNumber}</span><small>{formatDate(ticket.ticketDate)}</small></td>
+            <td><Link className="ticket-number-link" to={`/staff/tickets/${ticket.id}`}>{ticket.ticketNumber}</Link><small>{formatDate(ticket.ticketDate)}</small></td>
             <td className="staff-queue-summary"><strong>{ticket.summary}</strong><small>{ticket.category.name} / {ticket.relatedSystem.name}</small></td>
             <td>{ticket.requester.name}<span className="visually-hidden">{ticket.requester.email}</span></td>
             <td><span className={`badge ${badgeClass(ticket.requestedPriority)}`}>Requested {enumLabel(ticket.requestedPriority)}</span>{" "}<span className={`badge ${badgeClass(ticket.itPriority)}`}>IT {enumLabel(ticket.itPriority)}</span></td>
@@ -119,7 +122,7 @@ function QueueCards({ items }: { items: StaffQueueItem[] }) {
         const words = ticket.summary.split(" ");
         return (
           <article className="staff-queue-card" key={ticket.id}>
-            <div><strong>{ticket.ticketNumber}</strong><small>{formatDate(ticket.ticketDate)}</small></div>
+            <div><strong><Link className="ticket-number-link" to={`/staff/tickets/${ticket.id}`}>{ticket.ticketNumber}</Link></strong><small>{formatDate(ticket.ticketDate)}</small></div>
             <dl>
               <div><dt>Summary</dt><dd>{words.map((word, index) => <span key={`${word}-${index}`}>{word}{index < words.length - 1 ? " " : ""}</span>)}</dd></div>
               <div><dt>Category / Related System</dt><dd>{ticket.category.name} / {ticket.relatedSystem.name}</dd></div>
@@ -222,7 +225,7 @@ export default function StaffTicketQueue() {
 
   return (
     <section aria-labelledby="staff-queue-heading">
-      {loadState !== "loading" && <h1 id="staff-queue-heading" className="h2">Ticket Queue</h1>}
+      <h1 id="staff-queue-heading" className="h2">Ticket Queue</h1>
       <p className="text-secondary">Search and triage Tickets across Requesters.</p>
       <form className="card border-0 shadow-sm mb-4" onSubmit={apply}>
         <div className="card-body p-4">
@@ -236,20 +239,20 @@ export default function StaffTicketQueue() {
             <div><label className="form-label" htmlFor="queue-owner">Owner</label><select id="queue-owner" className="form-select" value={draft.owner} disabled={referenceState === "loading"} onChange={(event) => update("owner", event.target.value)}><option value="">All Owners</option><option value="unassigned">Unassigned</option><option value="me">Mine</option>{assignees.map((item) => <option key={item.id} value={item.id}>{item.name} ({roleLabel(item.role)})</option>)}</select></div>
           </div>
           {referenceState === "error" && <div className="alert alert-warning mt-3 mb-0" role="alert">Queue filters could not be loaded. <button type="button" className="btn btn-sm btn-outline-success" onClick={() => setReferenceRetry((value) => value + 1)}>Retry filters</button></div>}
-          <div className="d-flex flex-wrap gap-2 mt-3"><button type="submit" className="btn btn-success">Apply Filters</button><button type="button" className="btn btn-outline-secondary" onClick={clear}>Clear Filters</button></div>
+          <div className="d-flex flex-wrap gap-2 mt-3"><button type="submit" className="btn btn-success" disabled={loadState === "loading"}>Apply Filters</button><button type="button" className="btn btn-outline-secondary" onClick={clear}>Clear Filters</button></div>
         </div>
       </form>
 
       <div className="card border-0 shadow-sm"><div className="card-body p-4">
-        <div className="staff-queue-summary-bar" aria-live="polite">
+        {loadState !== "loading" && <div className="staff-queue-summary-bar" aria-live="polite">
           <span>{result?.counts.matching ?? 0} matching</span><span>{result?.counts.unassigned ?? 0} unassigned</span><span>{result?.counts.mine ?? 0} mine</span>
-        </div>
+        </div>}
         <div className="staff-queue-sort-grid mb-4">
-          <div><label className="form-label" htmlFor="queue-sort">Sort Field</label><select id="queue-sort" className="form-select" value={sortBy} onChange={(event) => { setSortBy(event.target.value as StaffQueueSortField); setPage(1); }}>{SORT_FIELDS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></div>
-          <div><label className="form-label" htmlFor="queue-direction">Sort Direction</label><select id="queue-direction" className="form-select" value={sortOrder} onChange={(event) => { setSortOrder(event.target.value as TicketSortOrder); setPage(1); }}><option value="asc">Ascending</option><option value="desc">Descending</option></select></div>
-          <div><label className="form-label" htmlFor="queue-page-size">Page Size</label><select id="queue-page-size" className="form-select" value={pageSize} onChange={(event) => { setPageSize(Number(event.target.value) as TicketPageSize); setPage(1); }}><option value="10">10</option><option value="25">25</option><option value="50">50</option></select></div>
+          <div><label className="form-label" htmlFor="queue-sort">Sort Field</label><select id="queue-sort" className="form-select" value={sortBy} disabled={loadState === "loading"} onChange={(event) => { setSortBy(event.target.value as StaffQueueSortField); setPage(1); }}>{SORT_FIELDS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></div>
+          <div><label className="form-label" htmlFor="queue-direction">Sort Direction</label><select id="queue-direction" className="form-select" value={sortOrder} disabled={loadState === "loading"} onChange={(event) => { setSortOrder(event.target.value as TicketSortOrder); setPage(1); }}><option value="asc">Ascending</option><option value="desc">Descending</option></select></div>
+          <div><label className="form-label" htmlFor="queue-page-size">Page Size</label><select id="queue-page-size" className="form-select" value={pageSize} disabled={loadState === "loading"} onChange={(event) => { setPageSize(Number(event.target.value) as TicketPageSize); setPage(1); }}><option value="10">10</option><option value="25">25</option><option value="50">50</option></select></div>
         </div>
-        {loadState === "loading" && <div className="my-tickets-state"><span className="spinner-border spinner-border-sm" aria-hidden="true" /><span role="status">Loading Ticket Queue…</span></div>}
+        {loadState === "loading" && <div className="my-tickets-state"><span role="status">Loading Ticket Queue…</span><div className="staff-queue-skeleton" data-testid="staff-queue-skeleton" aria-hidden="true"><span /><span /><span /></div></div>}
         {loadState === "error" && <div className="alert alert-danger mb-0" role="alert"><p>{errorMessage}</p><button type="button" className="btn btn-outline-danger" onClick={() => setRetry((value) => value + 1)}>Try Again</button></div>}
         {loadState === "success" && items.length > 0 && <><QueueTable items={items} /><QueueCards items={items} /></>}
         {empty && <div className="my-tickets-state">No Tickets are available in the Queue.</div>}

@@ -233,6 +233,18 @@ app.get("/api/staff/tickets", async (req, res) => {
 app.get("/api/staff/assignees", async (req, res) => {
   const live = await authenticated(req, res, ["IT_STAFF", "ADMINISTRATOR"]);
   if (!live) return;
+  const queryNames = Object.keys(req.query);
+  if (queryNames.length > 0) {
+    res.status(400).json(errorBody(
+      "INVALID_QUERY",
+      "One or more query parameters are invalid.",
+      Object.fromEntries(queryNames.map((name) => [
+        name,
+        "This query parameter is not supported.",
+      ])),
+    ));
+    return;
+  }
   try {
     res.status(200).json({ items: await listEligibleAssignees() });
   } catch (error) {

@@ -162,7 +162,7 @@ export type TicketSortField =
   | "ticketNumber" | "ticketDate" | "updatedAt" | "summary" | "requestedPriority";
 export type TicketSortOrder = "asc" | "desc";
 export type TicketPageSize = 10 | 25 | 50;
-export interface OwnerSummary { id: number; name: string; role: "IT_STAFF" | "ADMINISTRATOR" }
+export interface OwnerSummary { id: number; name: string; role: UserRole }
 export interface TicketListQuery {
   search?: string;
   categoryId?: number;
@@ -283,7 +283,11 @@ export interface StaffQueueResponse {
   counts: { matching: number; unassigned: number; mine: number };
   pagination: TicketListPagination;
 }
-export interface EligibleAssignee extends OwnerSummary {}
+export interface EligibleAssignee {
+  id: number;
+  name: string;
+  role: "IT_STAFF" | "ADMINISTRATOR";
+}
 
 export async function getStaffTickets(
   query: StaffQueueQuery,

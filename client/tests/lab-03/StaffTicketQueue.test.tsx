@@ -88,7 +88,7 @@ describe("UI-05 IT Staff Ticket Queue", () => {
     installFetch({ user });
     const { container } = renderAt(path);
     expect(await screen.findByRole("heading", { name: "Ticket Queue" })).toBeInTheDocument();
-    expect(screen.getByText("1 matching")).toBeInTheDocument();
+    expect(await screen.findByText("1 matching")).toBeInTheDocument();
     expect(screen.getByText("1 unassigned")).toBeInTheDocument();
     expect(screen.getByText("0 mine")).toBeInTheDocument();
 
