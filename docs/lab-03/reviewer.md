@@ -149,7 +149,7 @@ The requested-changes verification used only the validated `toktickit_test` targ
 
 ## 10. Issue #31 IT Staff Queue Handoff
 
-This section records local execution evidence and supplied governance facts. PR #30 was approved and merged and Issue #29 was closed before Issue #31 began. The Issue #31 chain through `9c831d5` was pushed before the pre-PR correction; no Issue #31 PR existed when that correction began.
+This section records local execution evidence and supplied governance facts. PR #30 was approved and merged and Issue #29 was closed before Issue #31 began. The complete Issue #31 chain through `ef48d94` was pushed before this governance-sync record was created; no Issue #31 PR existed when the sync began.
 
 | Item | Current evidence |
 | --- | --- |
@@ -171,4 +171,4 @@ This section records local execution evidence and supplied governance facts. PR 
 | Cleanup and secrets | Regenerated tracked Lab 2 screenshots were restored; generated build/test output and the temporary read-only snapshot helper were removed; `server/.env` remained ignored and outside commits; no private value was printed or recorded |
 | Test-contract status | `UNIT-04`, `API-09`, and `UI-05` are `Pass (Issue #31)`. Totals are 75 = 16 Issue #27 Pass + 13 Issue #29 Pass + 3 Issue #31 Pass + 43 Planned. `API-10`, `SEC-01`, `SEC-02`, and `E2E-03` remain Planned. |
 | Prior completed governance | PR #30 was approved and merged into `lab3-staging` as `f8eb6029f74134ca245e896464f09af001e9e8c8`; Issue #29 was closed as completed. |
-| Issue #31 external state | Commits through `9c831d5` were pushed before this correction. No Issue #31 PR existed when correction work began. Corrective RED `e84dc71`, GREEN `0bded01`, and the documentation commit created after this record remain local pending push/PR. No hosted CI, peer approval, review, merge, Issue #31 closure, or Project Done transition is claimed. |
+| Issue #31 external state | The complete chain through corrective RED `e84dc71`, GREEN `0bded01`, and evidence commit `ef48d94` was pushed before this governance-sync record was created. No Issue #31 PR existed when the sync began. No hosted CI, review, approval, merge, Issue #31 closure, or Project Done transition is claimed. GitHub is authoritative for events occurring after this recorded state. |
