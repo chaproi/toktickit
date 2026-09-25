@@ -57,6 +57,16 @@ function compare(
   return implementation(left, right, sortBy, sortOrder);
 }
 
+function escapeLikePattern(value: string): string {
+  const implementation = (ticketQuery as unknown as {
+    escapePostgresLikePattern?: (input: string) => string;
+  }).escapePostgresLikePattern;
+  if (!implementation) {
+    throw new Error("Issue #31 literal Queue search escaping is not implemented.");
+  }
+  return implementation(value);
+}
+
 const baseTicket = {
   id: 1,
   ticketNumber: "TKT-2026-00001",
@@ -68,6 +78,16 @@ const baseTicket = {
 };
 
 describe("UNIT-04 Staff Queue query contract", () => {
+  it.each([
+    ["literal percent", "100% complete", "100\\% complete"],
+    ["literal underscore", "queue_item", "queue\\_item"],
+    ["literal backslash", "queue\\path", "queue\\\\path"],
+    ["combined special characters", "50%_C:\\temp", "50\\%\\_C:\\\\temp"],
+    ["ordinary Unicode search text", "Café request ทดสอบ", "Café request ทดสอบ"],
+  ])("escapes PostgreSQL LIKE pattern characters for %s", (_case, input, expected) => {
+    expect(escapeLikePattern(input)).toBe(expected);
+  });
+
   it("applies the exact defaults", () => {
     expect(parse({})).toEqual({
       success: true,

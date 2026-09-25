@@ -100,6 +100,8 @@ describe("UI-05 IT Staff Ticket Queue", () => {
     expect(within(screen.getByLabelText("Owner")).getByRole("option", { name: /Queue Staff.*IT Staff/i })).toBeInTheDocument();
 
     const table = screen.getByRole("table", { name: "Ticket Queue" });
+    expect(within(table).getByText("Ticket Queue results", { selector: "caption" }))
+      .toHaveClass("visually-hidden");
     expect(within(table).getByRole("link", { name: ticket.ticketNumber }))
       .toHaveAttribute("href", "/staff/tickets/301");
     expect(within(table).getByText(ticket.summary)).toBeInTheDocument();
@@ -119,7 +121,18 @@ describe("UI-05 IT Staff Ticket Queue", () => {
       .toHaveAttribute("href", "/staff/tickets/301");
     expect(within(cards as HTMLElement).getByRole("link", { name: "Open Ticket" }))
       .toHaveAttribute("href", "/staff/tickets/301");
-    expect(within(cards as HTMLElement).getByText("Owner")).toBeInTheDocument();
+    const mobile = within(cards as HTMLElement);
+    expect(mobile.getByText("Requested Priority")).toBeInTheDocument();
+    expect(mobile.getByText("Requested Medium")).toHaveClass("badge", "text-bg-success");
+    expect(mobile.getByText("IT Priority")).toBeInTheDocument();
+    expect(mobile.getByText("IT High")).toHaveClass("badge", "text-bg-warning");
+    expect(mobile.getByText("Status")).toBeInTheDocument();
+    expect(mobile.getByText("Waiting for Requester")).toHaveClass("badge", "text-bg-warning");
+    expect(mobile.getByText("Requester reports problem appears resolved")).toBeInTheDocument();
+    for (const text of [
+      "Summary", ticket.summary, "Category / Related System", "Network / VPN",
+      "Requester", "Rina Requester", "Owner", "Unassigned", "Updated",
+    ]) expect(mobile.getByText(text)).toBeInTheDocument();
   });
 
   it("renders a terminal historical Requester owner accurately without adding them to assignees", async () => {

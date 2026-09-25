@@ -28,6 +28,9 @@ let inactiveStaffId: number;
 let categoryIds: number[];
 let systemIds: number[];
 let ticketIds: number[] = [];
+let literalSearchUserIds: number[] = [];
+let literalSearchTicketIds: number[] = [];
+let literalSearchCases: Array<{ search: string; expectedTicketId: number }> = [];
 
 function authenticatedGet(path: string, fixture: AuthenticatedFixture) {
   return request(app).get(path).set("Cookie", fixture.cookie);
@@ -112,14 +115,131 @@ beforeAll(async () => {
     },
   });
   ticketIds.push(historicalOwnerTicket.id);
+
+  const literalSuffix = randomUUID().replaceAll("-", "").slice(0, 6).toLowerCase();
+  const passwordHash = await hashPassword(syntheticPassword());
+  const createLiteralRequester = async (name: string, email: string) => {
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        role: "REQUESTER",
+        isActive: true,
+        mustChangePassword: false,
+        passwordHash,
+      },
+    });
+    literalSearchUserIds.push(user.id);
+    return user;
+  };
+  const createLiteralTicket = async (
+    requesterId: number,
+    ticketNumber: string,
+    summary: string,
+  ) => {
+    const ticket = await prisma.ticket.create({
+      data: {
+        ticketNumber,
+        ticketDate: new Date("2026-04-01T00:00:00.000Z"),
+        clientSubmissionId: randomUUID(),
+        requesterId,
+        categoryId: categoryIds[0]!,
+        relatedSystemId: systemIds[0]!,
+        requestedPriority: "LOW",
+        itPriority: "LOW",
+        currentStatus: "NEW",
+        ownerId: null,
+        summary,
+        description: "Synthetic literal Queue search fixture.",
+      },
+    });
+    literalSearchTicketIds.push(ticket.id);
+    return ticket;
+  };
+
+  const commonRequester = await createLiteralRequester(
+    `Literal Queue ${literalSuffix}`,
+    `literal.queue.${literalSuffix}@example.test`,
+  );
+  const percentTicket = await createLiteralTicket(
+    commonRequester.id,
+    `Q%${literalSuffix}`,
+    `Percent literal fixture ${literalSuffix}`,
+  );
+  await createLiteralTicket(
+    commonRequester.id,
+    `QX${literalSuffix}`,
+    `Percent confusable fixture ${literalSuffix}`,
+  );
+  const underscoreTicket = await createLiteralTicket(
+    commonRequester.id,
+    `QU${literalSuffix}`,
+    `summary_${literalSuffix}`,
+  );
+  await createLiteralTicket(
+    commonRequester.id,
+    `QV${literalSuffix}`,
+    `summaryX${literalSuffix}`,
+  );
+
+  const backslashRequester = await createLiteralRequester(
+    `agent\\${literalSuffix}`,
+    `literal.backslash.${literalSuffix}@example.test`,
+  );
+  const backslashTicket = await createLiteralTicket(
+    backslashRequester.id,
+    `QB${literalSuffix}`,
+    `Backslash literal fixture ${literalSuffix}`,
+  );
+  const backslashConfusableRequester = await createLiteralRequester(
+    `agent${literalSuffix}`,
+    `confusable.backslash.${literalSuffix}@example.test`,
+  );
+  await createLiteralTicket(
+    backslashConfusableRequester.id,
+    `QC${literalSuffix}`,
+    `Backslash confusable fixture ${literalSuffix}`,
+  );
+
+  const emailRequester = await createLiteralRequester(
+    `Email Literal ${literalSuffix}`,
+    `mail%_${literalSuffix}@example.test`,
+  );
+  const emailTicket = await createLiteralTicket(
+    emailRequester.id,
+    `QE${literalSuffix}`,
+    `Email literal fixture ${literalSuffix}`,
+  );
+  const emailConfusableRequester = await createLiteralRequester(
+    `Email Confusable ${literalSuffix}`,
+    `mailxy${literalSuffix}@example.test`,
+  );
+  await createLiteralTicket(
+    emailConfusableRequester.id,
+    `QF${literalSuffix}`,
+    `Email confusable fixture ${literalSuffix}`,
+  );
+
+  literalSearchCases = [
+    { search: `%${literalSuffix}`, expectedTicketId: percentTicket.id },
+    { search: `summary_${literalSuffix}`, expectedTicketId: underscoreTicket.id },
+    { search: `agent\\${literalSuffix}`, expectedTicketId: backslashTicket.id },
+    { search: `mail%_${literalSuffix}`, expectedTicketId: emailTicket.id },
+  ];
 });
 
 afterAll(async () => {
   const prisma = getPrisma();
+  await prisma.ticket.deleteMany({ where: { id: { in: literalSearchTicketIds } } });
+  await prisma.authSession.deleteMany({ where: { userId: { in: literalSearchUserIds } } });
+  await prisma.user.deleteMany({ where: { id: { in: literalSearchUserIds } } });
   await prisma.authSession.deleteMany({ where: { userId: inactiveStaffId } });
   await prisma.user.deleteMany({ where: { id: inactiveStaffId } });
   await cleanupIssue29Fixtures();
   ticketIds = [];
+  literalSearchTicketIds = [];
+  literalSearchUserIds = [];
+  literalSearchCases = [];
 });
 
 describe("API-09 Staff Ticket Queue and OP-21 assignees", () => {
@@ -221,6 +341,57 @@ describe("API-09 Staff Ticket Queue and OP-21 assignees", () => {
       expect(response.status).toBe(200);
       expect(response.body.items.map((item: { id: number }) => item.id)).toContain(first.id);
     }
+  });
+
+  it("treats PostgreSQL LIKE characters literally across all four Queue search fields", async () => {
+    const prisma = getPrisma();
+    const before = await prisma.ticket.findMany({
+      where: { id: { in: literalSearchTicketIds } },
+      orderBy: { id: "asc" },
+    });
+
+    for (const { search, expectedTicketId } of literalSearchCases) {
+      const path = `/api/staff/tickets?search=${encodeURIComponent(search)}&pageSize=10`;
+      const unauthenticated = await request(app).get(path);
+      expect(unauthenticated.status).toBe(401);
+      expect(unauthenticated.body).not.toHaveProperty("items");
+
+      const forbidden = await authenticatedGet(path, requesterA);
+      expect(forbidden.status).toBe(403);
+      expect(forbidden.body).not.toHaveProperty("items");
+
+      const response = await authenticatedGet(path, staff);
+      expect(response.status).toBe(200);
+      expect(response.body.items.map((item: { id: number }) => item.id)).toEqual([
+        expectedTicketId,
+      ]);
+      expect(response.body.counts).toEqual({ matching: 1, unassigned: 1, mine: 0 });
+      expect(response.body.pagination).toEqual({
+        page: 1,
+        pageSize: 10,
+        totalItems: 1,
+        totalPages: 1,
+        hasPreviousPage: false,
+        hasNextPage: false,
+      });
+      const item = response.body.items[0];
+      expect(Object.keys(item).sort()).toEqual([
+        "category", "currentStatus", "id", "itPriority", "owner",
+        "relatedSystem", "requestedPriority", "requester",
+        "requesterResolutionIndicatedAt", "summary", "ticketDate",
+        "ticketNumber", "updatedAt",
+      ].sort());
+      expect(Object.keys(item.requester).sort()).toEqual(["email", "id", "name"]);
+      expect(JSON.stringify(item)).not.toMatch(
+        /password|hash|session|cookie|token|internalNote|storageKey/i,
+      );
+    }
+
+    const after = await prisma.ticket.findMany({
+      where: { id: { in: literalSearchTicketIds } },
+      orderBy: { id: "asc" },
+    });
+    expect(after).toEqual(before);
   });
 
   it("applies every Queue filter and owner form with meaningful replacement counts", async () => {
