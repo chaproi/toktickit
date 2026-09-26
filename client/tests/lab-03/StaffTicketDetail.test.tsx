@@ -59,12 +59,13 @@ describe("UI-06 Staff operational Ticket Detail", () => {
     installStaffDetailFetch({ attachments: [
       {
         id: 41, ticketId: detail.id, originalFilename: "evidence.pdf", mimeType: "application/pdf",
-        sizeBytes: 1000, isRemoved: false, createdAt: "2026-09-21T08:30:00.000Z", removedAt: null, removalReason: null,
+        sizeBytes: 1000, uploadedByRequesterId: 71, isRemoved: false, createdAt: "2026-09-21T08:30:00.000Z",
+        removedAt: null, removedByRequesterId: null, removalReason: null,
       },
       {
         id: 42, ticketId: detail.id, originalFilename: "removed.txt", mimeType: "text/plain",
-        sizeBytes: 25, isRemoved: true, createdAt: "2026-09-21T08:31:00.000Z",
-        removedAt: "2026-09-21T09:00:00.000Z", removalReason: "Obsolete evidence",
+        sizeBytes: 25, uploadedByRequesterId: 71, isRemoved: true, createdAt: "2026-09-21T08:31:00.000Z",
+        removedAt: "2026-09-21T09:00:00.000Z", removedByRequesterId: 71, removalReason: "Obsolete evidence",
       },
     ] });
     renderAt(`/staff/tickets/${detail.id}`);
@@ -94,6 +95,16 @@ describe("UI-06 Staff operational Ticket Detail", () => {
         if (ticketId === detail.id) resolveA = resolve;
         else resolveB = resolve;
       }),
+      notesResponse: async (_page, ticketId) => jsonResponse({
+        items: ticketId === ticketB.id ? [{
+          id: 62, ticketId, author: { id: 91, name: "Workflow Staff", role: "IT_STAFF" },
+          content: "Ticket B private diagnosis", createdAt: "2026-09-21T09:20:00.000Z",
+        }] : [{
+          id: 61, ticketId, author: { id: 91, name: "Workflow Staff", role: "IT_STAFF" },
+          content: "Private diagnosis", createdAt: "2026-09-21T09:20:00.000Z",
+        }],
+        pagination: { page: 1, pageSize: 20, totalItems: 1, totalPages: 1, hasPreviousPage: false, hasNextPage: false },
+      }),
     });
     renderAt(`/staff/tickets/${detail.id}`);
     await screen.findByRole("status");
@@ -116,5 +127,6 @@ describe("UI-06 Staff operational Ticket Detail", () => {
     expect(screen.queryByText(detail.summary)).not.toBeInTheDocument();
     expect(screen.queryByText(detail.ticketNumber)).not.toBeInTheDocument();
     expect(screen.queryByText("Private diagnosis")).not.toBeInTheDocument();
+    expect(screen.getByText("Ticket B private diagnosis")).toBeInTheDocument();
   });
 });

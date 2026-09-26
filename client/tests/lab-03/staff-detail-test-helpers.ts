@@ -48,8 +48,8 @@ export function installStaffDetailFetch(options: {
   mutation?: (url: URL, init?: RequestInit) => Promise<Response>;
   attachments?: Attachment[];
   assignees?: EligibleAssignee[];
-  commentsResponse?: (page: number) => Promise<Response>;
-  notesResponse?: (page: number) => Promise<Response>;
+  commentsResponse?: (page: number, ticketId: number) => Promise<Response>;
+  notesResponse?: (page: number, ticketId: number) => Promise<Response>;
 } = {}) {
   const calls: Array<{ url: URL; init?: RequestInit }> = [];
   const ticket = options.ticket ?? detail;
@@ -72,17 +72,19 @@ export function installStaffDetailFetch(options: {
     });
     if (url.pathname.endsWith("/attachments")) return jsonResponse({ items: options.attachments ?? [{
       id: 41, ticketId: ticket.id, originalFilename: "evidence.pdf",
-      mimeType: "application/pdf", sizeBytes: 1000, isRemoved: false,
-      createdAt: "2026-09-21T08:30:00.000Z", removedAt: null, removalReason: null,
+      mimeType: "application/pdf", sizeBytes: 1000, uploadedByRequesterId: 71, isRemoved: false,
+      createdAt: "2026-09-21T08:30:00.000Z", removedAt: null, removedByRequesterId: null, removalReason: null,
     }] });
     if (url.pathname.endsWith("/comments")) return options.commentsResponse?.(
       Number(url.searchParams.get("page") ?? "1"),
+      Number(url.pathname.split("/").at(-2)),
     ) ?? jsonResponse({
       items: [{ id: 51, ticketId: ticket.id, author: ticket.requester, content: "Public update", createdAt: "2026-09-21T09:10:00.000Z" }],
       pagination: { page: 1, pageSize: 20, totalItems: 1, totalPages: 1, hasPreviousPage: false, hasNextPage: false },
     });
     if (url.pathname.endsWith("/notes")) return options.notesResponse?.(
       Number(url.searchParams.get("page") ?? "1"),
+      Number(url.pathname.split("/").at(-2)),
     ) ?? jsonResponse({
       items: [{ id: 61, ticketId: ticket.id, author: { id: 91, name: "Workflow Staff", role: "IT_STAFF" }, content: "Private diagnosis", createdAt: "2026-09-21T09:20:00.000Z" }],
       pagination: { page: 1, pageSize: 20, totalItems: 1, totalPages: 1, hasPreviousPage: false, hasNextPage: false },

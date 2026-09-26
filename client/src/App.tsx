@@ -207,6 +207,7 @@ function Forbidden({ user, message = "This page is not available for your role."
 
 function AuthenticatedRoutes() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [state, setState] = useState<"loading" | "signed-out" | "signed-in" | "error">("loading");
   const [user, setUser] = useState<AuthUser | null>(null);
   const [notice, setNotice] = useState("");
@@ -347,7 +348,7 @@ function AuthenticatedRoutes() {
       />
       <Route
         path="/staff/tickets/:ticketId"
-        element={user.role !== "REQUESTER" ? shell(<StaffTicketDetail />) : shell(<Forbidden user={user} />)}
+        element={user.role !== "REQUESTER" ? shell(<StaffTicketDetail key={location.pathname} />) : shell(<Forbidden user={user} />)}
       />
       <Route
         path="/admin/users"

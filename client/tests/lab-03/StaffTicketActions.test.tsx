@@ -17,11 +17,11 @@ describe("UI-07 Staff Ticket actions", () => {
     const status = screen.getByLabelText("Next status");
     expect(within(status).getAllByRole("option").map((option) => option.getAttribute("value")))
       .toEqual(["", "WAITING_FOR_REQUESTER", "RESOLVED", "CANCELLED"]);
-    expect(screen.getByText("Assign an active Ticket Owner first.")).toBeInTheDocument();
+    expect(screen.queryByText("Assign an active Ticket Owner first.")).not.toBeInTheDocument();
   });
 
   it("derives owner requirements from only the authoritative selected target", async () => {
-    const unassignedNew = { ...detail, currentStatus: "NEW" as const, allowedStatusTransitions: ["OPEN"] as const };
+    const unassignedNew = { ...detail, currentStatus: "NEW" as const, allowedStatusTransitions: ["OPEN" as const] };
     installStaffDetailFetch({ ticket: unassignedNew });
     renderAt(`/staff/tickets/${unassignedNew.id}`);
     await screen.findByText(unassignedNew.summary);
@@ -36,7 +36,7 @@ describe("UI-07 Staff Ticket actions", () => {
   it.each(["IN_PROGRESS", "REOPENED"] as const)(
     "keeps the owner-independent %s to CANCELLED transition available",
     async (currentStatus) => {
-      const ownerless = { ...detail, currentStatus, allowedStatusTransitions: ["CANCELLED"] as const };
+      const ownerless = { ...detail, currentStatus, allowedStatusTransitions: ["CANCELLED" as const] };
       installStaffDetailFetch({ ticket: ownerless });
       renderAt(`/staff/tickets/${ownerless.id}`);
       await screen.findByText(ownerless.summary);
@@ -47,7 +47,7 @@ describe("UI-07 Staff Ticket actions", () => {
   );
 
   it("makes an owner-required target available after authoritative assignment", async () => {
-    const unassignedNew = { ...detail, currentStatus: "NEW" as const, allowedStatusTransitions: ["OPEN"] as const };
+    const unassignedNew = { ...detail, currentStatus: "NEW" as const, allowedStatusTransitions: ["OPEN" as const] };
     const assigned = { ...unassignedNew, owner: { id: 91, name: "Workflow Staff", role: "IT_STAFF" as const } };
     let detailLoads = 0;
     installStaffDetailFetch({
@@ -199,8 +199,8 @@ describe("UI-07 Staff Ticket actions", () => {
   });
 
   it.each([
-    ["RESOLVED", "Resolve Ticket", "Confirm resolved"],
-    ["CLOSED", "Close Ticket", "Confirm closed"],
+    ["RESOLVED", "Resolved Ticket", "Confirm resolved"],
+    ["CLOSED", "Closed Ticket", "Confirm closed"],
   ] as const)("requires explicit confirmation for %s", async (nextStatus, dialogName, confirmName) => {
     const owned = {
       ...detail,

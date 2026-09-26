@@ -37,6 +37,9 @@ const TERMINAL = new Set<TicketStatus>(["CLOSED", "CANCELLED"]);
 const OWNER_REQUIRED = new Set<TicketStatus>([
   "OPEN", "IN_PROGRESS", "WAITING_FOR_REQUESTER", "RESOLVED", "CLOSED", "REOPENED",
 ]);
+type LoadOutcome = "success" | "failure" | "aborted";
+type MutationOutcome = "success" | "conflict-reloaded" | "failure" | "reload-failure";
+type FocusTarget = "owner-trigger" | "status-trigger" | "heading" | "error-heading";
 
 function label(value: string): string {
   return value.toLowerCase().split("_").map((part) => `${part[0]?.toUpperCase()}${part.slice(1)}`).join(" ");
@@ -72,6 +75,21 @@ function Dialog({
   const titleId = `dialog-title-${title.replaceAll(" ", "-").toLowerCase()}`;
   const descriptionId = `${titleId}-description`;
   useEffect(() => { initialFocus.current?.focus(); }, [initialFocus]);
+  useEffect(() => {
+    const dialogElement = dialog.current;
+    const main = dialogElement?.closest("main");
+    const shell = main?.parentElement;
+    const targets = [
+      shell?.querySelector<HTMLElement>(":scope > header"),
+      ...Array.from(main?.children ?? []).filter((child): child is HTMLElement =>
+        child instanceof HTMLElement && !child.contains(dialogElement ?? null)),
+    ].filter((target): target is HTMLElement => Boolean(target));
+    const previous = targets.map((target) => ({ target, inert: target.hasAttribute("inert") }));
+    for (const { target } of previous) target.setAttribute("inert", "");
+    return () => {
+      for (const { target, inert } of previous) if (!inert) target.removeAttribute("inert");
+    };
+  }, []);
   function keyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (event.key === "Escape" && !processing) {
       event.preventDefault();
@@ -120,6 +138,7 @@ function Messages({
   const [listError, setListError] = useState(initialResponse ? "" : SAFE_ERROR);
   const [postError, setPostError] = useState("");
   const [warning, setWarning] = useState("");
+  const [retainedCreated, setRetainedCreated] = useState<PublicComment | InternalNote | null>(null);
   const [page, setPage] = useState(initialResponse?.pagination.page ?? 1);
   const [pagination, setPagination] = useState(initialResponse?.pagination ?? null);
   useEffect(() => {
@@ -127,16 +146,25 @@ function Messages({
     setPagination(initialResponse?.pagination ?? null);
     setPage(initialResponse?.pagination.page ?? 1);
     setListError(initialResponse ? "" : SAFE_ERROR);
+    setRetainedCreated(null);
   }, [initialResponse]);
+
+  function withRetained(nextItems: Array<PublicComment | InternalNote>) {
+    const merged = retainedCreated
+      ? [...nextItems.filter(({ id }) => id !== retainedCreated.id), retainedCreated]
+      : nextItems;
+    return merged.sort((left, right) =>
+      left.createdAt.localeCompare(right.createdAt) || left.id - right.id);
+  }
 
   async function loadPage(targetPage: number) {
     setListError("");
-    setWarning("");
+    if (!retainedCreated) setWarning("");
     try {
       const response = privateChannel
         ? await getInternalNotes(ticketId, targetPage, 20)
         : await getPublicComments(ticketId, targetPage, 20);
-      setItems(response.items);
+      setItems(withRetained(response.items));
       setPagination(response.pagination);
       setPage(targetPage);
     } catch {
@@ -162,6 +190,7 @@ function Messages({
         : await addPublicComment(ticketId, trimmed);
       setContent("");
       setListError("");
+      setRetainedCreated(created);
       try {
         const first = privateChannel
           ? await getInternalNotes(ticketId, 1, 20)
@@ -183,7 +212,8 @@ function Messages({
           if (response.items.some(({ id }) => id === created.id)) located = response;
         }
         if (!located) throw new Error("Created entry was not returned by the authoritative list.");
-        setItems(located.items);
+        setItems([...located.items.filter(({ id }) => id !== created.id), created].sort((left, right) =>
+          left.createdAt.localeCompare(right.createdAt) || left.id - right.id));
         setPagination(located.pagination);
         setPage(located.pagination.page);
       } catch {
@@ -287,6 +317,7 @@ export default function StaffTicketDetail() {
   const [publicComments, setPublicComments] = useState<PublicCommentResponse | null>(null);
   const [internalNotes, setInternalNotes] = useState<PublicCommentResponse | null>(null);
   const [error, setError] = useState("");
+  const [errorKind, setErrorKind] = useState<"forbidden" | "missing" | "failure" | null>(null);
   const [notice, setNotice] = useState("");
   const [retry, setRetry] = useState(0);
   const [busy, setBusy] = useState(false);
@@ -295,8 +326,11 @@ export default function StaffTicketDetail() {
   const [dialog, setDialog] = useState<"owner" | "status" | null>(null);
   const [selectedOwner, setSelectedOwner] = useState("");
   const [reason, setReason] = useState("");
+  const [focusTarget, setFocusTarget] = useState<FocusTarget | null>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const errorHeadingRef = useRef<HTMLHeadingElement>(null);
   const assignTriggerRef = useRef<HTMLButtonElement>(null);
+  const statusSelectRef = useRef<HTMLSelectElement>(null);
   const ownerSelectRef = useRef<HTMLSelectElement>(null);
   const statusCancelRef = useRef<HTMLButtonElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -307,8 +341,22 @@ export default function StaffTicketDetail() {
     return () => contentRef.current?.removeAttribute("inert");
   }, [dialog]);
 
-  const load = useCallback(async (signal?: AbortSignal, focus = false) => {
+  useEffect(() => {
+    if (!focusTarget || dialog) return;
+    const target = focusTarget === "owner-trigger"
+      ? assignTriggerRef.current ?? headingRef.current
+      : focusTarget === "status-trigger"
+        ? statusSelectRef.current ?? headingRef.current
+        : focusTarget === "error-heading"
+          ? errorHeadingRef.current
+          : headingRef.current;
+    target?.focus();
+    setFocusTarget(null);
+  }, [dialog, focusTarget, state, ticket]);
+
+  const load = useCallback(async (signal?: AbortSignal): Promise<LoadOutcome> => {
     setError("");
+    setErrorKind(null);
     try {
       const [detail, available, comments, notes] = await Promise.all([
         getStaffTicketDetail(ticketId, signal),
@@ -323,13 +371,16 @@ export default function StaffTicketDetail() {
       setPriority(detail.itPriority);
       setNextStatus("");
       setState("success");
-      if (focus) headingRef.current?.focus();
+      return "success";
     } catch (caught) {
-      if (caught instanceof DOMException && caught.name === "AbortError") return;
-      const missing = caught instanceof ApiRequestError && [403, 404].includes(caught.status);
+      if (caught instanceof DOMException && caught.name === "AbortError") return "aborted";
+      const forbidden = caught instanceof ApiRequestError && caught.status === 403;
+      const missing = caught instanceof ApiRequestError && caught.status === 404;
       setTicket(null);
-      setError(missing ? "Ticket not found." : SAFE_ERROR);
+      setError(forbidden ? "You do not have permission to view this Ticket." : missing ? "Ticket not found." : SAFE_ERROR);
+      setErrorKind(forbidden ? "forbidden" : missing ? "missing" : "failure");
       setState("error");
+      return "failure";
     }
   }, [ticketId]);
 
@@ -340,32 +391,52 @@ export default function StaffTicketDetail() {
     return () => controller.abort();
   }, [load, retry]);
 
-  async function mutate(action: () => Promise<unknown>, success: string) {
-    if (busy) return;
+  async function mutate(action: () => Promise<unknown>, success: string): Promise<MutationOutcome> {
+    if (busy) return "failure";
     setBusy(true); setError(""); setNotice("");
     try {
       await action();
-      await load(undefined, true);
+      if (await load() !== "success") return "reload-failure";
       setNotice(success);
+      return "success";
     } catch (caught) {
       if (caught instanceof ApiRequestError && [
         "STALE_WRITE", "CONCURRENT_UPDATE", "OWNER_CONFLICT", "OWNER_ELIGIBILITY_CONFLICT",
         "TERMINAL_TICKET", "STATUS_OWNER_REQUIRED", "STATUS_TRANSITION_NOT_ALLOWED",
       ].includes(caught.code ?? "")) {
-        await load(undefined, true);
+        if (await load() !== "success") return "reload-failure";
         setError("The Ticket changed. Review the latest details and try again.");
-      } else setError(caught instanceof ApiRequestError ? caught.message : SAFE_ERROR);
+        return "conflict-reloaded";
+      }
+      setError(caught instanceof ApiRequestError ? caught.message : SAFE_ERROR);
+      return "failure";
     } finally { setBusy(false); }
   }
 
-  function closeOwner() { if (!busy) { assignTriggerRef.current?.focus(); setDialog(null); } }
-  function closeStatus() { if (!busy) { headingRef.current?.focus(); setDialog(null); setNextStatus(""); } }
+  function closeDialog(kind: "owner" | "status", target: FocusTarget) {
+    setDialog(null);
+    if (kind === "status") setNextStatus("");
+    setReason("");
+    setFocusTarget(target);
+  }
+  function closeOwner() { if (!busy) closeDialog("owner", "owner-trigger"); }
+  function closeStatus() { if (!busy) closeDialog("status", "status-trigger"); }
+  async function directMutation(action: () => Promise<unknown>, success: string) {
+    const outcome = await mutate(action, success);
+    if (outcome === "success" || outcome === "conflict-reloaded") setFocusTarget("heading");
+    else if (outcome === "reload-failure") setFocusTarget("error-heading");
+  }
+  async function submitDialog(kind: "owner" | "status", action: () => Promise<unknown>, success: string) {
+    const outcome = await mutate(action, success);
+    if (outcome === "failure") return;
+    closeDialog(kind, outcome === "reload-failure" ? "error-heading" : kind === "owner" ? "owner-trigger" : "heading");
+  }
 
   if (state === "loading") return <section><h1 className="h2">Loading Ticket Detail</h1><p role="status">Loading Ticket Detail…</p></section>;
-  if (state === "error" || !ticket) return <section><h1 className="h2">Operational Ticket Detail</h1><div role="alert" className="alert alert-danger"><p>{error}</p>{error !== "Ticket not found." && <button type="button" className="btn btn-success" onClick={() => setRetry((value) => value + 1)}>Try Again</button>} <Link to="/staff/tickets" className="btn btn-outline-success">Back to Queue</Link></div></section>;
+  if (state === "error" || !ticket) return <section><h1 ref={errorHeadingRef} tabIndex={-1} className="h2">{errorKind === "forbidden" ? "Forbidden" : "Operational Ticket Detail"}</h1><div role="alert" className="alert alert-danger"><p>{error}</p>{errorKind === "failure" && <button type="button" className="btn btn-success" onClick={() => setRetry((value) => value + 1)}>Try Again</button>} <Link to="/staff/tickets" className="btn btn-outline-success">Back to Queue</Link></div></section>;
 
   const terminal = TERMINAL.has(ticket.currentStatus);
-  const ownerMissing = OWNER_REQUIRED.has(ticket.currentStatus) && ticket.owner === null;
+  const ownerMissing = nextStatus !== "" && OWNER_REQUIRED.has(nextStatus) && ticket.owner === null;
   const needsConfirmation = nextStatus === "RESOLVED" || nextStatus === "CLOSED" || nextStatus === "CANCELLED";
   return (
     <section aria-labelledby="staff-ticket-heading">
@@ -396,7 +467,7 @@ export default function StaffTicketDetail() {
         <p>Owner: {ticket.owner?.name ?? "Unassigned"}</p>
         <p>Current Status: {label(ticket.currentStatus)}</p>
         {!terminal && ticket.owner === null && <button className="btn btn-success me-2" type="button" disabled={busy}
-          onClick={() => void mutate(() => claimStaffTicket(ticket.id, ticket.updatedAt), "Ticket claimed successfully.")}>Claim Ticket</button>}
+          onClick={() => void directMutation(() => claimStaffTicket(ticket.id, ticket.updatedAt), "Ticket claimed successfully.")}>Claim Ticket</button>}
         {!terminal && <button ref={assignTriggerRef} className="btn btn-outline-success" type="button" disabled={busy}
           onClick={() => {
             const mayUnassign = (["NEW", "OPEN", "REOPENED"] as TicketStatus[]).includes(ticket.currentStatus);
@@ -410,14 +481,15 @@ export default function StaffTicketDetail() {
             {(["LOW", "MEDIUM", "HIGH", "URGENT"] as RequestedPriority[]).map((value) => <option key={value} value={value}>{label(value)}</option>)}
           </select>
           <button className="btn btn-success mt-2" type="button" disabled={terminal || busy || priority === ticket.itPriority}
-            onClick={() => void mutate(() => setStaffTicketPriority(ticket.id, priority, ticket.updatedAt), "IT Priority updated successfully.")}>Save IT Priority</button>
+            onClick={() => void directMutation(() => setStaffTicketPriority(ticket.id, priority, ticket.updatedAt), "IT Priority updated successfully.")}>Save IT Priority</button>
         </div><div className="col-md-6">
           <label className="form-label" htmlFor="next-status">Next status</label>
-          <select id="next-status" className="form-select" disabled={terminal || busy} value={nextStatus}
+          <select ref={statusSelectRef} id="next-status" className="form-select" disabled={terminal || busy} value={nextStatus}
             onChange={(event) => {
               const value = event.target.value as TicketStatus | "";
               setNextStatus(value);
-              if (["RESOLVED", "CLOSED", "CANCELLED"].includes(value)) setDialog("status");
+              if (["RESOLVED", "CLOSED", "CANCELLED"].includes(value) &&
+                !(value !== "" && OWNER_REQUIRED.has(value) && ticket.owner === null)) setDialog("status");
             }}>
             <option value="">Select a status</option>
             {ticket.allowedStatusTransitions.map((value) => <option key={value} value={value}>{label(value)}</option>)}
@@ -425,7 +497,7 @@ export default function StaffTicketDetail() {
           {terminal && <p className="form-text">No further status changes are available.</p>}
           {ownerMissing && <p className="form-text">Assign an active Ticket Owner first.</p>}
           <button className="btn btn-success mt-2" type="button" disabled={!nextStatus || needsConfirmation || busy || ownerMissing}
-            onClick={() => nextStatus && void mutate(() => setStaffTicketStatus(ticket.id, nextStatus, ticket.updatedAt), "Status updated successfully.")}>Update Status</button>
+            onClick={() => nextStatus && void directMutation(() => setStaffTicketStatus(ticket.id, nextStatus, ticket.updatedAt), "Status updated successfully.")}>Update Status</button>
         </div></div>
       </div></section>
 
@@ -448,9 +520,9 @@ export default function StaffTicketDetail() {
           {assignees.map((owner) => <option key={owner.id} value={owner.id}>{owner.name} ({label(owner.role)})</option>)}
         </select>
         <div className="d-flex justify-content-end gap-2 mt-3"><button className="btn btn-outline-secondary" type="button" disabled={busy} onClick={closeOwner}>Cancel</button>
-          <button className="btn btn-success" type="button" disabled={busy} onClick={() => void mutate(
+          <button className="btn btn-success" type="button" disabled={busy} onClick={() => void submitDialog("owner",
             () => setStaffTicketOwner(ticket.id, selectedOwner ? Number(selectedOwner) : null, ticket.updatedAt), "Ticket Owner updated successfully.",
-          ).then(() => setDialog(null))}>Save Owner</button></div>
+          )}>Save Owner</button></div>
       </Dialog>}
 
       {dialog === "status" && nextStatus && <Dialog title={nextStatus === "CANCELLED" ? "Cancel Ticket" : `${label(nextStatus)} Ticket`}
@@ -458,9 +530,9 @@ export default function StaffTicketDetail() {
         {nextStatus === "CANCELLED" && <><label className="form-label" htmlFor="cancellation-reason">Cancellation reason</label>
           <textarea id="cancellation-reason" className="form-control" required minLength={5} maxLength={500} value={reason} onChange={(event) => setReason(event.target.value)} /></>}
         <div className="d-flex justify-content-end gap-2 mt-3"><button ref={statusCancelRef} className="btn btn-outline-secondary" type="button" disabled={busy} onClick={closeStatus}>Cancel</button>
-          <button className="btn btn-success" type="button" disabled={busy || (nextStatus === "CANCELLED" && reason.trim().length < 5)} onClick={() => void mutate(
+          <button className="btn btn-success" type="button" disabled={busy || (nextStatus === "CANCELLED" && reason.trim().length < 5)} onClick={() => void submitDialog("status",
             () => setStaffTicketStatus(ticket.id, nextStatus, ticket.updatedAt, true, nextStatus === "CANCELLED" ? reason.trim() : null), "Status updated successfully.",
-          ).then(() => { setDialog(null); setReason(""); })}>{nextStatus === "CANCELLED" ? "Confirm cancellation" : `Confirm ${label(nextStatus).toLowerCase()}`}</button></div>
+          )}>{nextStatus === "CANCELLED" ? "Confirm cancellation" : `Confirm ${label(nextStatus).toLowerCase()}`}</button></div>
       </Dialog>}
     </section>
   );
