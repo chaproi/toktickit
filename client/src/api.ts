@@ -95,15 +95,19 @@ export async function checkHealth(): Promise<HealthStatus> {
   return jsonRequest<HealthStatus>("/api/health", {}, false, "Backend is unavailable");
 }
 export async function getCategories(): Promise<Category[]> {
-  return jsonRequest<Category[]>("/api/categories", {}, false, "Unable to load categories");
+  const categories = await jsonRequest<unknown>("/api/categories", {}, false, "Unable to load categories");
+  if (!Array.isArray(categories)) throw new ApiRequestError("Unable to load categories", 500, "SAFE_FAILURE");
+  return categories as Category[];
 }
 export async function getRelatedSystems(): Promise<RelatedSystem[]> {
-  return jsonRequest<RelatedSystem[]>(
+  const systems = await jsonRequest<unknown>(
     "/api/related-systems",
     {},
     false,
     "Unable to load Related Systems",
   );
+  if (!Array.isArray(systems)) throw new ApiRequestError("Unable to load Related Systems", 500, "SAFE_FAILURE");
+  return systems as RelatedSystem[];
 }
 export async function checkSystem(): Promise<SystemStatus> {
   await checkHealth();
@@ -158,7 +162,7 @@ export type TicketSortField =
   | "ticketNumber" | "ticketDate" | "updatedAt" | "summary" | "requestedPriority";
 export type TicketSortOrder = "asc" | "desc";
 export type TicketPageSize = 10 | 25 | 50;
-export interface OwnerSummary { id: number; name: string; role: "IT_STAFF" | "ADMINISTRATOR" }
+export interface OwnerSummary { id: number; name: string; role: UserRole }
 export interface TicketListQuery {
   search?: string;
   categoryId?: number;
@@ -241,6 +245,79 @@ export async function getTickets(
   parameters.set("page", String(query.page));
   parameters.set("pageSize", String(query.pageSize));
   return jsonRequest<TicketListResponse>(`/api/tickets?${parameters}`, { signal });
+}
+
+export type StaffQueueSortField =
+  | "ticketNumber" | "ticketDate" | "updatedAt"
+  | "requestedPriority" | "itPriority" | "currentStatus";
+export interface StaffQueueQuery {
+  search?: string;
+  categoryId?: number;
+  relatedSystemId?: number;
+  requestedPriority?: RequestedPriority;
+  itPriority?: RequestedPriority;
+  currentStatus?: TicketStatus;
+  owner?: "unassigned" | "me" | number;
+  sortBy: StaffQueueSortField;
+  sortOrder: TicketSortOrder;
+  page: number;
+  pageSize: TicketPageSize;
+}
+export interface StaffQueueItem {
+  id: number;
+  ticketNumber: string;
+  ticketDate: string;
+  summary: string;
+  requester: { id: number; name: string; email: string };
+  category: Category;
+  relatedSystem: RelatedSystem;
+  requestedPriority: RequestedPriority;
+  itPriority: RequestedPriority;
+  currentStatus: TicketStatus;
+  owner: OwnerSummary | null;
+  requesterResolutionIndicatedAt: string | null;
+  updatedAt: string;
+}
+export interface StaffQueueResponse {
+  items: StaffQueueItem[];
+  counts: { matching: number; unassigned: number; mine: number };
+  pagination: TicketListPagination;
+}
+export interface EligibleAssignee {
+  id: number;
+  name: string;
+  role: "IT_STAFF" | "ADMINISTRATOR";
+}
+
+export async function getStaffTickets(
+  query: StaffQueueQuery,
+  signal?: AbortSignal,
+): Promise<StaffQueueResponse> {
+  const parameters = new URLSearchParams();
+  const search = query.search?.trim();
+  if (search) parameters.set("search", search);
+  if (query.categoryId !== undefined) parameters.set("categoryId", String(query.categoryId));
+  if (query.relatedSystemId !== undefined) parameters.set("relatedSystemId", String(query.relatedSystemId));
+  if (query.requestedPriority !== undefined) parameters.set("requestedPriority", query.requestedPriority);
+  if (query.itPriority !== undefined) parameters.set("itPriority", query.itPriority);
+  if (query.currentStatus !== undefined) parameters.set("currentStatus", query.currentStatus);
+  if (query.owner !== undefined) parameters.set("owner", String(query.owner));
+  parameters.set("sortBy", query.sortBy);
+  parameters.set("sortOrder", query.sortOrder);
+  parameters.set("page", String(query.page));
+  parameters.set("pageSize", String(query.pageSize));
+  return jsonRequest<StaffQueueResponse>(`/api/staff/tickets?${parameters}`, { signal });
+}
+
+export async function getStaffAssignees(signal?: AbortSignal): Promise<EligibleAssignee[]> {
+  const response = await jsonRequest<{ items?: unknown }>(
+    "/api/staff/assignees",
+    { signal },
+  );
+  if (!Array.isArray(response.items)) {
+    throw new ApiRequestError("Unable to load eligible assignees", 500, "SAFE_FAILURE");
+  }
+  return response.items as EligibleAssignee[];
 }
 
 export async function getTicketDetail(ticketId: number, signal?: AbortSignal): Promise<TicketDetail> {
