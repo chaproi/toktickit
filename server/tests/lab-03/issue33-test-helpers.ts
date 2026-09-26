@@ -42,11 +42,11 @@ export function staffGet(path: string, actor: AuthenticatedFixture) {
 }
 
 export function staffPost(path: string, actor: AuthenticatedFixture, body: unknown) {
-  return authenticatedUnsafe(request(app).post(path), actor).send(body);
+  return authenticatedUnsafe(request(app).post(path), actor).send(body as string | object | undefined);
 }
 
 export function staffPatch(path: string, actor: AuthenticatedFixture, body: unknown) {
-  return authenticatedUnsafe(request(app).patch(path), actor).send(body);
+  return authenticatedUnsafe(request(app).patch(path), actor).send(body as string | object | undefined);
 }
 
 export async function currentVersion(ticketId: number): Promise<string> {

@@ -37,7 +37,9 @@ export const detail = {
 };
 
 export function installStaffDetailFetch(options: {
-  ticket?: typeof detail;
+  ticket?: Omit<typeof detail, "owner"> & {
+    owner: null | { id: number; name: string; role: "IT_STAFF" | "ADMINISTRATOR" };
+  };
   detailResponse?: () => Promise<Response>;
   mutation?: (url: URL, init?: RequestInit) => Promise<Response>;
 } = {}) {

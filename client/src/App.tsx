@@ -23,6 +23,7 @@ import Login from "./components/Login.js";
 import MyTickets from "./components/MyTickets.js";
 import RequesterTicketDetail from "./components/RequesterTicketDetail.js";
 import StaffTicketQueue from "./components/StaffTicketQueue.js";
+import StaffTicketDetail from "./components/StaffTicketDetail.js";
 
 const MOBILE_NAVIGATION_QUERY = "(max-width: 767.98px)";
 
@@ -346,7 +347,7 @@ function AuthenticatedRoutes() {
       />
       <Route
         path="/staff/tickets/:ticketId"
-        element={user.role !== "REQUESTER" ? shell(<Placeholder heading="Operational Ticket Detail" />) : shell(<Forbidden user={user} />)}
+        element={user.role !== "REQUESTER" ? shell(<StaffTicketDetail />) : shell(<Forbidden user={user} />)}
       />
       <Route
         path="/admin/users"

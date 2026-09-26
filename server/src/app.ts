@@ -21,8 +21,11 @@ import { parseAllowedOrigins, validateOriginHeader } from "./auth/origin.js";
 import { parseCommentPageQuery } from "./comments/comment-query.js";
 import {
   addPublicComment,
+  addInternalNote,
+  listInternalNotes,
   listPublicComments,
   validateCommentBody,
+  validateInternalNoteBody,
 } from "./comments/comment-service.js";
 import { getPrisma } from "./prisma.js";
 import { indicateRequesterResolution } from "./tickets/resolution-indication-service.js";
@@ -32,11 +35,24 @@ import {
   listStaffQueue,
 } from "./tickets/staff-queue-service.js";
 import {
+  changeStaffTicketOwner,
+  changeStaffTicketPriority,
+  changeStaffTicketStatus,
+  claimStaffTicket,
+  getStaffTicketDetail,
+} from "./tickets/staff-ticket-service.js";
+import {
   createTicketForRequester,
   getTicketDetailForRequester,
   listTicketsForRequester,
 } from "./tickets/ticket-service.js";
-import { validateCreateTicketInput } from "./tickets/ticket-validation.js";
+import {
+  validateCreateTicketInput,
+  validateStaffClaimMutation,
+  validateStaffOwnerMutation,
+  validateStaffPriorityMutation,
+  validateStaffStatusMutation,
+} from "./tickets/ticket-validation.js";
 
 export const app = express();
 
@@ -122,6 +138,42 @@ function sendEligibilityConflict(res: Response): void {
     "CONCURRENT_UPDATE",
     "Your account eligibility changed. Reload and try again.",
   ));
+}
+
+function sendConflict(res: Response, code: string, message: string): void {
+  res.status(409).json(errorBody(code, message));
+}
+
+function sendStaffMutationResult(
+  res: Response,
+  result: { kind: string; ticket?: unknown },
+): void {
+  if (result.kind === "success") {
+    res.status(200).json({ ticket: result.ticket });
+    return;
+  }
+  if (result.kind === "not-found") {
+    sendTicketNotFound(res);
+    return;
+  }
+  if (result.kind === "owner-not-found") {
+    res.status(404).json(errorBody("OWNER_NOT_FOUND", "Ticket Owner not found."));
+    return;
+  }
+  const conflicts: Record<string, [string, string]> = {
+    "actor-conflict": ["OWNER_ELIGIBILITY_CONFLICT", "Ownership eligibility changed. Reload and try again."],
+    "owner-eligibility": ["OWNER_ELIGIBILITY_CONFLICT", "Ownership eligibility changed. Reload and try again."],
+    "owner-conflict": ["OWNER_CONFLICT", "This Ticket is already owned by another User."],
+    terminal: ["TERMINAL_TICKET", "Terminal Tickets cannot be changed."],
+    stale: ["STALE_WRITE", "This Ticket changed. Reload and try again."],
+    "owner-not-allowed": ["OWNER_CHANGE_NOT_ALLOWED", "This owner change is not allowed."],
+    "status-not-allowed": ["STATUS_TRANSITION_NOT_ALLOWED", "This status transition is not allowed."],
+    unchanged: ["STATUS_UNCHANGED", "The Ticket already has that status."],
+    confirmation: ["STATUS_CONFIRMATION_REQUIRED", "Confirmation is required for this status."],
+    "owner-required": ["STATUS_OWNER_REQUIRED", "Assign an active Ticket Owner first."],
+  };
+  const [code, message] = conflicts[result.kind] ?? ["STATUS_TRANSITION_NOT_ALLOWED", "This status transition is not allowed."];
+  sendConflict(res, code, message);
 }
 
 function sendMutationError(res: Response, error: unknown, operation: string): void {
@@ -249,6 +301,177 @@ app.get("/api/staff/assignees", async (req, res) => {
     res.status(200).json({ items: await listEligibleAssignees() });
   } catch (error) {
     sendDatabaseError(res, error, "listing eligible assignees");
+  }
+});
+
+app.get("/api/staff/tickets/:ticketId", async (req, res) => {
+  const live = await authenticated(req, res, ["IT_STAFF", "ADMINISTRATOR"]);
+  if (!live) return;
+  const ticketId = parsePositiveIdentifier(req.params.ticketId);
+  if (ticketId === null) {
+    res.status(400).json(errorBody("INVALID_TICKET_ID", "Ticket identifier must be a positive integer."));
+    return;
+  }
+  try {
+    const ticket = await getStaffTicketDetail(ticketId);
+    if (!ticket) {
+      sendTicketNotFound(res);
+      return;
+    }
+    res.status(200).json(ticket);
+  } catch (error) {
+    sendDatabaseError(res, error, "retrieving Staff Ticket Detail");
+  }
+});
+
+app.post("/api/staff/tickets/:ticketId/claim", async (req, res) => {
+  const live = await authenticated(req, res, ["IT_STAFF", "ADMINISTRATOR"], true);
+  if (!live) return;
+  const ticketId = parsePositiveIdentifier(req.params.ticketId);
+  if (ticketId === null) {
+    res.status(400).json(errorBody("INVALID_TICKET_ID", "Ticket identifier must be a positive integer."));
+    return;
+  }
+  const validation = validateStaffClaimMutation(req.body);
+  if (!validation.success) {
+    res.status(400).json(errorBody("VALIDATION_ERROR", "Please correct the highlighted fields.", validation.fields));
+    return;
+  }
+  try {
+    sendStaffMutationResult(res, await claimStaffTicket(live.user.id, ticketId, validation.data.expectedUpdatedAt));
+  } catch (error) {
+    sendMutationError(res, error, "claiming a Ticket");
+  }
+});
+
+app.patch("/api/staff/tickets/:ticketId/owner", async (req, res) => {
+  const live = await authenticated(req, res, ["IT_STAFF", "ADMINISTRATOR"], true);
+  if (!live) return;
+  const ticketId = parsePositiveIdentifier(req.params.ticketId);
+  if (ticketId === null) {
+    res.status(400).json(errorBody("INVALID_TICKET_ID", "Ticket identifier must be a positive integer."));
+    return;
+  }
+  const validation = validateStaffOwnerMutation(req.body);
+  if (!validation.success) {
+    res.status(400).json(errorBody("VALIDATION_ERROR", "Please correct the highlighted fields.", validation.fields));
+    return;
+  }
+  try {
+    sendStaffMutationResult(res, await changeStaffTicketOwner(
+      live.user.id,
+      ticketId,
+      validation.data.ownerId,
+      validation.data.expectedUpdatedAt,
+    ));
+  } catch (error) {
+    sendMutationError(res, error, "changing Ticket ownership");
+  }
+});
+
+app.patch("/api/staff/tickets/:ticketId/it-priority", async (req, res) => {
+  const live = await authenticated(req, res, ["IT_STAFF", "ADMINISTRATOR"], true);
+  if (!live) return;
+  const ticketId = parsePositiveIdentifier(req.params.ticketId);
+  if (ticketId === null) {
+    res.status(400).json(errorBody("INVALID_TICKET_ID", "Ticket identifier must be a positive integer."));
+    return;
+  }
+  const validation = validateStaffPriorityMutation(req.body);
+  if (!validation.success) {
+    res.status(400).json(errorBody("VALIDATION_ERROR", "Please correct the highlighted fields.", validation.fields));
+    return;
+  }
+  try {
+    sendStaffMutationResult(res, await changeStaffTicketPriority(
+      live.user.id,
+      ticketId,
+      validation.data.itPriority,
+      validation.data.expectedUpdatedAt,
+    ));
+  } catch (error) {
+    sendMutationError(res, error, "changing Ticket priority");
+  }
+});
+
+app.patch("/api/staff/tickets/:ticketId/status", async (req, res) => {
+  const live = await authenticated(req, res, ["IT_STAFF", "ADMINISTRATOR"], true);
+  if (!live) return;
+  const ticketId = parsePositiveIdentifier(req.params.ticketId);
+  if (ticketId === null) {
+    res.status(400).json(errorBody("INVALID_TICKET_ID", "Ticket identifier must be a positive integer."));
+    return;
+  }
+  const validation = validateStaffStatusMutation(req.body);
+  if (!validation.success) {
+    res.status(400).json(errorBody("VALIDATION_ERROR", "Please correct the highlighted fields.", validation.fields));
+    return;
+  }
+  try {
+    sendStaffMutationResult(res, await changeStaffTicketStatus(
+      live.user.id,
+      ticketId,
+      validation.data.targetStatus,
+      validation.data.confirm,
+      validation.data.reason,
+      validation.data.expectedUpdatedAt,
+    ));
+  } catch (error) {
+    sendMutationError(res, error, "changing Ticket status");
+  }
+});
+
+app.get("/api/staff/tickets/:ticketId/notes", async (req, res) => {
+  const live = await authenticated(req, res, ["IT_STAFF", "ADMINISTRATOR"]);
+  if (!live) return;
+  const ticketId = parsePositiveIdentifier(req.params.ticketId);
+  if (ticketId === null) {
+    res.status(400).json(errorBody("INVALID_TICKET_ID", "Ticket identifier must be a positive integer."));
+    return;
+  }
+  const validation = parseCommentPageQuery(req.query as Record<string, unknown>);
+  if (!validation.success) {
+    res.status(400).json(errorBody("INVALID_QUERY", "One or more query parameters are invalid.", validation.fields));
+    return;
+  }
+  try {
+    const result = await listInternalNotes(ticketId, validation.data);
+    if (result.kind === "not-found") {
+      sendTicketNotFound(res);
+      return;
+    }
+    res.status(200).json({ items: result.items, pagination: result.pagination });
+  } catch (error) {
+    sendDatabaseError(res, error, "listing Internal Notes");
+  }
+});
+
+app.post("/api/staff/tickets/:ticketId/notes", async (req, res) => {
+  const live = await authenticated(req, res, ["IT_STAFF", "ADMINISTRATOR"], true);
+  if (!live) return;
+  const ticketId = parsePositiveIdentifier(req.params.ticketId);
+  if (ticketId === null) {
+    res.status(400).json(errorBody("INVALID_TICKET_ID", "Ticket identifier must be a positive integer."));
+    return;
+  }
+  const validation = validateInternalNoteBody(req.body);
+  if (!validation.success) {
+    res.status(400).json(errorBody("VALIDATION_ERROR", "Please correct the highlighted fields.", validation.fields));
+    return;
+  }
+  try {
+    const result = await addInternalNote(live.user.id, live.user.role as "IT_STAFF" | "ADMINISTRATOR", ticketId, validation.content);
+    if (result.kind === "not-found") {
+      sendTicketNotFound(res);
+      return;
+    }
+    if (result.kind === "eligibility-conflict") {
+      sendEligibilityConflict(res);
+      return;
+    }
+    res.status(201).json(result.note);
+  } catch (error) {
+    sendMutationError(res, error, "adding an Internal Note");
   }
 });
 

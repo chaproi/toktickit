@@ -288,6 +288,20 @@ export interface EligibleAssignee {
   name: string;
   role: "IT_STAFF" | "ADMINISTRATOR";
 }
+export interface TicketStatusHistory {
+  id: number;
+  fromStatus: TicketStatus;
+  toStatus: TicketStatus;
+  reason: string | null;
+  actor: OwnerSummary;
+  createdAt: string;
+}
+export interface StaffTicketDetail extends StaffQueueItem {
+  description: string;
+  createdAt: string;
+  allowedStatusTransitions: TicketStatus[];
+  statusHistory: TicketStatusHistory[];
+}
 
 export async function getStaffTickets(
   query: StaffQueueQuery,
@@ -318,6 +332,42 @@ export async function getStaffAssignees(signal?: AbortSignal): Promise<EligibleA
     throw new ApiRequestError("Unable to load eligible assignees", 500, "SAFE_FAILURE");
   }
   return response.items as EligibleAssignee[];
+}
+
+export async function getStaffTicketDetail(ticketId: number, signal?: AbortSignal): Promise<StaffTicketDetail> {
+  return jsonRequest<StaffTicketDetail>(`/api/staff/tickets/${ticketId}`, { signal });
+}
+
+function staffMutation(
+  ticketId: number,
+  path: string,
+  method: "POST" | "PATCH",
+  body: Record<string, unknown>,
+): Promise<{ ticket: StaffQueueItem }> {
+  return jsonRequest(
+    `/api/staff/tickets/${ticketId}/${path}`,
+    { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) },
+    true,
+  );
+}
+
+export function claimStaffTicket(ticketId: number, expectedUpdatedAt: string) {
+  return staffMutation(ticketId, "claim", "POST", { expectedUpdatedAt });
+}
+export function setStaffTicketOwner(ticketId: number, ownerId: number | null, expectedUpdatedAt: string) {
+  return staffMutation(ticketId, "owner", "PATCH", { ownerId, expectedUpdatedAt });
+}
+export function setStaffTicketPriority(ticketId: number, itPriority: RequestedPriority, expectedUpdatedAt: string) {
+  return staffMutation(ticketId, "it-priority", "PATCH", { itPriority, expectedUpdatedAt });
+}
+export function setStaffTicketStatus(
+  ticketId: number,
+  targetStatus: TicketStatus,
+  expectedUpdatedAt: string,
+  confirm = false,
+  reason: string | null = null,
+) {
+  return staffMutation(ticketId, "status", "PATCH", { targetStatus, expectedUpdatedAt, confirm, reason });
 }
 
 export async function getTicketDetail(ticketId: number, signal?: AbortSignal): Promise<TicketDetail> {
@@ -395,6 +445,8 @@ export interface PublicCommentResponse {
   items: PublicComment[];
   pagination: TicketListPagination;
 }
+export type InternalNote = PublicComment;
+export type InternalNoteResponse = PublicCommentResponse;
 export async function getPublicComments(
   ticketId: number,
   page = 1,
@@ -409,6 +461,28 @@ export async function getPublicComments(
 export async function addPublicComment(ticketId: number, content: string): Promise<PublicComment> {
   return jsonRequest<PublicComment>(
     `/api/tickets/${ticketId}/comments`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content }),
+    },
+    true,
+  );
+}
+export async function getInternalNotes(
+  ticketId: number,
+  page = 1,
+  pageSize: 20 | 50 | 100 = 20,
+  signal?: AbortSignal,
+): Promise<InternalNoteResponse> {
+  return jsonRequest<InternalNoteResponse>(
+    `/api/staff/tickets/${ticketId}/notes?page=${page}&pageSize=${pageSize}`,
+    { signal },
+  );
+}
+export async function addInternalNote(ticketId: number, content: string): Promise<InternalNote> {
+  return jsonRequest<InternalNote>(
+    `/api/staff/tickets/${ticketId}/notes`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
