@@ -182,7 +182,7 @@ The PR #32 correction record claims no hosted CI, approval, merge, Issue #31 clo
 
 ## 11. Issue #33 IT Staff Workflow Handoff
 
-This section records locally executed implementation and verification evidence. It is not peer review, hosted CI, approval, merge, Issue closure, or a GitHub Project transition. No push or other GitHub action was performed for Issue #33.
+This section records locally executed implementation and verification evidence plus a later external-state cutoff. At the start of this documentation sync, the complete Issue #33 implementation and corrective chain through `da83bcb` had been pushed. No Issue #33 PR existed at that evidence cutoff. The recorded test results are local evidence, not hosted CI, and this documentation commit does not claim subsequent GitHub state.
 
 | Item | Current evidence |
 | --- | --- |
@@ -201,7 +201,7 @@ This section records locally executed implementation and verification evidence. 
 | Database isolation and cleanup | Mutation-based tests used only validated `toktickit_test`. The disposable Playwright schema was dropped, regenerated tracked Lab 2 screenshots were restored, generated build/test output and temporary helpers were removed, and no test process or verification listener remained. |
 | Secrets and local configuration | `server/.env` remained ignored and outside every Issue #33 commit. Committed-diff scans found no private credentials, password hashes, cookies, tokens, database URLs, HMAC secrets, private keys, or environment files introduced by Issue #33. |
 | Test-contract status | `UNIT-05`, `UNIT-06`, `API-10`, `API-11`, `API-12`, `API-13`, `API-15`, `API-16`, `UI-06`, `UI-07`, `UI-08`, and `E2E-03` are `Pass (Issue #33)`. Totals are 75 = 16 Issue #27 Pass + 13 Issue #29 Pass + 3 Issue #31 Pass + 12 Issue #33 Pass + 31 Planned. All 61 Acceptance Criteria remain traced. |
-| External state | No Issue #33 push, pull request, hosted CI run, review, approval, merge, Issue #33 closure, review-thread resolution, or Project Done transition is claimed. GitHub is authoritative for subsequent external events. |
+| Initial handoff event | No push or other GitHub action occurred during the original implementation handoff. The later pushed-state evidence cutoff is recorded below; GitHub remains authoritative for subsequent external events. |
 
 ### Issue #33 pre-push audit correction
 
@@ -217,4 +217,5 @@ The initial Issue #33 chain remains RED `5c48e63`, GREEN `46a21cc`, and evidence
 | Complete corrected verification | Plain server `npm test`: 40 files / 293 tests. Plain client `npm test`: 16 files / 138 tests. Ordinary unfiltered Playwright: all 9 scenarios. Server and client production builds: passed. Compiled health smoke: passed, process terminated, listener closed. |
 | Development preservation | Before/after `toktickit/public` counts remained 92 Attachments, 4 Categories, 5 Development Requesters, 7 Related Systems, 182 Tickets, and 1 TicketNumberSequence row; all six SHA-256 row-set checksums matched exactly. Mutation verification targeted only validated `toktickit_test`. |
 | Cleanup and contract | Disposable schemas and fixtures, build/Playwright output, regenerated tracked screenshots, temporary helpers, test processes, and listeners were cleaned. Test totals remain 75 = 16 Issue #27 Pass + 13 Issue #29 Pass + 3 Issue #31 Pass + 12 Issue #33 Pass + 31 Planned, with all 61 ACs traced. |
-| Governance state | No Issue #33 PR exists. The corrective commits and this evidence remain local and unpushed. No hosted CI, review, approval, merge, Issue #33 closure, resolved review thread, or Project Done transition is claimed. No GitHub action was performed. |
+| Pushed chain at evidence cutoff | Original RED `5c48e6383223bf2d26dcc8473388bf8f2daaa308`; original GREEN `46a21cc5f8957d76cbcc02eddcec38772007e34c`; original documentation `c7751c06e4e95123b6d560eec470ada3a653f9c7`; corrective RED `ac63701994c08d307ae01f3cf2111aa67c9084d5`; corrective GREEN `af8dbf2ecf7625c4d9941dfb2fb3cf9b9ce00d78`; transparent test-oracle follow-up `92f6c66164f4fc3fcdf2358689d3cbe770dc44d6`; corrective documentation `da83bcb7d22e4196c0de10af6d4d749f0bd11bab`. This complete chain had been pushed when the sync began. |
+| Governance state at sync start | No Issue #33 PR existed. No hosted GitHub Actions result, review, approval, merge, Issue #33 closure, resolved review thread, or Project Done transition is claimed. This documentation commit does not claim subsequent GitHub state; GitHub is authoritative after this evidence cutoff. |
