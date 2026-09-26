@@ -5,6 +5,7 @@ import {
   cleanupIssue29Fixtures,
   issue33Actors,
   issue33Ticket,
+  overlapOnMutationGate,
   staffPatch,
 } from "./issue33-test-helpers.js";
 
@@ -100,5 +101,40 @@ describe("API-12 and API-13 Staff priority and status workflow", () => {
     const persisted = await getPrisma().ticket.findUniqueOrThrow({ where: { id: ticket.id } });
     expect(persisted.requesterResolutionIndicatedAt).toBeNull();
     expect(persisted.requesterResolutionIndicatedById).toBeNull();
+  });
+
+  it("serializes overlapping same-version status changes into one transition and history row", async () => {
+    const actors = await issue33Actors();
+    const ticket = await issue33Ticket(actors.requester.user.id, "RESOLVED", actors.staff.user.id);
+    await getPrisma().ticket.update({
+      where: { id: ticket.id },
+      data: { requesterResolutionIndicatedAt: new Date(), requesterResolutionIndicatedById: actors.requester.user.id },
+    });
+    const current = await getPrisma().ticket.findUniqueOrThrow({ where: { id: ticket.id } });
+    const body = { targetStatus: "REOPENED", expectedUpdatedAt: current.updatedAt.toISOString() };
+    const { responses, blockedCount } = await overlapOnMutationGate(
+      { scope: 1, id: actors.staff.user.id },
+      [
+        () => staffPatch(`/api/staff/tickets/${ticket.id}/status`, actors.staff, body),
+        () => staffPatch(`/api/staff/tickets/${ticket.id}/status`, actors.staff, body),
+      ],
+    );
+    expect(blockedCount).toBeGreaterThanOrEqual(2);
+    expect(responses.map(({ status }) => status).sort()).toEqual([200, 409]);
+    const loser = responses.find(({ status }) => status === 409);
+    expect([
+      { error: { code: "STALE_WRITE", message: "This Ticket changed. Reload and try again." } },
+      { error: { code: "CONCURRENT_UPDATE", message: "Your account eligibility changed. Reload and try again." } },
+    ]).toContainEqual(loser?.body);
+    expect(JSON.stringify(loser?.body)).not.toMatch(/ticketNumber|requester|password|hash|session|ownerId/i);
+    const persisted = await getPrisma().ticket.findUniqueOrThrow({ where: { id: ticket.id } });
+    expect(persisted).toMatchObject({
+      currentStatus: "REOPENED",
+      requesterResolutionIndicatedAt: null,
+      requesterResolutionIndicatedById: null,
+    });
+    const history = await getPrisma().ticketStatusHistory.findMany({ where: { ticketId: ticket.id } });
+    expect(history).toHaveLength(1);
+    expect(history[0]).toMatchObject({ fromStatus: "RESOLVED", toStatus: "REOPENED", actorId: actors.staff.user.id });
   });
 });

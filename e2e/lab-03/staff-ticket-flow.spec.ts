@@ -2,7 +2,15 @@ import { randomBytes, randomUUID } from "node:crypto";
 import { expect, test } from "@playwright/test";
 import { getPrisma } from "../../server/src/prisma.js";
 
+const PNG_BUFFER = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl2nFQAAAAASUVORK5CYII=",
+  "base64",
+);
+
 function seededPassword(email: string): string {
+  const migratedRaw = process.env.TOKTICKIT_E2E_MIGRATED_REQUESTER_CREDENTIALS;
+  const migrated = migratedRaw ? (JSON.parse(migratedRaw) as Record<string, unknown>)[email] : undefined;
+  if (typeof migrated === "string") return migrated;
   const raw = process.env.LAB3_SEED_INITIAL_CREDENTIALS;
   if (!raw) throw new Error("Issue 33 E2E credentials are unavailable.");
   const value = (JSON.parse(raw) as Record<string, unknown>)[email];
@@ -13,7 +21,9 @@ function seededPassword(email: string): string {
 test("E2E-03 completes the Staff operational Ticket workflow", async ({ page }) => {
   const prisma = getPrisma();
   const marker = `${process.env.TOKTICKIT_E2E_RUN_MARKER}-Issue33`;
-  const requester = await prisma.user.findFirstOrThrow({ where: { role: "REQUESTER", isActive: true } });
+  const requesterEmail = "daniel.kim@example.com";
+  const requester = await prisma.user.findUniqueOrThrow({ where: { email: requesterEmail } });
+  const otherStaff = await prisma.user.findUniqueOrThrow({ where: { email: "noah.williams@example.com" } });
   const category = await prisma.category.findFirstOrThrow({ where: { isActive: true } });
   const system = await prisma.relatedSystem.findFirstOrThrow({ where: { isActive: true } });
   const ticket = await prisma.ticket.create({
@@ -31,6 +41,38 @@ test("E2E-03 completes the Staff operational Ticket workflow", async ({ page }) 
       description: "Synthetic Issue 33 operational workflow Ticket.",
     },
   });
+
+  const requesterPassword = seededPassword(requesterEmail);
+  const requesterReplacement = `Aa1!${randomBytes(18).toString("base64url")}`;
+  await page.goto("/login");
+  await page.getByLabel("Email").fill(requesterEmail);
+  await page.getByLabel("Password", { exact: true }).fill(requesterPassword);
+  await page.getByRole("button", { name: "Sign in" }).click();
+  await page.getByLabel("Current Password").fill(requesterPassword);
+  await page.getByLabel("New Password", { exact: true }).fill(requesterReplacement);
+  await page.getByLabel("Confirm New Password").fill(requesterReplacement);
+  await page.getByRole("button", { name: "Save Password" }).click();
+  await expect(page.getByRole("heading", { name: "My Tickets" })).toBeVisible();
+  await page.goto(`/tickets/${ticket.id}`);
+  const activeName = `${marker}-active.png`;
+  await page.getByLabel("Add Attachment").setInputFiles({ name: activeName, mimeType: "image/png", buffer: PNG_BUFFER });
+  await page.getByRole("button", { name: "Upload" }).click();
+  await expect(page.getByRole("listitem").filter({ hasText: activeName })).toBeVisible();
+  await prisma.attachment.create({
+    data: {
+      ticketId: ticket.id,
+      originalFilename: `${marker}-removed.txt`,
+      storageKey: `issue33-removed-${randomUUID()}`,
+      mimeType: "text/plain",
+      sizeBytes: 7,
+      uploadedByUserId: requester.id,
+      isRemoved: true,
+      removedAt: new Date(),
+      removedByUserId: requester.id,
+      removalReason: "Removed deterministic E2E fixture",
+    },
+  });
+  await page.getByRole("button", { name: "Logout" }).click();
 
   const email = "mina.patel@example.com";
   const initialPassword = seededPassword(email);
@@ -50,10 +92,27 @@ test("E2E-03 completes the Staff operational Ticket workflow", async ({ page }) 
   await page.getByRole("button", { name: "Apply Filters" }).click();
   await page.getByRole("link", { name: ticket.ticketNumber }).first().click();
   await expect(page.getByRole("heading", { name: ticket.ticketNumber })).toBeVisible();
+  await expect(page.getByText("Current Status: Open")).toBeVisible();
+  const activeItem = page.getByRole("listitem").filter({ hasText: activeName });
+  const popupPromise = page.waitForEvent("popup");
+  await activeItem.getByRole("button", { name: `Preview ${activeName}` }).click();
+  const preview = await popupPromise;
+  await expect(preview).toHaveURL(/^blob:/u);
+  await preview.close();
+  const removedItem = page.getByRole("listitem").filter({ hasText: `${marker}-removed.txt` });
+  await expect(removedItem.getByText("Removed")).toBeVisible();
+  await expect(removedItem.getByRole("button")).toHaveCount(0);
   await page.getByRole("button", { name: "Claim Ticket" }).click();
   await expect(page.getByText(/Owner.*Mina Patel/u)).toBeVisible();
+  await expect(page.getByText("Current Status: Open")).toBeVisible();
+  await page.getByRole("button", { name: "Assign Ticket" }).click();
+  await page.getByLabel("Ticket Owner").selectOption(String(otherStaff.id));
+  await page.getByRole("button", { name: "Save Owner" }).click();
+  await expect(page.getByText(/Owner.*Noah Williams/u)).toBeVisible();
   await page.getByLabel("IT Priority").selectOption("URGENT");
   await page.getByRole("button", { name: "Save IT Priority" }).click();
+  await expect(page.getByText("Requested High")).toBeVisible();
+  await expect(page.getByLabel("IT Priority")).toHaveValue("URGENT");
   await page.getByLabel("Add a public comment").fill("Public Staff E2E update.");
   await page.getByRole("button", { name: "Post comment" }).click();
   await expect(page.getByText("Public Staff E2E update.")).toBeVisible();
@@ -63,5 +122,7 @@ test("E2E-03 completes the Staff operational Ticket workflow", async ({ page }) 
   await page.getByLabel("Next status").selectOption("IN_PROGRESS");
   await page.getByRole("button", { name: "Update Status" }).click();
   await expect(page.getByText("Open to In Progress")).toBeVisible();
+  await expect(page.getByText("Current Status: In Progress")).toBeVisible();
+  await expect(page.getByText(/Owner.*Noah Williams/u)).toBeVisible();
   await expect(page.getByText("Internal — not visible to Requester")).toBeVisible();
 });

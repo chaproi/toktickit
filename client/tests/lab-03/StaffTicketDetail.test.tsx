@@ -1,4 +1,4 @@
-import { screen, waitFor, within } from "@testing-library/react";
+import { act, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { jsonResponse, renderAt } from "./test-helpers.js";
@@ -42,8 +42,31 @@ describe("UI-06 Staff operational Ticket Detail", () => {
     await waitFor(() => expect(screen.getByText(detail.summary)).toBeInTheDocument());
   });
 
+  it.each([
+    [403, "Forbidden"],
+    [404, "Ticket not found."],
+  ])("renders the exact safe state for a %s Detail response", async (status, expected) => {
+    installStaffDetailFetch({
+      detailResponse: async () => jsonResponse({ error: { code: status === 403 ? "FORBIDDEN" : "NOT_FOUND", message: expected } }, status),
+    });
+    renderAt(`/staff/tickets/${detail.id}`);
+    expect(await screen.findByText(expected)).toBeInTheDocument();
+    expect(screen.queryByText(detail.summary)).not.toBeInTheDocument();
+    expect(screen.queryByText(detail.requester.email)).not.toBeInTheDocument();
+  });
+
   it("offers Claim for an unassigned non-terminal Ticket and read-only Staff attachment actions", async () => {
-    installStaffDetailFetch();
+    installStaffDetailFetch({ attachments: [
+      {
+        id: 41, ticketId: detail.id, originalFilename: "evidence.pdf", mimeType: "application/pdf",
+        sizeBytes: 1000, isRemoved: false, createdAt: "2026-09-21T08:30:00.000Z", removedAt: null, removalReason: null,
+      },
+      {
+        id: 42, ticketId: detail.id, originalFilename: "removed.txt", mimeType: "text/plain",
+        sizeBytes: 25, isRemoved: true, createdAt: "2026-09-21T08:31:00.000Z",
+        removedAt: "2026-09-21T09:00:00.000Z", removalReason: "Obsolete evidence",
+      },
+    ] });
     renderAt(`/staff/tickets/${detail.id}`);
     expect(await screen.findByRole("button", { name: "Claim Ticket" })).toBeInTheDocument();
     const attachments = screen.getByRole("region", { name: "Attachments" });
@@ -51,5 +74,47 @@ describe("UI-06 Staff operational Ticket Detail", () => {
     expect(within(attachments).getByRole("button", { name: "Download evidence.pdf" })).toBeInTheDocument();
     expect(within(attachments).queryByText("Add Attachment")).not.toBeInTheDocument();
     expect(within(attachments).queryByRole("button", { name: /remove/i })).not.toBeInTheDocument();
+    expect(within(attachments).getByText("removed.txt")).toBeInTheDocument();
+    expect(within(attachments).getByText("Removed")).toBeInTheDocument();
+    expect(within(attachments).queryByRole("button", { name: /removed\.txt/i })).not.toBeInTheDocument();
+  });
+
+  it("clears Ticket A state immediately on route reuse and ignores Ticket A's late response", async () => {
+    const ticketB = {
+      ...detail,
+      id: 502,
+      ticketNumber: "TKT-2026-00502",
+      summary: "Authoritative Ticket B",
+      description: "Only Ticket B data may remain.",
+    };
+    let resolveA: ((response: Response) => void) | undefined;
+    let resolveB: ((response: Response) => void) | undefined;
+    installStaffDetailFetch({
+      detailResponse: (ticketId) => new Promise<Response>((resolve) => {
+        if (ticketId === detail.id) resolveA = resolve;
+        else resolveB = resolve;
+      }),
+    });
+    renderAt(`/staff/tickets/${detail.id}`);
+    await screen.findByRole("status");
+
+    act(() => {
+      window.history.pushState({}, "", `/staff/tickets/${ticketB.id}`);
+      window.dispatchEvent(new PopStateEvent("popstate"));
+    });
+    expect(await screen.findByRole("status")).toHaveTextContent("Loading Ticket Detail");
+    expect(screen.queryByText(detail.summary)).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+
+    await act(async () => { resolveB!(jsonResponse(ticketB)); });
+    expect(await screen.findByRole("heading", { name: ticketB.ticketNumber })).toBeInTheDocument();
+    expect(screen.getByText(ticketB.summary)).toBeInTheDocument();
+
+    await act(async () => { resolveA!(jsonResponse(detail)); });
+    await waitFor(() => expect(screen.getByText(ticketB.summary)).toBeInTheDocument());
+    expect(screen.queryByText(detail.summary)).not.toBeInTheDocument();
+    expect(screen.queryByText(detail.ticketNumber)).not.toBeInTheDocument();
+    expect(screen.queryByText("Private diagnosis")).not.toBeInTheDocument();
   });
 });

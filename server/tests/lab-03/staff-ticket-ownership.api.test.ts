@@ -6,6 +6,7 @@ import {
   currentVersion,
   issue33Actors,
   issue33Ticket,
+  overlapOnMutationGate,
   staffPatch,
   staffPost,
 } from "./issue33-test-helpers.js";
@@ -85,5 +86,27 @@ describe("API-11 Staff claim and ownership", () => {
     expect(response.status).toBe(409);
     expect(response.body.error.code).toBe("OWNER_CHANGE_NOT_ALLOWED");
     await assertTicketFields(blocked.id, { ownerId: actors.staff.user.id });
+  });
+
+  it("serializes genuinely overlapping competing claims and commits exactly one owner", async () => {
+    const actors = await issue33Actors();
+    const ticket = await issue33Ticket(actors.requester.user.id, "OPEN");
+    const body = { expectedUpdatedAt: ticket.updatedAt.toISOString() };
+    const { responses, blockedCount } = await overlapOnMutationGate(
+      { scope: 2, id: ticket.id },
+      [
+        () => staffPost(`/api/staff/tickets/${ticket.id}/claim`, actors.staff, body),
+        () => staffPost(`/api/staff/tickets/${ticket.id}/claim`, actors.otherStaff, body),
+      ],
+    );
+    expect(blockedCount).toBeGreaterThanOrEqual(2);
+    const winner = responses.find(({ status }) => status === 200);
+    const loser = responses.find(({ status }) => status === 409);
+    expect(winner?.body.ticket).toMatchObject({ id: ticket.id, currentStatus: "OPEN" });
+    expect(loser?.body).toEqual({ error: { code: "OWNER_CONFLICT", message: "This Ticket is already owned by another User." } });
+    expect(JSON.stringify(loser?.body)).not.toMatch(/ticketNumber|requester|password|hash|session|ownerId/i);
+    const persisted = await assertTicketFields(ticket.id, { currentStatus: "OPEN" });
+    expect([actors.staff.user.id, actors.otherStaff.user.id]).toContain(persisted.ownerId);
+    expect(persisted.ownerId).toBe(winner?.body.ticket.owner.id);
   });
 });
