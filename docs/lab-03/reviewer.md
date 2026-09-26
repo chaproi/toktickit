@@ -179,3 +179,26 @@ This section records local execution evidence and supplied governance facts. PR 
 | Issue #31 external state | The complete chain through corrective RED `e84dc71`, GREEN `0bded01`, and evidence commit `ef48d94` was pushed before this governance-sync record was created. No Issue #31 PR existed when the sync began. No hosted CI, review, approval, merge, Issue #31 closure, or Project Done transition is claimed. GitHub is authoritative for events occurring after this recorded state. |
 
 The PR #32 correction record claims no hosted CI, approval, merge, Issue #31 closure, resolved review thread, or Project Done transition. It does not assert whether the new correction chain is later pushed or re-reviewed; GitHub is authoritative for events after this dated record.
+
+## 11. Issue #33 IT Staff Workflow Handoff
+
+This section records locally executed implementation and verification evidence. It is not peer review, hosted CI, approval, merge, Issue closure, or a GitHub Project transition. No push or other GitHub action was performed for Issue #33.
+
+| Item | Current evidence |
+| --- | --- |
+| Issue / branch | #33 / `feat/33-it-staff-workflow` |
+| Starting commit | `774a0c006b9553d9255529b5db46878a4148f3a0` |
+| RED commit | `5c48e6383223bf2d26dcc8473388bf8f2daaa308` (`test(lab3): define IT Staff operational workflow`) |
+| GREEN commit | `46a21cc5f8957d76cbcc02eddcec38772007e34c` (`feat(lab3): implement IT Staff operational workflow`) |
+| RED evidence | Focused server: 7 files / 23 tests, with 18 intended failures and 5 retained passes. Focused client: 3 files / 9 tests, all 9 failed for the missing operational Detail UI. The browser flow reached the Queue/Detail boundary and failed at the missing operational heading after its own test-order race was corrected. No RED failure came from syntax, dependencies, unsafe database targeting, or invalid setup. |
+| Implemented scope | Staff/Administrator operational Ticket Detail; eligible-assignee read; claim, assign, reassign, unassign, IT Priority, and status transitions; exact owner and transition eligibility; Public Comments and Internal Notes; Staff read-only Attachment access; Requester-resolution clearing on REOPENED; safe conflict reloads; accessible dialogs, focus, pagination, validation, and inert rendering |
+| Transaction and authorization boundary | Every operational mutation reuses the existing SERIALIZABLE, transaction-scoped gate and User-before-Ticket revalidation protocol. Backend session role is authoritative; Requesters cannot access Staff Detail or Internal Notes, and Staff/Administrators do not receive Requester Attachment upload/removal authority. Safe errors do not expose protected resource or database details. |
+| Excluded scope preserved | No Administrator user-management workflow, Staff Attachment mutation, final responsive screenshot evidence, schema/migration/seed/dependency change, or unrelated feature was added |
+| Focused GREEN verification | Server: 7 files / 23 tests. Client: 3 files / 9 tests. All passed against the validated test configuration. |
+| Complete verification | Plain server `npm test`: 40 files / 291 tests with no command-line timeout override. Plain client `npm test`: 16 files / 121 tests. Ordinary unfiltered Playwright: all 9 scenarios passed, comprising the 6 retained Lab 2 scenarios, the existing Authentication and authenticated Requester scenarios, and the new Staff operational workflow scenario. Server and client production builds passed. |
+| Health smoke | The compiled server health endpoint on port 31933 returned the exact expected `ok` service response. The process was terminated and the port was confirmed closed. |
+| Development database | Read-only before/after evidence for `toktickit/public` matched exactly: 92 Attachments, 4 Categories, 5 Development Requesters, 7 Related Systems, 182 Tickets, and 1 TicketNumberSequence row. Every recorded SHA-256 row-set checksum was unchanged. |
+| Database isolation and cleanup | Mutation-based tests used only validated `toktickit_test`. The disposable Playwright schema was dropped, regenerated tracked Lab 2 screenshots were restored, generated build/test output and temporary helpers were removed, and no test process or verification listener remained. |
+| Secrets and local configuration | `server/.env` remained ignored and outside every Issue #33 commit. Committed-diff scans found no private credentials, password hashes, cookies, tokens, database URLs, HMAC secrets, private keys, or environment files introduced by Issue #33. |
+| Test-contract status | `UNIT-05`, `UNIT-06`, `API-10`, `API-11`, `API-12`, `API-13`, `API-15`, `API-16`, `UI-06`, `UI-07`, `UI-08`, and `E2E-03` are `Pass (Issue #33)`. Totals are 75 = 16 Issue #27 Pass + 13 Issue #29 Pass + 3 Issue #31 Pass + 12 Issue #33 Pass + 31 Planned. All 61 Acceptance Criteria remain traced. |
+| External state | No Issue #33 push, pull request, hosted CI run, review, approval, merge, Issue #33 closure, review-thread resolution, or Project Done transition is claimed. GitHub is authoritative for subsequent external events. |
