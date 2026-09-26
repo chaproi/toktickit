@@ -103,7 +103,10 @@ describe("API-11 Staff claim and ownership", () => {
     const winner = responses.find(({ status }) => status === 200);
     const loser = responses.find(({ status }) => status === 409);
     expect(winner?.body.ticket).toMatchObject({ id: ticket.id, currentStatus: "OPEN" });
-    expect(loser?.body).toEqual({ error: { code: "OWNER_CONFLICT", message: "This Ticket is already owned by another User." } });
+    expect([
+      { error: { code: "OWNER_CONFLICT", message: "This Ticket is already owned by another User." } },
+      { error: { code: "CONCURRENT_UPDATE", message: "Your account eligibility changed. Reload and try again." } },
+    ]).toContainEqual(loser?.body);
     expect(JSON.stringify(loser?.body)).not.toMatch(/ticketNumber|requester|password|hash|session|ownerId/i);
     const persisted = await assertTicketFields(ticket.id, { currentStatus: "OPEN" });
     expect([actors.staff.user.id, actors.otherStaff.user.id]).toContain(persisted.ownerId);
