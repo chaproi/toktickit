@@ -352,6 +352,7 @@ export default function StaffTicketDetail() {
   const [notice, setNotice] = useState("");
   const [retry, setRetry] = useState(0);
   const [busy, setBusy] = useState(false);
+  const [claiming, setClaiming] = useState(false);
   const [priority, setPriority] = useState<RequestedPriority>("MEDIUM");
   const [nextStatus, setNextStatus] = useState<TicketStatus | "">("");
   const [dialog, setDialog] = useState<"owner" | "status" | null>(null);
@@ -365,6 +366,7 @@ export default function StaffTicketDetail() {
   const ownerSelectRef = useRef<HTMLSelectElement>(null);
   const statusCancelRef = useRef<HTMLButtonElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const authoritativeTicketRef = useRef<StaffTicket | null>(null);
 
   useEffect(() => {
     if (dialog) contentRef.current?.setAttribute("inert", "");
@@ -395,6 +397,7 @@ export default function StaffTicketDetail() {
         getPublicComments(ticketId, 1, 20, signal).catch(() => null),
         getInternalNotes(ticketId, 1, 20, signal).catch(() => null),
       ]);
+      authoritativeTicketRef.current = detail;
       setTicket(detail);
       setAssignees(available);
       setPublicComments(comments);
@@ -407,6 +410,7 @@ export default function StaffTicketDetail() {
       if (caught instanceof DOMException && caught.name === "AbortError") return "aborted";
       const forbidden = caught instanceof ApiRequestError && caught.status === 403;
       const missing = caught instanceof ApiRequestError && caught.status === 404;
+      authoritativeTicketRef.current = null;
       setTicket(null);
       setError(forbidden ? "You do not have permission to view this Ticket." : missing ? "Ticket not found." : SAFE_ERROR);
       setErrorKind(forbidden ? "forbidden" : missing ? "missing" : "failure");
@@ -440,7 +444,10 @@ export default function StaffTicketDetail() {
         "TERMINAL_TICKET", "STATUS_OWNER_REQUIRED", "STATUS_TRANSITION_NOT_ALLOWED",
       ].includes(caught.code ?? "")) {
         if (await load() !== "success") return "reload-failure";
-        setError("The Ticket changed. Review the latest details and try again.");
+        const currentOwner = authoritativeTicketRef.current?.owner;
+        setError(caught.code === "OWNER_CONFLICT" && currentOwner
+          ? `The Ticket is now owned by ${currentOwner.name}.`
+          : "The Ticket changed. Review the latest details and try again.");
         return "conflict-reloaded";
       }
       const message = caught instanceof ApiRequestError ? caught.message : SAFE_ERROR;
@@ -463,6 +470,18 @@ export default function StaffTicketDetail() {
     const outcome = await mutate(action, success);
     if (outcome === "success" || outcome === "conflict-reloaded") setFocusTarget("heading");
     else if (outcome === "reload-failure") setFocusTarget("error-heading");
+  }
+  async function claimCurrentTicket() {
+    if (busy) return;
+    setClaiming(true);
+    try {
+      await directMutation(
+        () => claimStaffTicket(ticket!.id, ticket!.updatedAt),
+        "Ticket claimed successfully.",
+      );
+    } finally {
+      setClaiming(false);
+    }
   }
   async function submitDialog(kind: "owner" | "status", action: () => Promise<unknown>, success: string) {
     const outcome = await mutate(action, success, "dialog");
@@ -506,7 +525,7 @@ export default function StaffTicketDetail() {
         <p>Owner: {ticket.owner?.name ?? "Unassigned"}</p>
         <p>Current Status: <span className={`badge ${badgeClass(ticket.currentStatus)}`}>{label(ticket.currentStatus)}</span></p>
         {!terminal && ticket.owner === null && <button className="btn btn-success me-2" type="button" disabled={busy}
-          onClick={() => void directMutation(() => claimStaffTicket(ticket.id, ticket.updatedAt), "Ticket claimed successfully.")}>Claim Ticket</button>}
+          onClick={() => void claimCurrentTicket()}>{claiming ? "Claiming…" : "Claim Ticket"}</button>}
         {!terminal && <button ref={assignTriggerRef} className="btn btn-outline-success" type="button" disabled={busy}
           onClick={() => {
             const mayUnassign = (["NEW", "OPEN", "REOPENED"] as TicketStatus[]).includes(ticket.currentStatus);

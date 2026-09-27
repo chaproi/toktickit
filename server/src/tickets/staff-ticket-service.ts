@@ -119,10 +119,11 @@ export async function claimStaffTicket(actorId: number, ticketId: number, expect
       return { kind: "terminal" as const };
     }
     if (ticket.ownerId !== null && ticket.ownerId !== actorId) return { kind: "owner-conflict" as const };
-    if (!sameVersion(ticket.updatedAt, expectedUpdatedAt)) return { kind: "stale" as const };
-    if (ticket.ownerId === null) {
-      await transaction.ticket.update({ where: { id: ticketId }, data: { ownerId: actorId } });
+    if (ticket.ownerId === actorId) {
+      return { kind: "success" as const, ticket: await mutationSummary(transaction, ticketId) };
     }
+    if (!sameVersion(ticket.updatedAt, expectedUpdatedAt)) return { kind: "stale" as const };
+    await transaction.ticket.update({ where: { id: ticketId }, data: { ownerId: actorId } });
     return { kind: "success" as const, ticket: await mutationSummary(transaction, ticketId) };
   }, undefined, [
     ...userIds.map((id) => ({ scope: 1 as const, id })),
