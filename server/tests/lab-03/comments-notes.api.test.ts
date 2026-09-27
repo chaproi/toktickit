@@ -1,12 +1,14 @@
 import request from "supertest";
 import { afterEach, describe, expect, it } from "vitest";
 import { app } from "../../src/app.js";
+import { getPrisma } from "../../src/prisma.js";
 import {
   authenticatedFixture,
   authenticatedUnsafe,
   cleanupIssue29Fixtures,
   createTicketFixture,
 } from "./issue29-test-helpers.js";
+import { staffGet, staffPost } from "./issue33-test-helpers.js";
 
 afterEach(cleanupIssue29Fixtures);
 
@@ -118,5 +120,75 @@ describe("Issue 29 Public Comments", () => {
         },
       },
     });
+  });
+});
+
+describe("API-15 Internal Notes", () => {
+  it("denies Requesters before lookup for valid, missing, and malformed Ticket identifiers", async () => {
+    const requester = await authenticatedFixture({ label: "note-requester" });
+    const ticket = await createTicketFixture(requester.user.id);
+    for (const path of [
+      `/api/staff/tickets/${ticket.id}/notes`,
+      "/api/staff/tickets/2147483647/notes",
+      "/api/staff/tickets/not-a-number/notes",
+    ]) {
+      const response = await staffGet(path, requester);
+      expect(response.status).toBe(403);
+      expect(response.body).toEqual({
+        error: { code: "ROLE_FORBIDDEN", message: "You do not have permission to perform this action." },
+      });
+      expect(JSON.stringify(response.body)).not.toContain(ticket.ticketNumber);
+    }
+  });
+
+  it("creates trimmed inert Notes with backend author/time and lists oldest first with pagination", async () => {
+    const requester = await authenticatedFixture({ label: "note-owner" });
+    const staff = await authenticatedFixture({ role: "IT_STAFF", label: "note-staff" });
+    const administrator = await authenticatedFixture({ role: "ADMINISTRATOR", label: "note-admin" });
+    const ticket = await createTicketFixture(requester.user.id);
+    const firstContent = "<script>alert('inert')</script> private diagnosis";
+    const first = await staffPost(`/api/staff/tickets/${ticket.id}/notes`, staff, {
+      content: `  ${firstContent}  `,
+    });
+    expect(first.status).toBe(201);
+    expect(first.body).toMatchObject({
+      ticketId: ticket.id,
+      author: { id: staff.user.id, name: staff.user.name, role: "IT_STAFF" },
+      content: firstContent,
+    });
+    expect(new Date(first.body.createdAt).toString()).not.toBe("Invalid Date");
+    const second = await staffPost(`/api/staff/tickets/${ticket.id}/notes`, administrator, {
+      content: "Administrator follow-up",
+    });
+    expect(second.status).toBe(201);
+
+    const list = await staffGet(`/api/staff/tickets/${ticket.id}/notes?page=1&pageSize=20`, staff);
+    expect(list.status).toBe(200);
+    expect(list.body.items.map((item: { id: number }) => item.id)).toEqual([first.body.id, second.body.id]);
+    expect(list.body.pagination).toEqual({
+      page: 1, pageSize: 20, totalItems: 2, totalPages: 1,
+      hasPreviousPage: false, hasNextPage: false,
+    });
+    expect(JSON.stringify(list.body)).not.toMatch(/password|hash|session|cookie|token|storageKey/i);
+  });
+
+  it("rejects empty, oversized, unknown-field, invalid-query, and missing-Ticket requests without writes", async () => {
+    const requester = await authenticatedFixture({ label: "note-validation-owner" });
+    const staff = await authenticatedFixture({ role: "IT_STAFF", label: "note-validation-staff" });
+    const ticket = await createTicketFixture(requester.user.id);
+    for (const body of [
+      { content: "   " },
+      { content: "x".repeat(5_001) },
+      { content: "valid", public: true },
+    ]) {
+      const response = await staffPost(`/api/staff/tickets/${ticket.id}/notes`, staff, body);
+      expect(response.status).toBe(400);
+      expect(response.body.error.code).toBe("VALIDATION_ERROR");
+    }
+    expect(await getPrisma().internalNote.count({ where: { ticketId: ticket.id } })).toBe(0);
+    expect((await staffGet(`/api/staff/tickets/${ticket.id}/notes?page=0&pageSize=7`, staff)).body.error.code)
+      .toBe("INVALID_QUERY");
+    expect((await staffGet("/api/staff/tickets/2147483647/notes", staff)).body.error.code)
+      .toBe("TICKET_NOT_FOUND");
   });
 });

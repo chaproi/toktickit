@@ -14,6 +14,14 @@ const commentSelect = {
   createdAt: true,
 } satisfies Prisma.PublicCommentSelect;
 
+const noteSelect = {
+  id: true,
+  ticketId: true,
+  author: { select: { id: true, name: true, role: true } },
+  content: true,
+  createdAt: true,
+} satisfies Prisma.InternalNoteSelect;
+
 export function validateCommentBody(body: unknown):
   | { success: true; content: string }
   | { success: false; fields: Record<string, string> } {
@@ -28,6 +36,26 @@ export function validateCommentBody(body: unknown):
   const content = typeof input.content === "string" ? input.content.trim() : "";
   if (content.length < 1 || content.length > 2_000) {
     fields.content = "Comment must contain between 1 and 2000 characters.";
+  }
+  return Object.keys(fields).length > 0
+    ? { success: false, fields }
+    : { success: true, content };
+}
+
+export function validateInternalNoteBody(body: unknown):
+  | { success: true; content: string }
+  | { success: false; fields: Record<string, string> } {
+  if (body === null || typeof body !== "object" || Array.isArray(body)) {
+    return { success: false, fields: { body: "A JSON object is required." } };
+  }
+  const input = body as Record<string, unknown>;
+  const fields: Record<string, string> = {};
+  if (Object.keys(input).some((key) => key !== "content")) {
+    fields.body = "Unknown fields are not permitted.";
+  }
+  const content = typeof input.content === "string" ? input.content.trim() : "";
+  if (content.length < 1 || content.length > 5_000) {
+    fields.content = "Internal Note must contain between 1 and 5000 characters.";
   }
   return Object.keys(fields).length > 0
     ? { success: false, fields }
@@ -105,4 +133,57 @@ export async function addPublicComment(
     { scope: 1, id: userId },
     { scope: 2, id: ticketId },
   ]);
+}
+
+export async function listInternalNotes(ticketId: number, query: CommentPageQuery) {
+  const prisma = getPrisma();
+  if (!(await prisma.ticket.findUnique({ where: { id: ticketId }, select: { id: true } }))) {
+    return { kind: "not-found" as const };
+  }
+  const where = { ticketId };
+  const [totalItems, items] = await prisma.$transaction([
+    prisma.internalNote.count({ where }),
+    prisma.internalNote.findMany({
+      where,
+      select: noteSelect,
+      orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+      skip: (query.page - 1) * query.pageSize,
+      take: query.pageSize,
+    }),
+  ]);
+  const totalPages = totalItems === 0 ? 0 : Math.ceil(totalItems / query.pageSize);
+  return {
+    kind: "success" as const,
+    items,
+    pagination: {
+      page: query.page,
+      pageSize: query.pageSize,
+      totalItems,
+      totalPages,
+      hasPreviousPage: totalItems > 0 && query.page > 1,
+      hasNextPage: totalItems > 0 && query.page < totalPages,
+    },
+  };
+}
+
+export async function addInternalNote(
+  actorId: number,
+  role: "IT_STAFF" | "ADMINISTRATOR",
+  ticketId: number,
+  content: string,
+) {
+  return runSerializableMutation(async (transaction) => {
+    if (!(await lockCurrentActor(transaction, actorId, role))) {
+      return { kind: "eligibility-conflict" as const };
+    }
+    const tickets = await transaction.$queryRaw<Array<{ id: number }>>`
+      SELECT "id" FROM "Ticket" WHERE "id" = ${ticketId} FOR UPDATE
+    `;
+    if (tickets.length === 0) return { kind: "not-found" as const };
+    const note = await transaction.internalNote.create({
+      data: { ticketId, authorId: actorId, content },
+      select: noteSelect,
+    });
+    return { kind: "created" as const, note };
+  }, undefined, [{ scope: 1, id: actorId }, { scope: 2, id: ticketId }]);
 }

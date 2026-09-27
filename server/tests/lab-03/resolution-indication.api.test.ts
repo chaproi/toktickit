@@ -8,6 +8,7 @@ import {
   cleanupIssue29Fixtures,
   createTicketFixture,
 } from "./issue29-test-helpers.js";
+import { staffPatch } from "./issue33-test-helpers.js";
 
 afterEach(cleanupIssue29Fixtures);
 
@@ -63,5 +64,34 @@ describe("Issue 29 Problem Appears Resolved", () => {
     ).send({ confirm: false });
     expect(missingConfirmation.status).toBe(400);
     expect(missingConfirmation.body.error.code).toBe("VALIDATION_ERROR");
+  });
+
+  it("clears the indication through an authoritative REOPENED transition and permits a new cycle", async () => {
+    const owner = await authenticatedFixture({ label: "resolution-reopen-owner" });
+    const staff = await authenticatedFixture({ role: "IT_STAFF", label: "resolution-reopen-staff" });
+    const ticket = await createTicketFixture(owner.user.id, "RESOLVED");
+    const indicated = await getPrisma().ticket.update({
+      where: { id: ticket.id },
+      data: {
+        ownerId: staff.user.id,
+        requesterResolutionIndicatedAt: new Date(),
+        requesterResolutionIndicatedById: owner.user.id,
+      },
+    });
+    const reopened = await staffPatch(`/api/staff/tickets/${ticket.id}/status`, staff, {
+      targetStatus: "REOPENED",
+      expectedUpdatedAt: indicated.updatedAt.toISOString(),
+    });
+    expect(reopened.status).toBe(200);
+    expect(reopened.body.ticket).toMatchObject({
+      currentStatus: "REOPENED",
+      requesterResolutionIndicatedAt: null,
+    });
+    const nextCycle = await authenticatedUnsafe(
+      request(app).post(`/api/tickets/${ticket.id}/resolution-indication`),
+      owner,
+    ).send({ confirm: true });
+    expect(nextCycle.status).toBe(200);
+    expect(nextCycle.body.currentStatus).toBe("REOPENED");
   });
 });
