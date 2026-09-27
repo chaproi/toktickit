@@ -278,7 +278,7 @@ describe("UI-07 Staff Ticket actions", () => {
     await userEvent.click(screen.getByRole("button", { name: "Save Owner" }));
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
     expect(screen.getByRole("heading", { name: terminal.ticketNumber })).toHaveFocus();
-    expect(screen.getByRole("alert")).toHaveTextContent("The Ticket changed.");
+    expect(screen.getByRole("alert")).toHaveTextContent("The Ticket is now owned by Workflow Staff.");
   });
 
   it("moves focus to a stable safe-failure heading when conflict reload fails", async () => {
