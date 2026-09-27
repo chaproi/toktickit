@@ -100,7 +100,7 @@ test("E2E-03 completes the Staff operational Ticket workflow", async ({ page }) 
   await expect(preview).toHaveURL(/^blob:/u);
   await preview.close();
   const removedItem = page.getByRole("listitem").filter({ hasText: `${marker}-removed.txt` });
-  await expect(removedItem.getByText("Removed")).toBeVisible();
+  await expect(removedItem.getByText("Removed", { exact: true })).toBeVisible();
   await expect(removedItem.getByRole("button")).toHaveCount(0);
   await page.getByRole("button", { name: "Claim Ticket" }).click();
   await expect(page.getByText(/Owner.*Mina Patel/u)).toBeVisible();
