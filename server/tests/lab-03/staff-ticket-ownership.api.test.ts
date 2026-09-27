@@ -30,6 +30,37 @@ describe("API-11 Staff claim and ownership", () => {
     }
   });
 
+  it("returns an authoritative idempotent success for a stale-version claim by the current eligible owner", async () => {
+    const actors = await issue33Actors();
+    const ticket = await issue33Ticket(actors.requester.user.id, "OPEN");
+    const claimed = await staffPost(`/api/staff/tickets/${ticket.id}/claim`, actors.staff, {
+      expectedUpdatedAt: ticket.updatedAt.toISOString(),
+    });
+    expect(claimed.status).toBe(200);
+
+    const authoritativeUpdatedAt = new Date(ticket.updatedAt.getTime() + 60_000);
+    await getPrisma().ticket.update({
+      where: { id: ticket.id },
+      data: { updatedAt: authoritativeUpdatedAt },
+    });
+
+    const replay = await staffPost(`/api/staff/tickets/${ticket.id}/claim`, actors.staff, {
+      expectedUpdatedAt: ticket.updatedAt.toISOString(),
+    });
+    expect(replay.status).toBe(200);
+    expect(replay.body.ticket).toMatchObject({
+      id: ticket.id,
+      currentStatus: "OPEN",
+      owner: { id: actors.staff.user.id },
+      updatedAt: authoritativeUpdatedAt.toISOString(),
+    });
+    const persisted = await assertTicketFields(ticket.id, {
+      ownerId: actors.staff.user.id,
+      currentStatus: "OPEN",
+    });
+    expect(persisted.updatedAt).toEqual(authoritativeUpdatedAt);
+  });
+
   it("returns exact safe conflicts for competing, stale, terminal, and ineligible ownership", async () => {
     const actors = await issue33Actors();
     const owned = await issue33Ticket(actors.requester.user.id, "OPEN", actors.staff.user.id);

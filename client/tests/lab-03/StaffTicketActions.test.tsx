@@ -20,6 +20,52 @@ describe("UI-07 Staff Ticket actions", () => {
     expect(screen.queryByText("Assign an active Ticket Owner first.")).not.toBeInTheDocument();
   });
 
+  it("announces Claiming while the claim request is in progress", async () => {
+    const claimed = {
+      ...detail,
+      owner: { id: 91, name: "Workflow Staff", role: "IT_STAFF" as const },
+      updatedAt: "2026-09-21T10:05:00.000Z",
+    };
+    let detailLoads = 0;
+    let resolveClaim: ((response: Response) => void) | undefined;
+    installStaffDetailFetch({
+      detailResponse: async () => jsonResponse(detailLoads++ === 0 ? detail : claimed),
+      mutation: async () => new Promise<Response>((resolve) => { resolveClaim = resolve; }),
+    });
+    renderAt(`/staff/tickets/${detail.id}`);
+    await userEvent.click(await screen.findByRole("button", { name: "Claim Ticket" }));
+
+    const claiming = await screen.findByRole("button", { name: "Claiming…" });
+    expect(claiming).toBeDisabled();
+    await act(async () => { resolveClaim!(jsonResponse({ ticket: claimed })); });
+
+    expect(await screen.findByText("Owner: Workflow Staff")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Claiming…" })).not.toBeInTheDocument();
+  });
+
+  it("announces the authoritative owner after a competing claim conflict", async () => {
+    const claimedByAnotherUser = {
+      ...detail,
+      owner: { id: 92, name: "Workflow Administrator", role: "ADMINISTRATOR" as const },
+      updatedAt: "2026-09-21T10:05:00.000Z",
+    };
+    let detailLoads = 0;
+    installStaffDetailFetch({
+      detailResponse: async () => jsonResponse(detailLoads++ === 0 ? detail : claimedByAnotherUser),
+      mutation: async () => jsonResponse({
+        error: { code: "OWNER_CONFLICT", message: "This Ticket is already owned by another User." },
+      }, 409),
+    });
+    renderAt(`/staff/tickets/${detail.id}`);
+    await userEvent.click(await screen.findByRole("button", { name: "Claim Ticket" }));
+
+    expect(await screen.findByText("Owner: Workflow Administrator")).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "The Ticket is now owned by Workflow Administrator.",
+    );
+    expect(screen.getByRole("heading", { name: detail.ticketNumber })).toHaveFocus();
+  });
+
   it("derives owner requirements from only the authoritative selected target", async () => {
     const unassignedNew = { ...detail, currentStatus: "NEW" as const, allowedStatusTransitions: ["OPEN" as const] };
     installStaffDetailFetch({ ticket: unassignedNew });
