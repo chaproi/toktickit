@@ -122,6 +122,33 @@ a:focus-visible {
     white-space: pre-wrap;
 }
 
+.staff-public-comments {
+    border-left: 0.3rem solid var(--primary-green) !important;
+}
+
+.staff-public-comments .card-body,
+.staff-public-comment-item {
+    background: var(--pale-green);
+}
+
+.staff-internal-notes {
+    border-left: 0.3rem solid var(--warning) !important;
+}
+
+.staff-internal-notes .card-body,
+.staff-internal-note-item {
+    background: #fff7e8;
+}
+
+.staff-internal-note-item {
+    border-color: var(--warning);
+}
+
+.staff-internal-note-indicator {
+    color: var(--warning);
+    font-weight: 700;
+}
+
 .my-tickets-filter-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));

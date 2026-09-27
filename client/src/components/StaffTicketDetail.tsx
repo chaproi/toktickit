@@ -52,6 +52,19 @@ function date(value: string): string {
   }).format(parsed);
 }
 
+function fileSize(value: number): string {
+  if (value < 1_000) return `${value} bytes`;
+  if (value < 1_000_000) return `${(value / 1_000).toFixed(1)} KB`;
+  return `${(value / 1_000_000).toFixed(1)} MB`;
+}
+
+function badgeClass(value: RequestedPriority | TicketStatus): string {
+  if (["URGENT", "CANCELLED"].includes(value)) return "text-bg-danger";
+  if (["HIGH", "WAITING_FOR_REQUESTER"].includes(value)) return "text-bg-warning";
+  if (["RESOLVED", "CLOSED"].includes(value)) return "text-bg-success";
+  return "text-bg-secondary";
+}
+
 function Field({ name, children }: { name: string; children: ReactNode }) {
   return <div><dt className="fw-semibold">{name}</dt><dd>{children}</dd></div>;
 }
@@ -138,7 +151,6 @@ function Messages({
   const [listError, setListError] = useState(initialResponse ? "" : SAFE_ERROR);
   const [postError, setPostError] = useState("");
   const [warning, setWarning] = useState("");
-  const [retainedCreated, setRetainedCreated] = useState<PublicComment | InternalNote | null>(null);
   const [page, setPage] = useState(initialResponse?.pagination.page ?? 1);
   const [pagination, setPagination] = useState(initialResponse?.pagination ?? null);
   useEffect(() => {
@@ -146,25 +158,16 @@ function Messages({
     setPagination(initialResponse?.pagination ?? null);
     setPage(initialResponse?.pagination.page ?? 1);
     setListError(initialResponse ? "" : SAFE_ERROR);
-    setRetainedCreated(null);
   }, [initialResponse]);
-
-  function withRetained(nextItems: Array<PublicComment | InternalNote>) {
-    const merged = retainedCreated
-      ? [...nextItems.filter(({ id }) => id !== retainedCreated.id), retainedCreated]
-      : nextItems;
-    return merged.sort((left, right) =>
-      left.createdAt.localeCompare(right.createdAt) || left.id - right.id);
-  }
 
   async function loadPage(targetPage: number) {
     setListError("");
-    if (!retainedCreated) setWarning("");
+    setWarning("");
     try {
       const response = privateChannel
         ? await getInternalNotes(ticketId, targetPage, 20)
         : await getPublicComments(ticketId, targetPage, 20);
-      setItems(withRetained(response.items));
+      setItems(response.items);
       setPagination(response.pagination);
       setPage(targetPage);
     } catch {
@@ -190,7 +193,8 @@ function Messages({
         : await addPublicComment(ticketId, trimmed);
       setContent("");
       setListError("");
-      setRetainedCreated(created);
+      setItems((current) => [...current.filter(({ id }) => id !== created.id), created].sort((left, right) =>
+        left.createdAt.localeCompare(right.createdAt) || left.id - right.id));
       try {
         const first = privateChannel
           ? await getInternalNotes(ticketId, 1, 20)
@@ -229,7 +233,7 @@ function Messages({
 
   const id = privateChannel ? "internal-notes-heading" : "public-comments-heading";
   return (
-    <section className="card border-0 shadow-sm mb-4" aria-labelledby={id}>
+    <section className={`card border-0 shadow-sm mb-4 ${privateChannel ? "staff-internal-notes" : "staff-public-comments"}`} aria-labelledby={id}>
       <div className="card-body p-4">
         <h2 id={id} className="h4">{title}</h2>
         <p>{privateChannel ? "Internal — not visible to Requester" : "Visible to the Requester and support team."}</p>
@@ -238,9 +242,10 @@ function Messages({
         {warning && <div className="alert alert-warning" role="status">{warning}</div>}
         {!listError && items.length === 0 && <p>No {title.toLowerCase()} yet.</p>}
         <ol className="public-comment-list">
-          {items.map((item) => <li className="public-comment-item" key={item.id}>
+          {items.map((item) => <li className={`public-comment-item ${privateChannel ? "staff-internal-note-item" : "staff-public-comment-item"}`} key={item.id}>
+            {privateChannel && <p className="staff-internal-note-indicator mb-2">Internal Note</p>}
             <p className="mb-1"><strong>{item.author.name}</strong></p>
-            <p className="mb-1">{item.content}</p>
+            <p className="mb-1 public-comment-content">{item.content}</p>
             <time className="small text-secondary" dateTime={item.createdAt}>{date(item.createdAt)}</time>
           </li>)}
         </ol>
@@ -268,15 +273,28 @@ function Messages({
 
 function StaffAttachments({ ticketId }: { ticketId: number }) {
   const [items, setItems] = useState<Attachment[]>([]);
-  const [error, setError] = useState("");
+  const [state, setState] = useState<"loading" | "success" | "error">("loading");
+  const [listError, setListError] = useState("");
+  const [actionError, setActionError] = useState("");
+  const [retry, setRetry] = useState(0);
   useEffect(() => {
     const controller = new AbortController();
-    void getAttachments(ticketId, controller.signal).then((response) => setItems(response.items)).catch((caught) => {
-      if (!(caught instanceof DOMException && caught.name === "AbortError")) setError(SAFE_ERROR);
+    setState("loading");
+    setListError("");
+    setActionError("");
+    void getAttachments(ticketId, controller.signal).then((response) => {
+      setItems(response.items);
+      setState("success");
+    }).catch((caught) => {
+      if (!(caught instanceof DOMException && caught.name === "AbortError")) {
+        setListError(SAFE_ERROR);
+        setState("error");
+      }
     });
     return () => controller.abort();
-  }, [ticketId]);
+  }, [retry, ticketId]);
   async function open(item: Attachment, disposition: "inline" | "attachment") {
+    setActionError("");
     try {
       const blob = await getAttachmentContent(ticketId, item.id, disposition);
       const url = URL.createObjectURL(blob);
@@ -286,21 +304,33 @@ function StaffAttachments({ ticketId }: { ticketId: number }) {
       if (disposition === "attachment") link.download = item.originalFilename;
       link.click();
       URL.revokeObjectURL(url);
-    } catch { setError(SAFE_ERROR); }
+    } catch { setActionError(SAFE_ERROR); }
   }
   return (
     <section className="card border-0 shadow-sm mb-4" aria-labelledby="staff-attachments-heading">
       <div className="card-body p-4">
         <h2 id="staff-attachments-heading" className="h4">Attachments</h2>
-        {error && <div className="alert alert-danger" role="alert">{error}</div>}
-        {items.length === 0 ? <p>No Attachments.</p> : <ul>
-          {items.map((item) => <li key={item.id} className="mb-2">
-            {item.originalFilename}{" "}{item.isRemoved
-              ? <span className="badge text-bg-secondary">Removed</span>
-              : <>
-                <button className="btn btn-sm btn-outline-success" type="button" onClick={() => void open(item, "inline")}>Preview {item.originalFilename}</button>{" "}
-                <button className="btn btn-sm btn-outline-success" type="button" onClick={() => void open(item, "attachment")}>Download {item.originalFilename}</button>
-              </>}
+        {state === "loading" && <p role="status">Loading attachments…</p>}
+        {state === "error" && <div className="alert alert-danger" role="alert">{listError} <button className="btn btn-sm btn-outline-danger" type="button" onClick={() => setRetry((value) => value + 1)}>Try Again</button></div>}
+        {actionError && <div className="alert alert-danger" role="alert">{actionError}</div>}
+        {state === "success" && items.length === 0 && <p>No Attachments.</p>}
+        {state === "success" && items.length > 0 && <ul className="attachment-list" aria-label="Attachments">
+          {items.map((item) => <li key={item.id} className={`attachment-item ${item.isRemoved ? "attachment-item-removed" : ""}`}>
+            <div className="attachment-item-details">
+              <p className="mb-1"><strong className="attachment-filename">{item.originalFilename}</strong>{" "}
+                <span className={`badge ${item.isRemoved ? "text-bg-secondary" : "text-bg-success"}`}>{item.isRemoved ? "Removed" : "Active"}</span>
+              </p>
+              <p className="text-secondary small mb-1 attachment-metadata">{item.mimeType} · {fileSize(item.sizeBytes)}</p>
+              <p className="text-secondary small mb-0">Uploaded <time dateTime={item.createdAt}>{date(item.createdAt)}</time></p>
+              {item.isRemoved && <div className="attachment-removal-details mt-2">
+                <p className="mb-1">Removal reason: {item.removalReason}</p>
+                {item.removedAt && <p className="text-secondary small mb-0">Removed on <time dateTime={item.removedAt}>{date(item.removedAt)}</time></p>}
+              </div>}
+            </div>
+            {!item.isRemoved && <div className="attachment-actions">
+              <button className="btn btn-sm btn-outline-success" type="button" onClick={() => void open(item, "inline")}>Preview {item.originalFilename}</button>
+              <button className="btn btn-sm btn-outline-success" type="button" onClick={() => void open(item, "attachment")}>Download {item.originalFilename}</button>
+            </div>}
           </li>)}
         </ul>}
       </div>
@@ -317,6 +347,7 @@ export default function StaffTicketDetail() {
   const [publicComments, setPublicComments] = useState<PublicCommentResponse | null>(null);
   const [internalNotes, setInternalNotes] = useState<PublicCommentResponse | null>(null);
   const [error, setError] = useState("");
+  const [dialogError, setDialogError] = useState("");
   const [errorKind, setErrorKind] = useState<"forbidden" | "missing" | "failure" | null>(null);
   const [notice, setNotice] = useState("");
   const [retry, setRetry] = useState(0);
@@ -391,9 +422,13 @@ export default function StaffTicketDetail() {
     return () => controller.abort();
   }, [load, retry]);
 
-  async function mutate(action: () => Promise<unknown>, success: string): Promise<MutationOutcome> {
+  async function mutate(
+    action: () => Promise<unknown>,
+    success: string,
+    errorTarget: "page" | "dialog" = "page",
+  ): Promise<MutationOutcome> {
     if (busy) return "failure";
-    setBusy(true); setError(""); setNotice("");
+    setBusy(true); setError(""); setDialogError(""); setNotice("");
     try {
       await action();
       if (await load() !== "success") return "reload-failure";
@@ -408,13 +443,16 @@ export default function StaffTicketDetail() {
         setError("The Ticket changed. Review the latest details and try again.");
         return "conflict-reloaded";
       }
-      setError(caught instanceof ApiRequestError ? caught.message : SAFE_ERROR);
+      const message = caught instanceof ApiRequestError ? caught.message : SAFE_ERROR;
+      if (errorTarget === "dialog") setDialogError(message);
+      else setError(message);
       return "failure";
     } finally { setBusy(false); }
   }
 
   function closeDialog(kind: "owner" | "status", target: FocusTarget) {
     setDialog(null);
+    setDialogError("");
     if (kind === "status") setNextStatus("");
     setReason("");
     setFocusTarget(target);
@@ -427,7 +465,7 @@ export default function StaffTicketDetail() {
     else if (outcome === "reload-failure") setFocusTarget("error-heading");
   }
   async function submitDialog(kind: "owner" | "status", action: () => Promise<unknown>, success: string) {
-    const outcome = await mutate(action, success);
+    const outcome = await mutate(action, success, "dialog");
     if (outcome === "failure") return;
     closeDialog(kind, outcome === "reload-failure" ? "error-heading" : kind === "owner" ? "owner-trigger" : "heading");
   }
@@ -443,7 +481,7 @@ export default function StaffTicketDetail() {
       <div ref={contentRef}>
       <div className="d-flex flex-wrap justify-content-between gap-3 mb-4">
         <div><h1 ref={headingRef} id="staff-ticket-heading" className="h2" tabIndex={-1}>{ticket.ticketNumber}</h1>
-          <p className="mb-0">Status: {label(ticket.currentStatus)} · Updated <time dateTime={ticket.updatedAt}>{date(ticket.updatedAt)}</time></p>
+          <p className="mb-0">Status: <span className={`badge ${badgeClass(ticket.currentStatus)}`}>{label(ticket.currentStatus)}</span> · Updated <time dateTime={ticket.updatedAt}>{date(ticket.updatedAt)}</time></p>
         </div>
         <Link className="btn btn-outline-success align-self-start" to="/staff/tickets">Back to Queue</Link>
       </div>
@@ -456,7 +494,8 @@ export default function StaffTicketDetail() {
         <dl className="ticket-detail-grid mb-0">
           <Field name="Requester">{ticket.requester.name} ({ticket.requester.email})</Field>
           <Field name="Category">{ticket.category.name}</Field><Field name="Related System">{ticket.relatedSystem.name}</Field>
-          <Field name="Requested Priority"><span>Requested {label(ticket.requestedPriority)}</span></Field>
+          <Field name="Ticket Date"><time dateTime={ticket.ticketDate}>{date(ticket.ticketDate)}</time></Field>
+          <Field name="Requested Priority"><span className={`badge ${badgeClass(ticket.requestedPriority)}`}>Requested {label(ticket.requestedPriority)}</span></Field>
           <Field name="Summary">{ticket.summary}</Field><Field name="Description">{ticket.description}</Field>
           <Field name="Created"><time dateTime={ticket.createdAt}>{date(ticket.createdAt)}</time></Field>
         </dl>
@@ -465,17 +504,19 @@ export default function StaffTicketDetail() {
       <section className="card border-0 shadow-sm mb-4" aria-labelledby="operations-heading"><div className="card-body p-4">
         <h2 id="operations-heading" className="h4">Operations</h2>
         <p>Owner: {ticket.owner?.name ?? "Unassigned"}</p>
-        <p>Current Status: {label(ticket.currentStatus)}</p>
+        <p>Current Status: <span className={`badge ${badgeClass(ticket.currentStatus)}`}>{label(ticket.currentStatus)}</span></p>
         {!terminal && ticket.owner === null && <button className="btn btn-success me-2" type="button" disabled={busy}
           onClick={() => void directMutation(() => claimStaffTicket(ticket.id, ticket.updatedAt), "Ticket claimed successfully.")}>Claim Ticket</button>}
         {!terminal && <button ref={assignTriggerRef} className="btn btn-outline-success" type="button" disabled={busy}
           onClick={() => {
             const mayUnassign = (["NEW", "OPEN", "REOPENED"] as TicketStatus[]).includes(ticket.currentStatus);
             setSelectedOwner(ticket.owner ? String(ticket.owner.id) : mayUnassign ? "" : String(assignees[0]?.id ?? ""));
+            setDialogError("");
             setDialog("owner");
           }}>Assign Ticket</button>}
         <div className="row mt-4 g-3"><div className="col-md-6">
           <label className="form-label" htmlFor="it-priority">IT Priority</label>
+          <p><span className={`badge ${badgeClass(ticket.itPriority)}`}>IT {label(ticket.itPriority)}</span></p>
           <select id="it-priority" className="form-select" disabled={terminal || busy} value={priority}
             onChange={(event) => setPriority(event.target.value as RequestedPriority)}>
             {(["LOW", "MEDIUM", "HIGH", "URGENT"] as RequestedPriority[]).map((value) => <option key={value} value={value}>{label(value)}</option>)}
@@ -489,7 +530,10 @@ export default function StaffTicketDetail() {
               const value = event.target.value as TicketStatus | "";
               setNextStatus(value);
               if (["RESOLVED", "CLOSED", "CANCELLED"].includes(value) &&
-                !(value !== "" && OWNER_REQUIRED.has(value) && ticket.owner === null)) setDialog("status");
+                !(value !== "" && OWNER_REQUIRED.has(value) && ticket.owner === null)) {
+                setDialogError("");
+                setDialog("status");
+              }
             }}>
             <option value="">Select a status</option>
             {ticket.allowedStatusTransitions.map((value) => <option key={value} value={value}>{label(value)}</option>)}
@@ -514,6 +558,7 @@ export default function StaffTicketDetail() {
 
       {dialog === "owner" && <Dialog title="Assign Ticket" description="Choose an active IT Staff member or Administrator."
         initialFocus={ownerSelectRef} processing={busy} onClose={closeOwner}>
+        {dialogError && <div className="alert alert-danger" role="alert">{dialogError}</div>}
         <label className="form-label" htmlFor="ticket-owner">Ticket Owner</label>
         <select ref={ownerSelectRef} id="ticket-owner" className="form-select" value={selectedOwner} onChange={(event) => setSelectedOwner(event.target.value)}>
           {(["NEW", "OPEN", "REOPENED"] as TicketStatus[]).includes(ticket.currentStatus) && <option value="">Unassigned</option>}
@@ -527,6 +572,7 @@ export default function StaffTicketDetail() {
 
       {dialog === "status" && nextStatus && <Dialog title={nextStatus === "CANCELLED" ? "Cancel Ticket" : `${label(nextStatus)} Ticket`}
         description="Confirm this formal Ticket status change." initialFocus={statusCancelRef} processing={busy} onClose={closeStatus}>
+        {dialogError && <div className="alert alert-danger" role="alert">{dialogError}</div>}
         {nextStatus === "CANCELLED" && <><label className="form-label" htmlFor="cancellation-reason">Cancellation reason</label>
           <textarea id="cancellation-reason" className="form-control" required minLength={5} maxLength={500} value={reason} onChange={(event) => setReason(event.target.value)} /></>}
         <div className="d-flex justify-content-end gap-2 mt-3"><button ref={statusCancelRef} className="btn btn-outline-secondary" type="button" disabled={busy} onClick={closeStatus}>Cancel</button>
