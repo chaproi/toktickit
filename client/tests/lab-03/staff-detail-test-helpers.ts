@@ -47,11 +47,13 @@ export function installStaffDetailFetch(options: {
   detailResponse?: (ticketId: number) => Promise<Response>;
   mutation?: (url: URL, init?: RequestInit) => Promise<Response>;
   attachments?: Attachment[];
+  attachmentsResponse?: (attempt: number, ticketId: number) => Promise<Response>;
   assignees?: EligibleAssignee[];
   commentsResponse?: (page: number, ticketId: number) => Promise<Response>;
   notesResponse?: (page: number, ticketId: number) => Promise<Response>;
 } = {}) {
   const calls: Array<{ url: URL; init?: RequestInit }> = [];
+  let attachmentAttempts = 0;
   const ticket = options.ticket ?? detail;
   const mock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = requestUrl(input);
@@ -70,11 +72,17 @@ export function installStaffDetailFetch(options: {
         { id: 92, name: "Workflow Administrator", role: "ADMINISTRATOR" },
       ],
     });
-    if (url.pathname.endsWith("/attachments")) return jsonResponse({ items: options.attachments ?? [{
-      id: 41, ticketId: ticket.id, originalFilename: "evidence.pdf",
-      mimeType: "application/pdf", sizeBytes: 1000, uploadedByRequesterId: 71, isRemoved: false,
-      createdAt: "2026-09-21T08:30:00.000Z", removedAt: null, removedByRequesterId: null, removalReason: null,
-    }] });
+    if (url.pathname.endsWith("/attachments")) {
+      attachmentAttempts += 1;
+      return options.attachmentsResponse?.(
+        attachmentAttempts,
+        Number(url.pathname.split("/").at(-2)),
+      ) ?? jsonResponse({ items: options.attachments ?? [{
+        id: 41, ticketId: ticket.id, originalFilename: "evidence.pdf",
+        mimeType: "application/pdf", sizeBytes: 1000, uploadedByRequesterId: 71, isRemoved: false,
+        createdAt: "2026-09-21T08:30:00.000Z", removedAt: null, removedByRequesterId: null, removalReason: null,
+      }] });
+    }
     if (url.pathname.endsWith("/comments")) return options.commentsResponse?.(
       Number(url.searchParams.get("page") ?? "1"),
       Number(url.pathname.split("/").at(-2)),

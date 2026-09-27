@@ -9,7 +9,7 @@ afterEach(() => vi.unstubAllGlobals());
 describe("UI-06 Staff operational Ticket Detail", () => {
   it("renders the six distinct groups, authoritative fields, indication, and read-only history", async () => {
     installStaffDetailFetch();
-    renderAt(`/staff/tickets/${detail.id}`);
+    const { container } = renderAt(`/staff/tickets/${detail.id}`);
     expect(await screen.findByRole("heading", { name: detail.ticketNumber })).toBeInTheDocument();
     for (const heading of [
       "Requester-reported information", "Operations", "Attachments",
@@ -17,10 +17,41 @@ describe("UI-06 Staff operational Ticket Detail", () => {
     ]) expect(screen.getByRole("heading", { name: heading })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Back to Queue" })).toHaveAttribute("href", "/staff/tickets");
     expect(screen.getByText(detail.summary)).toBeInTheDocument();
-    expect(screen.getByText("Requested Medium")).toBeInTheDocument();
+    const reported = screen.getByRole("region", { name: "Requester-reported information" });
+    expect(within(reported).getByText("Ticket Date")).toBeInTheDocument();
+    expect(reported.querySelector(`time[datetime="${detail.ticketDate}"]`)).toBeInTheDocument();
+    expect(within(reported).getByText("Created")).toBeInTheDocument();
+    expect(reported.querySelector(`time[datetime="${detail.createdAt}"]`)).toBeInTheDocument();
+    expect(container.querySelector(`time[datetime="${detail.updatedAt}"]`)).toBeInTheDocument();
+    expect(within(reported).getByText("Requested Medium")).toHaveClass("badge");
+    const operations = screen.getByRole("region", { name: "Operations" });
+    expect(within(operations).getByText("IT High")).toHaveClass("badge");
+    expect(within(operations).getByText("In Progress")).toHaveClass("badge");
     expect(screen.getByText("Requester reports that the problem appears resolved")).toBeInTheDocument();
     expect(screen.getByText("Open to In Progress")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /edit history/i })).not.toBeInTheDocument();
+  });
+
+  it("keeps Attachment loading, safe error/retry, and empty states distinct", async () => {
+    let resolveInitial: ((response: Response) => void) | undefined;
+    installStaffDetailFetch({
+      attachmentsResponse: async (attempt) => attempt === 1
+        ? new Promise<Response>((resolve) => { resolveInitial = resolve; })
+        : jsonResponse({ items: [] }),
+    });
+    renderAt(`/staff/tickets/${detail.id}`);
+    const attachments = await screen.findByRole("region", { name: "Attachments" });
+    expect(within(attachments).getByRole("status")).toHaveTextContent("Loading attachments…");
+    expect(within(attachments).queryByText("No Attachments.")).not.toBeInTheDocument();
+
+    await act(async () => {
+      resolveInitial!(jsonResponse({ error: { code: "INTERNAL_ERROR", message: "Private database detail" } }, 500));
+    });
+    expect(await within(attachments).findByRole("alert")).toHaveTextContent("Something went wrong. Please try again.");
+    expect(within(attachments).queryByText("Private database detail")).not.toBeInTheDocument();
+    await userEvent.click(within(attachments).getByRole("button", { name: "Try Again" }));
+    expect(await within(attachments).findByText("No Attachments.")).toBeInTheDocument();
+    expect(within(attachments).queryByRole("status")).not.toBeInTheDocument();
   });
 
   it("keeps loading distinct and handles missing, forbidden, safe failure, and retry without stale data", async () => {
@@ -71,13 +102,22 @@ describe("UI-06 Staff operational Ticket Detail", () => {
     renderAt(`/staff/tickets/${detail.id}`);
     expect(await screen.findByRole("button", { name: "Claim Ticket" })).toBeInTheDocument();
     const attachments = screen.getByRole("region", { name: "Attachments" });
+    const activeItem = within(attachments).getByText("evidence.pdf").closest("li");
+    const removedItem = within(attachments).getByText("removed.txt").closest("li");
+    expect(activeItem).not.toBeNull();
+    expect(removedItem).not.toBeNull();
+    expect(within(activeItem!).getByText("Active")).toHaveClass("badge");
+    expect(within(activeItem!).getByText("application/pdf · 1.0 KB")).toBeInTheDocument();
+    expect(activeItem!.querySelector('time[datetime="2026-09-21T08:30:00.000Z"]')).toBeInTheDocument();
     expect(within(attachments).getByRole("button", { name: "Preview evidence.pdf" })).toBeInTheDocument();
     expect(within(attachments).getByRole("button", { name: "Download evidence.pdf" })).toBeInTheDocument();
     expect(within(attachments).queryByText("Add Attachment")).not.toBeInTheDocument();
     expect(within(attachments).queryByRole("button", { name: /remove/i })).not.toBeInTheDocument();
-    expect(within(attachments).getByText("removed.txt")).toBeInTheDocument();
-    expect(within(attachments).getByText("Removed")).toBeInTheDocument();
-    expect(within(attachments).queryByRole("button", { name: /removed\.txt/i })).not.toBeInTheDocument();
+    expect(within(removedItem!).getByText("Removed")).toHaveClass("badge");
+    expect(within(removedItem!).getByText("text/plain · 25 bytes")).toBeInTheDocument();
+    expect(within(removedItem!).getByText("Removal reason: Obsolete evidence")).toBeInTheDocument();
+    expect(removedItem!.querySelector('time[datetime="2026-09-21T09:00:00.000Z"]')).toBeInTheDocument();
+    expect(within(removedItem!).queryByRole("button")).not.toBeInTheDocument();
   });
 
   it("clears Ticket A state immediately on route reuse and ignores Ticket A's late response", async () => {

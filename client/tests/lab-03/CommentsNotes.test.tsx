@@ -12,11 +12,16 @@ describe("UI-08 Public Comments and Internal Notes", () => {
     renderAt(`/staff/tickets/${detail.id}`);
     const publicSection = await screen.findByRole("region", { name: "Public Comments" });
     const privateSection = screen.getByRole("region", { name: "Internal Notes" });
+    expect(publicSection).toHaveClass("staff-public-comments");
+    expect(privateSection).toHaveClass("staff-internal-notes");
     expect(within(publicSection).getByText("Visible to the Requester and support team.")).toBeInTheDocument();
     expect(within(privateSection).getByText("Internal — not visible to Requester")).toBeInTheDocument();
     expect(within(privateSection).getByText("This note is private to IT Staff and Administrators.")).toBeInTheDocument();
     expect(within(publicSection).getByText("Public update")).toBeInTheDocument();
     expect(within(privateSection).getByText("Private diagnosis")).toBeInTheDocument();
+    expect(within(publicSection).getByText("Public update").closest("li")).toHaveClass("staff-public-comment-item");
+    expect(within(privateSection).getByText("Private diagnosis").closest("li")).toHaveClass("staff-internal-note-item");
+    expect(within(privateSection).getByText("Internal Note", { selector: ".staff-internal-note-indicator" })).toBeInTheDocument();
     expect(document.querySelector("script")).toBeNull();
     expect(within(publicSection).queryByRole("button", { name: /edit|delete/i })).not.toBeInTheDocument();
     expect(within(privateSection).queryByRole("button", { name: /edit|delete/i })).not.toBeInTheDocument();
@@ -90,7 +95,7 @@ describe("UI-08 Public Comments and Internal Notes", () => {
     expect(within(publicSection).getByLabelText("Add a public comment")).toHaveValue("");
   });
 
-  it("finds a concurrently paginated created Comment and retains it across later page changes", async () => {
+  it("finds a concurrently paginated created Comment and restores authoritative page boundaries", async () => {
     const created = { id: 99, ticketId: detail.id, author: detail.requester, content: "Authoritative concurrent comment", createdAt: "2026-09-21T10:30:00.000Z" };
     const older = { id: 52, ticketId: detail.id, author: detail.requester, content: "Older page comment", createdAt: "2026-09-21T09:00:00.000Z" };
     let firstPageCalls = 0;
@@ -112,8 +117,33 @@ describe("UI-08 Public Comments and Internal Notes", () => {
     await userEvent.click(within(publicSection).getByRole("button", { name: "Previous" }));
     await waitFor(() => expect(within(publicSection).getByText("Page 2 of 3")).toBeInTheDocument());
     expect(within(publicSection).getByText(older.content)).toBeInTheDocument();
-    expect(within(publicSection).getByText(created.content)).toBeInTheDocument();
-    expect(within(publicSection).getAllByText(created.content)).toHaveLength(1);
+    expect(within(publicSection).queryByText(created.content)).not.toBeInTheDocument();
+    expect(within(publicSection).getByRole("list").children).toHaveLength(1);
+  });
+
+  it("clears temporary retention when an authoritative Internal Note page is located", async () => {
+    const created = { id: 199, ticketId: detail.id, author: { id: 91, name: "Workflow Staff", role: "IT_STAFF" as const }, content: "Authoritative page-three note", createdAt: "2026-09-21T10:30:00.000Z" };
+    const pageTwo = { id: 152, ticketId: detail.id, author: created.author, content: "Page-two private note", createdAt: "2026-09-21T09:00:00.000Z" };
+    let firstPageCalls = 0;
+    installStaffDetailFetch({
+      notesResponse: async (page) => {
+        if (page === 1) firstPageCalls += 1;
+        const items = page === 3 ? [created] : page === 2 ? [pageTwo] : [{ id: 151, ticketId: detail.id, author: created.author, content: "Oldest private note", createdAt: "2026-09-21T08:00:00.000Z" }];
+        return jsonResponse({ items, pagination: { page, pageSize: 1, totalItems: firstPageCalls > 1 ? 3 : 2, totalPages: 3, hasPreviousPage: page > 1, hasNextPage: page < 3 } });
+      },
+      mutation: async (url) => url.pathname.endsWith("/notes") ? jsonResponse(created, 201) : jsonResponse({ ticket: detail }),
+    });
+    renderAt(`/staff/tickets/${detail.id}`);
+    const privateSection = await screen.findByRole("region", { name: "Internal Notes" });
+    await userEvent.type(within(privateSection).getByLabelText("Add an internal note"), created.content);
+    await userEvent.click(within(privateSection).getByRole("button", { name: "Post internal note" }));
+    expect(await within(privateSection).findByText(created.content)).toBeInTheDocument();
+    expect(within(privateSection).getByText("Page 3 of 3")).toBeInTheDocument();
+    await userEvent.click(within(privateSection).getByRole("button", { name: "Previous" }));
+    await waitFor(() => expect(within(privateSection).getByText("Page 2 of 3")).toBeInTheDocument());
+    expect(within(privateSection).getByText(pageTwo.content)).toBeInTheDocument();
+    expect(within(privateSection).queryByText(created.content)).not.toBeInTheDocument();
+    expect(within(privateSection).getByRole("list").children).toHaveLength(1);
   });
 
   it("retains the exact created entry and gives a non-blocking warning when refresh fails", async () => {

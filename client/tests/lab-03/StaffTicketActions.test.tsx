@@ -89,11 +89,15 @@ describe("UI-07 Staff Ticket actions", () => {
   });
 
   it("prevents duplicate owner submission and retains the dialog and input after ordinary failure", async () => {
-    let resolveMutation: ((response: Response) => void) | undefined;
+    let resolveFirst: ((response: Response) => void) | undefined;
+    let resolveSecond: ((response: Response) => void) | undefined;
     let calls = 0;
     installStaffDetailFetch({ mutation: async () => {
       calls += 1;
-      return new Promise<Response>((resolve) => { resolveMutation = resolve; });
+      return new Promise<Response>((resolve) => {
+        if (calls === 1) resolveFirst = resolve;
+        else resolveSecond = resolve;
+      });
     } });
     renderAt(`/staff/tickets/${detail.id}`);
     await userEvent.click(await screen.findByRole("button", { name: "Assign Ticket" }));
@@ -105,11 +109,44 @@ describe("UI-07 Staff Ticket actions", () => {
     await userEvent.keyboard("{Escape}");
     expect(screen.getByRole("dialog", { name: "Assign Ticket" })).toBeInTheDocument();
     await act(async () => {
-      resolveMutation!(jsonResponse({ error: { code: "INTERNAL_ERROR", message: "Something went wrong. Please try again." } }, 500));
+      resolveFirst!(jsonResponse({ error: { code: "INTERNAL_ERROR", message: "Something went wrong. Please try again." } }, 500));
     });
-    expect(await screen.findByRole("dialog", { name: "Assign Ticket" })).toBeInTheDocument();
+    const dialog = await screen.findByRole("dialog", { name: "Assign Ticket" });
     expect(screen.getByLabelText("Ticket Owner")).toHaveValue("92");
-    expect(screen.getByRole("alert")).toHaveTextContent("Something went wrong. Please try again.");
+    const alert = within(dialog).getByRole("alert");
+    expect(alert).toHaveTextContent("Something went wrong. Please try again.");
+    expect(alert.closest("[inert]")).toBeNull();
+    expect(screen.getByRole("button", { name: "Check System" }).closest("section")).toHaveAttribute("inert");
+    expect(dialog).toContainElement(document.activeElement as HTMLElement);
+
+    await userEvent.click(save);
+    expect(calls).toBe(2);
+    expect(within(dialog).queryByRole("alert")).not.toBeInTheDocument();
+    expect(save).toBeDisabled();
+    await userEvent.keyboard("{Escape}");
+    expect(screen.getByRole("dialog", { name: "Assign Ticket" })).toBeInTheDocument();
+    await act(async () => { resolveSecond!(jsonResponse({ ticket: detail })); });
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+  });
+
+  it("keeps a failed status dialog, cancellation reason, alert, and focus accessible", async () => {
+    const owned = { ...detail, owner: { id: 91, name: "Workflow Staff", role: "IT_STAFF" as const } };
+    installStaffDetailFetch({
+      ticket: owned,
+      mutation: async () => jsonResponse({ error: { code: "INTERNAL_ERROR", message: "Something went wrong. Please try again." } }, 500),
+    });
+    renderAt(`/staff/tickets/${owned.id}`);
+    await screen.findByText(owned.summary);
+    await userEvent.selectOptions(screen.getByLabelText("Next status"), "CANCELLED");
+    const dialog = screen.getByRole("dialog", { name: "Cancel Ticket" });
+    const reason = within(dialog).getByLabelText("Cancellation reason");
+    await userEvent.type(reason, "Customer withdrew request");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Confirm cancellation" }));
+    expect(await within(dialog).findByRole("alert")).toHaveTextContent("Something went wrong. Please try again.");
+    expect(reason).toHaveValue("Customer withdrew request");
+    expect(within(dialog).getByRole("alert").closest("[inert]")).toBeNull();
+    expect(screen.getByRole("button", { name: "Check System" }).closest("section")).toHaveAttribute("inert");
+    expect(dialog).toContainElement(document.activeElement as HTMLElement);
   });
 
   it("closes successful owner submission through the focus-restoring path", async () => {
@@ -160,6 +197,22 @@ describe("UI-07 Staff Ticket actions", () => {
     expect(screen.getByLabelText("IT Priority")).toHaveValue("LOW");
     expect(screen.queryByText(/updated successfully/i)).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: owned.ticketNumber })).toHaveFocus();
+  });
+
+  it("refreshes the saved IT Priority badge from authoritative mutation state", async () => {
+    const updated = { ...detail, itPriority: "URGENT" as const, updatedAt: "2026-09-21T11:00:00.000Z" };
+    let detailLoads = 0;
+    installStaffDetailFetch({
+      detailResponse: async () => jsonResponse(detailLoads++ === 0 ? detail : updated),
+      mutation: async () => jsonResponse({ ticket: updated }),
+    });
+    renderAt(`/staff/tickets/${detail.id}`);
+    await screen.findByText(detail.summary);
+    await userEvent.selectOptions(screen.getByLabelText("IT Priority"), "URGENT");
+    await userEvent.click(screen.getByRole("button", { name: "Save IT Priority" }));
+    const operations = screen.getByRole("region", { name: "Operations" });
+    expect(await within(operations).findByText("IT Urgent")).toHaveClass("badge");
+    expect(screen.getByLabelText("IT Priority")).toHaveValue("URGENT");
   });
 
   it("closes a conflict dialog after authoritative reload and focuses the stable heading when its trigger disappears", async () => {
