@@ -155,9 +155,9 @@ describe("UI-10 and UI-11 Administrator User Management", () => {
     expect(name).toHaveFocus();
     expect(screen.getByRole("banner", { hidden: true })).toHaveAttribute("inert");
     cancel.focus();
-    fireEvent.keyDown(dialog, { key: "Tab" });
+    fireEvent.keyDown(cancel, { key: "Tab", code: "Tab", keyCode: 9, which: 9 });
     expect(name).toHaveFocus();
-    fireEvent.keyDown(dialog, { key: "Tab", shiftKey: true });
+    fireEvent.keyDown(name, { key: "Tab", code: "Tab", keyCode: 9, which: 9, shiftKey: true });
     expect(cancel).toHaveFocus();
     await userEvent.keyboard("{Escape}");
     expect(screen.queryByRole("dialog", { name: "Create User" })).not.toBeInTheDocument();
