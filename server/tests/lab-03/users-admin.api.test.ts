@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { afterEach, describe, expect, it } from "vitest";
 import request from "supertest";
 import { app } from "../../src/app.js";
@@ -34,6 +35,45 @@ describe("API-17 through API-20 Administrator User Management", () => {
     expect(filtered.body.items.every((item: { role: string }) => item.role === "IT_STAFF")).toBe(true);
     expect((await adminGet("/api/admin/users?page=1", administrator)).body.error.code).toBe("INVALID_QUERY");
     expect((await adminGet("/api/admin/users?role=IT_STAFF&role=REQUESTER", administrator)).body.error.code).toBe("INVALID_QUERY");
+  });
+
+  it("treats percent, underscore, and backslash literally across User names and normalized emails", async () => {
+    const { administrator } = await issue35Actors();
+    const prisma = getPrisma();
+    const suffix = randomUUID();
+    const fixtures = [
+      { key: "percent-name", name: "Issue 35 literal % name", email: `issue35-percent-name-${suffix}@example.test` },
+      { key: "percent-email", name: "Issue 35 percent email", email: `issue35-percent%email-${suffix}@example.test` },
+      { key: "underscore-name", name: "Issue 35 literal _ name", email: `issue35-underscore-name-${suffix}@example.test` },
+      { key: "underscore-email", name: "Issue 35 underscore email", email: `issue35-underscore_email-${suffix}@example.test` },
+      { key: "backslash-name", name: "Issue 35 literal \\ name", email: `issue35-backslash-name-${suffix}@example.test` },
+      { key: "backslash-email", name: "Issue 35 backslash email", email: `issue35-backslash\\email-${suffix}@example.test` },
+      { key: "wildcard-decoy", name: "Issue 35 wildcard decoy", email: `issue35-wildcard-decoy-${suffix}@example.test` },
+    ] as const;
+    await prisma.user.createMany({
+      data: fixtures.map(({ name, email }) => ({ name, email, role: "IT_STAFF", passwordHash: "not-returned" })),
+    });
+    const stored = await prisma.user.findMany({
+      where: { email: { in: fixtures.map(({ email }) => email) } },
+      select: { id: true, email: true },
+    });
+    const idFor = (key: typeof fixtures[number]["key"]) => {
+      const email = fixtures.find((fixture) => fixture.key === key)!.email;
+      return stored.find((user) => user.email === email)!.id;
+    };
+    const searches = await Promise.all(["%", "_", "\\"].map(async (search) => {
+      const response = await adminGet(`/api/admin/users?${new URLSearchParams({ search })}`, administrator);
+      expect(response.status).toBe(200);
+      expect(JSON.stringify(response.body)).not.toMatch(/passwordHash|tokenHash|csrf|session/iu);
+      return response.body.items.map((user: { id: number }) => user.id).sort((left: number, right: number) => left - right);
+    }));
+    const expected = [
+      [idFor("percent-name"), idFor("percent-email")].sort((left, right) => left - right),
+      [idFor("underscore-name"), idFor("underscore-email")].sort((left, right) => left - right),
+      [idFor("backslash-name"), idFor("backslash-email")].sort((left, right) => left - right),
+    ];
+    expect(searches).toEqual(expected);
+    for (const ids of searches) expect(ids).not.toContain(idFor("wildcard-decoy"));
   });
 
   it("denies non-Administrators before protected User lookup", async () => {
