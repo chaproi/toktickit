@@ -17,7 +17,9 @@ import { authenticatedFixture } from "./issue29-test-helpers.js";
 
 afterEach(cleanupIssue35Fixtures);
 
-type EditChange = { isActive: false } | { role: "REQUESTER" };
+type EditChange =
+  | { isActive: false; role?: never }
+  | { role: "REQUESTER"; isActive?: never };
 type LockOrder = "ownership-first" | "edit-first";
 
 const changes: Array<[string, EditChange]> = [
