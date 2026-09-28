@@ -53,6 +53,18 @@ import {
   validateStaffPriorityMutation,
   validateStaffStatusMutation,
 } from "./tickets/ticket-validation.js";
+import {
+  createAdminUser,
+  editAdminUser,
+  listAdminUsers,
+  resetAdminInitialPassword,
+} from "./users/admin-user-service.js";
+import {
+  parseAdminUserQuery,
+  validateCreateAdminUser,
+  validateEditAdminUser,
+  validateInitialPassword,
+} from "./users/admin-user-validation.js";
 
 export const app = express();
 
@@ -184,6 +196,14 @@ function sendMutationError(res: Response, error: unknown, operation: string): vo
   sendDatabaseError(res, error, operation);
 }
 
+function sendAdminMutationError(res: Response, error: unknown, operation: string): void {
+  if (error instanceof ConcurrentUpdateError) {
+    sendConflict(res, "CONCURRENT_UPDATE", "This User changed concurrently. Reload and try again.");
+    return;
+  }
+  sendDatabaseError(res, error, operation);
+}
+
 function buildContentDisposition(
   disposition: "inline" | "attachment",
   filename: string,
@@ -260,6 +280,132 @@ app.get("/api/related-systems", async (_req, res) => {
     res.status(200).json(systems);
   } catch (error) {
     sendDatabaseError(res, error, "fetching related systems");
+  }
+});
+
+app.get("/api/admin/users", async (req, res) => {
+  const live = await authenticated(req, res, ["ADMINISTRATOR"]);
+  if (!live) return;
+  const validation = parseAdminUserQuery(req.query as Record<string, unknown>);
+  if (!validation.success) {
+    res.status(400).json(errorBody(
+      "INVALID_QUERY",
+      "One or more query parameters are invalid.",
+      validation.fields,
+    ));
+    return;
+  }
+  try {
+    res.status(200).json({ items: await listAdminUsers(validation.data) });
+  } catch (error) {
+    sendDatabaseError(res, error, "listing Users");
+  }
+});
+
+app.post("/api/admin/users", async (req, res) => {
+  const live = await authenticated(req, res, ["ADMINISTRATOR"], true);
+  if (!live) return;
+  const validation = validateCreateAdminUser(req.body);
+  if (!validation.success) {
+    res.status(400).json(errorBody(
+      "VALIDATION_ERROR",
+      "Please correct the highlighted fields.",
+      validation.fields,
+    ));
+    return;
+  }
+  try {
+    const result = await createAdminUser(live.user.id, validation.data);
+    if (result.kind === "success") {
+      res.status(201).json({ user: result.user });
+      return;
+    }
+    if (result.kind === "duplicate-email") {
+      sendConflict(res, "EMAIL_ALREADY_EXISTS", "A User with this email already exists.");
+      return;
+    }
+    sendConflict(res, "CONCURRENT_UPDATE", "This User changed concurrently. Reload and try again.");
+  } catch (error) {
+    sendAdminMutationError(res, error, "creating a User");
+  }
+});
+
+app.patch("/api/admin/users/:userId", async (req, res) => {
+  const live = await authenticated(req, res, ["ADMINISTRATOR"], true);
+  if (!live) return;
+  const userId = parsePositiveIdentifier(req.params.userId);
+  if (userId === null) {
+    res.status(400).json(errorBody("INVALID_USER_ID", "User identifier must be a positive integer."));
+    return;
+  }
+  const validation = validateEditAdminUser(req.body);
+  if (!validation.success) {
+    res.status(400).json(errorBody(
+      "VALIDATION_ERROR",
+      "Please correct the highlighted fields.",
+      validation.fields,
+    ));
+    return;
+  }
+  try {
+    const result = await editAdminUser(live.user.id, userId, validation.data);
+    if (result.kind === "success") {
+      res.status(200).json({ user: result.user });
+      return;
+    }
+    if (result.kind === "not-found") {
+      res.status(404).json(errorBody("USER_NOT_FOUND", "User not found."));
+      return;
+    }
+    const conflicts: Record<string, [string, string]> = {
+      "duplicate-email": ["EMAIL_ALREADY_EXISTS", "A User with this email already exists."],
+      "self-change": ["SELF_ADMIN_CHANGE_FORBIDDEN", "You cannot deactivate your own account or change your own role."],
+      "last-administrator": ["LAST_ACTIVE_ADMIN_REQUIRED", "At least one active Administrator is required."],
+      "non-terminal-owner": ["USER_HAS_NON_TERMINAL_TICKETS", "Reassign or unassign this User's non-terminal Tickets first."],
+      stale: ["STALE_WRITE", "This User changed. Reload and try again."],
+      "actor-conflict": ["CONCURRENT_UPDATE", "This User changed concurrently. Reload and try again."],
+    };
+    const [code, message] = conflicts[result.kind] ?? conflicts["actor-conflict"]!;
+    sendConflict(res, code, message);
+  } catch (error) {
+    sendAdminMutationError(res, error, "editing a User");
+  }
+});
+
+app.post("/api/admin/users/:userId/initial-password", async (req, res) => {
+  const live = await authenticated(req, res, ["ADMINISTRATOR"], true);
+  if (!live) return;
+  const userId = parsePositiveIdentifier(req.params.userId);
+  if (userId === null) {
+    res.status(400).json(errorBody("INVALID_USER_ID", "User identifier must be a positive integer."));
+    return;
+  }
+  const validation = validateInitialPassword(req.body);
+  if (!validation.success) {
+    res.status(400).json(errorBody(
+      "VALIDATION_ERROR",
+      "Please correct the highlighted fields.",
+      validation.fields,
+    ));
+    return;
+  }
+  try {
+    const result = await resetAdminInitialPassword(live.user.id, userId, validation.data);
+    if (result.kind === "success") {
+      res.status(200).json({ user: result.user });
+      return;
+    }
+    if (result.kind === "not-found") {
+      res.status(404).json(errorBody("USER_NOT_FOUND", "User not found."));
+      return;
+    }
+    if (result.kind === "self-reset") {
+      sendConflict(res, "SELF_INITIAL_PASSWORD_RESET_FORBIDDEN", "Use Change Password to update your own password.");
+      return;
+    }
+    sendConflict(res, "CONCURRENT_UPDATE", "This User changed concurrently. Reload and try again.");
+  } catch (error) {
+    sendAdminMutationError(res, error, "setting an initial password");
   }
 });
 

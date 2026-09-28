@@ -451,6 +451,34 @@ a:focus-visible {
     box-shadow: 0 1rem 3rem rgba(23, 53, 42, 0.24);
 }
 
+.admin-user-filters {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(10rem, 1fr) auto;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--pale-green);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.admin-user-cards {
+    display: none;
+}
+
+.admin-user-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.admin-user-form-wide {
+    grid-column: 1 / -1;
+}
+
+.admin-user-dialog {
+    width: min(100%, 40rem);
+}
+
 @media (max-width: 991.98px) {
     .my-tickets-filter-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -461,6 +489,10 @@ a:focus-visible {
     }
 
     .staff-queue-filter-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-user-filters {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
@@ -491,6 +523,24 @@ a:focus-visible {
 
     .staff-queue-table-wrap {
         display: none;
+    }
+
+    .admin-user-table-wrap {
+        display: none;
+    }
+
+    .admin-user-cards {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .admin-user-filters,
+    .admin-user-form-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .admin-user-form-wide {
+        grid-column: auto;
     }
 
     .staff-queue-cards {

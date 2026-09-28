@@ -24,6 +24,7 @@ import MyTickets from "./components/MyTickets.js";
 import RequesterTicketDetail from "./components/RequesterTicketDetail.js";
 import StaffTicketQueue from "./components/StaffTicketQueue.js";
 import StaffTicketDetail from "./components/StaffTicketDetail.js";
+import UserManagement from "./components/UserManagement.js";
 
 const MOBILE_NAVIGATION_QUERY = "(max-width: 767.98px)";
 
@@ -179,17 +180,6 @@ function AppShell({
         {children}
       </main>
     </div>
-  );
-}
-
-function Placeholder({ heading }: { heading: string }) {
-  return (
-    <section className="card border-0 shadow-sm">
-      <div className="card-body p-4">
-        <h1 className="h2">{heading}</h1>
-        <p className="text-secondary mb-0">This role destination is reserved for a later Sprint 3 increment.</p>
-      </div>
-    </section>
   );
 }
 
@@ -352,7 +342,7 @@ function AuthenticatedRoutes() {
       />
       <Route
         path="/admin/users"
-        element={user.role === "ADMINISTRATOR" ? shell(<Placeholder heading="User Management" />) : shell(<Forbidden user={user} />)}
+        element={user.role === "ADMINISTRATOR" ? shell(<UserManagement currentUser={user} />) : shell(<Forbidden user={user} />)}
       />
       <Route path="*" element={shell(<section className="ticket-detail-state"><h1 className="h2">Page not found</h1></section>)} />
     </Routes>
