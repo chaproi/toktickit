@@ -1,4 +1,4 @@
-import { cleanup, screen, waitFor, within } from "@testing-library/react";
+import { cleanup, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { authResponse, jsonResponse, renderAt, requestUrl } from "./test-helpers.js";
@@ -34,9 +34,11 @@ afterEach(() => {
 });
 
 function installFetch({
+  auth = administrator,
   list = async () => jsonResponse({ items: [self, staff] }),
   mutate = async (_url: URL, _init?: RequestInit) => jsonResponse({ user: staff }),
 }: {
+  auth?: typeof administrator | typeof staff;
   list?: (url: URL) => Promise<Response>;
   mutate?: (url: URL, init?: RequestInit) => Promise<Response>;
 } = {}) {
@@ -44,7 +46,7 @@ function installFetch({
   vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = requestUrl(input);
     calls.push({ url, init });
-    if (url.pathname === "/api/auth/me") return jsonResponse(authResponse(administrator));
+    if (url.pathname === "/api/auth/me") return jsonResponse(authResponse(auth));
     if (url.pathname === "/api/admin/users" && (!init?.method || init.method === "GET")) return list(url);
     if (url.pathname.startsWith("/api/admin/users")) return mutate(url, init);
     throw new Error(`Unexpected request: ${url.pathname}`);
@@ -53,6 +55,15 @@ function installFetch({
 }
 
 describe("UI-10 and UI-11 Administrator User Management", () => {
+  it("shows a safe role destination without requesting protected User data", async () => {
+    const calls = installFetch({ auth: staff });
+    renderAt("/admin/users");
+    expect(await screen.findByRole("heading", { name: "Forbidden" })).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent("This page is not available for your role.");
+    expect(screen.getByRole("link", { name: "Go to role home" })).toHaveAttribute("href", "/staff/tickets");
+    expect(calls.some(({ url }) => url.pathname === "/api/admin/users")).toBe(false);
+  });
+
   it("keeps a named loading region, then renders safe table and mobile-card fields with navigation", async () => {
     let release: ((value: Response) => void) | undefined;
     const deferred = new Promise<Response>((resolve) => { release = resolve; });
@@ -125,6 +136,48 @@ describe("UI-10 and UI-11 Administrator User Management", () => {
     expect(document.body.textContent).not.toContain("Valid Issue35! 7");
   });
 
+  it("traps focus, makes the background inert, restores focus, and blocks dismissal while saving", async () => {
+    let release: ((value: Response) => void) | undefined;
+    const deferred = new Promise<Response>((resolve) => { release = resolve; });
+    installFetch({ mutate: async () => deferred });
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    const trigger = screen.getByRole("button", { name: "Create User" });
+    await userEvent.click(trigger);
+    let dialog = screen.getByRole("dialog", { name: "Create User" });
+    const name = within(dialog).getByLabelText("Name");
+    const cancel = within(dialog).getByRole("button", { name: "Cancel" });
+    const focusable = Array.from(dialog.querySelectorAll<HTMLElement>(
+      "button:not(:disabled), input:not(:disabled), select:not(:disabled)",
+    ));
+    expect(focusable[0]).toBe(name);
+    expect(focusable.at(-1)).toBe(cancel);
+    expect(name).toHaveFocus();
+    expect(screen.getByRole("banner", { hidden: true })).toHaveAttribute("inert");
+    cancel.focus();
+    fireEvent.keyDown(dialog, { key: "Tab" });
+    expect(name).toHaveFocus();
+    fireEvent.keyDown(dialog, { key: "Tab", shiftKey: true });
+    expect(cancel).toHaveFocus();
+    await userEvent.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog", { name: "Create User" })).not.toBeInTheDocument();
+    await waitFor(() => expect(trigger).toHaveFocus());
+
+    await userEvent.click(trigger);
+    dialog = screen.getByRole("dialog", { name: "Create User" });
+    await userEvent.type(within(dialog).getByLabelText("Name"), "Busy User");
+    await userEvent.type(within(dialog).getByLabelText("Email"), "busy.user@example.test");
+    await userEvent.type(within(dialog).getByLabelText("Initial Password"), "Valid Issue35! 7");
+    await userEvent.type(within(dialog).getByLabelText("Confirm Initial Password"), "Valid Issue35! 7");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Create User" }));
+    expect(within(dialog).getByRole("button", { name: "Creating user…" })).toBeDisabled();
+    await userEvent.keyboard("{Escape}");
+    expect(screen.getByRole("dialog", { name: "Create User" })).toBeInTheDocument();
+    expect(within(dialog).getByRole("button", { name: "Cancel" })).toBeDisabled();
+    release!(jsonResponse({ user: { ...staff, id: 904, name: "Busy User", email: "busy.user@example.test" } }, 201));
+    expect(await screen.findByText("Busy User was created.")).toBeInTheDocument();
+  });
+
   it("keeps duplicate-email errors and safe input inside the active dialog", async () => {
     installFetch({ mutate: async () => jsonResponse({ error: { code: "EMAIL_ALREADY_EXISTS", message: "A User with this email already exists." } }, 409) });
     renderAt("/admin/users");
@@ -176,6 +229,30 @@ describe("UI-10 and UI-11 Administrator User Management", () => {
     expect(alert).toHaveFocus();
     await userEvent.click(within(dialog).getByRole("button", { name: "Reload User" }));
     expect(await within(dialog).findByDisplayValue("Authoritative Staff")).toBeInTheDocument();
+  });
+
+  it.each([
+    ["USER_HAS_NON_TERMINAL_TICKETS", "Reassign or unassign this User's non-terminal Tickets first."],
+    ["LAST_ACTIVE_ADMIN_REQUIRED", "At least one active Administrator is required."],
+    ["CONCURRENT_UPDATE", "This user changed concurrently. Reload the latest details."],
+  ])("keeps safe %s feedback and retained edits inside the active dialog", async (code, message) => {
+    installFetch({
+      mutate: async () => jsonResponse({ error: { code, message: "server-safe-message" } }, 409),
+    });
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.click(screen.getByRole("button", { name: "Edit Staff Mina" }));
+    const dialog = screen.getByRole("dialog", { name: "Edit Staff Mina" });
+    const name = within(dialog).getByLabelText("Name");
+    await userEvent.clear(name);
+    await userEvent.type(name, "Retained Edit");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Save User" }));
+    const alert = await within(dialog).findByRole("alert");
+    expect(alert).toHaveTextContent(message);
+    expect(alert).toHaveFocus();
+    expect(name).toHaveValue("Retained Edit");
+    expect(screen.getByRole("banner", { hidden: true })).toHaveAttribute("inert");
+    expect(screen.queryByText("server-safe-message")).not.toBeInTheDocument();
   });
 
   it("sets another User's initial password, clears password fields, and refreshes forced-change state", async () => {

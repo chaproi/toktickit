@@ -1,6 +1,9 @@
 import { afterEach, describe, expect, it } from "vitest";
+import request from "supertest";
+import { app } from "../../src/app.js";
 import { verifyPassword } from "../../src/auth/password.js";
 import { getPrisma } from "../../src/prisma.js";
+import { APPROVED_ORIGIN, cookieHeader } from "./auth-test-helpers.js";
 import {
   adminGet,
   adminPatch,
@@ -92,9 +95,11 @@ describe("API-17 through API-20 Administrator User Management", () => {
     expect(stale.body.error.code).toBe("STALE_WRITE");
 
     const self = await prisma.user.findUniqueOrThrow({ where: { id: administrator.user.id } });
+    const selfSessions = await prisma.authSession.count({ where: { userId: self.id } });
     const selfProfile = await adminPatch(`/api/admin/users/${self.id}`, administrator, editableUser(self, { name: "Administrator Profile" }));
     expect(selfProfile.status).toBe(200);
     expect(selfProfile.body.user.name).toBe("Administrator Profile");
+    expect(await prisma.authSession.count({ where: { userId: self.id } })).toBe(selfSessions);
   });
 
   it("resets another User's initial password, revokes sessions, forces change, and rejects self-reset", async () => {
@@ -109,6 +114,23 @@ describe("API-17 through API-20 Administrator User Management", () => {
     const stored = await getPrisma().user.findUniqueOrThrow({ where: { id: staff.user.id } });
     expect(await verifyPassword(stored.passwordHash, password)).toBe(true);
     expect(await getPrisma().authSession.count({ where: { userId: staff.user.id } })).toBe(0);
+    expect(JSON.stringify(response.body)).not.toMatch(/passwordHash|initialPassword|confirmPassword|session|cookie|token/iu);
+    const revoked = await request(app).get("/api/auth/me").set("Cookie", staff.cookie);
+    expect(revoked.status).toBe(401);
+    expect(revoked.body.error.code).toBe("AUTHENTICATION_REQUIRED");
+
+    const nextLogin = await request(app)
+      .post("/api/auth/login")
+      .set("Origin", APPROVED_ORIGIN)
+      .send({ email: staff.user.email, password });
+    expect(nextLogin.status).toBe(200);
+    expect(nextLogin.body.user).toMatchObject({ id: staff.user.id, mustChangePassword: true });
+    const forcedGate = await request(app)
+      .get("/api/staff/tickets")
+      .set("Cookie", cookieHeader(nextLogin.headers["set-cookie"]));
+    expect(forcedGate.status).toBe(403);
+    expect(forcedGate.body.error.code).toBe("PASSWORD_CHANGE_REQUIRED");
+
     const self = await adminPost(`/api/admin/users/${administrator.user.id}/initial-password`, administrator, {
       initialPassword: password,
       confirmPassword: password,
