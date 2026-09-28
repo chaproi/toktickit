@@ -3,7 +3,6 @@ import {
   useRef,
   useState,
   type FormEvent,
-  type KeyboardEvent,
   type ReactNode,
   type RefObject,
 } from "react";
@@ -106,26 +105,34 @@ function AdminDialog({
       for (const { target, inert } of previous) if (!inert) target.removeAttribute("inert");
     };
   }, []);
-
-  function keyDown(event: KeyboardEvent<HTMLDivElement>) {
-    if (event.key === "Escape" && !processing) {
-      event.preventDefault();
-      onClose();
-      return;
-    }
-    if (event.key !== "Tab") return;
-    const controls = Array.from(dialog.current?.querySelectorAll<HTMLElement>(
-      "button:not(:disabled), input:not(:disabled), select:not(:disabled)",
-    ) ?? []);
-    if (controls.length === 0) return;
-    const first = controls[0]!;
-    const last = controls.at(-1)!;
-    if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault(); first.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault(); last.focus();
-    }
-  }
+  useEffect(() => {
+    const element = dialog.current;
+    if (!element) return;
+    const keyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key === "Escape" && !processing) {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const controls = Array.from(element.querySelectorAll<HTMLElement>(
+        "button:not(:disabled), input:not(:disabled), select:not(:disabled)",
+      ));
+      if (controls.length === 0) return;
+      const first = controls[0]!;
+      const last = controls.at(-1)!;
+      const active = event.target instanceof HTMLElement && controls.includes(event.target)
+        ? event.target
+        : document.activeElement;
+      if (event.shiftKey && active === first) {
+        event.preventDefault(); last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault(); first.focus();
+      }
+    };
+    element.addEventListener("keydown", keyDown);
+    return () => element.removeEventListener("keydown", keyDown);
+  }, [onClose, processing]);
 
   return (
     <div className="attachment-dialog-backdrop">
@@ -135,7 +142,6 @@ function AdminDialog({
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        onKeyDown={keyDown}
       >
         <h2 id={titleId} className="h4">{title}</h2>
         <p className="text-secondary">{description}</p>
