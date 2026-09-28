@@ -54,6 +54,25 @@ function installFetch({
   return calls;
 }
 
+async function completeCreateUser({
+  name,
+  email,
+  role = "IT_STAFF",
+}: {
+  name: string;
+  email: string;
+  role?: "REQUESTER" | "IT_STAFF" | "ADMINISTRATOR";
+}) {
+  await userEvent.click(screen.getByRole("button", { name: "Create User" }));
+  const dialog = screen.getByRole("dialog", { name: "Create User" });
+  await userEvent.type(within(dialog).getByLabelText("Name"), name);
+  await userEvent.type(within(dialog).getByLabelText("Email"), email);
+  await userEvent.selectOptions(within(dialog).getByLabelText("Role"), role);
+  await userEvent.type(within(dialog).getByLabelText("Initial Password"), "Valid Issue35! 7");
+  await userEvent.type(within(dialog).getByLabelText("Confirm Initial Password"), "Valid Issue35! 7");
+  await userEvent.click(within(dialog).getByRole("button", { name: "Create User" }));
+}
+
 describe("UI-10 and UI-11 Administrator User Management", () => {
   it("shows a safe role destination without requesting protected User data", async () => {
     const calls = installFetch({ auth: staff });
@@ -71,6 +90,14 @@ describe("UI-10 and UI-11 Administrator User Management", () => {
     const { container } = renderAt("/admin/users");
     expect(await screen.findByRole("heading", { name: "User Management" })).toBeInTheDocument();
     expect(screen.getByText("Loading users…")).toHaveAttribute("role", "status");
+    expect(container.querySelector(".admin-user-skeleton")).toHaveAttribute("aria-hidden", "true");
+    expect(screen.queryByText("No users are available.")).not.toBeInTheDocument();
+    expect(screen.queryByText("No users match the current search.")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Search users")).toBeDisabled();
+    expect(screen.getByLabelText("Role")).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Search" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Clear Search" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Create User" })).toBeDisabled();
     expect(screen.getByRole("link", { name: "Ticket Queue" })).toHaveAttribute("href", "/staff/tickets");
     release!(jsonResponse({ items: [self, staff] }));
     const table = await screen.findByRole("table", { name: "Users" });
@@ -115,7 +142,15 @@ describe("UI-10 and UI-11 Administrator User Management", () => {
     let release: ((value: Response) => void) | undefined;
     const deferred = new Promise<Response>((resolve) => { release = resolve; });
     const created = { ...staff, id: 903, name: "New User", email: "new.user@example.test", mustChangePassword: true };
-    installFetch({ mutate: async () => deferred });
+    let mutationComplete = false;
+    installFetch({
+      list: async () => jsonResponse({ items: mutationComplete ? [self, staff, created] : [self, staff] }),
+      mutate: async () => {
+        const response = await deferred;
+        mutationComplete = true;
+        return response;
+      },
+    });
     renderAt("/admin/users");
     await screen.findByText("Staff Mina");
     await userEvent.click(screen.getByRole("button", { name: "Create User" }));
@@ -134,6 +169,95 @@ describe("UI-10 and UI-11 Administrator User Management", () => {
     expect(screen.queryByRole("dialog", { name: "Create User" })).not.toBeInTheDocument();
     expect(await screen.findByText("New User")).toHaveFocus();
     expect(document.body.textContent).not.toContain("Valid Issue35! 7");
+  });
+
+  it("reconciles successful creation against the active search and uses authoritative server data", async () => {
+    const mismatched = { ...staff, id: 903, name: "Other User", email: "other.user@example.test", mustChangePassword: true };
+    const submitted = { ...staff, id: 904, name: "Mina Submitted", email: "mina.submitted@example.test", mustChangePassword: true };
+    const authoritative = { ...submitted, name: "Mina Authoritative", email: "mina.authoritative@example.test", updatedAt: "2026-09-28T11:00:00.000Z" };
+    let mutations = 0;
+    const calls = installFetch({
+      list: async (url) => jsonResponse({
+        items: url.searchParams.get("search") === "mina"
+          ? mutations >= 2 ? [staff, authoritative] : [staff]
+          : [staff],
+      }),
+      mutate: async () => {
+        mutations += 1;
+        return jsonResponse({ user: mutations === 1 ? mismatched : submitted }, 201);
+      },
+    });
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.type(screen.getByLabelText("Search users"), "mina");
+    await userEvent.click(screen.getByRole("button", { name: "Search" }));
+    await screen.findByText("Staff Mina");
+
+    await completeCreateUser({ name: mismatched.name, email: mismatched.email });
+    expect(await screen.findByText("Other User was created.")).toHaveAttribute("role", "status");
+    await waitFor(() => expect(calls.filter(({ url, init }) =>
+      url.pathname === "/api/admin/users" && !init?.method && url.searchParams.get("search") === "mina")).toHaveLength(2));
+    expect(screen.queryByRole("button", { name: "Edit Other User" })).not.toBeInTheDocument();
+
+    await completeCreateUser({ name: submitted.name, email: submitted.email });
+    expect(await screen.findByRole("button", { name: "Edit Mina Authoritative" })).toBeInTheDocument();
+    expect(screen.getByText("mina.authoritative@example.test")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Edit Mina Submitted" })).not.toBeInTheDocument();
+  });
+
+  it("removes an edited User that no longer matches the active role filter", async () => {
+    const requester = { ...staff, role: "REQUESTER" as const, updatedAt: "2026-09-28T11:00:00.000Z" };
+    let edited = false;
+    const calls = installFetch({
+      list: async (url) => jsonResponse({ items: edited && url.searchParams.get("role") === "IT_STAFF" ? [] : [staff] }),
+      mutate: async () => {
+        edited = true;
+        return jsonResponse({ user: requester });
+      },
+    });
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.selectOptions(screen.getByLabelText("Role"), "IT_STAFF");
+    await userEvent.click(screen.getByRole("button", { name: "Search" }));
+    await screen.findByText("Staff Mina");
+    await userEvent.click(screen.getByRole("button", { name: "Edit Staff Mina" }));
+    const dialog = screen.getByRole("dialog", { name: "Edit Staff Mina" });
+    await userEvent.selectOptions(within(dialog).getByLabelText("Role"), "REQUESTER");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Save User" }));
+    expect(await screen.findByText("No users match the current search.")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Edit Staff Mina" })).not.toBeInTheDocument();
+    expect(calls.filter(({ url, init }) => url.pathname === "/api/admin/users" && !init?.method)
+      .at(-1)!.url.searchParams.get("role")).toBe("IT_STAFF");
+  });
+
+  it("describes preserved terminal ownership for deactivation and conversion to Requester", async () => {
+    installFetch();
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.click(screen.getByRole("button", { name: "Edit Staff Mina" }));
+    const dialog = screen.getByRole("dialog", { name: "Edit Staff Mina" });
+    const guidance = /historical owner references on CLOSED and CANCELLED Tickets remain preserved/i;
+    await userEvent.selectOptions(within(dialog).getByLabelText("Status"), "inactive");
+    expect(within(dialog).getByText(guidance)).toBeInTheDocument();
+    await userEvent.selectOptions(within(dialog).getByLabelText("Status"), "active");
+    await userEvent.selectOptions(within(dialog).getByLabelText("Role"), "REQUESTER");
+    expect(within(dialog).getByText(guidance)).toBeInTheDocument();
+  });
+
+  it("programmatically associates every Administrator dialog description", async () => {
+    installFetch();
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.click(screen.getByRole("button", { name: "Create User" }));
+    expect(screen.getByRole("dialog", { name: "Create User" }))
+      .toHaveAccessibleDescription("Create one User with one role and an initial password.");
+    await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
+    await userEvent.click(screen.getByRole("button", { name: "Edit Staff Mina" }));
+    expect(screen.getByRole("dialog", { name: "Edit Staff Mina" }))
+      .toHaveAccessibleDescription("Edit approved profile and access fields.");
+    await userEvent.click(screen.getByRole("button", { name: "Set New Initial Password" }));
+    expect(screen.getByRole("dialog", { name: "Set New Initial Password" }))
+      .toHaveAccessibleDescription("Set a new initial password for Staff Mina. All current sessions will end.");
   });
 
   it("traps focus, makes the background inert, restores focus, and blocks dismissal while saving", async () => {
