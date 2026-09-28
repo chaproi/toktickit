@@ -89,6 +89,7 @@ function AdminDialog({
 }) {
   const dialog = useRef<HTMLDivElement>(null);
   const titleId = `admin-dialog-${title.replaceAll(" ", "-").toLowerCase()}`;
+  const descriptionId = `${titleId}-description`;
   useEffect(() => { initialFocus.current?.focus(); }, [initialFocus]);
   useEffect(() => {
     const element = dialog.current;
@@ -142,9 +143,10 @@ function AdminDialog({
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
+        aria-describedby={descriptionId}
       >
         <h2 id={titleId} className="h4">{title}</h2>
-        <p className="text-secondary">{description}</p>
+        <p id={descriptionId} className="text-secondary">{description}</p>
         {children}
       </div>
     </div>
@@ -257,7 +259,9 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
   const trigger = useRef<HTMLElement | null>(null);
   const initialFocus = useRef<HTMLInputElement>(null);
   const alertRef = useRef<HTMLDivElement | null>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
   const rowRefs = useRef(new Map<number, HTMLElement>());
+  const loadRequest = useRef(0);
   const [mobile, setMobile] = useState(() =>
     typeof window.matchMedia === "function" && window.matchMedia("(max-width: 767.98px)").matches);
 
@@ -271,24 +275,30 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
   }, []);
 
   useEffect(() => {
+    const requestId = ++loadRequest.current;
     const controller = new AbortController();
     setLoading(true);
     setLoadError("");
     setUsers([]);
     void getAdminUsers(query, controller.signal)
-      .then((items) => setUsers(items))
-      .catch((error: unknown) => {
-        if (!(error instanceof DOMException && error.name === "AbortError")) setLoadError(SAFE_ERROR);
+      .then((items) => {
+        if (requestId === loadRequest.current && !controller.signal.aborted) setUsers(items);
       })
-      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+      .catch((error: unknown) => {
+        if (requestId === loadRequest.current &&
+          !(error instanceof DOMException && error.name === "AbortError")) setLoadError(SAFE_ERROR);
+      })
+      .finally(() => {
+        if (requestId === loadRequest.current && !controller.signal.aborted) setLoading(false);
+      });
     return () => controller.abort();
   }, [query, retry]);
 
   useEffect(() => {
-    if (pendingFocusId === null) return;
-    rowRefs.current.get(pendingFocusId)?.focus();
+    if (pendingFocusId === null || loading) return;
+    (rowRefs.current.get(pendingFocusId) ?? searchRef.current)?.focus();
     setPendingFocusId(null);
-  }, [pendingFocusId, users]);
+  }, [loading, pendingFocusId, users]);
 
   function sort(items: AdminUser[]): AdminUser[] {
     return [...items].sort((left, right) =>
@@ -296,6 +306,12 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
   }
 
   function rememberTrigger(element: HTMLElement) { trigger.current = element; }
+  function refreshUsers(focusId: number) {
+    setLoading(true);
+    setUsers([]);
+    setPendingFocusId(focusId);
+    setRetry((value) => value + 1);
+  }
   function closeDialog() {
     if (saving) return;
     setDialog(null);
@@ -350,9 +366,8 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
         name: values.name.trim(), email: values.email.trim(), role: values.role,
         isActive: values.isActive, ...passwords,
       });
-      setUsers((current) => sort([...current.filter(({ id }) => id !== response.user.id), response.user]));
       setDialog(null); setPasswords({ initialPassword: "", confirmPassword: "" });
-      setNotice(`${response.user.name} was created.`); setPendingFocusId(response.user.id);
+      setNotice(`${response.user.name} was created.`); refreshUsers(response.user.id);
     } catch (error) { showFormError(error); }
     finally { setSaving(false); }
   }
@@ -371,8 +386,7 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
         name: values.name.trim(), email: values.email.trim(), role: values.role,
         isActive: values.isActive, expectedUpdatedAt: selected.updatedAt,
       });
-      setUsers((current) => sort(current.map((item) => item.id === response.user.id ? response.user : item)));
-      setDialog(null); setNotice(`${response.user.name} was saved.`); setPendingFocusId(response.user.id);
+      setDialog(null); setNotice(`${response.user.name} was saved.`); refreshUsers(response.user.id);
     } catch (error) { showFormError(error); }
     finally { setSaving(false); }
   }
@@ -413,29 +427,35 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
 
   const applied = Boolean(query.search || query.role);
   const selected = dialog && dialog.kind !== "create" ? dialog.user : null;
+  const preservesTerminalOwnership = selected !== null && (
+    (selected.isActive && !values.isActive) ||
+    (selected.role !== "REQUESTER" && values.role === "REQUESTER")
+  );
   return (
     <section className="card border-0 shadow-sm admin-user-management" aria-labelledby="user-management-heading">
       <div className="card-body p-4">
         <div className="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
           <div><h1 id="user-management-heading" className="h2 mb-1">User Management</h1><p className="text-secondary mb-0">Create and maintain TokTickIT user access.</p></div>
-          <button type="button" className="btn btn-success" onClick={(event) => openCreate(event.currentTarget)}>Create User</button>
+          <button type="button" className="btn btn-success" disabled={loading} onClick={(event) => openCreate(event.currentTarget)}>Create User</button>
         </div>
         {notice && <div className="alert alert-success" role="status">{notice}</div>}
         <form className="admin-user-filters mb-4" onSubmit={(event) => {
           event.preventDefault();
+          if (loading) return;
+          setLoading(true); setUsers([]);
           setQuery({ ...(draftSearch.trim() ? { search: draftSearch.trim() } : {}), ...(draftRole ? { role: draftRole } : {}) });
         }}>
-          <div><label className="form-label" htmlFor="admin-user-search">Search users</label><input id="admin-user-search" className="form-control" value={draftSearch} maxLength={100} onChange={(event) => setDraftSearch(event.target.value)} /></div>
-          <div><label className="form-label" htmlFor="admin-role-filter">Role</label><select id="admin-role-filter" className="form-select" value={draftRole} onChange={(event) => setDraftRole(event.target.value as UserRole | "")}><option value="">All roles</option>{ROLES.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}</select></div>
-          <div className="d-flex flex-wrap gap-2 align-self-end"><button type="submit" className="btn btn-success">Search</button><button type="button" className="btn btn-outline-secondary" onClick={() => { setDraftSearch(""); setDraftRole(""); setQuery({}); }}>Clear Search</button></div>
+          <div><label className="form-label" htmlFor="admin-user-search">Search users</label><input ref={searchRef} id="admin-user-search" className="form-control" value={draftSearch} maxLength={100} disabled={loading} onChange={(event) => setDraftSearch(event.target.value)} /></div>
+          <div><label className="form-label" htmlFor="admin-role-filter">Role</label><select id="admin-role-filter" className="form-select" value={draftRole} disabled={loading} onChange={(event) => setDraftRole(event.target.value as UserRole | "")}><option value="">All roles</option>{ROLES.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}</select></div>
+          <div className="d-flex flex-wrap gap-2 align-self-end"><button type="submit" className="btn btn-success" disabled={loading}>Search</button><button type="button" className="btn btn-outline-secondary" disabled={loading} onClick={() => { setLoading(true); setUsers([]); setDraftSearch(""); setDraftRole(""); setQuery({}); }}>Clear Search</button></div>
         </form>
-        {loading && <p role="status">Loading users…</p>}
+        {loading && <div className="my-tickets-state"><p role="status">Loading users…</p><div className="staff-queue-skeleton admin-user-skeleton" aria-hidden="true"><span /><span /><span /></div></div>}
         {!loading && loadError && <div className="alert alert-danger" role="alert"><p>{loadError}</p><button type="button" className="btn btn-outline-danger" onClick={() => setRetry((value) => value + 1)}>Try Again</button></div>}
         {!loading && !loadError && users.length === 0 && <div className="ticket-detail-state"><div><p>{applied ? "No users match the current search." : "No users are available."}</p>{!applied && <button type="button" className="btn btn-success" onClick={(event) => openCreate(event.currentTarget)}>Create User</button>}</div></div>}
         {!loading && !loadError && users.length > 0 && (
           <>
             <div className="table-responsive admin-user-table-wrap">
-              <table className="table align-middle" aria-label="Users"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Edit</th></tr></thead><tbody>{users.map((user) => <tr key={user.id}><td><span tabIndex={-1} ref={(element) => { if (element) rowRefs.current.set(user.id, element); }}>{user.name}</span></td><td className="text-break">{user.email}</td><td>{roleLabel(user.role)}</td><td>{user.isActive ? "Active" : "Inactive"}</td><td><button type="button" className="btn btn-outline-success btn-sm" aria-label={`Edit ${user.name}`} onClick={(event) => openEdit(user, event.currentTarget)}>Edit</button></td></tr>)}</tbody></table>
+              <table className="table align-middle" aria-label="Users"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Edit</th></tr></thead><tbody>{users.map((user) => <tr key={user.id}><td><span tabIndex={-1} ref={(element) => { if (element) rowRefs.current.set(user.id, element); else rowRefs.current.delete(user.id); }}>{user.name}</span></td><td className="text-break">{user.email}</td><td>{roleLabel(user.role)}</td><td>{user.isActive ? "Active" : "Inactive"}</td><td><button type="button" className="btn btn-outline-success btn-sm" aria-label={`Edit ${user.name}`} onClick={(event) => openEdit(user, event.currentTarget)}>Edit</button></td></tr>)}</tbody></table>
             </div>
             <div className="admin-user-cards" aria-label="Users on small screens">{mobile && users.map((user) => <article key={user.id} className="card"><div className="card-body"><h2 className="h5" tabIndex={-1} ref={(element) => { if (element) rowRefs.current.set(user.id, element); }}>{user.name}</h2><dl><dt>Email</dt><dd className="text-break">{user.email}</dd><dt>Role</dt><dd>{roleLabel(user.role)}</dd><dt>Status</dt><dd>{user.isActive ? "Active" : "Inactive"}</dd></dl><button type="button" className="btn btn-outline-success" aria-label={`Edit ${user.name}`} onClick={(event) => openEdit(user, event.currentTarget)}>Edit</button></div></article>)}</div>
           </>
@@ -444,7 +464,7 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
 
       {dialog?.kind === "create" && <AdminDialog title="Create User" description="Create one User with one role and an initial password." processing={saving} initialFocus={initialFocus} onClose={closeDialog}><form onSubmit={(event) => void submitCreate(event)}>{formError && <div ref={alertRef} tabIndex={-1} className="alert alert-danger" role="alert">{formError}</div>}<UserFields values={values} errors={errors} disabled={saving} protectRoleAndStatus={false} onChange={setValues} initialFocus={initialFocus} /><div className="mt-3"><PasswordFields values={passwords} errors={errors} disabled={saving} onChange={setPasswords} /></div><div className="d-flex flex-wrap gap-2"><button type="submit" className="btn btn-success" disabled={saving}>{saving ? "Creating user…" : "Create User"}</button><button type="button" className="btn btn-outline-secondary" disabled={saving} onClick={closeDialog}>Cancel</button></div></form></AdminDialog>}
 
-      {dialog?.kind === "edit" && selected && <AdminDialog title={`Edit ${selected.name}`} description="Edit approved profile and access fields." processing={saving} initialFocus={initialFocus} onClose={closeDialog}><form onSubmit={(event) => void submitEdit(event, selected)}>{formError && <div ref={alertRef} tabIndex={-1} className="alert alert-danger" role="alert">{formError}</div>}{selected.id === currentUser.id && <p className="alert alert-info">You cannot change your own role or deactivate your own account here.</p>}<UserFields values={values} errors={errors} disabled={saving} protectRoleAndStatus={selected.id === currentUser.id} onChange={setValues} initialFocus={initialFocus} /><p className="mt-3 mb-2"><strong>{`Password change required: ${selected.mustChangePassword ? "Yes" : "No"}`}</strong></p>{selected.role === "REQUESTER" && values.role !== "REQUESTER" && <p className="alert alert-warning">Current permissions will change. Existing submitted Tickets remain attributed to this historical User.</p>}<div className="d-flex flex-wrap gap-2"><button type="submit" className="btn btn-success" disabled={saving}>{saving ? "Saving user…" : "Save User"}</button>{selected.id !== currentUser.id && <button type="button" className="btn btn-outline-success" disabled={saving} onClick={() => openPassword(selected)}>Set New Initial Password</button>}{["STALE_WRITE", "CONCURRENT_UPDATE"].some((code) => formError.includes(code)) || formError.includes("changed") ? <button type="button" className="btn btn-outline-warning" disabled={saving} onClick={() => void reloadSelected(selected)}>Reload User</button> : null}<button type="button" className="btn btn-outline-secondary" disabled={saving} onClick={closeDialog}>Cancel</button></div></form></AdminDialog>}
+      {dialog?.kind === "edit" && selected && <AdminDialog title={`Edit ${selected.name}`} description="Edit approved profile and access fields." processing={saving} initialFocus={initialFocus} onClose={closeDialog}><form onSubmit={(event) => void submitEdit(event, selected)}>{formError && <div ref={alertRef} tabIndex={-1} className="alert alert-danger" role="alert">{formError}</div>}{selected.id === currentUser.id && <p className="alert alert-info">You cannot change your own role or deactivate your own account here.</p>}<UserFields values={values} errors={errors} disabled={saving} protectRoleAndStatus={selected.id === currentUser.id} onChange={setValues} initialFocus={initialFocus} /><p className="mt-3 mb-2"><strong>{`Password change required: ${selected.mustChangePassword ? "Yes" : "No"}`}</strong></p>{preservesTerminalOwnership && <p className="alert alert-info">Historical owner references on CLOSED and CANCELLED Tickets remain preserved.</p>}{selected.role === "REQUESTER" && values.role !== "REQUESTER" && <p className="alert alert-warning">Current permissions will change. Existing submitted Tickets remain attributed to this historical User.</p>}<div className="d-flex flex-wrap gap-2"><button type="submit" className="btn btn-success" disabled={saving}>{saving ? "Saving user…" : "Save User"}</button>{selected.id !== currentUser.id && <button type="button" className="btn btn-outline-success" disabled={saving} onClick={() => openPassword(selected)}>Set New Initial Password</button>}{["STALE_WRITE", "CONCURRENT_UPDATE"].some((code) => formError.includes(code)) || formError.includes("changed") ? <button type="button" className="btn btn-outline-warning" disabled={saving} onClick={() => void reloadSelected(selected)}>Reload User</button> : null}<button type="button" className="btn btn-outline-secondary" disabled={saving} onClick={closeDialog}>Cancel</button></div></form></AdminDialog>}
 
       {dialog?.kind === "password" && selected && <AdminDialog title="Set New Initial Password" description={`Set a new initial password for ${selected.name}. All current sessions will end.`} processing={saving} initialFocus={initialFocus} onClose={closeDialog}><form onSubmit={(event) => void submitPassword(event, selected)}>{formError && <div ref={alertRef} tabIndex={-1} className="alert alert-danger" role="alert">{formError}</div>}<PasswordFields values={passwords} errors={errors} disabled={saving} onChange={setPasswords} initialFocus={initialFocus} /><div className="d-flex flex-wrap gap-2"><button type="submit" className="btn btn-success" disabled={saving}>{saving ? "Setting password…" : "Set Initial Password"}</button><button type="button" className="btn btn-outline-secondary" disabled={saving} onClick={closeDialog}>Cancel</button></div></form></AdminDialog>}
     </section>
