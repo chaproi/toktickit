@@ -249,7 +249,7 @@ PR #34 was re-reviewed at exact pushed HEAD `ede8c00a28f715be56289791624b0115ca3
 
 ## 12. Issue #35 Administrator User Management Handoff
 
-This section records local implementation and verification evidence only. It does not claim a push, pull request, hosted CI run, review, approval, merge, Issue #35 closure, resolved review thread, or GitHub Project transition.
+This section records local implementation and verification evidence plus a later external-state cutoff. At the start of this governance sync, the complete Issue #35 implementation and API-17 correction chain through `e4b00bc15c8c957d341a82dcb8fd2957149a0a30` had been pushed. No Issue #35 pull request existed at that cutoff. The recorded test results remain local evidence, not hosted CI, and this documentation commit does not claim subsequent GitHub state.
 
 | Item | Current evidence |
 | --- | --- |
@@ -271,3 +271,4 @@ This section records local implementation and verification evidence only. It doe
 | Secrets and local configuration | `server/.env` remained ignored and outside every Issue #35 commit. Committed and working-diff scans found no private credentials, password hashes, session cookies, CSRF tokens, database URLs, HMAC secrets, private keys, or environment files introduced by Issue #35. |
 | Contract status | `UNIT-07`, `API-17`–`API-20`, `API-22`, `SEC-07`–`SEC-15`, `UI-10`, `UI-11`, and `E2E-04` are `Pass (Issue #35)`. Totals are 75 = 16 Issue #27 Pass + 13 Issue #29 Pass + 3 Issue #31 Pass + 12 Issue #33 Pass + 18 Issue #35 Pass + 13 Planned. All 61 Acceptance Criteria remain traced. |
 | Excluded scope preserved | No User deletion, multiple-role model, bulk action, User-list pagination/arbitrary sorting, plaintext/hash display, Ticket-history rewrite, final responsive screenshot evidence, final cross-role sweep, schema/migration/seed/dependency change, hosted-CI configuration, or unrelated completion scope was added. |
+| Governance evidence cutoff | The complete Issue #35 chain, including API-17 tests-only RED `3343de9`, GREEN `cffebb4`, and documentation evidence `e4b00bc`, had been pushed when this governance sync began. No Issue #35 PR existed. No hosted GitHub Actions run, review, approval, merge, Issue #35 closure, resolved review thread, or Project Done transition is claimed. GitHub remains authoritative for events after this cutoff. |
