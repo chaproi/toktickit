@@ -39,7 +39,7 @@ test("E2E-04 completes minimal Administrator User Management", async ({ page }) 
   await expect(page.getByText(`${marker} was created.`)).toBeVisible();
 
   await page.getByLabel("Search users").fill(email);
-  await page.getByRole("button", { name: "Search" }).click();
+  await page.getByRole("button", { name: "Search", exact: true }).click();
   await page.getByRole("button", { name: `Edit ${marker}` }).click();
   const edit = page.getByRole("dialog", { name: `Edit ${marker}` });
   await edit.getByLabel("Name").fill(`${marker} Updated`);
