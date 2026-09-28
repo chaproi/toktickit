@@ -33,7 +33,7 @@ test("E2E-04 completes minimal Administrator User Management", async ({ page }) 
   await create.getByLabel("Name").fill(marker);
   await create.getByLabel("Email").fill(email);
   await create.getByLabel("Role").selectOption("IT_STAFF");
-  await create.getByLabel("Initial Password").fill(userPassword);
+  await create.getByLabel("Initial Password", { exact: true }).fill(userPassword);
   await create.getByLabel("Confirm Initial Password").fill(userPassword);
   await create.getByRole("button", { name: "Create User" }).click();
   await expect(page.getByText(`${marker} was created.`)).toBeVisible();
@@ -50,7 +50,7 @@ test("E2E-04 completes minimal Administrator User Management", async ({ page }) 
   await page.getByRole("button", { name: `Edit ${marker} Updated` }).click();
   await page.getByRole("button", { name: "Set New Initial Password" }).click();
   const reset = page.getByRole("dialog", { name: "Set New Initial Password" });
-  await reset.getByLabel("Initial Password").fill(resetPassword);
+  await reset.getByLabel("Initial Password", { exact: true }).fill(resetPassword);
   await reset.getByLabel("Confirm Initial Password").fill(resetPassword);
   await reset.getByRole("button", { name: "Set Initial Password" }).click();
   await expect(page.getByText("A new initial password was set. The user must change it at next login.")).toBeVisible();
