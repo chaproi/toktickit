@@ -3,6 +3,7 @@ import { Prisma, type UserRole } from "@prisma/client";
 import { runSerializableMutation } from "../auth/eligibility-transaction.js";
 import { hashPassword } from "../auth/password.js";
 import { getPrisma } from "../prisma.js";
+import { escapePostgresLikePattern } from "../tickets/ticket-query.js";
 import type {
   AdminUserQuery,
   CreateAdminUserInput,
@@ -52,13 +53,16 @@ function isAdministrator(user: LockedUser | null | undefined): boolean {
 }
 
 export async function listAdminUsers(query: AdminUserQuery) {
+  const literalSearch = query.search
+    ? escapePostgresLikePattern(query.search)
+    : undefined;
   const users = await getPrisma().user.findMany({
     where: {
       ...(query.role ? { role: query.role } : {}),
-      ...(query.search ? {
+      ...(literalSearch ? {
         OR: [
-          { name: { contains: query.search, mode: "insensitive" as const } },
-          { email: { contains: query.search.toLowerCase(), mode: "insensitive" as const } },
+          { name: { contains: literalSearch, mode: "insensitive" as const } },
+          { email: { contains: literalSearch, mode: "insensitive" as const } },
         ],
       } : {}),
     },
