@@ -116,3 +116,79 @@ export async function overlapOnMutationGate<T>(
     await Promise.all([blocker.end(), observer.end()]);
   }
 }
+
+async function blockedAdvisoryWaiters(
+  observer: Client,
+  gate: { scope: 1 | 2 | 3; id: number },
+): Promise<number> {
+  const result = await observer.query<{ count: string }>(`
+    SELECT COUNT(*)::text AS count
+    FROM pg_locks waiting
+    WHERE waiting.locktype = 'advisory'
+      AND waiting.classid = $1::oid
+      AND waiting.objid = $2::oid
+      AND waiting.granted = false
+      AND cardinality(pg_blocking_pids(waiting.pid)) > 0
+  `, [gate.scope, gate.id]);
+  return Number(result.rows[0]?.count ?? 0);
+}
+
+async function waitForBlockedAdvisoryCount(
+  observer: Client,
+  gate: { scope: 1 | 2 | 3; id: number },
+  expected: number,
+): Promise<number> {
+  const deadline = Date.now() + 5_000;
+  let observed = 0;
+  while (Date.now() < deadline) {
+    observed = await blockedAdvisoryWaiters(observer, gate);
+    if (observed >= expected) return observed;
+    await new Promise((resolve) => setTimeout(resolve, 10));
+  }
+  return observed;
+}
+
+export async function orderedOnMutationGate<T>(
+  sharedGate: { scope: 1; id: number },
+  first: () => Promise<T>,
+  second: () => Promise<T>,
+): Promise<{ firstResponse: T; secondResponse: T; blockedCounts: [number, number] }> {
+  if (!process.env.DATABASE_URL) throw new Error("Validated test database URL is unavailable.");
+  const blocker = new Client({ connectionString: process.env.DATABASE_URL, application_name: `issue35-ordered-blocker-${randomUUID()}` });
+  const observer = new Client({ connectionString: process.env.DATABASE_URL, application_name: `issue35-ordered-observer-${randomUUID()}` });
+  let transactionOpen = false;
+  await Promise.all([blocker.connect(), observer.connect()]);
+  try {
+    await blocker.query("BEGIN");
+    transactionOpen = true;
+    const blockerPid = (await blocker.query<{ pid: number }>("SELECT pg_backend_pid() AS pid")).rows[0]!.pid;
+    await blocker.query('SELECT "id" FROM "User" WHERE "id" = $1 FOR UPDATE', [sharedGate.id]);
+
+    const firstPending = Promise.resolve(first());
+    const blockDeadline = Date.now() + 5_000;
+    let firstBlocked = 0;
+    while (Date.now() < blockDeadline) {
+      const blocked = await observer.query<{ count: string }>(`
+        SELECT COUNT(*)::text AS count
+        FROM pg_stat_activity activity
+        WHERE $1::integer = ANY(pg_blocking_pids(activity.pid))
+      `, [blockerPid]);
+      firstBlocked = Number(blocked.rows[0]?.count ?? 0);
+      if (firstBlocked >= 1) break;
+      await new Promise((resolve) => setTimeout(resolve, 10));
+    }
+    expect(firstBlocked).toBeGreaterThanOrEqual(1);
+
+    const secondPending = Promise.resolve(second());
+    const secondBlocked = await waitForBlockedAdvisoryCount(observer, sharedGate, 1);
+    expect(secondBlocked).toBeGreaterThanOrEqual(1);
+
+    await blocker.query("COMMIT");
+    transactionOpen = false;
+    const [firstResponse, secondResponse] = await Promise.all([firstPending, secondPending]);
+    return { firstResponse, secondResponse, blockedCounts: [firstBlocked, secondBlocked] };
+  } finally {
+    if (transactionOpen) await blocker.query("ROLLBACK").catch(() => undefined);
+    await Promise.all([blocker.end(), observer.end()]);
+  }
+}
