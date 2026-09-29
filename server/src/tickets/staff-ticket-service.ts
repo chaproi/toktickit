@@ -106,6 +106,22 @@ async function initialOwnerId(ticketId: number): Promise<number | null> {
     ?.ownerId ?? null;
 }
 
+async function initialOwnerChangeState(ticketId: number, proposedOwnerId: number | null) {
+  const [ownerId, proposedOwner] = await Promise.all([
+    initialOwnerId(ticketId),
+    proposedOwnerId === null
+      ? null
+      : getPrisma().user.findUnique({
+          where: { id: proposedOwnerId },
+          select: { id: true, role: true, isActive: true },
+        }),
+  ]);
+  return {
+    ownerId,
+    proposedOwnerWasEligible: proposedOwnerId === null || operational(proposedOwner),
+  };
+}
+
 export async function claimStaffTicket(actorId: number, ticketId: number, expectedUpdatedAt: string) {
   const initialOwner = await initialOwnerId(ticketId);
   const userIds = [actorId, ...(initialOwner === null ? [] : [initialOwner])];
@@ -137,13 +153,15 @@ export async function changeStaffTicketOwner(
   ownerId: number | null,
   expectedUpdatedAt: string,
 ) {
-  const initialOwner = await initialOwnerId(ticketId);
+  const initial = await initialOwnerChangeState(ticketId, ownerId);
+  if (!initial.proposedOwnerWasEligible) return { kind: "owner-not-found" as const };
+  const initialOwner = initial.ownerId;
   const userIds = [actorId, ...(initialOwner === null ? [] : [initialOwner]), ...(ownerId === null ? [] : [ownerId])];
   return runSerializableMutation(async (transaction) => {
     const users = await lockUsers(transaction, userIds);
     if (!operational(users.find(({ id }) => id === actorId))) return { kind: "actor-conflict" as const };
     const target = ownerId === null ? null : users.find(({ id }) => id === ownerId);
-    if (ownerId !== null && !operational(target)) return { kind: "owner-not-found" as const };
+    if (ownerId !== null && !operational(target)) return { kind: "owner-eligibility" as const };
     const ticket = await lockTicket(transaction, ticketId);
     if (!ticket) return { kind: "not-found" as const };
     if (ticket.currentStatus === "CLOSED" || ticket.currentStatus === "CANCELLED") return { kind: "terminal" as const };

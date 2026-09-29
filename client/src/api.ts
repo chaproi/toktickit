@@ -154,6 +154,76 @@ export async function changePassword(input: {
   );
 }
 
+export interface AdminUser {
+  id: number;
+  name: string;
+  email: string;
+  role: UserRole;
+  isActive: boolean;
+  mustChangePassword: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+export interface AdminUserQuery { search?: string; role?: UserRole }
+export interface CreateAdminUserInput {
+  name: string;
+  email: string;
+  role: UserRole;
+  isActive: boolean;
+  initialPassword: string;
+  confirmPassword: string;
+}
+export interface EditAdminUserInput {
+  name: string;
+  email: string;
+  role: UserRole;
+  isActive: boolean;
+  expectedUpdatedAt: string;
+}
+
+export async function getAdminUsers(query: AdminUserQuery = {}, signal?: AbortSignal): Promise<AdminUser[]> {
+  const parameters = new URLSearchParams();
+  const search = query.search?.trim();
+  if (search) parameters.set("search", search);
+  if (query.role) parameters.set("role", query.role);
+  const suffix = parameters.size > 0 ? `?${parameters}` : "";
+  const response = await jsonRequest<{ items?: unknown }>(`/api/admin/users${suffix}`, { signal });
+  if (!Array.isArray(response.items)) throw new ApiRequestError("Unable to load Users", 500, "SAFE_FAILURE");
+  return response.items as AdminUser[];
+}
+
+export function createAdminUser(input: CreateAdminUserInput): Promise<{ user: AdminUser }> {
+  return jsonRequest(
+    "/api/admin/users",
+    { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(input) },
+    true,
+  );
+}
+
+export function updateAdminUser(userId: number, input: EditAdminUserInput): Promise<{ user: AdminUser }> {
+  return jsonRequest(
+    `/api/admin/users/${userId}`,
+    { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(input) },
+    true,
+  );
+}
+
+export function setAdminInitialPassword(
+  userId: number,
+  initialPassword: string,
+  confirmPassword: string,
+): Promise<{ user: AdminUser }> {
+  return jsonRequest(
+    `/api/admin/users/${userId}/initial-password`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ initialPassword, confirmPassword }),
+    },
+    true,
+  );
+}
+
 export type RequestedPriority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
 export type TicketStatus =
   | "NEW" | "OPEN" | "IN_PROGRESS" | "WAITING_FOR_REQUESTER"
