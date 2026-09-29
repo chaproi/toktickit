@@ -262,6 +262,7 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
   const searchRef = useRef<HTMLInputElement>(null);
   const rowRefs = useRef(new Map<number, HTMLElement>());
   const loadRequest = useRef(0);
+  const pendingReloadId = useRef<number | null>(null);
   const [mobile, setMobile] = useState(() =>
     typeof window.matchMedia === "function" && window.matchMedia("(max-width: 767.98px)").matches);
 
@@ -276,20 +277,43 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
 
   useEffect(() => {
     const requestId = ++loadRequest.current;
+    const reloadId = pendingReloadId.current;
     const controller = new AbortController();
     setLoading(true);
     setLoadError("");
     setUsers([]);
     void getAdminUsers(query, controller.signal)
       .then((items) => {
-        if (requestId === loadRequest.current && !controller.signal.aborted) setUsers(items);
+        if (requestId !== loadRequest.current || controller.signal.aborted) return;
+        setUsers(items);
+        if (reloadId !== null) {
+          pendingReloadId.current = null;
+          setFormError("");
+          const fresh = items.find(({ id }) => id === reloadId);
+          if (fresh) {
+            setValues(userForm(fresh)); setDialog({ kind: "edit", user: fresh });
+            setNotice("Latest User details loaded.");
+            queueMicrotask(() => initialFocus.current?.focus());
+          } else {
+            setDialog(null); setNotice("Latest User list loaded.");
+            setPendingFocusId(reloadId);
+          }
+        }
       })
       .catch((error: unknown) => {
-        if (requestId === loadRequest.current &&
-          !(error instanceof DOMException && error.name === "AbortError")) setLoadError(SAFE_ERROR);
+        if (requestId !== loadRequest.current ||
+          (error instanceof DOMException && error.name === "AbortError")) return;
+        if (reloadId !== null) {
+          pendingReloadId.current = null;
+          setFormError(SAFE_ERROR);
+          queueMicrotask(() => alertRef.current?.focus());
+        } else setLoadError(SAFE_ERROR);
       })
       .finally(() => {
-        if (requestId === loadRequest.current && !controller.signal.aborted) setLoading(false);
+        if (requestId === loadRequest.current && !controller.signal.aborted) {
+          setLoading(false);
+          if (reloadId !== null) setSaving(false);
+        }
       });
     return () => controller.abort();
   }, [query, retry]);
@@ -306,10 +330,11 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
   }
 
   function rememberTrigger(element: HTMLElement) { trigger.current = element; }
-  function refreshUsers(focusId: number) {
+  function refreshUsers(focusId: number, reloadSelection = false) {
+    pendingReloadId.current = reloadSelection ? focusId : null;
     setLoading(true);
     setUsers([]);
-    setPendingFocusId(focusId);
+    setPendingFocusId(reloadSelection ? null : focusId);
     setRetry((value) => value + 1);
   }
   function closeDialog() {
@@ -391,18 +416,10 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
     finally { setSaving(false); }
   }
 
-  async function reloadSelected(selected: AdminUser) {
+  function reloadSelected(selected: AdminUser) {
     if (saving) return;
-    setSaving(true); setFormError(""); setErrors({});
-    try {
-      const fresh = (await getAdminUsers()).find(({ id }) => id === selected.id);
-      if (!fresh) throw new Error("missing");
-      setUsers((current) => sort(current.map((item) => item.id === fresh.id ? fresh : item)));
-      setValues(userForm(fresh)); setDialog({ kind: "edit", user: fresh });
-      setNotice("Latest User details loaded.");
-      queueMicrotask(() => initialFocus.current?.focus());
-    } catch { setFormError(SAFE_ERROR); queueMicrotask(() => alertRef.current?.focus()); }
-    finally { setSaving(false); }
+    setSaving(true); setErrors({});
+    refreshUsers(selected.id, true);
   }
 
   async function submitPassword(event: FormEvent, selected: AdminUser) {
