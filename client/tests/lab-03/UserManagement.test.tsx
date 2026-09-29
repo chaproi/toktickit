@@ -101,6 +101,7 @@ describe("UI-10 and UI-11 Administrator User Management", () => {
     expect(screen.getByRole("link", { name: "Ticket Queue" })).toHaveAttribute("href", "/staff/tickets");
     release!(jsonResponse({ items: [self, staff] }));
     const table = await screen.findByRole("table", { name: "Users" });
+    expect(within(table).getByText("Users", { selector: "caption" })).toBeInTheDocument();
     for (const heading of ["Name", "Email", "Role", "Status", "Edit"]) expect(within(table).getByRole("columnheader", { name: heading })).toBeInTheDocument();
     expect(within(table).getByText("Staff Mina")).toBeInTheDocument();
     expect(within(table).getByText("IT Staff")).toBeInTheDocument();
@@ -260,6 +261,64 @@ describe("UI-10 and UI-11 Administrator User Management", () => {
       .toHaveAccessibleDescription("Set a new initial password for Staff Mina. All current sessions will end.");
   });
 
+  it("marks every create field as programmatically required", async () => {
+    installFetch();
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.click(screen.getByRole("button", { name: "Create User" }));
+    const dialog = screen.getByRole("dialog", { name: "Create User" });
+    for (const label of ["Name", "Email", "Role", "Status", "Initial Password", "Confirm Initial Password"]) {
+      expect(within(dialog).getByLabelText(label)).toHaveAttribute("aria-required", "true");
+    }
+  });
+
+  it("associates stable field errors with invalid profile controls", async () => {
+    installFetch();
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.click(screen.getByRole("button", { name: "Create User" }));
+    const dialog = screen.getByRole("dialog", { name: "Create User" });
+    await userEvent.click(within(dialog).getByRole("button", { name: "Create User" }));
+
+    const name = within(dialog).getByLabelText("Name");
+    const email = within(dialog).getByLabelText("Email");
+    expect(name).toHaveAttribute("aria-invalid", "true");
+    expect(name).toHaveAttribute("aria-describedby", "admin-user-name-error");
+    expect(name).toHaveAccessibleDescription("Name must contain between 2 and 120 characters.");
+    expect(email).toHaveAttribute("aria-invalid", "true");
+    expect(email).toHaveAttribute("aria-describedby", "admin-user-email-error");
+    expect(email).toHaveAccessibleDescription("Enter a valid email address.");
+  });
+
+  it("associates password guidance and combined field errors with both password controls", async () => {
+    installFetch();
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.click(screen.getByRole("button", { name: "Create User" }));
+    const dialog = screen.getByRole("dialog", { name: "Create User" });
+    const initialPassword = within(dialog).getByLabelText("Initial Password");
+    const confirmPassword = within(dialog).getByLabelText("Confirm Initial Password");
+    const guidance = /Use 12.*128 characters.*must change this password.*not emailed or retrievable/i;
+    expect(initialPassword).toHaveAccessibleDescription(guidance);
+    expect(confirmPassword).toHaveAccessibleDescription(guidance);
+
+    await userEvent.type(initialPassword, "short");
+    await userEvent.type(confirmPassword, "different");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Create User" }));
+    expect(initialPassword).toHaveAttribute("aria-invalid", "true");
+    expect(initialPassword).toHaveAttribute(
+      "aria-describedby",
+      "admin-password-help admin-initial-password-error",
+    );
+    expect(initialPassword).toHaveAccessibleDescription(/Use 12.*128 characters.*Use 12.*128 characters/i);
+    expect(confirmPassword).toHaveAttribute("aria-invalid", "true");
+    expect(confirmPassword).toHaveAttribute(
+      "aria-describedby",
+      "admin-password-help admin-confirm-password-error",
+    );
+    expect(confirmPassword).toHaveAccessibleDescription(/must change this password.*Password confirmation must match/i);
+  });
+
   it("traps focus, makes the background inert, restores focus, and blocks dismissal while saving", async () => {
     let release: ((value: Response) => void) | undefined;
     const deferred = new Promise<Response>((resolve) => { release = resolve; });
@@ -314,7 +373,11 @@ describe("UI-10 and UI-11 Administrator User Management", () => {
     await userEvent.type(within(dialog).getByLabelText("Confirm Initial Password"), "Valid Issue35! 7");
     await userEvent.click(within(dialog).getByRole("button", { name: "Create User" }));
     expect(await within(dialog).findByRole("alert")).toHaveTextContent("already exists");
-    expect(within(dialog).getByLabelText("Email")).toHaveValue("staff.mina@example.test");
+    const email = within(dialog).getByLabelText("Email");
+    expect(email).toHaveValue("staff.mina@example.test");
+    expect(email).toHaveAttribute("aria-invalid", "true");
+    expect(email).toHaveAttribute("aria-describedby", "admin-user-email-error");
+    expect(email).toHaveAccessibleDescription("A User with this email already exists.");
   });
 
   it("protects self role/status while allowing profile fields and omits self reset", async () => {
@@ -328,6 +391,41 @@ describe("UI-10 and UI-11 Administrator User Management", () => {
     expect(within(dialog).getByText("You cannot change your own role or deactivate your own account here.")).toBeInTheDocument();
     expect(within(dialog).queryByRole("button", { name: "Set New Initial Password" })).not.toBeInTheDocument();
     expect(within(dialog).getByLabelText("Name")).toBeEnabled();
+  });
+
+  it("updates the authenticated shell and filtered User list together after a self-profile edit", async () => {
+    const updatedSelf = {
+      ...self,
+      name: "Administrator Avery Updated",
+      email: "administrator.avery.updated@example.test",
+      updatedAt: "2026-09-28T12:00:00.000Z",
+    };
+    let edited = false;
+    installFetch({
+      list: async () => jsonResponse({ items: edited ? [updatedSelf, staff] : [self, staff] }),
+      mutate: async () => {
+        edited = true;
+        return jsonResponse({ user: updatedSelf });
+      },
+    });
+    renderAt("/admin/users");
+    await screen.findByRole("button", { name: `Edit ${self.name}` });
+    expect(screen.getByText(self.name, { selector: "p.fw-semibold" })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: `Edit ${self.name}` }));
+    const dialog = screen.getByRole("dialog", { name: `Edit ${self.name}` });
+    const name = within(dialog).getByLabelText("Name");
+    const email = within(dialog).getByLabelText("Email");
+    await userEvent.clear(name);
+    await userEvent.type(name, updatedSelf.name);
+    await userEvent.clear(email);
+    await userEvent.type(email, updatedSelf.email);
+    await userEvent.click(within(dialog).getByRole("button", { name: "Save User" }));
+
+    expect(await screen.findByRole("button", { name: `Edit ${updatedSelf.name}` })).toBeInTheDocument();
+    expect(screen.getByText(updatedSelf.name, { selector: "p.fw-semibold" })).toBeInTheDocument();
+    expect(screen.queryByText(self.name, { selector: "p.fw-semibold" })).not.toBeInTheDocument();
+    expect(screen.getByText(updatedSelf.email)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "User Management" })).toHaveAttribute("aria-current", "page");
   });
 
   it("retains edits and focus after ordinary/conflict failures and can reload authoritative User state", async () => {
@@ -495,6 +593,52 @@ describe("UI-10 and UI-11 Administrator User Management", () => {
     expect(document.querySelector("#admin-role-filter")).toHaveValue("IT_STAFF");
   });
 
+  it("retains the last authoritative filtered list after a conflict reload fails and the dialog closes", async () => {
+    let conflictRaised = false;
+    let activeQueryReads = 0;
+    const calls = installFetch({
+      list: async (url) => {
+        const activeQuery = url.searchParams.get("search") === "mina" &&
+          url.searchParams.get("role") === "IT_STAFF";
+        if (!activeQuery) return jsonResponse({ items: [staff] });
+        activeQueryReads += 1;
+        return conflictRaised
+          ? jsonResponse({ error: { code: "INTERNAL_ERROR", message: "private database detail" } }, 500)
+          : jsonResponse({ items: [staff] });
+      },
+      mutate: async () => {
+        conflictRaised = true;
+        return jsonResponse({ error: { code: "STALE_WRITE", message: "This User changed." } }, 409);
+      },
+    });
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.type(screen.getByLabelText("Search users"), "mina");
+    await userEvent.selectOptions(screen.getByLabelText("Role"), "IT_STAFF");
+    await userEvent.click(screen.getByRole("button", { name: "Search" }));
+    await screen.findByText("Staff Mina");
+
+    await userEvent.click(screen.getByRole("button", { name: "Edit Staff Mina" }));
+    let dialog = screen.getByRole("dialog", { name: "Edit Staff Mina" });
+    await userEvent.click(within(dialog).getByRole("button", { name: "Save User" }));
+    expect(await within(dialog).findByRole("alert")).toHaveTextContent("changed since you opened");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Reload User" }));
+    expect(await within(dialog).findByRole("alert")).toHaveTextContent("Something went wrong. Please try again.");
+    expect(activeQueryReads).toBe(2);
+    await userEvent.click(within(dialog).getByRole("button", { name: "Cancel" }));
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Edit Staff Mina" })).toBeInTheDocument();
+    expect(screen.queryByText("No users match the current search.")).not.toBeInTheDocument();
+    expect(screen.queryByText("No users are available.")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Search users")).toHaveValue("mina");
+    expect(document.querySelector("#admin-role-filter")).toHaveValue("IT_STAFF");
+    const activeReads = calls.filter(({ url, init }) =>
+      url.pathname === "/api/admin/users" && !init?.method &&
+      url.searchParams.get("search") === "mina" && url.searchParams.get("role") === "IT_STAFF");
+    expect(activeReads).toHaveLength(2);
+  });
+
   it.each([
     ["USER_HAS_NON_TERMINAL_TICKETS", "Reassign or unassign this User's non-terminal Tickets first."],
     ["LAST_ACTIVE_ADMIN_REQUIRED", "At least one active Administrator is required."],
@@ -533,4 +677,33 @@ describe("UI-10 and UI-11 Administrator User Management", () => {
     expect(await screen.findByText("A new initial password was set. The user must change it at next login.")).toHaveAttribute("role", "status");
     expect(document.body.textContent).not.toContain("Another Issue35! 7");
   });
+
+  it.each(["Cancel", "Escape"])(
+    "returns from the password dialog to the selected User edit context with focus after %s",
+    async (dismissal) => {
+      installFetch();
+      renderAt("/admin/users");
+      await screen.findByText("Staff Mina");
+      await userEvent.click(screen.getByRole("button", { name: "Edit Staff Mina" }));
+      let dialog = screen.getByRole("dialog", { name: "Edit Staff Mina" });
+      const name = within(dialog).getByLabelText("Name");
+      await userEvent.clear(name);
+      await userEvent.type(name, "Retained Staff Edit");
+      await userEvent.click(within(dialog).getByRole("button", { name: "Set New Initial Password" }));
+      const passwordDialog = screen.getByRole("dialog", { name: "Set New Initial Password" });
+      await userEvent.type(within(passwordDialog).getByLabelText("Initial Password"), "Discarded Issue35! 8");
+      if (dismissal === "Cancel") {
+        await userEvent.click(within(passwordDialog).getByRole("button", { name: "Cancel" }));
+      } else {
+        await userEvent.keyboard("{Escape}");
+      }
+
+      expect(screen.queryByRole("dialog", { name: "Set New Initial Password" })).not.toBeInTheDocument();
+      dialog = screen.getByRole("dialog", { name: "Edit Staff Mina" });
+      expect(within(dialog).getByLabelText("Name")).toHaveValue("Retained Staff Edit");
+      expect(within(dialog).getByText("Password change required: No")).toBeInTheDocument();
+      expect(within(dialog).getByRole("button", { name: "Set New Initial Password" })).toHaveFocus();
+      expect(document.body.textContent).not.toContain("Discarded Issue35! 8");
+    },
+  );
 });
