@@ -412,6 +412,89 @@ describe("UI-10 and UI-11 Administrator User Management", () => {
     expect(userReads.filter(({ url }) => url.searchParams.get("search") === null)).toHaveLength(1);
   });
 
+  it("retains an accessible active-query retry after an authoritative conflict reload fails", async () => {
+    const authoritative = {
+      ...staff,
+      name: "Staff Mina Authoritative",
+      updatedAt: "2026-09-28T09:00:00.000Z",
+    };
+    let conflictRaised = false;
+    let filteredReads = 0;
+    let releaseFailedReload: ((value: Response) => void) | undefined;
+    let releaseSuccessfulRetry: ((value: Response) => void) | undefined;
+    const failedReload = new Promise<Response>((resolve) => { releaseFailedReload = resolve; });
+    const successfulRetry = new Promise<Response>((resolve) => { releaseSuccessfulRetry = resolve; });
+    const calls = installFetch({
+      list: async (url) => {
+        const isActiveQuery =
+          url.searchParams.get("search") === "mina" &&
+          url.searchParams.get("role") === "IT_STAFF";
+        if (!isActiveQuery) return jsonResponse({ items: [staff] });
+        filteredReads += 1;
+        if (!conflictRaised) return jsonResponse({ items: [staff] });
+        return filteredReads === 2 ? failedReload : successfulRetry;
+      },
+      mutate: async () => {
+        conflictRaised = true;
+        return jsonResponse({ error: { code: "STALE_WRITE", message: "This User changed. Reload and try again." } }, 409);
+      },
+    });
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.type(screen.getByLabelText("Search users"), "mina");
+    await userEvent.selectOptions(screen.getByLabelText("Role"), "IT_STAFF");
+    await userEvent.click(screen.getByRole("button", { name: "Search" }));
+    await screen.findByText("Staff Mina");
+
+    await userEvent.click(screen.getByRole("button", { name: "Edit Staff Mina" }));
+    const dialog = screen.getByRole("dialog", { name: "Edit Staff Mina" });
+    const name = within(dialog).getByLabelText("Name");
+    await userEvent.clear(name);
+    await userEvent.type(name, "Entered Edit");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Save User" }));
+    expect(await within(dialog).findByRole("alert")).toHaveTextContent("changed since you opened");
+
+    await userEvent.click(within(dialog).getByRole("button", { name: "Reload User" }));
+    await waitFor(() => expect(filteredReads).toBe(2));
+    const processingReload = within(dialog).getByRole("button", { name: "Reload User" });
+    expect(processingReload).toBeDisabled();
+    await userEvent.click(processingReload);
+    expect(filteredReads).toBe(2);
+    expect(screen.getByRole("banner", { hidden: true })).toHaveAttribute("inert");
+    releaseFailedReload!(jsonResponse({ error: { code: "INTERNAL_ERROR", message: "database details" } }, 500));
+
+    const safeAlert = await within(dialog).findByRole("alert");
+    expect(safeAlert).toHaveTextContent("Something went wrong. Please try again.");
+    expect(safeAlert).not.toHaveTextContent("database details");
+    expect(safeAlert).toHaveFocus();
+    expect(dialog).toContainElement(document.activeElement as HTMLElement);
+    expect(within(dialog).getByLabelText("Name")).toHaveValue("Entered Edit");
+    expect(screen.getByLabelText("Search users")).toHaveValue("mina");
+    expect(document.querySelector("#admin-role-filter")).toHaveValue("IT_STAFF");
+    const retryReload = within(dialog).getByRole("button", { name: "Reload User" });
+    expect(retryReload).toBeEnabled();
+
+    await userEvent.click(retryReload);
+    await waitFor(() => expect(filteredReads).toBe(3));
+    expect(within(dialog).getByRole("button", { name: "Reload User" })).toBeDisabled();
+    await userEvent.click(within(dialog).getByRole("button", { name: "Reload User" }));
+    expect(filteredReads).toBe(3);
+    const reads = calls.filter(({ url, init }) =>
+      url.pathname === "/api/admin/users" && !init?.method);
+    expect(reads).toHaveLength(4);
+    for (const read of reads.slice(1)) {
+      expect(read.url.searchParams.get("search")).toBe("mina");
+      expect(read.url.searchParams.get("role")).toBe("IT_STAFF");
+    }
+    expect((reads[2]!.init?.signal as AbortSignal).aborted).toBe(true);
+    releaseSuccessfulRetry!(jsonResponse({ items: [authoritative] }));
+
+    expect(await within(dialog).findByDisplayValue("Staff Mina Authoritative")).toHaveFocus();
+    expect(within(screen.getByRole("table", { name: "Users" })).getByText("Staff Mina Authoritative")).toBeInTheDocument();
+    expect(screen.getByLabelText("Search users")).toHaveValue("mina");
+    expect(document.querySelector("#admin-role-filter")).toHaveValue("IT_STAFF");
+  });
+
   it.each([
     ["USER_HAS_NON_TERMINAL_TICKETS", "Reassign or unassign this User's non-terminal Tickets first."],
     ["LAST_ACTIVE_ADMIN_REQUIRED", "At least one active Administrator is required."],
