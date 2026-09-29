@@ -355,6 +355,63 @@ describe("UI-10 and UI-11 Administrator User Management", () => {
     expect(await within(dialog).findByDisplayValue("Authoritative Staff")).toBeInTheDocument();
   });
 
+  it("reconciles conflict reloads against the active query without patching an unfiltered User", async () => {
+    const movedOutsideSearch = {
+      ...staff,
+      name: "Authoritative Other",
+      email: "authoritative.other@example.test",
+      updatedAt: "2026-09-28T09:00:00.000Z",
+    };
+    let conflictRaised = false;
+    let filteredReads = 0;
+    let releaseFilteredReload: ((value: Response) => void) | undefined;
+    const filteredReload = new Promise<Response>((resolve) => { releaseFilteredReload = resolve; });
+    const calls = installFetch({
+      list: async (url) => {
+        if (url.searchParams.get("search") === "mina") {
+          filteredReads += 1;
+          if (conflictRaised && filteredReads === 2) return filteredReload;
+          return jsonResponse({ items: [staff] });
+        }
+        return jsonResponse({ items: conflictRaised ? [movedOutsideSearch] : [staff] });
+      },
+      mutate: async () => {
+        conflictRaised = true;
+        return jsonResponse({ error: { code: "STALE_WRITE", message: "This User changed. Reload and try again." } }, 409);
+      },
+    });
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.type(screen.getByLabelText("Search users"), "mina");
+    await userEvent.click(screen.getByRole("button", { name: "Search" }));
+    await screen.findByText("Staff Mina");
+
+    await userEvent.click(screen.getByRole("button", { name: "Edit Staff Mina" }));
+    const dialog = screen.getByRole("dialog", { name: "Edit Staff Mina" });
+    await userEvent.clear(within(dialog).getByLabelText("Name"));
+    await userEvent.type(within(dialog).getByLabelText("Name"), "Entered Edit");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Save User" }));
+    const alert = await within(dialog).findByRole("alert");
+    expect(alert).toHaveTextContent("changed since you opened");
+    expect(alert).toHaveFocus();
+    expect(within(dialog).getByLabelText("Name")).toHaveValue("Entered Edit");
+
+    await userEvent.click(within(dialog).getByRole("button", { name: "Reload User" }));
+    await waitFor(() => expect(filteredReads).toBe(2));
+    expect(screen.getByText("Loading users…")).toHaveAttribute("role", "status");
+    expect(screen.getByRole("dialog", { name: "Edit Staff Mina" })).toBeInTheDocument();
+    expect(within(dialog).getByRole("button", { name: "Reload User" })).toBeDisabled();
+    releaseFilteredReload!(jsonResponse({ items: [] }));
+
+    expect(await screen.findByText("No users match the current search.")).toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Edit Staff Mina" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Edit Authoritative Other" })).not.toBeInTheDocument();
+    const userReads = calls.filter(({ url, init }) => url.pathname === "/api/admin/users" && !init?.method);
+    expect(userReads.at(-1)!.url.searchParams.get("search")).toBe("mina");
+    expect(userReads.filter(({ url }) => url.searchParams.get("search") === null)).toHaveLength(1);
+  });
+
   it.each([
     ["USER_HAS_NON_TERMINAL_TICKETS", "Reassign or unassign this User's non-terminal Tickets first."],
     ["LAST_ACTIVE_ADMIN_REQUIRED", "At least one active Administrator is required."],
