@@ -263,6 +263,7 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
   const rowRefs = useRef(new Map<number, HTMLElement>());
   const loadRequest = useRef(0);
   const pendingReloadId = useRef<number | null>(null);
+  const focusReloadedSelection = useRef(false);
   const [mobile, setMobile] = useState(() =>
     typeof window.matchMedia === "function" && window.matchMedia("(max-width: 767.98px)").matches);
 
@@ -293,7 +294,7 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
           if (fresh) {
             setValues(userForm(fresh)); setDialog({ kind: "edit", user: fresh });
             setNotice("Latest User details loaded.");
-            queueMicrotask(() => initialFocus.current?.focus());
+            focusReloadedSelection.current = true;
           } else {
             setDialog(null); setNotice("Latest User list loaded.");
             setPendingFocusId(reloadId);
@@ -304,7 +305,6 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
         if (requestId !== loadRequest.current ||
           (error instanceof DOMException && error.name === "AbortError")) return;
         if (reloadId !== null) {
-          pendingReloadId.current = null;
           setFormError(SAFE_ERROR);
           queueMicrotask(() => alertRef.current?.focus());
         } else setLoadError(SAFE_ERROR);
@@ -324,6 +324,12 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
     setPendingFocusId(null);
   }, [loading, pendingFocusId, users]);
 
+  useEffect(() => {
+    if (saving || !focusReloadedSelection.current) return;
+    focusReloadedSelection.current = false;
+    initialFocus.current?.focus();
+  }, [dialog, saving]);
+
   function sort(items: AdminUser[]): AdminUser[] {
     return [...items].sort((left, right) =>
       left.name.localeCompare(right.name, undefined, { sensitivity: "base" }) || left.id - right.id);
@@ -339,6 +345,7 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
   }
   function closeDialog() {
     if (saving) return;
+    pendingReloadId.current = null;
     setDialog(null);
     setPasswords({ initialPassword: "", confirmPassword: "" });
     setErrors({});
@@ -481,7 +488,7 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
 
       {dialog?.kind === "create" && <AdminDialog title="Create User" description="Create one User with one role and an initial password." processing={saving} initialFocus={initialFocus} onClose={closeDialog}><form onSubmit={(event) => void submitCreate(event)}>{formError && <div ref={alertRef} tabIndex={-1} className="alert alert-danger" role="alert">{formError}</div>}<UserFields values={values} errors={errors} disabled={saving} protectRoleAndStatus={false} onChange={setValues} initialFocus={initialFocus} /><div className="mt-3"><PasswordFields values={passwords} errors={errors} disabled={saving} onChange={setPasswords} /></div><div className="d-flex flex-wrap gap-2"><button type="submit" className="btn btn-success" disabled={saving}>{saving ? "Creating user…" : "Create User"}</button><button type="button" className="btn btn-outline-secondary" disabled={saving} onClick={closeDialog}>Cancel</button></div></form></AdminDialog>}
 
-      {dialog?.kind === "edit" && selected && <AdminDialog title={`Edit ${selected.name}`} description="Edit approved profile and access fields." processing={saving} initialFocus={initialFocus} onClose={closeDialog}><form onSubmit={(event) => void submitEdit(event, selected)}>{formError && <div ref={alertRef} tabIndex={-1} className="alert alert-danger" role="alert">{formError}</div>}{selected.id === currentUser.id && <p className="alert alert-info">You cannot change your own role or deactivate your own account here.</p>}<UserFields values={values} errors={errors} disabled={saving} protectRoleAndStatus={selected.id === currentUser.id} onChange={setValues} initialFocus={initialFocus} /><p className="mt-3 mb-2"><strong>{`Password change required: ${selected.mustChangePassword ? "Yes" : "No"}`}</strong></p>{preservesTerminalOwnership && <p className="alert alert-info">Historical owner references on CLOSED and CANCELLED Tickets remain preserved.</p>}{selected.role === "REQUESTER" && values.role !== "REQUESTER" && <p className="alert alert-warning">Current permissions will change. Existing submitted Tickets remain attributed to this historical User.</p>}<div className="d-flex flex-wrap gap-2"><button type="submit" className="btn btn-success" disabled={saving}>{saving ? "Saving user…" : "Save User"}</button>{selected.id !== currentUser.id && <button type="button" className="btn btn-outline-success" disabled={saving} onClick={() => openPassword(selected)}>Set New Initial Password</button>}{["STALE_WRITE", "CONCURRENT_UPDATE"].some((code) => formError.includes(code)) || formError.includes("changed") ? <button type="button" className="btn btn-outline-warning" disabled={saving} onClick={() => void reloadSelected(selected)}>Reload User</button> : null}<button type="button" className="btn btn-outline-secondary" disabled={saving} onClick={closeDialog}>Cancel</button></div></form></AdminDialog>}
+      {dialog?.kind === "edit" && selected && <AdminDialog title={`Edit ${selected.name}`} description="Edit approved profile and access fields." processing={saving} initialFocus={initialFocus} onClose={closeDialog}><form onSubmit={(event) => void submitEdit(event, selected)}>{formError && <div ref={alertRef} tabIndex={-1} className="alert alert-danger" role="alert">{formError}</div>}{selected.id === currentUser.id && <p className="alert alert-info">You cannot change your own role or deactivate your own account here.</p>}<UserFields values={values} errors={errors} disabled={saving} protectRoleAndStatus={selected.id === currentUser.id} onChange={setValues} initialFocus={initialFocus} /><p className="mt-3 mb-2"><strong>{`Password change required: ${selected.mustChangePassword ? "Yes" : "No"}`}</strong></p>{preservesTerminalOwnership && <p className="alert alert-info">Historical owner references on CLOSED and CANCELLED Tickets remain preserved.</p>}{selected.role === "REQUESTER" && values.role !== "REQUESTER" && <p className="alert alert-warning">Current permissions will change. Existing submitted Tickets remain attributed to this historical User.</p>}<div className="d-flex flex-wrap gap-2"><button type="submit" className="btn btn-success" disabled={saving}>{saving ? "Saving user…" : "Save User"}</button>{selected.id !== currentUser.id && <button type="button" className="btn btn-outline-success" disabled={saving} onClick={() => openPassword(selected)}>Set New Initial Password</button>}{pendingReloadId.current === selected.id || ["STALE_WRITE", "CONCURRENT_UPDATE"].some((code) => formError.includes(code)) || formError.includes("changed") ? <button type="button" className="btn btn-outline-warning" disabled={saving} onClick={() => void reloadSelected(selected)}>Reload User</button> : null}<button type="button" className="btn btn-outline-secondary" disabled={saving} onClick={closeDialog}>Cancel</button></div></form></AdminDialog>}
 
       {dialog?.kind === "password" && selected && <AdminDialog title="Set New Initial Password" description={`Set a new initial password for ${selected.name}. All current sessions will end.`} processing={saving} initialFocus={initialFocus} onClose={closeDialog}><form onSubmit={(event) => void submitPassword(event, selected)}>{formError && <div ref={alertRef} tabIndex={-1} className="alert alert-danger" role="alert">{formError}</div>}<PasswordFields values={passwords} errors={errors} disabled={saving} onChange={setPasswords} initialFocus={initialFocus} /><div className="d-flex flex-wrap gap-2"><button type="submit" className="btn btn-success" disabled={saving}>{saving ? "Setting password…" : "Set Initial Password"}</button><button type="button" className="btn btn-outline-secondary" disabled={saving} onClick={closeDialog}>Cancel</button></div></form></AdminDialog>}
     </section>
