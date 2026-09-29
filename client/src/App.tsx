@@ -342,7 +342,9 @@ function AuthenticatedRoutes() {
       />
       <Route
         path="/admin/users"
-        element={user.role === "ADMINISTRATOR" ? shell(<UserManagement currentUser={user} />) : shell(<Forbidden user={user} />)}
+        element={user.role === "ADMINISTRATOR"
+          ? shell(<UserManagement currentUser={user} onCurrentUserUpdated={setUser} />)
+          : shell(<Forbidden user={user} />)}
       />
       <Route path="*" element={shell(<section className="ticket-detail-state"><h1 className="h2">Page not found</h1></section>)} />
     </Routes>

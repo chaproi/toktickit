@@ -173,19 +173,24 @@ function UserFields({
       <div className="admin-user-form-wide">
         <label className="form-label" htmlFor="admin-user-name">Name</label>
         <input ref={initialFocus} id="admin-user-name" className={`form-control ${errors.name ? "is-invalid" : ""}`}
+          aria-required="true" aria-invalid={errors.name ? "true" : undefined}
+          aria-describedby={errors.name ? "admin-user-name-error" : undefined}
           value={values.name} disabled={disabled} onChange={(event) => onChange({ ...values, name: event.target.value })} />
-        {errors.name && <div className="invalid-feedback">{errors.name}</div>}
+        {errors.name && <div id="admin-user-name-error" className="invalid-feedback">{errors.name}</div>}
       </div>
       <div className="admin-user-form-wide">
         <label className="form-label" htmlFor="admin-user-email">Email</label>
         <input id="admin-user-email" type="email" autoComplete="email"
           className={`form-control ${errors.email ? "is-invalid" : ""}`}
+          aria-required="true" aria-invalid={errors.email ? "true" : undefined}
+          aria-describedby={errors.email ? "admin-user-email-error" : undefined}
           value={values.email} disabled={disabled} onChange={(event) => onChange({ ...values, email: event.target.value })} />
-        {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+        {errors.email && <div id="admin-user-email-error" className="invalid-feedback">{errors.email}</div>}
       </div>
       <div>
         <label className="form-label" htmlFor="admin-user-role">Role</label>
         <select id="admin-user-role" className="form-select" value={values.role}
+          aria-required="true"
           disabled={disabled || protectRoleAndStatus}
           onChange={(event) => onChange({ ...values, role: event.target.value as UserRole })}>
           {ROLES.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
@@ -194,6 +199,7 @@ function UserFields({
       <div>
         <label className="form-label" htmlFor="admin-user-status">Status</label>
         <select id="admin-user-status" className="form-select" value={values.isActive ? "active" : "inactive"}
+          aria-required="true"
           disabled={disabled || protectRoleAndStatus}
           onChange={(event) => onChange({ ...values, isActive: event.target.value === "active" })}>
           <option value="active">Active</option>
@@ -223,24 +229,34 @@ function PasswordFields({
         <label className="form-label" htmlFor="admin-initial-password">Initial Password</label>
         <input ref={initialFocus} id="admin-initial-password" type="password" autoComplete="new-password"
           className={`form-control ${errors.initialPassword ? "is-invalid" : ""}`}
+          aria-required="true" aria-invalid={errors.initialPassword ? "true" : undefined}
+          aria-describedby={`admin-password-help${errors.initialPassword ? " admin-initial-password-error" : ""}`}
           value={values.initialPassword} disabled={disabled}
           onChange={(event) => onChange({ ...values, initialPassword: event.target.value })} />
-        {errors.initialPassword && <div className="invalid-feedback">{errors.initialPassword}</div>}
+        {errors.initialPassword && <div id="admin-initial-password-error" className="invalid-feedback">{errors.initialPassword}</div>}
       </div>
       <div className="mb-3">
         <label className="form-label" htmlFor="admin-confirm-password">Confirm Initial Password</label>
         <input id="admin-confirm-password" type="password" autoComplete="new-password"
           className={`form-control ${errors.confirmPassword ? "is-invalid" : ""}`}
+          aria-required="true" aria-invalid={errors.confirmPassword ? "true" : undefined}
+          aria-describedby={`admin-password-help${errors.confirmPassword ? " admin-confirm-password-error" : ""}`}
           value={values.confirmPassword} disabled={disabled}
           onChange={(event) => onChange({ ...values, confirmPassword: event.target.value })} />
-        {errors.confirmPassword && <div className="invalid-feedback">{errors.confirmPassword}</div>}
+        {errors.confirmPassword && <div id="admin-confirm-password-error" className="invalid-feedback">{errors.confirmPassword}</div>}
       </div>
-      <p className="small text-secondary">Use 12–128 characters and at least three of lowercase, uppercase, number, and symbol. The User must change this password at next login. It is not emailed or retrievable.</p>
+      <p id="admin-password-help" className="small text-secondary">Use 12–128 characters and at least three of lowercase, uppercase, number, and symbol. The User must change this password at next login. It is not emailed or retrievable.</p>
     </>
   );
 }
 
-export default function UserManagement({ currentUser }: { currentUser: AuthUser }) {
+export default function UserManagement({
+  currentUser,
+  onCurrentUserUpdated,
+}: {
+  currentUser: AuthUser;
+  onCurrentUserUpdated: (user: AuthUser) => void;
+}) {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
@@ -264,6 +280,8 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
   const loadRequest = useRef(0);
   const pendingReloadId = useRef<number | null>(null);
   const focusReloadedSelection = useRef(false);
+  const passwordTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const focusPasswordTrigger = useRef(false);
   const [mobile, setMobile] = useState(() =>
     typeof window.matchMedia === "function" && window.matchMedia("(max-width: 767.98px)").matches);
 
@@ -282,7 +300,7 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
     const controller = new AbortController();
     setLoading(true);
     setLoadError("");
-    setUsers([]);
+    if (reloadId === null) setUsers([]);
     void getAdminUsers(query, controller.signal)
       .then((items) => {
         if (requestId !== loadRequest.current || controller.signal.aborted) return;
@@ -330,6 +348,12 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
     initialFocus.current?.focus();
   }, [dialog, saving]);
 
+  useEffect(() => {
+    if (dialog?.kind !== "edit" || !focusPasswordTrigger.current) return;
+    focusPasswordTrigger.current = false;
+    passwordTriggerRef.current?.focus();
+  }, [dialog]);
+
   function sort(items: AdminUser[]): AdminUser[] {
     return [...items].sort((left, right) =>
       left.name.localeCompare(right.name, undefined, { sensitivity: "base" }) || left.id - right.id);
@@ -339,7 +363,7 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
   function refreshUsers(focusId: number, reloadSelection = false) {
     pendingReloadId.current = reloadSelection ? focusId : null;
     setLoading(true);
-    setUsers([]);
+    if (!reloadSelection) setUsers([]);
     setPendingFocusId(reloadSelection ? null : focusId);
     setRetry((value) => value + 1);
   }
@@ -366,6 +390,13 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
   function openPassword(user: AdminUser) {
     setPasswords({ initialPassword: "", confirmPassword: "" });
     setErrors({}); setFormError(""); setDialog({ kind: "password", user });
+  }
+  function returnToEditFromPassword(user: AdminUser) {
+    if (saving) return;
+    setPasswords({ initialPassword: "", confirmPassword: "" });
+    setErrors({}); setFormError("");
+    focusPasswordTrigger.current = true;
+    setDialog({ kind: "edit", user });
   }
 
   function showFormError(error: unknown) {
@@ -418,6 +449,7 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
         name: values.name.trim(), email: values.email.trim(), role: values.role,
         isActive: values.isActive, expectedUpdatedAt: selected.updatedAt,
       });
+      if (response.user.id === currentUser.id) onCurrentUserUpdated(response.user);
       setDialog(null); setNotice(`${response.user.name} was saved.`); refreshUsers(response.user.id);
     } catch (error) { showFormError(error); }
     finally { setSaving(false); }
@@ -479,7 +511,7 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
         {!loading && !loadError && users.length > 0 && (
           <>
             <div className="table-responsive admin-user-table-wrap">
-              <table className="table align-middle" aria-label="Users"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Edit</th></tr></thead><tbody>{users.map((user) => <tr key={user.id}><td><span tabIndex={-1} ref={(element) => { if (element) rowRefs.current.set(user.id, element); else rowRefs.current.delete(user.id); }}>{user.name}</span></td><td className="text-break">{user.email}</td><td>{roleLabel(user.role)}</td><td>{user.isActive ? "Active" : "Inactive"}</td><td><button type="button" className="btn btn-outline-success btn-sm" aria-label={`Edit ${user.name}`} onClick={(event) => openEdit(user, event.currentTarget)}>Edit</button></td></tr>)}</tbody></table>
+              <table className="table align-middle" aria-label="Users"><caption className="visually-hidden">Users</caption><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Edit</th></tr></thead><tbody>{users.map((user) => <tr key={user.id}><td><span tabIndex={-1} ref={(element) => { if (element) rowRefs.current.set(user.id, element); else rowRefs.current.delete(user.id); }}>{user.name}</span></td><td className="text-break">{user.email}</td><td>{roleLabel(user.role)}</td><td>{user.isActive ? "Active" : "Inactive"}</td><td><button type="button" className="btn btn-outline-success btn-sm" aria-label={`Edit ${user.name}`} onClick={(event) => openEdit(user, event.currentTarget)}>Edit</button></td></tr>)}</tbody></table>
             </div>
             <div className="admin-user-cards" aria-label="Users on small screens">{mobile && users.map((user) => <article key={user.id} className="card"><div className="card-body"><h2 className="h5" tabIndex={-1} ref={(element) => { if (element) rowRefs.current.set(user.id, element); }}>{user.name}</h2><dl><dt>Email</dt><dd className="text-break">{user.email}</dd><dt>Role</dt><dd>{roleLabel(user.role)}</dd><dt>Status</dt><dd>{user.isActive ? "Active" : "Inactive"}</dd></dl><button type="button" className="btn btn-outline-success" aria-label={`Edit ${user.name}`} onClick={(event) => openEdit(user, event.currentTarget)}>Edit</button></div></article>)}</div>
           </>
@@ -488,9 +520,9 @@ export default function UserManagement({ currentUser }: { currentUser: AuthUser 
 
       {dialog?.kind === "create" && <AdminDialog title="Create User" description="Create one User with one role and an initial password." processing={saving} initialFocus={initialFocus} onClose={closeDialog}><form onSubmit={(event) => void submitCreate(event)}>{formError && <div ref={alertRef} tabIndex={-1} className="alert alert-danger" role="alert">{formError}</div>}<UserFields values={values} errors={errors} disabled={saving} protectRoleAndStatus={false} onChange={setValues} initialFocus={initialFocus} /><div className="mt-3"><PasswordFields values={passwords} errors={errors} disabled={saving} onChange={setPasswords} /></div><div className="d-flex flex-wrap gap-2"><button type="submit" className="btn btn-success" disabled={saving}>{saving ? "Creating user…" : "Create User"}</button><button type="button" className="btn btn-outline-secondary" disabled={saving} onClick={closeDialog}>Cancel</button></div></form></AdminDialog>}
 
-      {dialog?.kind === "edit" && selected && <AdminDialog title={`Edit ${selected.name}`} description="Edit approved profile and access fields." processing={saving} initialFocus={initialFocus} onClose={closeDialog}><form onSubmit={(event) => void submitEdit(event, selected)}>{formError && <div ref={alertRef} tabIndex={-1} className="alert alert-danger" role="alert">{formError}</div>}{selected.id === currentUser.id && <p className="alert alert-info">You cannot change your own role or deactivate your own account here.</p>}<UserFields values={values} errors={errors} disabled={saving} protectRoleAndStatus={selected.id === currentUser.id} onChange={setValues} initialFocus={initialFocus} /><p className="mt-3 mb-2"><strong>{`Password change required: ${selected.mustChangePassword ? "Yes" : "No"}`}</strong></p>{preservesTerminalOwnership && <p className="alert alert-info">Historical owner references on CLOSED and CANCELLED Tickets remain preserved.</p>}{selected.role === "REQUESTER" && values.role !== "REQUESTER" && <p className="alert alert-warning">Current permissions will change. Existing submitted Tickets remain attributed to this historical User.</p>}<div className="d-flex flex-wrap gap-2"><button type="submit" className="btn btn-success" disabled={saving}>{saving ? "Saving user…" : "Save User"}</button>{selected.id !== currentUser.id && <button type="button" className="btn btn-outline-success" disabled={saving} onClick={() => openPassword(selected)}>Set New Initial Password</button>}{pendingReloadId.current === selected.id || ["STALE_WRITE", "CONCURRENT_UPDATE"].some((code) => formError.includes(code)) || formError.includes("changed") ? <button type="button" className="btn btn-outline-warning" disabled={saving} onClick={() => void reloadSelected(selected)}>Reload User</button> : null}<button type="button" className="btn btn-outline-secondary" disabled={saving} onClick={closeDialog}>Cancel</button></div></form></AdminDialog>}
+      {dialog?.kind === "edit" && selected && <AdminDialog title={`Edit ${selected.name}`} description="Edit approved profile and access fields." processing={saving} initialFocus={initialFocus} onClose={closeDialog}><form onSubmit={(event) => void submitEdit(event, selected)}>{formError && <div ref={alertRef} tabIndex={-1} className="alert alert-danger" role="alert">{formError}</div>}{selected.id === currentUser.id && <p className="alert alert-info">You cannot change your own role or deactivate your own account here.</p>}<UserFields values={values} errors={errors} disabled={saving} protectRoleAndStatus={selected.id === currentUser.id} onChange={setValues} initialFocus={initialFocus} /><p className="mt-3 mb-2"><strong>{`Password change required: ${selected.mustChangePassword ? "Yes" : "No"}`}</strong></p>{preservesTerminalOwnership && <p className="alert alert-info">Historical owner references on CLOSED and CANCELLED Tickets remain preserved.</p>}{selected.role === "REQUESTER" && values.role !== "REQUESTER" && <p className="alert alert-warning">Current permissions will change. Existing submitted Tickets remain attributed to this historical User.</p>}<div className="d-flex flex-wrap gap-2"><button type="submit" className="btn btn-success" disabled={saving}>{saving ? "Saving user…" : "Save User"}</button>{selected.id !== currentUser.id && <button ref={passwordTriggerRef} type="button" className="btn btn-outline-success" disabled={saving} onClick={() => openPassword(selected)}>Set New Initial Password</button>}{pendingReloadId.current === selected.id || ["STALE_WRITE", "CONCURRENT_UPDATE"].some((code) => formError.includes(code)) || formError.includes("changed") ? <button type="button" className="btn btn-outline-warning" disabled={saving} onClick={() => void reloadSelected(selected)}>Reload User</button> : null}<button type="button" className="btn btn-outline-secondary" disabled={saving} onClick={closeDialog}>Cancel</button></div></form></AdminDialog>}
 
-      {dialog?.kind === "password" && selected && <AdminDialog title="Set New Initial Password" description={`Set a new initial password for ${selected.name}. All current sessions will end.`} processing={saving} initialFocus={initialFocus} onClose={closeDialog}><form onSubmit={(event) => void submitPassword(event, selected)}>{formError && <div ref={alertRef} tabIndex={-1} className="alert alert-danger" role="alert">{formError}</div>}<PasswordFields values={passwords} errors={errors} disabled={saving} onChange={setPasswords} initialFocus={initialFocus} /><div className="d-flex flex-wrap gap-2"><button type="submit" className="btn btn-success" disabled={saving}>{saving ? "Setting password…" : "Set Initial Password"}</button><button type="button" className="btn btn-outline-secondary" disabled={saving} onClick={closeDialog}>Cancel</button></div></form></AdminDialog>}
+      {dialog?.kind === "password" && selected && <AdminDialog title="Set New Initial Password" description={`Set a new initial password for ${selected.name}. All current sessions will end.`} processing={saving} initialFocus={initialFocus} onClose={() => returnToEditFromPassword(selected)}><form onSubmit={(event) => void submitPassword(event, selected)}>{formError && <div ref={alertRef} tabIndex={-1} className="alert alert-danger" role="alert">{formError}</div>}<PasswordFields values={passwords} errors={errors} disabled={saving} onChange={setPasswords} initialFocus={initialFocus} /><div className="d-flex flex-wrap gap-2"><button type="submit" className="btn btn-success" disabled={saving}>{saving ? "Setting password…" : "Set Initial Password"}</button><button type="button" className="btn btn-outline-secondary" disabled={saving} onClick={() => returnToEditFromPassword(selected)}>Cancel</button></div></form></AdminDialog>}
     </section>
   );
 }
