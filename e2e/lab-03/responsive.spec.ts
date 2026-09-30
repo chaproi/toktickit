@@ -85,7 +85,7 @@ async function capture(page: Page, viewport: typeof VIEWPORTS[number], screen: S
   await assertResponsiveGeometry(page);
   const path = join(process.cwd(), "artifacts", "lab-03", "screenshots", viewport.label, `${screen}.png`);
   mkdirSync(dirname(path), { recursive: true });
-  await page.screenshot({ path, fullPage: true, animations: "disabled" });
+  await page.screenshot({ path, fullPage: false, animations: "disabled" });
 }
 
 async function createOperationalFixture(label: string) {
