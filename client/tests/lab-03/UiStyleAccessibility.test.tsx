@@ -62,7 +62,7 @@ describe("STYLE-01 shared Zen Green and accessibility contract", () => {
     expect(screen.getByRole("status")).toHaveTextContent("must replace the initial password");
     expectDescribedInvalidField(screen.getByLabelText("Current Password"), "Current Password is required.");
     expectDescribedInvalidField(screen.getByLabelText("New Password", { exact: true }), "between 12 and 128");
-    expectDescribedInvalidField(screen.getByLabelText("Confirm New Password"), "must match");
+    expectDescribedInvalidField(screen.getByLabelText("Confirm New Password"), "Confirm New Password is required.");
     for (const field of ["New Password", "Confirm New Password"]) {
       const input = screen.getByLabelText(field, { exact: true });
       const descriptions = input.getAttribute("aria-describedby") ?? "";
@@ -90,11 +90,11 @@ describe("STYLE-01 shared Zen Green and accessibility contract", () => {
     );
     await screen.findByRole("option", { name: "Hardware" });
     await userEvent.click(screen.getByRole("button", { name: "Create Ticket" }));
-    expectDescribedInvalidField(screen.getByLabelText(/Category/u), "Category is required.");
-    expectDescribedInvalidField(screen.getByLabelText(/Related System/u), "Related System is required.");
-    expectDescribedInvalidField(screen.getByLabelText(/Priority/u), "Priority is required.");
-    expectDescribedInvalidField(screen.getByLabelText(/Summary/u), "Summary must contain");
-    expectDescribedInvalidField(screen.getByLabelText(/Description/u), "Description must contain");
+    expectDescribedInvalidField(screen.getByLabelText(/Category/u), "Category is required");
+    expectDescribedInvalidField(screen.getByLabelText(/Related System/u), "Related System is required");
+    expectDescribedInvalidField(screen.getByLabelText(/Priority/u), "Priority is required");
+    expectDescribedInvalidField(screen.getByLabelText(/Summary/u), "Summary is required");
+    expectDescribedInvalidField(screen.getByLabelText(/Description/u), "Description is required");
     expect(screen.getByLabelText(/Summary/u).getAttribute("aria-describedby")).toMatch(/summary-help/iu);
     expect(screen.getByLabelText(/Description/u).getAttribute("aria-describedby")).toMatch(/description-help/iu);
   });

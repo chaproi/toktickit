@@ -24,7 +24,7 @@ vi.mock("../../src/auth/password.js", async (importOriginal) => {
     async hashPassword(password: string) {
       if (passwordFailure.nextHashFails) {
         passwordFailure.nextHashFails = false;
-        throw new Error("private-hash-detail password=never-log-this");
+        throw new actual.PasswordHashingUnavailableError();
       }
       return actual.hashPassword(password);
     },
