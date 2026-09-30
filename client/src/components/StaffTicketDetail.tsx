@@ -66,7 +66,7 @@ function badgeClass(value: RequestedPriority | TicketStatus): string {
 }
 
 function Field({ name, children }: { name: string; children: ReactNode }) {
-  return <div><dt className="fw-semibold">{name}</dt><dd>{children}</dd></div>;
+  return <div><dt className="fw-semibold">{name}</dt><dd className="read-only-field">{children}</dd></div>;
 }
 
 function Dialog({

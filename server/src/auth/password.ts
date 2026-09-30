@@ -14,6 +14,13 @@ export type PasswordValidationResult =
   | { success: true }
   | { success: false; message: string };
 
+export class PasswordHashingUnavailableError extends Error {
+  constructor() {
+    super("Password hashing is unavailable.");
+    this.name = "PasswordHashingUnavailableError";
+  }
+}
+
 function characterCount(value: string): number {
   return Array.from(value).length;
 }
@@ -63,14 +70,18 @@ export function validateNewPassword(
 }
 
 export async function hashPassword(password: string): Promise<string> {
-  return argon2.hash(password, {
-    type: argon2.argon2id,
-    memoryCost: ARGON2ID_OPTIONS.memoryCost,
-    timeCost: ARGON2ID_OPTIONS.timeCost,
-    parallelism: ARGON2ID_OPTIONS.parallelism,
-    hashLength: ARGON2ID_OPTIONS.hashLength,
-    salt: randomBytes(ARGON2ID_OPTIONS.saltLength),
-  });
+  try {
+    return await argon2.hash(password, {
+      type: argon2.argon2id,
+      memoryCost: ARGON2ID_OPTIONS.memoryCost,
+      timeCost: ARGON2ID_OPTIONS.timeCost,
+      parallelism: ARGON2ID_OPTIONS.parallelism,
+      hashLength: ARGON2ID_OPTIONS.hashLength,
+      salt: randomBytes(ARGON2ID_OPTIONS.saltLength),
+    });
+  } catch {
+    throw new PasswordHashingUnavailableError();
+  }
 }
 
 export async function verifyPassword(

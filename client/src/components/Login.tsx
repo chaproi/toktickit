@@ -80,10 +80,13 @@ export default function Login({
                 type="email"
                 autoComplete="email"
                 disabled={busy}
+                aria-required="true"
+                aria-invalid={errors.email ? "true" : undefined}
+                aria-describedby={errors.email ? "login-email-error" : undefined}
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
               />
-              {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+              {errors.email && <div id="login-email-error" className="invalid-feedback">{errors.email}</div>}
             </div>
             <div className="mb-3">
               <label className="form-label fw-semibold" htmlFor="login-password">Password</label>
@@ -93,10 +96,13 @@ export default function Login({
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
                 disabled={busy}
+                aria-required="true"
+                aria-invalid={errors.password ? "true" : undefined}
+                aria-describedby={errors.password ? "login-password-error" : undefined}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
               />
-              {errors.password && <div className="invalid-feedback">{errors.password}</div>}
+              {errors.password && <div id="login-password-error" className="invalid-feedback">{errors.password}</div>}
             </div>
             <div className="form-check mb-4">
               <input
