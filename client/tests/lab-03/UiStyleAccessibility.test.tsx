@@ -1,5 +1,4 @@
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
@@ -25,7 +24,7 @@ function expectDescribedInvalidField(field: HTMLElement, message: string) {
 describe("STYLE-01 shared Zen Green and accessibility contract", () => {
   it("defines the approved tokens, visible focus, and non-color visual distinctions", () => {
     const stylesheet = readFileSync(
-      join(process.cwd(), "src", "lab2.css"),
+      "src/lab2.css",
       "utf8",
     );
     for (const token of [

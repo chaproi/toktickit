@@ -93,7 +93,7 @@ describe("API-21 safe dependency failures and redaction", () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
     setAttachmentStorageForTests({
       async store() {
-        throw new StorageUnavailableError("private storage endpoint and token");
+        throw new StorageUnavailableError();
       },
       async remove() {},
     });
