@@ -1,7 +1,17 @@
 import { randomBytes, randomUUID } from "node:crypto";
 import { dirname, join } from "node:path";
-import { mkdirSync } from "node:fs";
-import { expect, test, type Browser, type Locator, type Page } from "@playwright/test";
+import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import {
+  chromium,
+  expect,
+  test,
+  type Browser,
+  type BrowserContext,
+  type Locator,
+  type Page,
+  type Worker,
+} from "@playwright/test";
 import { hashPassword } from "../../server/src/auth/password.js";
 import { getPrisma } from "../../server/src/prisma.js";
 
@@ -26,6 +36,8 @@ const VIEWPORTS = [
   { label: "tablet-834x1112", width: 834, height: 1112 },
   { label: "desktop-1440x900", width: 1440, height: 900 },
 ] as const;
+
+const TAB_ZOOM_EXTENSION = join(process.cwd(), "e2e", "fixtures", "tab-zoom-extension");
 
 async function createUser(role: Role, label: string, mustChangePassword = false) {
   const password = `Aa1!${randomBytes(18).toString("base64url")}`;
@@ -230,30 +242,67 @@ async function assertVisibleKeyboardFocus(page: Page, target: Locator) {
   expect(focus.unobscured).toBe(true);
 }
 
-async function withBrowserZoom(page: Page, callback: () => Promise<void>) {
-  const session = await page.context().newCDPSession(page);
+async function extensionZoom(worker: Worker, page: Page, zoomFactor?: number) {
+  const targetUrl = page.url();
+  return worker.evaluate(async ({ url, factor }) => {
+    const controller = (globalThis as unknown as {
+      toktickitTabZoom: {
+        get: (testedUrl: string) => Promise<number>;
+        set: (testedUrl: string, testedZoomFactor: number) => Promise<number>;
+      };
+    }).toktickitTabZoom;
+    if (!controller) throw new Error("Tab zoom extension controller is unavailable.");
+    return factor === undefined ? controller.get(url) : controller.set(url, factor);
+  }, { url: targetUrl, factor: zoomFactor });
+}
+
+async function withBrowserZoom(page: Page, worker: Worker, callback: () => Promise<void>) {
+  expect(await page.evaluate(() => visualViewport?.scale ?? 1)).toBe(1);
+  expect(await extensionZoom(worker, page)).toBe(1);
   try {
-    const before = await page.evaluate(() => ({
-      scale: visualViewport?.scale ?? 1,
-      width: visualViewport?.width ?? innerWidth,
-      innerWidth,
-    }));
-    expect(before.scale).toBe(1);
-    await session.send("Emulation.setPageScaleFactor", { pageScaleFactor: 2 });
-    await expect.poll(() => page.evaluate(() => visualViewport?.scale ?? 1)).toBe(2);
-    const zoomed = await page.evaluate(() => ({
-      scale: visualViewport?.scale ?? 1,
-      width: visualViewport?.width ?? innerWidth,
-      innerWidth,
-    }));
-    expect(zoomed.scale).toBe(2);
-    expect(zoomed.width).toBeCloseTo(before.width / 2, 0);
-    expect(zoomed.innerWidth).toBe(before.innerWidth);
+    expect(await extensionZoom(worker, page, 2)).toBe(2);
+    await expect.poll(() => extensionZoom(worker, page)).toBe(2);
+    expect(await page.evaluate(() => visualViewport?.scale ?? 1)).toBe(1);
     await callback();
   } finally {
-    await session.send("Emulation.setPageScaleFactor", { pageScaleFactor: 1 });
-    await expect.poll(() => page.evaluate(() => visualViewport?.scale ?? 1)).toBe(1);
-    await session.detach();
+    expect(await extensionZoom(worker, page, 1)).toBe(1);
+    await expect.poll(() => extensionZoom(worker, page)).toBe(1);
+    expect(await page.evaluate(() => visualViewport?.scale ?? 1)).toBe(1);
+  }
+}
+
+async function withTabZoomPage(
+  context: BrowserContext,
+  worker: Worker,
+  callback: (page: Page) => Promise<void>,
+) {
+  await context.clearCookies();
+  const page = await context.newPage();
+  try {
+    await callback(page);
+  } finally {
+    await page.close();
+  }
+}
+
+async function withTabZoomContext(callback: (context: BrowserContext, worker: Worker) => Promise<void>) {
+  const profile = mkdtempSync(join(tmpdir(), "toktickit-tab-zoom-"));
+  const context = await chromium.launchPersistentContext(profile, {
+    baseURL: "http://127.0.0.1:4173",
+    channel: "chromium",
+    headless: true,
+    viewport: { width: 1440, height: 900 },
+    args: [
+      `--disable-extensions-except=${TAB_ZOOM_EXTENSION}`,
+      `--load-extension=${TAB_ZOOM_EXTENSION}`,
+    ],
+  });
+  try {
+    const worker = context.serviceWorkers()[0] ?? await context.waitForEvent("serviceworker");
+    await callback(context, worker);
+  } finally {
+    await context.close();
+    rmSync(profile, { recursive: true, force: true });
   }
 }
 
@@ -452,13 +501,13 @@ for (const viewport of VIEWPORTS) {
   });
 }
 
-test("RESP-02 keeps all six screens operable with keyboard and accessibility semantics at genuine 200% browser zoom", async ({ browser }) => {
+test("RESP-02 keeps all six screens operable with keyboard and accessibility semantics at genuine 200% browser tab zoom", async () => {
   const fixture = await createOperationalFixture("zoom-200");
-  const viewport = { width: 1440, height: 900 };
 
-  await withPage(browser, viewport, async (page) => {
+  await withTabZoomContext(async (context, worker) => {
+  await withTabZoomPage(context, worker, async (page) => {
     await page.goto("/login");
-    await withBrowserZoom(page, async () => {
+    await withBrowserZoom(page, worker, async () => {
       await expect(page.getByRole("main")).toBeVisible();
       const email = page.getByLabel("Email");
       const password = page.getByLabel("Password", { exact: true });
@@ -486,9 +535,9 @@ test("RESP-02 keeps all six screens operable with keyboard and accessibility sem
     });
   });
 
-  await withPage(browser, viewport, async (page) => {
+  await withTabZoomPage(context, worker, async (page) => {
     await login(page, fixture.forced.user.email, fixture.forced.password);
-    await withBrowserZoom(page, async () => {
+    await withBrowserZoom(page, worker, async () => {
       const save = page.getByRole("button", { name: "Save Password" });
       await reachByKeyboard(page, save);
       await assertVisibleKeyboardFocus(page, save);
@@ -508,10 +557,10 @@ test("RESP-02 keeps all six screens operable with keyboard and accessibility sem
     });
   });
 
-  await withPage(browser, viewport, async (page) => {
+  await withTabZoomPage(context, worker, async (page) => {
     await login(page, fixture.requester.user.email, fixture.requester.password);
     await page.goto(`/tickets/${fixture.ticket.id}`);
-    await withBrowserZoom(page, async () => {
+    await withBrowserZoom(page, worker, async () => {
       await expect(page.getByRole("main")).toBeVisible();
       await expect(page.locator(".read-only-field").first()).toBeVisible();
       await expect(page.getByLabel("Add a public comment")).toBeEditable();
@@ -543,9 +592,9 @@ test("RESP-02 keeps all six screens operable with keyboard and accessibility sem
     });
   });
 
-  await withPage(browser, viewport, async (page) => {
+  await withTabZoomPage(context, worker, async (page) => {
     await login(page, fixture.staff.user.email, fixture.staff.password);
-    await withBrowserZoom(page, async () => {
+    await withBrowserZoom(page, worker, async () => {
       const search = page.getByLabel("Search Queue");
       await reachByKeyboard(page, search);
       await assertVisibleKeyboardFocus(page, search);
@@ -558,7 +607,7 @@ test("RESP-02 keeps all six screens operable with keyboard and accessibility sem
     });
   });
 
-  await withPage(browser, viewport, async (page) => {
+  await withTabZoomPage(context, worker, async (page) => {
     await login(page, fixture.staff.user.email, fixture.staff.password);
     await page.goto(`/staff/tickets/${fixture.ticket.id}`);
     let releaseFailure = () => {};
@@ -571,7 +620,7 @@ test("RESP-02 keeps all six screens operable with keyboard and accessibility sem
         body: JSON.stringify({ error: { code: "INTERNAL_ERROR", message: "Something went wrong. Please try again." } }),
       });
     });
-    await withBrowserZoom(page, async () => {
+    await withBrowserZoom(page, worker, async () => {
       const publicRegion = page.getByRole("region", { name: "Public Comments" });
       const internalRegion = page.getByRole("region", { name: "Internal Notes" });
       const styles = await Promise.all([publicRegion, internalRegion].map((region) =>
@@ -616,9 +665,9 @@ test("RESP-02 keeps all six screens operable with keyboard and accessibility sem
     await page.unroute("**/api/staff/tickets/*/owner");
   });
 
-  await withPage(browser, viewport, async (page) => {
+  await withTabZoomPage(context, worker, async (page) => {
     await login(page, fixture.administrator.user.email, fixture.administrator.password);
-    await withBrowserZoom(page, async () => {
+    await withBrowserZoom(page, worker, async () => {
       const create = page.getByRole("button", { name: "Create User" }).first();
       await reachByKeyboard(page, create);
       await assertVisibleKeyboardFocus(page, create);
@@ -648,5 +697,6 @@ test("RESP-02 keeps all six screens operable with keyboard and accessibility sem
       await expect(create).toBeFocused();
       await assertScreenLayout(page, administratorElements(page));
     });
+  });
   });
 });
