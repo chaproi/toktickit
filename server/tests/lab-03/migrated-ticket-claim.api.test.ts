@@ -46,12 +46,16 @@ function credentials(ids: readonly number[]): string {
   ])));
 }
 
-function cookieHeader(setCookie: string[] | undefined): string {
-  return (setCookie ?? []).map((value) => value.split(";", 1)[0]).join("; ");
+function cookieValues(setCookie: string | string[] | undefined): string[] {
+  return typeof setCookie === "string" ? [setCookie] : (setCookie ?? []);
 }
 
-function cookieValue(setCookie: string[] | undefined, name: string): string {
-  const cookie = (setCookie ?? []).find((value) => value.startsWith(`${name}=`));
+function cookieHeader(setCookie: string | string[] | undefined): string {
+  return cookieValues(setCookie).map((value) => value.split(";", 1)[0]).join("; ");
+}
+
+function cookieValue(setCookie: string | string[] | undefined, name: string): string {
+  const cookie = cookieValues(setCookie).find((value) => value.startsWith(`${name}=`));
   if (!cookie) throw new Error(`Expected ${name} cookie.`);
   return cookie.slice(name.length + 1).split(";", 1)[0] ?? "";
 }
