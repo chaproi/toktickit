@@ -71,5 +71,5 @@ describe("API-23 migrated Ticket Queue and claim compatibility", () => {
           .toMatchObject({ currentStatus: ticket.currentStatus, ownerId: actors.staff.user.id });
       }
     }
-  }, 30_000);
+  });
 });

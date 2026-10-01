@@ -219,7 +219,7 @@ describe("SEC-01 authentication gates on every protected application operation",
         expectOnlySafeError(response, 401, "AUTHENTICATION_REQUIRED");
       }
     }
-  }, 30_000);
+  });
 
   it("returns PASSWORD_CHANGE_REQUIRED before validation, CSRF, role, or resource lookup", async () => {
     const forced = await authenticatedFixture({
@@ -230,7 +230,7 @@ describe("SEC-01 authentication gates on every protected application operation",
       const response = await call(operation, forced.cookie);
       expectOnlySafeError(response, 403, "PASSWORD_CHANGE_REQUIRED");
     }
-  }, 30_000);
+  });
 
   it("keeps current-user and password change available at the forced-change gate", async () => {
     const password = `Aa1!${randomBytes(16).toString("base64url")}`;
@@ -287,7 +287,7 @@ describe("SEC-02 complete backend role-operation matrix", () => {
         }
       }
     }
-  }, 60_000);
+  });
 });
 
 describe("SEC-05 Internal Note denial before resource lookup", () => {
