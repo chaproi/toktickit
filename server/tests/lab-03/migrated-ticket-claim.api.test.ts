@@ -88,7 +88,7 @@ async function counts(prisma: PrismaClient) {
 }
 
 describe("MIG-06/API-23 migration-produced Queue and claim compatibility", () => {
-  it("lists every real mapped Lab 2 Ticket and claims one non-terminal row only through authenticated APIs", async () => {
+  it("lists and claims every real mapped Lab 2 Ticket through authenticated APIs", async () => {
     const databaseUrl = process.env.TEST_DATABASE_URL;
     expect(databaseUrl).toBeTruthy();
     const fixture = await buildSafeLegacySnapshot({
@@ -163,51 +163,121 @@ describe("MIG-06/API-23 migration-produced Queue and claim compatibility", () =>
     }
     expect(await counts(prisma)).toEqual(beforeApi);
 
-    const target = migratedTickets.find(({ currentStatus }) => currentStatus === "NEW")!;
-    const claim = await request(app)
-      .post(`/api/staff/tickets/${target.id}/claim`)
-      .set("Cookie", staffAuth.cookie)
-      .set("Origin", APPROVED_ORIGIN)
-      .set("X-CSRF-Token", staffAuth.csrf)
-      .send({ expectedUpdatedAt: target.updatedAt.toISOString() })
-      .expect(200);
-    expect(claim.body.ticket).toMatchObject({
-      id: target.id,
-      currentStatus: "NEW",
-      owner: { id: staff.id, name: staff.name, role: "IT_STAFF" },
-    });
-    expect(JSON.stringify(claim.body)).not.toMatch(PROTECTED_FIELDS);
+    const nonTerminalStatuses = new Set([
+      "NEW",
+      "OPEN",
+      "IN_PROGRESS",
+      "WAITING_FOR_REQUESTER",
+      "RESOLVED",
+    ]);
+    for (const target of migratedTickets) {
+      const beforeTickets = await prisma.ticket.findMany({ orderBy: { id: "asc" } });
+      const beforeTarget = await prisma.ticket.findUniqueOrThrow({
+        where: { id: target.id },
+        include: {
+          requester: { select: { id: true, name: true, email: true } },
+          category: { select: { id: true, name: true } },
+          relatedSystem: { select: { id: true, name: true } },
+        },
+      });
+      const claim = await request(app)
+        .post(`/api/staff/tickets/${target.id}/claim`)
+        .set("Cookie", staffAuth.cookie)
+        .set("Origin", APPROVED_ORIGIN)
+        .set("X-CSRF-Token", staffAuth.csrf)
+        .send({ expectedUpdatedAt: target.updatedAt.toISOString() });
 
-    const claimed = await prisma.ticket.findUniqueOrThrow({ where: { id: target.id } });
-    expect(claimed).toMatchObject({
-      id: target.id,
-      requesterId: target.requesterId,
-      currentStatus: target.currentStatus,
-      ownerId: staff.id,
-    });
-    const authoritativeQueue = await request(app)
+      if (nonTerminalStatuses.has(target.currentStatus)) {
+        expect(claim.status).toBe(200);
+        expect(JSON.stringify(claim.body)).not.toMatch(PROTECTED_FIELDS);
+        const claimed = await prisma.ticket.findUniqueOrThrow({
+          where: { id: target.id },
+          include: {
+            requester: { select: { id: true, name: true, email: true } },
+            category: { select: { id: true, name: true } },
+            relatedSystem: { select: { id: true, name: true } },
+          },
+        });
+        expect(claim.body.ticket).toEqual({
+          id: claimed.id,
+          owner: { id: staff.id, name: staff.name, role: "IT_STAFF" },
+          requestedPriority: claimed.requestedPriority,
+          itPriority: claimed.itPriority,
+          currentStatus: target.currentStatus,
+          requesterResolutionIndicatedAt: claimed.requesterResolutionIndicatedAt,
+          updatedAt: claimed.updatedAt.toISOString(),
+        });
+        const { ownerId: _beforeOwner, updatedAt: _beforeUpdated, ...beforeStable } = beforeTarget;
+        const { ownerId: _afterOwner, updatedAt: _afterUpdated, ...afterStable } = claimed;
+        expect(afterStable).toEqual(beforeStable);
+        expect(claimed.ownerId).toBe(staff.id);
+
+        const authoritativeQueue = await request(app)
+          .get("/api/staff/tickets")
+          .query({ search: target.ticketNumber, owner: "me", pageSize: 10 })
+          .set("Cookie", staffAuth.cookie)
+          .expect(200);
+        expect(authoritativeQueue.body.items).toHaveLength(1);
+        expect(authoritativeQueue.body.items[0]).toMatchObject({
+          id: target.id,
+          currentStatus: target.currentStatus,
+          owner: { id: staff.id, name: staff.name, role: "IT_STAFF" },
+          requester: beforeTarget.requester,
+          category: beforeTarget.category,
+          relatedSystem: beforeTarget.relatedSystem,
+        });
+        expect(JSON.stringify(authoritativeQueue.body)).not.toMatch(PROTECTED_FIELDS);
+
+        const afterTickets = await prisma.ticket.findMany({ orderBy: { id: "asc" } });
+        expect(afterTickets.filter(({ id }) => id !== target.id)).toEqual(
+          beforeTickets.filter(({ id }) => id !== target.id),
+        );
+      } else {
+        expect(claim.status).toBe(409);
+        expect(claim.body).toEqual({
+          error: {
+            code: "TERMINAL_TICKET",
+            message: "Terminal Tickets cannot be changed.",
+          },
+        });
+        expect(JSON.stringify(claim.body)).not.toMatch(PROTECTED_FIELDS);
+        expect(await prisma.ticket.findUniqueOrThrow({
+          where: { id: target.id },
+          include: {
+            requester: { select: { id: true, name: true, email: true } },
+            category: { select: { id: true, name: true } },
+            relatedSystem: { select: { id: true, name: true } },
+          },
+        })).toEqual(beforeTarget);
+        expect(await prisma.ticket.findMany({ orderBy: { id: "asc" } })).toEqual(beforeTickets);
+
+        const authoritativeQueue = await request(app)
+          .get("/api/staff/tickets")
+          .query({ search: target.ticketNumber, owner: "unassigned", pageSize: 10 })
+          .set("Cookie", staffAuth.cookie)
+          .expect(200);
+        expect(authoritativeQueue.body.items).toHaveLength(1);
+        expect(authoritativeQueue.body.items[0]).toMatchObject({
+          id: target.id,
+          currentStatus: target.currentStatus,
+          owner: null,
+          requester: beforeTarget.requester,
+          category: beforeTarget.category,
+          relatedSystem: beforeTarget.relatedSystem,
+        });
+      }
+      expect(await counts(prisma)).toEqual(beforeApi);
+    }
+
+    const finalQueue = await request(app)
       .get("/api/staff/tickets")
-      .query({ search: target.ticketNumber, owner: "me", pageSize: 10 })
+      .query({ search: "Fixture Ticket", pageSize: 10 })
       .set("Cookie", staffAuth.cookie)
       .expect(200);
-    expect(authoritativeQueue.body.items).toHaveLength(1);
-    expect(authoritativeQueue.body.items[0]).toMatchObject({
-      id: target.id,
-      currentStatus: target.currentStatus,
-      owner: { id: staff.id },
-      requester: target.requester,
-    });
-
-    expect(await counts(prisma)).toEqual(beforeApi);
-    const untouched = await prisma.ticket.findMany({
-      where: { id: { not: target.id } },
-      orderBy: { id: "asc" },
-    });
-    expect(untouched).toEqual(
-      migratedTickets
-        .filter(({ id }) => id !== target.id)
-        .map(({ requester: _requester, ...ticket }) => ticket),
-    );
+    expect(finalQueue.body.counts).toMatchObject({ matching: 7, mine: 5, unassigned: 2 });
+    expect(new Set(
+      finalQueue.body.items.map((item: { currentStatus: string }) => item.currentStatus),
+    )).toEqual(new Set(Object.values(LEGACY_STATUS_MAPPING)));
     expect(migrated.before.checksums).toEqual(fixture.before.checksums);
   }, 30_000);
 });
