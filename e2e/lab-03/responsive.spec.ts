@@ -639,9 +639,10 @@ test("RESP-02 keeps all six screens operable with keyboard and accessibility sem
       const alert = dialog.getByRole("alert");
       await expect(alert).toBeVisible();
       await expect(name).toHaveAttribute("aria-invalid", "true");
-      await expect(name).toHaveAttribute("aria-describedby", /admin-name-error/u);
-      await expect(dialog.getByLabel("Email")).toHaveAttribute("aria-describedby", /admin-email-error/u);
-      await expect(dialog.getByLabel("Initial Password", { exact: true })).toHaveAttribute("aria-describedby", /admin-password-error/u);
+      await expect(name).toHaveAttribute("aria-describedby", "admin-user-name-error");
+      await expect(dialog.getByLabel("Email")).toHaveAttribute("aria-describedby", "admin-user-email-error");
+      await expect(dialog.getByLabel("Initial Password", { exact: true }))
+        .toHaveAttribute("aria-describedby", /admin-initial-password-error/u);
       await page.keyboard.press("Escape");
       await expect(dialog).toHaveCount(0);
       await expect(create).toBeFocused();
