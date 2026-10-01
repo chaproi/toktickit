@@ -91,7 +91,7 @@ export async function verifyPassword(
   try {
     return await argon2.verify(encodedHash, password);
   } catch {
-    return false;
+    throw new PasswordHashingUnavailableError();
   }
 }
 
