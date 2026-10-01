@@ -66,7 +66,7 @@ function badgeClass(value: RequestedPriority | TicketStatus): string {
 }
 
 function Field({ name, children }: { name: string; children: ReactNode }) {
-  return <div><dt className="fw-semibold">{name}</dt><dd>{children}</dd></div>;
+  return <div><dt className="fw-semibold">{name}</dt><dd className="read-only-field">{children}</dd></div>;
 }
 
 function Dialog({
@@ -365,6 +365,7 @@ export default function StaffTicketDetail() {
   const statusSelectRef = useRef<HTMLSelectElement>(null);
   const ownerSelectRef = useRef<HTMLSelectElement>(null);
   const statusCancelRef = useRef<HTMLButtonElement>(null);
+  const dialogAlertRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const authoritativeTicketRef = useRef<StaffTicket | null>(null);
 
@@ -373,6 +374,10 @@ export default function StaffTicketDetail() {
     else contentRef.current?.removeAttribute("inert");
     return () => contentRef.current?.removeAttribute("inert");
   }, [dialog]);
+
+  useEffect(() => {
+    if (dialog && dialogError && !busy) dialogAlertRef.current?.focus();
+  }, [busy, dialog, dialogError]);
 
   useEffect(() => {
     if (!focusTarget || dialog) return;
@@ -577,7 +582,7 @@ export default function StaffTicketDetail() {
 
       {dialog === "owner" && <Dialog title="Assign Ticket" description="Choose an active IT Staff member or Administrator."
         initialFocus={ownerSelectRef} processing={busy} onClose={closeOwner}>
-        {dialogError && <div className="alert alert-danger" role="alert">{dialogError}</div>}
+        {dialogError && <div ref={dialogAlertRef} tabIndex={-1} className="alert alert-danger" role="alert">{dialogError}</div>}
         <label className="form-label" htmlFor="ticket-owner">Ticket Owner</label>
         <select ref={ownerSelectRef} id="ticket-owner" className="form-select" value={selectedOwner} onChange={(event) => setSelectedOwner(event.target.value)}>
           {(["NEW", "OPEN", "REOPENED"] as TicketStatus[]).includes(ticket.currentStatus) && <option value="">Unassigned</option>}
@@ -591,7 +596,7 @@ export default function StaffTicketDetail() {
 
       {dialog === "status" && nextStatus && <Dialog title={nextStatus === "CANCELLED" ? "Cancel Ticket" : `${label(nextStatus)} Ticket`}
         description="Confirm this formal Ticket status change." initialFocus={statusCancelRef} processing={busy} onClose={closeStatus}>
-        {dialogError && <div className="alert alert-danger" role="alert">{dialogError}</div>}
+        {dialogError && <div ref={dialogAlertRef} tabIndex={-1} className="alert alert-danger" role="alert">{dialogError}</div>}
         {nextStatus === "CANCELLED" && <><label className="form-label" htmlFor="cancellation-reason">Cancellation reason</label>
           <textarea id="cancellation-reason" className="form-control" required minLength={5} maxLength={500} value={reason} onChange={(event) => setReason(event.target.value)} /></>}
         <div className="d-flex justify-content-end gap-2 mt-3"><button ref={statusCancelRef} className="btn btn-outline-secondary" type="button" disabled={busy} onClick={closeStatus}>Cancel</button>

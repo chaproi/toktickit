@@ -17,6 +17,7 @@ import {
   type LiveSession,
 } from "./auth/auth-router.js";
 import { ConcurrentUpdateError } from "./auth/eligibility-transaction.js";
+import { PasswordHashingUnavailableError } from "./auth/password.js";
 import { parseAllowedOrigins, validateOriginHeader } from "./auth/origin.js";
 import { parseCommentPageQuery } from "./comments/comment-query.js";
 import {
@@ -95,6 +96,7 @@ function errorBody(code: string, message: string, fields?: Record<string, string
 }
 
 function isDatabaseUnavailableError(error: unknown): boolean {
+  if (error instanceof PasswordHashingUnavailableError) return true;
   if (error instanceof Prisma.PrismaClientInitializationError) return true;
   return error instanceof Prisma.PrismaClientKnownRequestError &&
     ["P1001", "P1002", "P1008", "P1017"].includes(error.code);

@@ -53,7 +53,9 @@ export default function ChangePassword({
     else if (newPassword === currentPassword) {
       nextErrors.newPassword = "New password must be different from the current password.";
     }
-    if (confirmPassword !== newPassword) {
+    if (!confirmPassword) {
+      nextErrors.confirmPassword = "Confirm New Password is required.";
+    } else if (confirmPassword !== newPassword) {
       nextErrors.confirmPassword = "New passwords must match.";
     }
     setErrors(nextErrors);
@@ -90,7 +92,7 @@ export default function ChangePassword({
               You must replace the initial password before using TokTickIT.
             </div>
           )}
-          <p>Use 12–128 characters and at least three of lowercase, uppercase, number, and symbol.</p>
+          <p id="password-policy">Use 12–128 characters and at least three of lowercase, uppercase, number, and symbol.</p>
           {(message || Object.keys(errors).length > 0) && (
             <div ref={summaryRef} className="alert alert-danger" role="alert" tabIndex={-1}>
               {message || "Please correct the highlighted fields."}
@@ -110,11 +112,17 @@ export default function ChangePassword({
                   type="password"
                   autoComplete={id === "current-password" ? "current-password" : "new-password"}
                   disabled={busy}
+                  aria-required="true"
+                  aria-invalid={errors[String(errorKey)] ? "true" : undefined}
+                  aria-describedby={[
+                    id === "new-password" || id === "confirm-password" ? "password-policy" : "",
+                    errors[String(errorKey)] ? `${String(id)}-error` : "",
+                  ].filter(Boolean).join(" ") || undefined}
                   value={String(value)}
                   onChange={(event) => (setter as (value: string) => void)(event.target.value)}
                 />
                 {errors[String(errorKey)] && (
-                  <div className="invalid-feedback">{errors[String(errorKey)]}</div>
+                  <div id={`${String(id)}-error`} className="invalid-feedback">{errors[String(errorKey)]}</div>
                 )}
               </div>
             ))}
