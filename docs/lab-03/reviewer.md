@@ -383,4 +383,18 @@ The genuine tab-zoom case passed one focused run plus three consecutive repeats.
 | Contract integrity | `MIG-06`, `API-21`, `API-23`, and `AC-59` have direct semantic evidence. The matrix remains 75 completed Test IDs and 61 traced ACs. |
 | AI-use hand-in | The final rendered AI-use record selects eight lifecycle prompts and includes the repository owner's supplied four-point reflection with only light grammar cleanup. |
 
-At the start of the external re-review correction, the prior PR #38 corrective chain through `1f5d8cf8dee5cb20b1eda43d4f9208179fc8b6b4` had been pushed to `feat/37-lab3-final-hardening`, and PR #38 remained open. The new all-status evidence correction beginning with local tests-only commit `7e2e9e1` is recorded at this documentation cutoff without claiming that this new correction has been pushed. No hosted CI result, submitted review, approval, merge, Issue #37 closure, review-thread resolution, or Project Done transition is claimed. GitHub remains authoritative for events after this cutoff.
+At the start of the final correction, the prior PR #38 corrective chain through `1f5d8cf8dee5cb20b1eda43d4f9208179fc8b6b4` had been pushed to `feat/37-lab3-final-hardening`, and PR #38 remained open. The new all-status evidence correction beginning with local tests-only commit `7e2e9e1` is recorded at this documentation cutoff without claiming that this new correction has been pushed. No hosted CI result, submitted review, approval, merge, Issue #37 closure, review-thread resolution, or Project Done transition is claimed. GitHub remains authoritative for events after this cutoff.
+
+## PR #38 Final Review and Merge
+
+[PR #38](https://github.com/chaproi/toktickit/pull/38) was reviewed and approved by `L0u1sss` after the final corrections.
+The reviewer reported no remaining blocker in the reviewed Lab 3 scope.
+
+PR #38 was then merged into `lab3-staging`.
+Merge commit: `e7591d54028c489734561e1142ee8e94d33ff39e`
+
+The final local integration verification on `lab3-staging` passed:
+- Server: 52 files / 351 tests
+- Client: 18 files / 175 tests
+- E2E: 16 / 16 scenarios
+- Server and client production builds: passed
