@@ -383,4 +383,35 @@ The genuine tab-zoom case passed one focused run plus three consecutive repeats.
 | Contract integrity | `MIG-06`, `API-21`, `API-23`, and `AC-59` have direct semantic evidence. The matrix remains 75 completed Test IDs and 61 traced ACs. |
 | AI-use hand-in | The final rendered AI-use record selects eight lifecycle prompts and includes the repository owner's supplied four-point reflection with only light grammar cleanup. |
 
-At the start of the external re-review correction, the prior PR #38 corrective chain through `1f5d8cf8dee5cb20b1eda43d4f9208179fc8b6b4` had been pushed to `feat/37-lab3-final-hardening`, and PR #38 remained open. The new all-status evidence correction beginning with local tests-only commit `7e2e9e1` is recorded at this documentation cutoff without claiming that this new correction has been pushed. No hosted CI result, submitted review, approval, merge, Issue #37 closure, review-thread resolution, or Project Done transition is claimed. GitHub remains authoritative for events after this cutoff.
+At the start of the final correction, the prior PR #38 corrective chain through `1f5d8cf8dee5cb20b1eda43d4f9208179fc8b6b4` had been pushed to `feat/37-lab3-final-hardening`, and PR #38 remained open. The new all-status evidence correction beginning with local tests-only commit `7e2e9e1` is recorded at this documentation cutoff without claiming that this new correction has been pushed. No hosted CI result, submitted review, approval, merge, Issue #37 closure, review-thread resolution, or Project Done transition is claimed. GitHub remains authoritative for events after this cutoff.
+
+## PR #38 Final Review and Merge
+
+[PR #38](https://github.com/chaproi/toktickit/pull/38) was reviewed and approved by `L0u1sss` after the final corrections.
+The reviewer reported no remaining blocker in the reviewed Lab 3 scope.
+
+PR #38 was then merged into `lab3-staging`.
+Merge commit: `e7591d54028c489734561e1142ee8e94d33ff39e`
+
+The repository owner then recorded the following local integration verification on the merged `lab3-staging` commit. These results were not independently rerun by peer reviewer `L0u1sss` and are not hosted GitHub Actions evidence:
+
+- Server: 52 files / 351 tests passed
+- Client: 18 files / 175 tests passed
+- E2E: 16 / 16 scenarios passed
+
+The server and client production builds had already passed during the final PR #38 verification before merge; this section does not represent those build results as independently rerun by the peer reviewer.
+
+
+## Peer Reviews Performed by Author
+
+The repository owner, `chaproi`, also performed submitted GitHub peer reviews on classmates' Lab 3 Pull Requests. The table below records only review activity that is directly visible in GitHub review/comment history. Reviews of this repository's own Pull Requests are not counted here.
+
+| Repository / PR | Review date(s) | Review action by `chaproi` | Main finding / contribution | Final outcome visible on GitHub |
+| --- | --- | --- | --- | --- |
+| [Chxtamos/-TokTickIT- PR #71](https://github.com/Chxtamos/-TokTickIT-/pull/71) — Feature 27: Implement authentication and session APIs | 2026-09-17 | Requested Changes; later follow-up comment | Required restricted-session enforcement for `mustChangePassword`, PostgreSQL rollback/lost-response evidence, IP throttle/reset, HTTPS `Secure` cookie, and 16 KiB payload-boundary coverage. A later follow-up on commit `727f54e` confirmed the functional blockers were fixed and requested readable TypeScript formatting before approval. | Merged into `lab3-staging` on 2026-09-17 as `74586fc58765a0514483b29fe92eab0b35dc8777`. No submitted APPROVED review by `chaproi` is recorded. |
+| [Peepipat-Suesoongnuen/TokTickIT PR #58](https://github.com/Peepipat-Suesoongnuen/TokTickIT/pull/58) — Lab 3 authentication/session/password-change foundation | 2026-09-18 | Requested Changes | Identified three authentication-security blockers: concurrent lockout threshold was not atomic, account-specific failure paths exposed a timing side channel without equivalent Argon2 work, and the configured IP limiter lacked route-level `429` evidence. | Merged into `lab3-staging` on 2026-09-18 as `8046ec06b4d3c92613cc23a1d7a77c04cac201c9`. No submitted APPROVED review by `chaproi` is recorded. |
+| [L0u1sss/TokTickIT PR #46](https://github.com/L0u1sss/TokTickIT/pull/46) — Administrator User Management | 2026-09-19 | Requested Changes → Approved | The implementation scope was accepted, but the first review found stale Hosted-CI/governance evidence in `user-management.md` and `tests.md`. After documentation was synchronized to the actual implementation HEAD and CI runs, the re-review of `437ac216` found no remaining implementation or evidence blocker. | Approved by `chaproi`, then merged into `lab3-staging` on 2026-09-19 as `6ad96403bd962c6d9df9c73a1299992b5305b735`. |
+| [cottonlnwza/toktickit PR #62](https://github.com/cottonlnwza/toktickit/pull/62) — Release author peer-review evidence to main | 2026-09-29 | Approved | Verified that the PR was documentation-only, PR #61 had real peer approval before staging merge, the author's five recorded peer reviews were supported by submitted GitHub reviews, and the release flow remained `feature → lab3-staging → main` without claiming later submission evidence early. | Approved by `chaproi` and merged into `main` on 2026-09-29 as `749eb51c6fef26e2e64c6de50e3dd2c581b34d19`. |
+| [Chxtamos/-TokTickIT- PR #84](https://github.com/Chxtamos/-TokTickIT-/pull/84) — Lab 3 release from `lab3-staging` to `main` | 2026-10-01 | Approved (two submitted approval events; one contains the detailed review) | Re-reviewed exact HEAD `aa45eb71084b9e2bceb585f853e3b3e0ffb1e056` and confirmed prior blockers were closed: RELEASE-01/Product-DoD pre/post-merge gates were separated, `reviewer.md` history was synchronized, legacy Lab 2 E2E authentication compatibility was removed, and exact-head CI showed Client 93/93, Server 219/219, and E2E 20/20. | Approved by `chaproi`. At this documentation update, PR #84 remains open and unmerged on GitHub. |
+
+Total peer-review evidence recorded here: **5 distinct peer-reviewed PRs across 4 classmates/repositories**, **7 submitted GitHub review events** by `chaproi`, plus the documented follow-up comment on PR #71. A PR reviewed multiple times is counted once in the distinct-PR total.
