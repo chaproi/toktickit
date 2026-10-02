@@ -35,7 +35,6 @@ if (typeof URL.revokeObjectURL !== "function") {
 }
 
 interface AttachmentSectionProps {
-  requesterId: number;
   ticketId: number;
   onInitialLoadComplete?: () => void;
 }
@@ -85,7 +84,6 @@ function safeErrorMessage(error: unknown): string {
 }
 
 export default function AttachmentSection({
-  requesterId,
   ticketId,
   onInitialLoadComplete,
 }: AttachmentSectionProps) {
@@ -121,11 +119,7 @@ export default function AttachmentSection({
     setListState("loading");
     setListError("");
 
-    void getAttachments(
-      requesterId,
-      ticketId,
-      controller.signal,
-    )
+    void getAttachments(ticketId, controller.signal)
       .then((response) => {
         setAttachments(response.items);
         setListState("success");
@@ -147,7 +141,6 @@ export default function AttachmentSection({
 
     return () => controller.abort();
   }, [
-    requesterId,
     ticketId,
     retryVersion,
     onInitialLoadComplete,
@@ -229,11 +222,7 @@ export default function AttachmentSection({
     setSuccessMessage("");
 
     try {
-      const uploaded = await uploadAttachment(
-        requesterId,
-        ticketId,
-        selectedFile,
-      );
+      const uploaded = await uploadAttachment(ticketId, selectedFile);
       setAttachments((current) => [...current, uploaded]);
       setSelectedFile(null);
       if (fileInputRef.current) {
@@ -262,12 +251,7 @@ export default function AttachmentSection({
     setSuccessMessage("");
 
     try {
-      const content = await getAttachmentContent(
-        requesterId,
-        ticketId,
-        attachment.id,
-        disposition,
-      );
+      const content = await getAttachmentContent(ticketId, attachment.id, disposition);
       const objectUrl = URL.createObjectURL(content);
 
       if (disposition === "inline") {
@@ -377,12 +361,7 @@ export default function AttachmentSection({
     setRemovalError("");
 
     try {
-      const removed = await removeAttachment(
-        requesterId,
-        ticketId,
-        attachmentToRemove.id,
-        trimmedReason,
-      );
+      const removed = await removeAttachment(ticketId, attachmentToRemove.id, trimmedReason);
       setAttachments((current) =>
         current.map((attachment) =>
           attachment.id === removed.id

@@ -15,13 +15,13 @@ import {
     uploadAttachment,
     type Category,
     type CreatedTicket,
-    type DevelopmentRequester,
+    type AuthUser,
     type RelatedSystem,
     type RequestedPriority,
 } from "../api.js";
 
 interface CreateTicketProps {
-    requester: DevelopmentRequester;
+    requester: AuthUser;
 }
 
 type ReferenceState = "loading" | "ready" | "error";
@@ -304,7 +304,7 @@ export default function CreateTicket({
         submissionIdRef.current = clientSubmissionId;
 
         try {
-            const response = await createTicket(requester.id, {
+            const response = await createTicket({
                 clientSubmissionId,
                 categoryId: Number(form.categoryId),
                 relatedSystemId: Number(
@@ -320,11 +320,7 @@ export default function CreateTicket({
 
             for (const file of selectedFiles) {
                 try {
-                    await uploadAttachment(
-                        requester.id,
-                        response.ticket.id,
-                        file,
-                    );
+                    await uploadAttachment(response.ticket.id, file);
                 } catch {
                     failedFiles.push(file.name);
                 }
@@ -596,6 +592,9 @@ export default function CreateTicket({
                                     aria-invalid={Boolean(
                                         errors.categoryId,
                                     )}
+                                    aria-describedby={errors.categoryId
+                                        ? "category-error"
+                                        : undefined}
                                     required
                                 >
                                     <option value="">
@@ -613,7 +612,7 @@ export default function CreateTicket({
                                 </select>
 
                                 {errors.categoryId && (
-                                    <div className="invalid-feedback">
+                                    <div id="category-error" className="invalid-feedback">
                                         {errors.categoryId}
                                     </div>
                                 )}
@@ -648,6 +647,9 @@ export default function CreateTicket({
                                     aria-invalid={Boolean(
                                         errors.relatedSystemId,
                                     )}
+                                    aria-describedby={errors.relatedSystemId
+                                        ? "related-system-error"
+                                        : undefined}
                                     required
                                 >
                                     <option value="">
@@ -665,7 +667,7 @@ export default function CreateTicket({
                                 </select>
 
                                 {errors.relatedSystemId && (
-                                    <div className="invalid-feedback">
+                                    <div id="related-system-error" className="invalid-feedback">
                                         {errors.relatedSystemId}
                                     </div>
                                 )}
@@ -700,6 +702,9 @@ export default function CreateTicket({
                                     aria-invalid={Boolean(
                                         errors.priority,
                                     )}
+                                    aria-describedby={errors.priority
+                                        ? "priority-error"
+                                        : undefined}
                                     required
                                 >
                                     <option value="">
@@ -722,7 +727,7 @@ export default function CreateTicket({
                                 </select>
 
                                 {errors.priority && (
-                                    <div className="invalid-feedback">
+                                    <div id="priority-error" className="invalid-feedback">
                                         {errors.priority}
                                     </div>
                                 )}
@@ -758,15 +763,18 @@ export default function CreateTicket({
                                     aria-invalid={Boolean(
                                         errors.summary,
                                     )}
+                                    aria-describedby={`summary-help${errors.summary
+                                        ? " summary-error"
+                                        : ""}`}
                                     required
                                 />
 
-                                <div className="form-text">
+                                <div id="summary-help" className="form-text">
                                     5–150 characters
                                 </div>
 
                                 {errors.summary && (
-                                    <div className="invalid-feedback">
+                                    <div id="summary-error" className="invalid-feedback">
                                         {errors.summary}
                                     </div>
                                 )}
@@ -803,15 +811,18 @@ export default function CreateTicket({
                                     aria-invalid={Boolean(
                                         errors.description,
                                     )}
+                                    aria-describedby={`description-help${errors.description
+                                        ? " description-error"
+                                        : ""}`}
                                     required
                                 />
 
-                                <div className="form-text">
+                                <div id="description-help" className="form-text">
                                     10–5000 characters
                                 </div>
 
                                 {errors.description && (
-                                    <div className="invalid-feedback">
+                                    <div id="description-error" className="invalid-feedback">
                                         {errors.description}
                                     </div>
                                 )}

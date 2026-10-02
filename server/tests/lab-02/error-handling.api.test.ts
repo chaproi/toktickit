@@ -17,19 +17,33 @@ import {
   type AttachmentStorage,
 } from "../../src/attachments/attachment-storage.js";
 import { getPrisma } from "../../src/prisma.js";
+import {
+  authenticated,
+  authenticatedUnsafe,
+  createTestSession,
+  removeTestSessions,
+  type TestSession,
+} from "./authenticated-test-session.js";
 
 const PNG_BUFFER = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl2nFQAAAAASUVORK5CYII=",
   "base64",
 );
 
-let requesterId: number;
 let ticketId: number;
+let requesterSession: TestSession;
 
 async function getReferenceId(
   endpoint: string,
   name: string,
 ): Promise<number> {
+  if (endpoint === "/api/development-requesters") {
+    const user = await getPrisma().user.findFirstOrThrow({
+      where: { name, isActive: true, role: "REQUESTER" },
+      select: { id: true },
+    });
+    return user.id;
+  }
   const response = await request(app).get(endpoint);
   expect(response.status).toBe(200);
 
@@ -53,13 +67,12 @@ async function createFixture(): Promise<void> {
         "Corporate Laptop",
       ),
     ]);
+  requesterSession = await createTestSession(selectedRequesterId);
 
-  const response = await request(app)
-    .post("/api/tickets")
-    .set(
-      "X-Development-Requester-Id",
-      String(selectedRequesterId),
-    )
+  const response = await authenticatedUnsafe(
+    request(app).post("/api/tickets"),
+    requesterSession,
+  )
     .send({
       clientSubmissionId: randomUUID(),
       categoryId,
@@ -71,7 +84,6 @@ async function createFixture(): Promise<void> {
     });
 
   expect(response.status).toBe(201);
-  requesterId = selectedRequesterId;
   ticketId = response.body.ticket.id;
 }
 
@@ -86,6 +98,7 @@ async function cleanFixture(): Promise<void> {
   await getPrisma().ticket.delete({
     where: { id: ticketId },
   });
+  await removeTestSessions([requesterSession]);
 }
 
 beforeAll(createFixture, 30_000);
@@ -110,12 +123,10 @@ describe("Issue #19 safe API failures", () => {
     setAttachmentStorageForTests(failingStorage);
     vi.spyOn(console, "error").mockImplementation(() => undefined);
 
-    const response = await request(app)
-      .post(`/api/tickets/${ticketId}/attachments`)
-      .set(
-        "X-Development-Requester-Id",
-        String(requesterId),
-      )
+    const response = await authenticatedUnsafe(
+      request(app).post(`/api/tickets/${ticketId}/attachments`),
+      requesterSession,
+    )
       .attach("file", PNG_BUFFER, {
         filename: "evidence.png",
         contentType: "image/png",
@@ -145,12 +156,10 @@ describe("Issue #19 safe API failures", () => {
     );
     vi.spyOn(console, "error").mockImplementation(() => undefined);
 
-    const response = await request(app)
-      .get(`/api/tickets/${ticketId}/attachments`)
-      .set(
-        "X-Development-Requester-Id",
-        String(requesterId),
-      );
+    const response = await authenticated(
+      request(app).get(`/api/tickets/${ticketId}/attachments`),
+      requesterSession,
+    );
 
     expect(response.status).toBe(500);
     expect(response.body).toEqual({
@@ -179,12 +188,10 @@ describe("Issue #19 safe API failures", () => {
       .mockRejectedValueOnce(unavailableError);
     vi.spyOn(console, "error").mockImplementation(() => undefined);
 
-    const internalResponse = await request(app)
-      .get(`/api/tickets/${ticketId}`)
-      .set(
-        "X-Development-Requester-Id",
-        String(requesterId),
-      );
+    const internalResponse = await authenticated(
+      request(app).get(`/api/tickets/${ticketId}`),
+      requesterSession,
+    );
     expect(internalResponse.status).toBe(500);
     expect(internalResponse.body).toEqual({
       error: {
@@ -196,12 +203,10 @@ describe("Issue #19 safe API failures", () => {
       /Prisma|SQL|DATABASE_URL|private|secret|stack/i,
     );
 
-    const unavailableResponse = await request(app)
-      .get(`/api/tickets/${ticketId}`)
-      .set(
-        "X-Development-Requester-Id",
-        String(requesterId),
-      );
+    const unavailableResponse = await authenticated(
+      request(app).get(`/api/tickets/${ticketId}`),
+      requesterSession,
+    );
     expect(unavailableResponse.status).toBe(503);
     expect(unavailableResponse.body).toEqual({
       error: {

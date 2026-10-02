@@ -1,4 +1,5 @@
 import { getPrisma } from "../server/src/prisma.js";
+import { cleanupPreparedIssue27TestDatabase } from "../server/src/testing/prepare-issue27-test-database.js";
 
 const FIXTURE_DESCRIPTIONS = [
   "Deterministic end-to-end Ticket data for final Lab 2 verification.",
@@ -36,5 +37,6 @@ export default async function globalTeardown(): Promise<void> {
     }
   } finally {
     await prisma.$disconnect();
+    await cleanupPreparedIssue27TestDatabase();
   }
 }

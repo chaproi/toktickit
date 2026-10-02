@@ -32,10 +32,13 @@ const TICKET = {
   category: { id: 2, name: "Hardware" },
   relatedSystem: { id: 7, name: "Corporate Laptop" },
   requestedPriority: "HIGH",
+  itPriority: "HIGH",
+  owner: null,
   currentStatus: "IN_PROGRESS",
   summary: "Laptop display flickers after startup",
   description:
     "The corporate laptop display flickers for several minutes after startup.",
+  requesterResolutionIndicatedAt: null,
   createdAt: "2026-09-06T08:30:00.000Z",
   updatedAt: "2026-09-06T09:45:00.000Z",
 };
@@ -101,6 +104,13 @@ function installFetchMock(override?: OverrideResponder) {
         return overridden;
       }
 
+      if (url.pathname === "/api/auth/me") {
+        return jsonResponse({
+          user: { ...REQUESTER, role: "REQUESTER", mustChangePassword: false },
+          session: { expiresAt: "2099-01-01T00:00:00.000Z" },
+        });
+      }
+
       if (url.pathname === "/api/development-requesters") {
         return jsonResponse([REQUESTER]);
       }
@@ -163,6 +173,14 @@ function installFetchMock(override?: OverrideResponder) {
         };
         attachments = [removedAttachment, REMOVED_ATTACHMENT];
         return jsonResponse(removedAttachment);
+      }
+
+      if (url.pathname === `/api/tickets/${TICKET.id}/comments`) {
+        return jsonResponse({
+          items: [],
+          pagination: { page: 1, pageSize: 20, totalItems: 0, totalPages: 0,
+            hasPreviousPage: false, hasNextPage: false },
+        });
       }
 
       throw new Error(`Unexpected request: ${url.toString()}`);
@@ -288,7 +306,8 @@ describe("Ticket Detail Attachment section", () => {
     const uploadOptions = uploadRequest[1] as RequestInit;
     expect(new Headers(uploadOptions.headers).get(
       "X-Development-Requester-Id",
-    )).toBe("1");
+    )).toBeNull();
+    expect(uploadOptions.credentials).toBe("include");
     expect(uploadOptions.body).toBeInstanceOf(FormData);
     expect((uploadOptions.body as FormData).get("file")).toBe(file);
 
@@ -407,7 +426,8 @@ describe("Ticket Detail Attachment section", () => {
         new Headers((options as RequestInit | undefined)?.headers).get(
           "X-Development-Requester-Id",
         ),
-      ).toBe("1");
+      ).toBeNull();
+      expect((options as RequestInit | undefined)?.credentials).toBe("include");
     }
   });
 
@@ -493,7 +513,8 @@ describe("Ticket Detail Attachment section", () => {
       new Headers(deleteOptions.headers).get(
         "X-Development-Requester-Id",
       ),
-    ).toBe("1");
+    ).toBeNull();
+    expect(deleteOptions.credentials).toBe("include");
 
     const attachmentList = screen.getByRole("list", {
       name: "Attachments",

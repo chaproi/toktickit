@@ -1,0 +1,709 @@
+import { cleanup, fireEvent, screen, waitFor, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { authResponse, jsonResponse, renderAt, requestUrl } from "./test-helpers.js";
+
+const administrator = {
+  id: 901,
+  name: "Admin Avery",
+  email: "admin.avery@example.test",
+  role: "ADMINISTRATOR" as const,
+  mustChangePassword: false,
+};
+const staff = {
+  id: 902,
+  name: "Staff Mina",
+  email: "staff.mina@example.test",
+  role: "IT_STAFF" as const,
+  isActive: true,
+  mustChangePassword: false,
+  createdAt: "2026-09-28T08:00:00.000Z",
+  updatedAt: "2026-09-28T08:00:00.000Z",
+};
+const self = {
+  ...staff,
+  id: administrator.id,
+  name: administrator.name,
+  email: administrator.email,
+  role: "ADMINISTRATOR" as const,
+};
+
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
+
+function installFetch({
+  auth = administrator,
+  list = async () => jsonResponse({ items: [self, staff] }),
+  mutate = async (_url: URL, _init?: RequestInit) => jsonResponse({ user: staff }),
+}: {
+  auth?: typeof administrator | typeof staff;
+  list?: (url: URL) => Promise<Response>;
+  mutate?: (url: URL, init?: RequestInit) => Promise<Response>;
+} = {}) {
+  const calls: Array<{ url: URL; init?: RequestInit }> = [];
+  vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = requestUrl(input);
+    calls.push({ url, init });
+    if (url.pathname === "/api/auth/me") return jsonResponse(authResponse(auth));
+    if (url.pathname === "/api/admin/users" && (!init?.method || init.method === "GET")) return list(url);
+    if (url.pathname.startsWith("/api/admin/users")) return mutate(url, init);
+    throw new Error(`Unexpected request: ${url.pathname}`);
+  }));
+  return calls;
+}
+
+async function completeCreateUser({
+  name,
+  email,
+  role = "IT_STAFF",
+}: {
+  name: string;
+  email: string;
+  role?: "REQUESTER" | "IT_STAFF" | "ADMINISTRATOR";
+}) {
+  await userEvent.click(screen.getByRole("button", { name: "Create User" }));
+  const dialog = screen.getByRole("dialog", { name: "Create User" });
+  await userEvent.type(within(dialog).getByLabelText("Name"), name);
+  await userEvent.type(within(dialog).getByLabelText("Email"), email);
+  await userEvent.selectOptions(within(dialog).getByLabelText("Role"), role);
+  await userEvent.type(within(dialog).getByLabelText("Initial Password"), "Valid Issue35! 7");
+  await userEvent.type(within(dialog).getByLabelText("Confirm Initial Password"), "Valid Issue35! 7");
+  await userEvent.click(within(dialog).getByRole("button", { name: "Create User" }));
+}
+
+describe("UI-10 and UI-11 Administrator User Management", () => {
+  it("shows a safe role destination without requesting protected User data", async () => {
+    const calls = installFetch({ auth: staff });
+    renderAt("/admin/users");
+    expect(await screen.findByRole("heading", { name: "Forbidden" })).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent("This page is not available for your role.");
+    expect(screen.getByRole("link", { name: "Go to role home" })).toHaveAttribute("href", "/staff/tickets");
+    expect(calls.some(({ url }) => url.pathname === "/api/admin/users")).toBe(false);
+  });
+
+  it("keeps a named loading region, then renders safe table and mobile-card fields with navigation", async () => {
+    let release: ((value: Response) => void) | undefined;
+    const deferred = new Promise<Response>((resolve) => { release = resolve; });
+    installFetch({ list: async () => deferred });
+    const { container } = renderAt("/admin/users");
+    expect(await screen.findByRole("heading", { name: "User Management" })).toBeInTheDocument();
+    expect(screen.getByText("Loading users…")).toHaveAttribute("role", "status");
+    expect(container.querySelector(".admin-user-skeleton")).toHaveAttribute("aria-hidden", "true");
+    expect(screen.queryByText("No users are available.")).not.toBeInTheDocument();
+    expect(screen.queryByText("No users match the current search.")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Search users")).toBeDisabled();
+    expect(screen.getByLabelText("Role")).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Search" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Clear Search" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Create User" })).toBeDisabled();
+    expect(screen.getByRole("link", { name: "Ticket Queue" })).toHaveAttribute("href", "/staff/tickets");
+    release!(jsonResponse({ items: [self, staff] }));
+    const table = await screen.findByRole("table", { name: "Users" });
+    expect(within(table).getByText("Users", { selector: "caption" })).toBeInTheDocument();
+    for (const heading of ["Name", "Email", "Role", "Status", "Edit"]) expect(within(table).getByRole("columnheader", { name: heading })).toBeInTheDocument();
+    expect(within(table).getByText("Staff Mina")).toBeInTheDocument();
+    expect(within(table).getByText("IT Staff")).toBeInTheDocument();
+    expect(within(table).getAllByText("Active").length).toBeGreaterThan(0);
+    expect(container.querySelector(".admin-user-cards")).not.toBeNull();
+  });
+
+  it("applies trimmed search and one role filter and distinguishes empty from no-results", async () => {
+    const calls = installFetch({ list: async (url) => jsonResponse({ items: url.search ? [] : [staff] }) });
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.type(screen.getByLabelText("Search users"), "  mina  ");
+    await userEvent.selectOptions(screen.getByLabelText("Role"), "IT_STAFF");
+    await userEvent.click(screen.getByRole("button", { name: "Search" }));
+    expect(await screen.findByText("No users match the current search.")).toBeInTheDocument();
+    const request = calls.filter(({ url }) => url.pathname === "/api/admin/users").at(-1)!.url;
+    expect(request.searchParams.get("search")).toBe("mina");
+    expect(request.searchParams.get("role")).toBe("IT_STAFF");
+    await userEvent.click(screen.getByRole("button", { name: "Clear Search" }));
+    await screen.findByText("Staff Mina");
+  });
+
+  it("shows safe list failure without stale rows and retries", async () => {
+    let attempt = 0;
+    installFetch({ list: async () => {
+      attempt += 1;
+      return attempt === 1
+        ? jsonResponse({ error: { code: "INTERNAL_ERROR", message: "Something went wrong. Please try again." } }, 500)
+        : jsonResponse({ items: [staff] });
+    } });
+    renderAt("/admin/users");
+    expect(await screen.findByRole("alert")).toHaveTextContent("Something went wrong. Please try again.");
+    expect(screen.queryByText("Staff Mina")).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Try Again" }));
+    expect(await screen.findByText("Staff Mina")).toBeInTheDocument();
+  });
+
+  it("creates a User with validation, busy protection, safe success, and focus on the new row", async () => {
+    let release: ((value: Response) => void) | undefined;
+    const deferred = new Promise<Response>((resolve) => { release = resolve; });
+    const created = { ...staff, id: 903, name: "New User", email: "new.user@example.test", mustChangePassword: true };
+    let mutationComplete = false;
+    installFetch({
+      list: async () => jsonResponse({ items: mutationComplete ? [self, staff, created] : [self, staff] }),
+      mutate: async () => {
+        const response = await deferred;
+        mutationComplete = true;
+        return response;
+      },
+    });
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.click(screen.getByRole("button", { name: "Create User" }));
+    const dialog = screen.getByRole("dialog", { name: "Create User" });
+    await userEvent.click(within(dialog).getByRole("button", { name: "Create User" }));
+    expect(within(dialog).getByRole("alert")).toHaveTextContent("Please correct");
+    await userEvent.type(within(dialog).getByLabelText("Name"), "New User");
+    await userEvent.type(within(dialog).getByLabelText("Email"), "new.user@example.test");
+    await userEvent.selectOptions(within(dialog).getByLabelText("Role"), "IT_STAFF");
+    await userEvent.type(within(dialog).getByLabelText("Initial Password"), "Valid Issue35! 7");
+    await userEvent.type(within(dialog).getByLabelText("Confirm Initial Password"), "Valid Issue35! 7");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Create User" }));
+    expect(within(dialog).getByRole("button", { name: "Creating user…" })).toBeDisabled();
+    release!(jsonResponse({ user: created }, 201));
+    expect(await screen.findByText("New User was created.")).toHaveAttribute("role", "status");
+    expect(screen.queryByRole("dialog", { name: "Create User" })).not.toBeInTheDocument();
+    expect(await screen.findByText("New User")).toHaveFocus();
+    expect(document.body.textContent).not.toContain("Valid Issue35! 7");
+  });
+
+  it("reconciles successful creation against the active search and uses authoritative server data", async () => {
+    const mismatched = { ...staff, id: 903, name: "Other User", email: "other.user@example.test", mustChangePassword: true };
+    const submitted = { ...staff, id: 904, name: "Mina Submitted", email: "mina.submitted@example.test", mustChangePassword: true };
+    const authoritative = { ...submitted, name: "Mina Authoritative", email: "mina.authoritative@example.test", updatedAt: "2026-09-28T11:00:00.000Z" };
+    let mutations = 0;
+    const calls = installFetch({
+      list: async (url) => jsonResponse({
+        items: url.searchParams.get("search") === "mina"
+          ? mutations >= 2 ? [staff, authoritative] : [staff]
+          : [staff],
+      }),
+      mutate: async () => {
+        mutations += 1;
+        return jsonResponse({ user: mutations === 1 ? mismatched : submitted }, 201);
+      },
+    });
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.type(screen.getByLabelText("Search users"), "mina");
+    await userEvent.click(screen.getByRole("button", { name: "Search" }));
+    await screen.findByText("Staff Mina");
+
+    await completeCreateUser({ name: mismatched.name, email: mismatched.email });
+    expect(await screen.findByText("Other User was created.")).toHaveAttribute("role", "status");
+    await waitFor(() => expect(calls.filter(({ url, init }) =>
+      url.pathname === "/api/admin/users" && !init?.method && url.searchParams.get("search") === "mina")).toHaveLength(2));
+    expect(screen.queryByRole("button", { name: "Edit Other User" })).not.toBeInTheDocument();
+
+    await completeCreateUser({ name: submitted.name, email: submitted.email });
+    expect(await screen.findByRole("button", { name: "Edit Mina Authoritative" })).toBeInTheDocument();
+    expect(screen.getByText("mina.authoritative@example.test")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Edit Mina Submitted" })).not.toBeInTheDocument();
+  });
+
+  it("removes an edited User that no longer matches the active role filter", async () => {
+    const requester = { ...staff, role: "REQUESTER" as const, updatedAt: "2026-09-28T11:00:00.000Z" };
+    let edited = false;
+    const calls = installFetch({
+      list: async (url) => jsonResponse({ items: edited && url.searchParams.get("role") === "IT_STAFF" ? [] : [staff] }),
+      mutate: async () => {
+        edited = true;
+        return jsonResponse({ user: requester });
+      },
+    });
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.selectOptions(screen.getByLabelText("Role"), "IT_STAFF");
+    await userEvent.click(screen.getByRole("button", { name: "Search" }));
+    await screen.findByText("Staff Mina");
+    await userEvent.click(screen.getByRole("button", { name: "Edit Staff Mina" }));
+    const dialog = screen.getByRole("dialog", { name: "Edit Staff Mina" });
+    await userEvent.selectOptions(within(dialog).getByLabelText("Role"), "REQUESTER");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Save User" }));
+    expect(await screen.findByText("No users match the current search.")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Edit Staff Mina" })).not.toBeInTheDocument();
+    expect(calls.filter(({ url, init }) => url.pathname === "/api/admin/users" && !init?.method)
+      .at(-1)!.url.searchParams.get("role")).toBe("IT_STAFF");
+  });
+
+  it("describes preserved terminal ownership for deactivation and conversion to Requester", async () => {
+    installFetch();
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.click(screen.getByRole("button", { name: "Edit Staff Mina" }));
+    const dialog = screen.getByRole("dialog", { name: "Edit Staff Mina" });
+    const guidance = /historical owner references on CLOSED and CANCELLED Tickets remain preserved/i;
+    await userEvent.selectOptions(within(dialog).getByLabelText("Status"), "inactive");
+    expect(within(dialog).getByText(guidance)).toBeInTheDocument();
+    await userEvent.selectOptions(within(dialog).getByLabelText("Status"), "active");
+    await userEvent.selectOptions(within(dialog).getByLabelText("Role"), "REQUESTER");
+    expect(within(dialog).getByText(guidance)).toBeInTheDocument();
+  });
+
+  it("programmatically associates every Administrator dialog description", async () => {
+    installFetch();
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.click(screen.getByRole("button", { name: "Create User" }));
+    expect(screen.getByRole("dialog", { name: "Create User" }))
+      .toHaveAccessibleDescription("Create one User with one role and an initial password.");
+    await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
+    await userEvent.click(screen.getByRole("button", { name: "Edit Staff Mina" }));
+    expect(screen.getByRole("dialog", { name: "Edit Staff Mina" }))
+      .toHaveAccessibleDescription("Edit approved profile and access fields.");
+    await userEvent.click(screen.getByRole("button", { name: "Set New Initial Password" }));
+    expect(screen.getByRole("dialog", { name: "Set New Initial Password" }))
+      .toHaveAccessibleDescription("Set a new initial password for Staff Mina. All current sessions will end.");
+  });
+
+  it("marks every create field as programmatically required", async () => {
+    installFetch();
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.click(screen.getByRole("button", { name: "Create User" }));
+    const dialog = screen.getByRole("dialog", { name: "Create User" });
+    for (const label of ["Name", "Email", "Role", "Status", "Initial Password", "Confirm Initial Password"]) {
+      expect(within(dialog).getByLabelText(label)).toHaveAttribute("aria-required", "true");
+    }
+  });
+
+  it("associates stable field errors with invalid profile controls", async () => {
+    installFetch();
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.click(screen.getByRole("button", { name: "Create User" }));
+    const dialog = screen.getByRole("dialog", { name: "Create User" });
+    await userEvent.click(within(dialog).getByRole("button", { name: "Create User" }));
+
+    const name = within(dialog).getByLabelText("Name");
+    const email = within(dialog).getByLabelText("Email");
+    expect(name).toHaveAttribute("aria-invalid", "true");
+    expect(name).toHaveAttribute("aria-describedby", "admin-user-name-error");
+    expect(name).toHaveAccessibleDescription("Name must contain between 2 and 120 characters.");
+    expect(email).toHaveAttribute("aria-invalid", "true");
+    expect(email).toHaveAttribute("aria-describedby", "admin-user-email-error");
+    expect(email).toHaveAccessibleDescription("Enter a valid email address.");
+  });
+
+  it("associates password guidance and combined field errors with both password controls", async () => {
+    installFetch();
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.click(screen.getByRole("button", { name: "Create User" }));
+    const dialog = screen.getByRole("dialog", { name: "Create User" });
+    const initialPassword = within(dialog).getByLabelText("Initial Password");
+    const confirmPassword = within(dialog).getByLabelText("Confirm Initial Password");
+    const guidance = /Use 12.*128 characters.*must change this password.*not emailed or retrievable/i;
+    expect(initialPassword).toHaveAccessibleDescription(guidance);
+    expect(confirmPassword).toHaveAccessibleDescription(guidance);
+
+    await userEvent.type(initialPassword, "short");
+    await userEvent.type(confirmPassword, "different");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Create User" }));
+    expect(initialPassword).toHaveAttribute("aria-invalid", "true");
+    expect(initialPassword).toHaveAttribute(
+      "aria-describedby",
+      "admin-password-help admin-initial-password-error",
+    );
+    expect(initialPassword).toHaveAccessibleDescription(/Use 12.*128 characters.*Use 12.*128 characters/i);
+    expect(confirmPassword).toHaveAttribute("aria-invalid", "true");
+    expect(confirmPassword).toHaveAttribute(
+      "aria-describedby",
+      "admin-password-help admin-confirm-password-error",
+    );
+    expect(confirmPassword).toHaveAccessibleDescription(/must change this password.*Password confirmation must match/i);
+  });
+
+  it("traps focus, makes the background inert, restores focus, and blocks dismissal while saving", async () => {
+    let release: ((value: Response) => void) | undefined;
+    const deferred = new Promise<Response>((resolve) => { release = resolve; });
+    installFetch({ mutate: async () => deferred });
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    const trigger = screen.getByRole("button", { name: "Create User" });
+    await userEvent.click(trigger);
+    let dialog = screen.getByRole("dialog", { name: "Create User" });
+    const name = within(dialog).getByLabelText("Name");
+    const cancel = within(dialog).getByRole("button", { name: "Cancel" });
+    const focusable = Array.from(dialog.querySelectorAll<HTMLElement>(
+      "button:not(:disabled), input:not(:disabled), select:not(:disabled)",
+    ));
+    expect(focusable[0]).toBe(name);
+    expect(focusable.at(-1)).toBe(cancel);
+    expect(name).toHaveFocus();
+    expect(screen.getByRole("banner", { hidden: true })).toHaveAttribute("inert");
+    cancel.focus();
+    fireEvent.keyDown(cancel, { key: "Tab", code: "Tab", keyCode: 9, which: 9 });
+    expect(name).toHaveFocus();
+    fireEvent.keyDown(name, { key: "Tab", code: "Tab", keyCode: 9, which: 9, shiftKey: true });
+    expect(cancel).toHaveFocus();
+    await userEvent.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog", { name: "Create User" })).not.toBeInTheDocument();
+    await waitFor(() => expect(trigger).toHaveFocus());
+
+    await userEvent.click(trigger);
+    dialog = screen.getByRole("dialog", { name: "Create User" });
+    await userEvent.type(within(dialog).getByLabelText("Name"), "Busy User");
+    await userEvent.type(within(dialog).getByLabelText("Email"), "busy.user@example.test");
+    await userEvent.type(within(dialog).getByLabelText("Initial Password"), "Valid Issue35! 7");
+    await userEvent.type(within(dialog).getByLabelText("Confirm Initial Password"), "Valid Issue35! 7");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Create User" }));
+    expect(within(dialog).getByRole("button", { name: "Creating user…" })).toBeDisabled();
+    await userEvent.keyboard("{Escape}");
+    expect(screen.getByRole("dialog", { name: "Create User" })).toBeInTheDocument();
+    expect(within(dialog).getByRole("button", { name: "Cancel" })).toBeDisabled();
+    release!(jsonResponse({ user: { ...staff, id: 904, name: "Busy User", email: "busy.user@example.test" } }, 201));
+    expect(await screen.findByText("Busy User was created.")).toBeInTheDocument();
+  });
+
+  it("keeps duplicate-email errors and safe input inside the active dialog", async () => {
+    installFetch({ mutate: async () => jsonResponse({ error: { code: "EMAIL_ALREADY_EXISTS", message: "A User with this email already exists." } }, 409) });
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.click(screen.getByRole("button", { name: "Create User" }));
+    const dialog = screen.getByRole("dialog", { name: "Create User" });
+    await userEvent.type(within(dialog).getByLabelText("Name"), "Duplicate User");
+    await userEvent.type(within(dialog).getByLabelText("Email"), "staff.mina@example.test");
+    await userEvent.type(within(dialog).getByLabelText("Initial Password"), "Valid Issue35! 7");
+    await userEvent.type(within(dialog).getByLabelText("Confirm Initial Password"), "Valid Issue35! 7");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Create User" }));
+    expect(await within(dialog).findByRole("alert")).toHaveTextContent("already exists");
+    const email = within(dialog).getByLabelText("Email");
+    expect(email).toHaveValue("staff.mina@example.test");
+    expect(email).toHaveAttribute("aria-invalid", "true");
+    expect(email).toHaveAttribute("aria-describedby", "admin-user-email-error");
+    expect(email).toHaveAccessibleDescription("A User with this email already exists.");
+  });
+
+  it("protects self role/status while allowing profile fields and omits self reset", async () => {
+    installFetch();
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.click(screen.getByRole("button", { name: `Edit ${self.name}` }));
+    const dialog = screen.getByRole("dialog", { name: `Edit ${self.name}` });
+    expect(within(dialog).getByLabelText("Role")).toBeDisabled();
+    expect(within(dialog).getByLabelText("Status")).toBeDisabled();
+    expect(within(dialog).getByText("You cannot change your own role or deactivate your own account here.")).toBeInTheDocument();
+    expect(within(dialog).queryByRole("button", { name: "Set New Initial Password" })).not.toBeInTheDocument();
+    expect(within(dialog).getByLabelText("Name")).toBeEnabled();
+  });
+
+  it("updates the authenticated shell and filtered User list together after a self-profile edit", async () => {
+    const updatedSelf = {
+      ...self,
+      name: "Administrator Avery Updated",
+      email: "administrator.avery.updated@example.test",
+      updatedAt: "2026-09-28T12:00:00.000Z",
+    };
+    let edited = false;
+    installFetch({
+      list: async () => jsonResponse({ items: edited ? [updatedSelf, staff] : [self, staff] }),
+      mutate: async () => {
+        edited = true;
+        return jsonResponse({ user: updatedSelf });
+      },
+    });
+    renderAt("/admin/users");
+    await screen.findByRole("button", { name: `Edit ${self.name}` });
+    expect(screen.getByText(self.name, { selector: "p.fw-semibold" })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: `Edit ${self.name}` }));
+    const dialog = screen.getByRole("dialog", { name: `Edit ${self.name}` });
+    const name = within(dialog).getByLabelText("Name");
+    const email = within(dialog).getByLabelText("Email");
+    await userEvent.clear(name);
+    await userEvent.type(name, updatedSelf.name);
+    await userEvent.clear(email);
+    await userEvent.type(email, updatedSelf.email);
+    await userEvent.click(within(dialog).getByRole("button", { name: "Save User" }));
+
+    expect(await screen.findByRole("button", { name: `Edit ${updatedSelf.name}` })).toBeInTheDocument();
+    expect(screen.getByText(updatedSelf.name, { selector: "p.fw-semibold" })).toBeInTheDocument();
+    expect(screen.queryByText(self.name, { selector: "p.fw-semibold" })).not.toBeInTheDocument();
+    expect(screen.getByText(updatedSelf.email)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "User Management" })).toHaveAttribute("aria-current", "page");
+  });
+
+  it("retains edits and focus after ordinary/conflict failures and can reload authoritative User state", async () => {
+    let mutation = 0;
+    installFetch({
+      list: async () => jsonResponse({ items: mutation ? [{ ...staff, name: "Authoritative Staff", updatedAt: "2026-09-28T09:00:00.000Z" }] : [staff] }),
+      mutate: async () => {
+        mutation += 1;
+        return jsonResponse({ error: { code: "STALE_WRITE", message: "This User changed. Reload and try again." } }, 409);
+      },
+    });
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.click(screen.getByRole("button", { name: "Edit Staff Mina" }));
+    const dialog = screen.getByRole("dialog", { name: "Edit Staff Mina" });
+    const name = within(dialog).getByLabelText("Name");
+    await userEvent.clear(name);
+    await userEvent.type(name, "Entered Edit");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Save User" }));
+    const alert = await within(dialog).findByRole("alert");
+    expect(alert).toHaveTextContent("changed since you opened");
+    expect(name).toHaveValue("Entered Edit");
+    expect(alert).toHaveFocus();
+    await userEvent.click(within(dialog).getByRole("button", { name: "Reload User" }));
+    expect(await within(dialog).findByDisplayValue("Authoritative Staff")).toBeInTheDocument();
+  });
+
+  it("reconciles conflict reloads against the active query without patching an unfiltered User", async () => {
+    const movedOutsideSearch = {
+      ...staff,
+      name: "Authoritative Other",
+      email: "authoritative.other@example.test",
+      updatedAt: "2026-09-28T09:00:00.000Z",
+    };
+    let conflictRaised = false;
+    let filteredReads = 0;
+    let releaseFilteredReload: ((value: Response) => void) | undefined;
+    const filteredReload = new Promise<Response>((resolve) => { releaseFilteredReload = resolve; });
+    const calls = installFetch({
+      list: async (url) => {
+        if (url.searchParams.get("search") === "mina") {
+          filteredReads += 1;
+          if (conflictRaised && filteredReads === 2) return filteredReload;
+          return jsonResponse({ items: [staff] });
+        }
+        return jsonResponse({ items: conflictRaised ? [movedOutsideSearch] : [staff] });
+      },
+      mutate: async () => {
+        conflictRaised = true;
+        return jsonResponse({ error: { code: "STALE_WRITE", message: "This User changed. Reload and try again." } }, 409);
+      },
+    });
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.type(screen.getByLabelText("Search users"), "mina");
+    await userEvent.click(screen.getByRole("button", { name: "Search" }));
+    await screen.findByText("Staff Mina");
+
+    await userEvent.click(screen.getByRole("button", { name: "Edit Staff Mina" }));
+    const dialog = screen.getByRole("dialog", { name: "Edit Staff Mina" });
+    await userEvent.clear(within(dialog).getByLabelText("Name"));
+    await userEvent.type(within(dialog).getByLabelText("Name"), "Entered Edit");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Save User" }));
+    const alert = await within(dialog).findByRole("alert");
+    expect(alert).toHaveTextContent("changed since you opened");
+    expect(alert).toHaveFocus();
+    expect(within(dialog).getByLabelText("Name")).toHaveValue("Entered Edit");
+
+    await userEvent.click(within(dialog).getByRole("button", { name: "Reload User" }));
+    await waitFor(() => expect(filteredReads).toBe(2));
+    expect(screen.getByText("Loading users…")).toHaveAttribute("role", "status");
+    expect(screen.getByRole("dialog", { name: "Edit Staff Mina" })).toBeInTheDocument();
+    expect(within(dialog).getByRole("button", { name: "Reload User" })).toBeDisabled();
+    releaseFilteredReload!(jsonResponse({ items: [] }));
+
+    expect(await screen.findByText("No users match the current search.")).toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Edit Staff Mina" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Edit Authoritative Other" })).not.toBeInTheDocument();
+    const userReads = calls.filter(({ url, init }) => url.pathname === "/api/admin/users" && !init?.method);
+    expect(userReads.at(-1)!.url.searchParams.get("search")).toBe("mina");
+    expect(userReads.filter(({ url }) => url.searchParams.get("search") === null)).toHaveLength(1);
+  });
+
+  it("retains an accessible active-query retry after an authoritative conflict reload fails", async () => {
+    const authoritative = {
+      ...staff,
+      name: "Staff Mina Authoritative",
+      updatedAt: "2026-09-28T09:00:00.000Z",
+    };
+    let conflictRaised = false;
+    let filteredReads = 0;
+    let releaseFailedReload: ((value: Response) => void) | undefined;
+    let releaseSuccessfulRetry: ((value: Response) => void) | undefined;
+    const failedReload = new Promise<Response>((resolve) => { releaseFailedReload = resolve; });
+    const successfulRetry = new Promise<Response>((resolve) => { releaseSuccessfulRetry = resolve; });
+    const calls = installFetch({
+      list: async (url) => {
+        const isActiveQuery =
+          url.searchParams.get("search") === "mina" &&
+          url.searchParams.get("role") === "IT_STAFF";
+        if (!isActiveQuery) return jsonResponse({ items: [staff] });
+        filteredReads += 1;
+        if (!conflictRaised) return jsonResponse({ items: [staff] });
+        return filteredReads === 2 ? failedReload : successfulRetry;
+      },
+      mutate: async () => {
+        conflictRaised = true;
+        return jsonResponse({ error: { code: "STALE_WRITE", message: "This User changed. Reload and try again." } }, 409);
+      },
+    });
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.type(screen.getByLabelText("Search users"), "mina");
+    await userEvent.selectOptions(screen.getByLabelText("Role"), "IT_STAFF");
+    await userEvent.click(screen.getByRole("button", { name: "Search" }));
+    await screen.findByText("Staff Mina");
+
+    await userEvent.click(screen.getByRole("button", { name: "Edit Staff Mina" }));
+    const dialog = screen.getByRole("dialog", { name: "Edit Staff Mina" });
+    const name = within(dialog).getByLabelText("Name");
+    await userEvent.clear(name);
+    await userEvent.type(name, "Entered Edit");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Save User" }));
+    expect(await within(dialog).findByRole("alert")).toHaveTextContent("changed since you opened");
+
+    await userEvent.click(within(dialog).getByRole("button", { name: "Reload User" }));
+    await waitFor(() => expect(filteredReads).toBe(2));
+    const processingReload = within(dialog).getByRole("button", { name: "Reload User" });
+    expect(processingReload).toBeDisabled();
+    await userEvent.click(processingReload);
+    expect(filteredReads).toBe(2);
+    expect(screen.getByRole("banner", { hidden: true })).toHaveAttribute("inert");
+    releaseFailedReload!(jsonResponse({ error: { code: "INTERNAL_ERROR", message: "database details" } }, 500));
+
+    const safeAlert = await within(dialog).findByRole("alert");
+    expect(safeAlert).toHaveTextContent("Something went wrong. Please try again.");
+    expect(safeAlert).not.toHaveTextContent("database details");
+    expect(safeAlert).toHaveFocus();
+    expect(dialog).toContainElement(document.activeElement as HTMLElement);
+    expect(within(dialog).getByLabelText("Name")).toHaveValue("Entered Edit");
+    expect(screen.getByLabelText("Search users")).toHaveValue("mina");
+    expect(document.querySelector("#admin-role-filter")).toHaveValue("IT_STAFF");
+    const retryReload = within(dialog).getByRole("button", { name: "Reload User" });
+    expect(retryReload).toBeEnabled();
+
+    await userEvent.click(retryReload);
+    await waitFor(() => expect(filteredReads).toBe(3));
+    expect(within(dialog).getByRole("button", { name: "Reload User" })).toBeDisabled();
+    await userEvent.click(within(dialog).getByRole("button", { name: "Reload User" }));
+    expect(filteredReads).toBe(3);
+    const reads = calls.filter(({ url, init }) =>
+      url.pathname === "/api/admin/users" && !init?.method);
+    expect(reads).toHaveLength(4);
+    for (const read of reads.slice(1)) {
+      expect(read.url.searchParams.get("search")).toBe("mina");
+      expect(read.url.searchParams.get("role")).toBe("IT_STAFF");
+    }
+    expect((reads[2]!.init?.signal as AbortSignal).aborted).toBe(true);
+    releaseSuccessfulRetry!(jsonResponse({ items: [authoritative] }));
+
+    expect(await within(dialog).findByDisplayValue("Staff Mina Authoritative")).toHaveFocus();
+    expect(within(screen.getByRole("table", { name: "Users" })).getByText("Staff Mina Authoritative")).toBeInTheDocument();
+    expect(screen.getByLabelText("Search users")).toHaveValue("mina");
+    expect(document.querySelector("#admin-role-filter")).toHaveValue("IT_STAFF");
+  });
+
+  it("retains the last authoritative filtered list after a conflict reload fails and the dialog closes", async () => {
+    let conflictRaised = false;
+    let activeQueryReads = 0;
+    const calls = installFetch({
+      list: async (url) => {
+        const activeQuery = url.searchParams.get("search") === "mina" &&
+          url.searchParams.get("role") === "IT_STAFF";
+        if (!activeQuery) return jsonResponse({ items: [staff] });
+        activeQueryReads += 1;
+        return conflictRaised
+          ? jsonResponse({ error: { code: "INTERNAL_ERROR", message: "private database detail" } }, 500)
+          : jsonResponse({ items: [staff] });
+      },
+      mutate: async () => {
+        conflictRaised = true;
+        return jsonResponse({ error: { code: "STALE_WRITE", message: "This User changed." } }, 409);
+      },
+    });
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.type(screen.getByLabelText("Search users"), "mina");
+    await userEvent.selectOptions(screen.getByLabelText("Role"), "IT_STAFF");
+    await userEvent.click(screen.getByRole("button", { name: "Search" }));
+    await screen.findByText("Staff Mina");
+
+    await userEvent.click(screen.getByRole("button", { name: "Edit Staff Mina" }));
+    let dialog = screen.getByRole("dialog", { name: "Edit Staff Mina" });
+    await userEvent.click(within(dialog).getByRole("button", { name: "Save User" }));
+    expect(await within(dialog).findByRole("alert")).toHaveTextContent("changed since you opened");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Reload User" }));
+    expect(await within(dialog).findByRole("alert")).toHaveTextContent("Something went wrong. Please try again.");
+    expect(activeQueryReads).toBe(2);
+    await userEvent.click(within(dialog).getByRole("button", { name: "Cancel" }));
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Edit Staff Mina" })).toBeInTheDocument();
+    expect(screen.queryByText("No users match the current search.")).not.toBeInTheDocument();
+    expect(screen.queryByText("No users are available.")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Search users")).toHaveValue("mina");
+    expect(document.querySelector("#admin-role-filter")).toHaveValue("IT_STAFF");
+    const activeReads = calls.filter(({ url, init }) =>
+      url.pathname === "/api/admin/users" && !init?.method &&
+      url.searchParams.get("search") === "mina" && url.searchParams.get("role") === "IT_STAFF");
+    expect(activeReads).toHaveLength(2);
+  });
+
+  it.each([
+    ["USER_HAS_NON_TERMINAL_TICKETS", "Reassign or unassign this User's non-terminal Tickets first."],
+    ["LAST_ACTIVE_ADMIN_REQUIRED", "At least one active Administrator is required."],
+    ["CONCURRENT_UPDATE", "This user changed concurrently. Reload the latest details."],
+  ])("keeps safe %s feedback and retained edits inside the active dialog", async (code, message) => {
+    installFetch({
+      mutate: async () => jsonResponse({ error: { code, message: "server-safe-message" } }, 409),
+    });
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.click(screen.getByRole("button", { name: "Edit Staff Mina" }));
+    const dialog = screen.getByRole("dialog", { name: "Edit Staff Mina" });
+    const name = within(dialog).getByLabelText("Name");
+    await userEvent.clear(name);
+    await userEvent.type(name, "Retained Edit");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Save User" }));
+    const alert = await within(dialog).findByRole("alert");
+    expect(alert).toHaveTextContent(message);
+    expect(alert).toHaveFocus();
+    expect(name).toHaveValue("Retained Edit");
+    expect(screen.getByRole("banner", { hidden: true })).toHaveAttribute("inert");
+    expect(screen.queryByText("server-safe-message")).not.toBeInTheDocument();
+  });
+
+  it("sets another User's initial password, clears password fields, and refreshes forced-change state", async () => {
+    const updated = { ...staff, mustChangePassword: true, updatedAt: "2026-09-28T10:00:00.000Z" };
+    installFetch({ mutate: async () => jsonResponse({ user: updated }) });
+    renderAt("/admin/users");
+    await screen.findByText("Staff Mina");
+    await userEvent.click(screen.getByRole("button", { name: "Edit Staff Mina" }));
+    await userEvent.click(screen.getByRole("button", { name: "Set New Initial Password" }));
+    const dialog = screen.getByRole("dialog", { name: "Set New Initial Password" });
+    await userEvent.type(within(dialog).getByLabelText("Initial Password"), "Another Issue35! 7");
+    await userEvent.type(within(dialog).getByLabelText("Confirm Initial Password"), "Another Issue35! 7");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Set Initial Password" }));
+    expect(await screen.findByText("A new initial password was set. The user must change it at next login.")).toHaveAttribute("role", "status");
+    expect(document.body.textContent).not.toContain("Another Issue35! 7");
+  });
+
+  it.each(["Cancel", "Escape"])(
+    "returns from the password dialog to the selected User edit context with focus after %s",
+    async (dismissal) => {
+      installFetch();
+      renderAt("/admin/users");
+      await screen.findByText("Staff Mina");
+      await userEvent.click(screen.getByRole("button", { name: "Edit Staff Mina" }));
+      let dialog = screen.getByRole("dialog", { name: "Edit Staff Mina" });
+      const name = within(dialog).getByLabelText("Name");
+      await userEvent.clear(name);
+      await userEvent.type(name, "Retained Staff Edit");
+      await userEvent.click(within(dialog).getByRole("button", { name: "Set New Initial Password" }));
+      const passwordDialog = screen.getByRole("dialog", { name: "Set New Initial Password" });
+      await userEvent.type(within(passwordDialog).getByLabelText("Initial Password"), "Discarded Issue35! 8");
+      if (dismissal === "Cancel") {
+        await userEvent.click(within(passwordDialog).getByRole("button", { name: "Cancel" }));
+      } else {
+        await userEvent.keyboard("{Escape}");
+      }
+
+      expect(screen.queryByRole("dialog", { name: "Set New Initial Password" })).not.toBeInTheDocument();
+      dialog = screen.getByRole("dialog", { name: "Edit Staff Mina" });
+      expect(within(dialog).getByLabelText("Name")).toHaveValue("Retained Staff Edit");
+      expect(within(dialog).getByText("Password change required: No")).toBeInTheDocument();
+      expect(within(dialog).getByRole("button", { name: "Set New Initial Password" })).toHaveFocus();
+      expect(document.body.textContent).not.toContain("Discarded Issue35! 8");
+    },
+  );
+});

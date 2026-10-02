@@ -6,7 +6,7 @@ describe("Attachment Upload API", () => {
         vi.unstubAllGlobals();
     });
 
-    it("UI-04 uploads one file using FormData and Requester header", async () => {
+    it("UI-04 uploads one file using FormData and the authenticated session", async () => {
         const responseBody = {
             id: 501,
             ticketId: 101,
@@ -36,7 +36,7 @@ describe("Attachment Upload API", () => {
             { type: "image/png" },
         );
 
-        const result = await uploadAttachment(1, 101, file);
+        const result = await uploadAttachment(101, file);
 
         expect(fetchMock).toHaveBeenCalledTimes(1);
 
@@ -49,9 +49,10 @@ describe("Attachment Upload API", () => {
             "http://localhost:3000/api/tickets/101/attachments",
         );
         expect(options.method).toBe("POST");
-        expect(options.headers).toEqual({
-            "X-Development-Requester-Id": "1",
-        });
+        expect(new Headers(options.headers).has(
+            "X-Development-Requester-Id",
+        )).toBe(false);
+        expect(options.credentials).toBe("include");
         expect(options.body).toBeInstanceOf(FormData);
         expect((options.body as FormData).get("file")).toBe(file);
         expect(result).toEqual(responseBody);

@@ -1,0 +1,399 @@
+# Lab 3 Test Plan
+
+## 1. Status and Strategy
+
+The matrix contains 75 Test IDs. Following completion and verification of Issues #27, #29, #31, #33, #35, and #37, 16 Test IDs are recorded as `Pass (Issue #27)`, 13 as `Pass (Issue #29)`, 3 as `Pass (Issue #31)`, 12 as `Pass (Issue #33)`, 18 as `Pass (Issue #35)`, and 13 as `Pass (Issue #37)`. No Test ID remains `Planned`.
+
+The suite uses an isolated PostgreSQL TEST_DATABASE_URL protected by the existing structural database guard. Tests must be deterministic, independent of execution order, use unique fixture keys, and clean up only their own data. Authentication tests use non-production fixture credentials supplied at runtime. Cookies and password material must never appear in snapshots, logs, or retained artifacts.
+
+Test levels:
+
+- Unit: isolated validation, hashing configuration, exact Origin parsing, query parsing, transition, and invariant rules.
+- API/integration: Express, Prisma, cookies, CSRF, persistence, response DTOs, and safe failures.
+- Security/authorization: direct endpoint attacks, identity spoofing, resource isolation, secret redaction, and final-state race assertions.
+- Migration/regression: populated Lab 2 upgrade, exact status/null-owner transformation, ownership preservation, deterministic repeatability, seed idempotency, and earlier suites.
+- UI/style/responsive: role routes, screen states, accessibility, Zen Green consistency, exact evidence viewports, and 200% zoom.
+- E2E: real-browser workflows through the client, API, and isolated database.
+
+## 2. Test Matrix
+
+### 2.1 Unit Tests
+
+| Test ID | Requirement / AC | What It Tests | Expected Result | Planned Automated Test File | Status |
+| --- | --- | --- | --- | --- | --- |
+| UNIT-01 | BR-05–BR-07, AC-05, AC-06 | Password boundaries, category rule, confirmation, current-password difference, and Argon2id configuration | Valid input accepted; invalid input rejected; only encoded hashes stored | server/tests/lab-03/auth-validation.unit.test.ts | Pass (Issue #27) |
+| UNIT-02 | BR-08–BR-16, AC-07–AC-09, AC-61 | Session token digests, expiry, cookie flags, CSRF comparison, and exact normalized Origin tuple parsing | Default ports normalize correctly; null/malformed/partial tuples fail closed; session and CSRF rules remain deterministic | server/tests/lab-03/session-security.unit.test.ts | Pass (Issue #27) |
+| UNIT-03 | BR-02–BR-04, BR-17, AC-02–AC-04 | Email normalization and login-throttle window calculations | Equivalent emails share a key; five failures trigger the documented block | server/tests/lab-03/login-throttle.unit.test.ts | Pass (Issue #27) |
+| UNIT-04 | BR-69–BR-74, AC-18–AC-20 | Queue search/filter/sort/page parsing and priority/status ordering | Only whitelisted values produce stable order specifications | server/tests/lab-03/staff-queue-query.unit.test.ts | Pass (Issue #31) |
+| UNIT-05 | BR-34–BR-48, AC-24–AC-30, AC-60 | Nullable owner in every status, non-null eligibility, unassign rules, complete status matrix, confirmations, and reasons | Unassigned stored states remain valid; mutation prerequisites and every allowed/forbidden edge are exact | server/tests/lab-03/ticket-workflow.unit.test.ts | Pass (Issue #33) |
+| UNIT-06 | BR-49–BR-57, AC-31–AC-37 | Comment, Note, and resolution-indication validation | Trimmed boundaries and eligible statuses are enforced | server/tests/lab-03/ticket-communication.unit.test.ts | Pass (Issue #33) |
+| UNIT-07 | BR-34, BR-41, BR-58–BR-68, AC-42–AC-48, AC-57, AC-58, AC-60 | User validation, one-role rule, self/last-admin/non-terminal-owner guards, lock ordering, bounded serialization retry, and history | Approved changes preserve history; deterministic User/Ticket lock sets and every safety violation are exact | server/tests/lab-03/admin-user-validation.unit.test.ts | Pass (Issue #35) |
+| UNIT-08 | BR-28–BR-33, BR-80, AC-14, AC-15, AC-39 | Authenticated Requester creation defaults and retained Lab 2 validation adapters | Session identity is used and Lab 2 business limits remain unchanged | server/tests/lab-03/requester-regression.unit.test.ts | Pass (Issue #29) |
+
+### 2.2 API and Integration Tests
+
+| Test ID | Requirement / AC | What It Tests | Expected Result | Planned Automated Test File | Status |
+| --- | --- | --- | --- | --- | --- |
+| API-01 | FR-01, FR-02, AC-01, AC-02, AC-61 | Valid/invalid Login after approved Origin, cookie creation, safe DTO, and dummy-hash path | 200 and cookies only after exact Origin plus valid active credentials; identical safe 401 for invalid credentials | server/tests/lab-03/auth.api.test.ts | Pass (Issue #27) |
+| API-02 | FR-06, AC-03, AC-04 | Inactive-account handling and persistent normalized-email/IP throttle, including deterministically overlapping same-key failures at the threshold and an independent second key | Safe 403 after valid inactive credentials; overlapping failures atomically advance the count from three to five, establish one 15-minute block row, leave the independent key unchanged, and make the next request a safe 429 without exposing sensitive data | server/tests/lab-03/auth.api.test.ts | Pass (Issue #27) |
+| API-03 | FR-03, FR-04, AC-07, AC-08 | Current User, idle/absolute expiry, inactivation, logout deletion, and cookie clearing | Safe User returned only for a live active session; revoked access cannot be reused | server/tests/lab-03/auth.api.test.ts | Pass (Issue #27) |
+| API-04 | FR-05, AC-05, AC-06 | Forced-password route restriction and successful/invalid password changes | Only permitted auth endpoints work until valid change; session rotates afterward | server/tests/lab-03/password-change.api.test.ts | Pass (Issue #27) |
+| API-05 | FR-06, AC-09, AC-61 | CSRF cookie/header/digest and exact Origin validation on authenticated unsafe endpoints and Login distinction | Authenticated failures and Login Origin failures return exact 403 codes with no write/session | server/tests/lab-03/csrf.api.test.ts | Pass (Issue #27) |
+| API-06 | FR-10–FR-12, AC-12, AC-14, AC-15 | Authenticated Ticket creation/list, ignored spoof headers, defaults, and idempotency | Session User owns the Ticket; NEW/null owner/copied priority are atomic | server/tests/lab-03/requester-tickets.api.test.ts | Pass (Issue #29) |
+| API-07 | FR-13, FR-15, AC-13, AC-14 | Requester Detail DTO and missing/non-owned equivalence | Owned Detail includes Lab 3 public fields; foreign resource returns safe 404 | server/tests/lab-03/requester-tickets.api.test.ts | Pass (Issue #29) |
+| API-08 | FR-14, FR-21, AC-13, AC-38, AC-39 | Role-aware Attachment listing/content and Requester-only upload/removal | Existing files persist; role/ownership/mutation rules and 410 behavior hold | server/tests/lab-03/attachments.api.test.ts | Pass (Issue #29) |
+| API-09 | FR-18, FR-19, AC-17–AC-21 | Queue fields, search, all filters/sorts/pages, empty/no-results data, and invalid queries | Stable correct pages or documented 400 response | server/tests/lab-03/staff-queue.api.test.ts | Pass (Issue #31) |
+| API-10 | FR-20, FR-21, AC-22, AC-23 | Operational Detail and eligible-assignee DTO for Staff/Admin versus Requester | Permitted roles receive grouped data; Requester receives 403 | server/tests/lab-03/staff-ticket-detail.api.test.ts | Pass (Issue #33) |
+| API-11 | FR-22, FR-23, AC-24–AC-26, AC-60 | Claim including any migrated non-terminal status, idempotent own claim, competing claim, assignment/reassignment/unassign, target eligibility | Nullable states remain valid; committed non-null owner is eligible; all conflicts are safe | server/tests/lab-03/staff-ticket-ownership.api.test.ts | Pass (Issue #33) |
+| API-12 | FR-24, AC-27, AC-30 | IT Priority update, terminal rejection, optimistic concurrency, Requested Priority immutability | Only IT Priority changes on a current eligible Ticket | server/tests/lab-03/staff-ticket-workflow.api.test.ts | Pass (Issue #33) |
+| API-13 | FR-25, FR-26, AC-28–AC-30, AC-60 | Every transition, unassigned stored states, owner eligibility at commit, confirmation, reason, history, stale/concurrent write | Matrix and append-only history are exact with no partial writes or ineligible owner | server/tests/lab-03/staff-ticket-workflow.api.test.ts | Pass (Issue #33) |
+| API-14 | FR-27, FR-28, AC-33–AC-35 | Public Comment creation/list pagination, ownership, author, timestamp, validation, inert content | One safe append-only Comment or documented rejection | server/tests/lab-03/comments-notes.api.test.ts | Pass (Issue #29) |
+| API-15 | FR-29, AC-36, AC-37 | Internal Note creation/list and Requester denial-before-lookup | Staff/Admin see safe Notes; Requester receives 403 and no content | server/tests/lab-03/comments-notes.api.test.ts | Pass (Issue #33) |
+| API-16 | FR-17, AC-31, AC-32 | Requester resolution indication, eligible status, owner protection, repeated request, reopen clearing | Status unchanged; one current-cycle indication; safe rejection otherwise | server/tests/lab-03/resolution-indication.api.test.ts | Pass (Issue #33) |
+| API-17 | FR-31, AC-40, AC-41 | Admin User list DTO, deterministic order, search, optional role, invalid queries, role denial | Safe non-credential summaries or 403/400 | server/tests/lab-03/users-admin.api.test.ts | Pass (Issue #35) |
+| API-18 | FR-32, FR-37, AC-42, AC-43 | User creation, normalized duplicate email, one role, password hashing, unknown fields | Atomic 201 with mustChangePassword true or documented safe rejection | server/tests/lab-03/users-admin.api.test.ts | Pass (Issue #35) |
+| API-19 | FR-33, FR-35, FR-36, AC-44–AC-47, AC-60 | User edit, stale write, self/last-admin/non-terminal-owner guards, shared locks, and session invalidation | Only valid approved fields and session changes commit; final User/Ticket invariants always hold | server/tests/lab-03/users-admin.api.test.ts | Pass (Issue #35) |
+| API-20 | FR-34, AC-48 | Initial-password reset, self-reset rejection, hash replacement, forced change, all-session revocation | Target’s old sessions fail and next login is gated | server/tests/lab-03/users-admin.api.test.ts | Pass (Issue #35) |
+| API-21 | FR-42, BR-76–BR-79, AC-52 | Unexpected database/storage/hash failures and DTO/log redaction | Safe 500/503 body with no protected material | `server/tests/lab-03/safe-errors.api.test.ts`<br>`server/tests/lab-03/password-verification-outage.api.test.ts` | Pass (Issue #37) |
+| API-22 | FR-33, FR-36, BR-20, BR-22, BR-34, BR-41, BR-65, AC-44, AC-47, AC-57, AC-58, AC-60 | OP-30 matrix: historical Requesters, non-terminal/terminal owners, Staff/Admin swaps, session invalidation, lock ordering, and last-admin precedence | Historical references remain; current permissions change; exact conflicts and final database state satisfy invariants | server/tests/lab-03/users-admin-history.api.test.ts | Pass (Issue #35) |
+| API-23 | FR-22, FR-38, AC-24, AC-50, AC-59 | Staff Queue and Claim after migration for each mapped legacy status with ownerId=null | Every migrated Ticket is visible as Unassigned; every non-terminal one can be claimed without status rewrite; terminal claim conflicts | server/tests/lab-03/migrated-ticket-claim.api.test.ts | Pass (Issue #37) |
+| API-24 | FR-01, FR-06, BR-16, AC-01, AC-02, AC-61 | Login Origin matrix: missing, null, malformed, wrong scheme/host/port, misleading suffix/subdomain, approved default/explicit port, no Referer fallback, no CSRF requirement | Exact ORIGIN_REQUIRED/ORIGIN_FORBIDDEN responses; approved Origin reaches credentials; rejection creates no AuthSession/cookies and reveals no account existence | server/tests/lab-03/login-origin.api.test.ts | Pass (Issue #27) |
+
+### 2.3 Security and Authorization Tests
+
+| Test ID | Requirement / AC | What It Tests | Expected Result | Planned Automated Test File | Status |
+| --- | --- | --- | --- | --- | --- |
+| SEC-01 | FR-06, FR-08, AC-07–AC-11 | Every protected endpoint without, after-expiry, after-logout, and forced-change session | 401 or PASSWORD_CHANGE_REQUIRED; no protected DTO | server/tests/lab-03/authorization.api.test.ts | Pass (Issue #37) |
+| SEC-02 | FR-08, authorization matrix, AC-10, AC-11, AC-22, AC-41 | Complete role-operation matrix including direct URL/API access | Every allowed cell succeeds and every forbidden cell is 403 | server/tests/lab-03/authorization.api.test.ts | Pass (Issue #37) |
+| SEC-03 | BR-03, BR-04, BR-07, AC-02–AC-04, AC-52 | Enumeration resistance and credential/token/hash redaction | Equivalent invalid responses and no secret output/log capture | server/tests/lab-03/auth-security.api.test.ts | Pass (Issue #27) |
+| SEC-04 | BR-21–BR-25, AC-12, AC-13 | Header/body identity spoofing and Ticket/Attachment ownership probing | Authenticated identity wins; protected existence is hidden | server/tests/lab-03/requester-ownership.api.test.ts | Pass (Issue #29) |
+| SEC-05 | BR-25, BR-52, AC-37, AC-52 | Requester probing Internal Notes with valid/invalid Ticket and Note identifiers | Identical role denial occurs before lookup and never includes content | server/tests/lab-03/authorization.api.test.ts | Pass (Issue #37) |
+| SEC-06 | BR-14–BR-16, AC-09, AC-61 | Cross-site authenticated unsafe requests, Login Origin attacks, exact allowlist tuples, no Referer fallback, and cookie attributes | CSRF/Origin controls prevent mutation or session creation without leaking account existence | server/tests/lab-03/csrf.api.test.ts | Pass (Issue #27) |
+| SEC-07 | FR-43, BR-40, BR-41, BR-64, BR-68, AC-24–AC-30, AC-44–AC-47, AC-58, AC-60 | Lock-order and bounded-retry harness for claims, workflow, duplicate email, last-admin, and owner-eligibility concurrency | User locks precede Ticket locks in ascending ids; only 40001 retries at most twice; final rows satisfy invariants | server/tests/lab-03/concurrency.api.test.ts | Pass (Issue #35) |
+| SEC-08 | BR-20, BR-22, BR-41, BR-65, AC-57, AC-58, AC-60 | Authorization immediately after Requester role change/deactivation and safe owner conflicts under concurrent User/Ticket edits | Former Requester access is denied; historical references remain; conflict bodies disclose no Ticket contents | server/tests/lab-03/user-role-history-security.api.test.ts | Pass (Issue #35) |
+| SEC-09 | FR-22, FR-43, BR-34, BR-35, BR-41, AC-24, AC-60 | Claim versus claimant deactivation in both lock orders | Claim-first leaves active eligible owner and blocks deactivation; deactivation-first leaves owner null and blocks claim; final User/Ticket/session rows asserted | server/tests/lab-03/ownership-eligibility-races.api.test.ts | Pass (Issue #35) |
+| SEC-10 | FR-23, FR-43, BR-34, BR-41, BR-65, AC-25, AC-47, AC-60 | Assign versus target deactivation in both lock orders | Assign-first blocks deactivation; deactivation-first blocks assignment; final owner/role/isActive/session rows asserted | server/tests/lab-03/ownership-eligibility-races.api.test.ts | Pass (Issue #35) |
+| SEC-11 | FR-23, FR-43, BR-34, BR-41, BR-65, AC-25, AC-47, AC-60 | Assign versus target change to REQUESTER in both lock orders | Assign-first blocks demotion; demotion-first blocks assignment; final owner/role/session rows asserted | server/tests/lab-03/ownership-eligibility-races.api.test.ts | Pass (Issue #35) |
+| SEC-12 | FR-23, FR-43, BR-34, BR-41, BR-65, AC-25, AC-47, AC-60 | Reassign versus old-owner deactivation/demotion in both lock orders | Reassign-first can release old owner; edit-first conflicts while ownership remains; final old/new User, Ticket, and session rows asserted | server/tests/lab-03/ownership-eligibility-races.api.test.ts | Pass (Issue #35) |
+| SEC-13 | FR-23, FR-43, BR-34, BR-41, BR-65, AC-25, AC-47, AC-60 | Reassign versus new-owner deactivation/demotion in both lock orders | Reassign-first blocks edit; edit-first blocks reassign; final old/new User, Ticket, and session rows asserted | server/tests/lab-03/ownership-eligibility-races.api.test.ts | Pass (Issue #35) |
+| SEC-14 | FR-25, FR-26, FR-43, BR-38, BR-41, AC-28, AC-29, AC-47, AC-60 | Owner-dependent status transition versus owner deactivation/demotion, including terminal transition | Non-terminal result retains eligible owner or conflicts; terminal result may retain historical owner; final Ticket/history/User/session rows asserted | server/tests/lab-03/ownership-eligibility-races.api.test.ts | Pass (Issue #35) |
+| SEC-15 | FR-35, FR-36, FR-43, BR-41, BR-64, BR-65, BR-68, AC-44–AC-47, AC-58, AC-60 | Concurrent Administrator edits, last-admin count, stale version, owned Tickets, lock order, and exhausted serialization retry | One valid commit; loser gets exact safe conflict; final admin count, User versions, sessions, and Ticket owners asserted | server/tests/lab-03/admin-concurrency.api.test.ts | Pass (Issue #35) |
+
+### 2.4 Migration and Regression Tests
+
+| Test ID | Requirement / AC | What It Tests | Expected Result | Planned Automated Test File | Status |
+| --- | --- | --- | --- | --- | --- |
+| MIG-01 | FR-38, FR-39, AC-49, AC-59 | Populated Lab 2 schema migrates without reset; User/Ticket/Attachment ids, requester/uploader/remover links, row counts, timestamps, checksums, and foreign keys | Every preserved value/reference/count matches preflight; no historical owner or status history is fabricated | server/tests/lab-03/lab2-to-lab3.migration.test.ts | Pass (Issue #27) |
+| MIG-02 | FR-38, Data migration, AC-50, AC-59 | All seven legacy status mappings, IT Priority backfill, ownerId=null in every status, and unknown-status preflight | Exact table transformation; unsupported value fails before mutation; no status changes merely to satisfy owner rules | server/tests/lab-03/lab2-to-lab3.migration.test.ts | Pass (Issue #27) |
+| MIG-03 | FR-38, BR-05–BR-07, AC-05, AC-49, AC-56 | Valid per-User migration mapping produces independently salted Argon2id hashes and mandatory password change | Hashes differ even for independently processed Users; mustChangePassword is true; plaintext never persists or appears in output | server/tests/lab-03/lab2-to-lab3.migration.test.ts | Pass (Issue #27) |
+| MIG-04 | FR-40, AC-51 | Seed mapping validation, repeatability, required role counts, realistic distribution, safe sample communication, and sequence continuity | Unique per-User runtime credentials create fixtures once; two runs preserve existing hashes | server/tests/lab-03/seed.integration.test.ts | Pass (Issue #27) |
+| MIG-05 | FR-38, BR-05–BR-07, AC-49, AC-56 | Migration preflight with a missing User credential, duplicate credential, policy-invalid value, and unexpected key | Each invalid mapping fails before schema/data mutation and never echoes credentials | server/tests/lab-03/lab2-to-lab3-credentials.migration.test.ts | Pass (Issue #27) |
+| MIG-06 | FR-38, FR-39, BR-34, BR-35, AC-49, AC-50, AC-59 | Two migrations from equivalent populated snapshots containing every legacy status, followed by Queue/claim fixture checks | Postflight checksums are identical; every ownerId is null; all mapped Tickets are visible; every non-terminal Ticket is claimable without status rewrite | `server/tests/lab-03/lab2-to-lab3-repeatability.migration.test.ts`<br>`server/tests/lab-03/migrated-ticket-claim.api.test.ts` | Pass (Issue #37) |
+| REG-01 | BR-81, AC-55 | Original Lab 1 health and Category API/client behavior | All original Lab 1 tests remain regression obligations | `server/tests/lab-01/categories.test.ts`<br>`server/tests/lab-01/health.test.ts`<br>`client/tests/lab-01/App.test.tsx` | Pass (Issue #37) |
+| REG-02 | FR-44, BR-28–BR-33, BR-80, AC-14, AC-39, AC-55 | Lab 2 server Ticket, query, validation, number, Attachment, and safe-error behavior under session identity | All non-identity behavior remains a regression obligation; approved identity assertions are covered by the Lab 3 file | Existing: `server/tests/lab-02/attachment-validation.unit.test.ts`<br>`server/tests/lab-02/attachments.api.test.ts`<br>`server/tests/lab-02/create-ticket.api.test.ts`<br>`server/tests/lab-02/error-handling.api.test.ts`<br>`server/tests/lab-02/my-tickets.api.test.ts`<br>`server/tests/lab-02/reference-data.api.test.ts`<br>`server/tests/lab-02/test-database.unit.test.ts`<br>`server/tests/lab-02/ticket-detail.api.test.ts`<br>`server/tests/lab-02/ticket-number.unit.test.ts`<br>`server/tests/lab-02/ticket-query.unit.test.ts`<br>`server/tests/lab-02/ticket-validation.unit.test.ts`<br>Authenticated: `server/tests/lab-03/requester-tickets.api.test.ts` | Pass (Issue #37) |
+| REG-03 | FR-44, AC-14, AC-16, AC-55 | Lab 2 Requester client flows and E2E without selector/Change Requester | Existing flows remain regression obligations; the equivalent authenticated Lab 3 workflow has no obsolete identity state | Existing: `client/tests/lab-02/AttachmentSection.test.tsx`<br>`client/tests/lab-02/AttachmentUploadApi.test.tsx`<br>`client/tests/lab-02/CreateTicket.test.tsx`<br>`client/tests/lab-02/MyTickets.test.tsx`<br>`client/tests/lab-02/RequesterTicketDetail.test.tsx`<br>`client/tests/lab-02/UiStyleAccessibility.test.tsx`<br>`e2e/lab-02/requester-ticket-flow.spec.ts`<br>Authenticated: `e2e/lab-03/requester-regression.spec.ts` | Pass (Issue #37) |
+
+### 2.5 UI, Style, and Responsive Tests
+
+| Test ID | Requirement / AC | What It Tests | Expected Result | Planned Automated Test File | Status |
+| --- | --- | --- | --- | --- | --- |
+| UI-01 | FR-01, FR-06, AC-01–AC-04, AC-61 | Login initial, validation, busy, success, invalid, inactive, throttle, Origin-required/forbidden, and safe-failure states | Approved safe copy, cleared password, and no duplicate submission or account enumeration | client/tests/lab-03/Login.test.tsx | Pass (Issue #29) |
+| UI-02 | FR-05, AC-05, AC-06 | Forced Change Password fields, rules, mismatch, busy, failure, success, and route gate | Normal app opens only after successful rotation | client/tests/lab-03/ChangePassword.test.tsx | Pass (Issue #29) |
+| UI-03 | FR-07–FR-09, AC-08, AC-10, AC-11, AC-16 | Current User loading, role navigation, logout, protected routes, obsolete selector redirect | Exact destinations per role and direct access blocked | client/tests/lab-03/AuthenticatedShell.test.tsx | Pass (Issue #29) |
+| UI-04 | FR-11–FR-17, AC-12–AC-16, AC-31–AC-35, AC-39 | Requester screens use session identity, show Lab 3 fields/Comments/indication, preserve Attachments, omit Notes | Complete owned workflow with all relevant states | client/tests/lab-03/RequesterTicketFlow.test.tsx | Pass (Issue #29) |
+| UI-05 | FR-18, FR-19, AC-17–AC-22, AC-59 | Queue controls, all mapped migrated unassigned statuses, applied query, table/cards, pagination, and states | Migrated Tickets remain visible as Unassigned and query/state behavior matches contract | client/tests/lab-03/StaffTicketQueue.test.tsx | Pass (Issue #31) |
+| UI-06 | FR-20, FR-21, AC-23, AC-38, AC-59 | Operational Detail groups, unassigned status validity, Claim availability, read-only/editable distinction, Attachments, and states | Every non-terminal migrated unassigned Detail offers Claim without status rewrite | client/tests/lab-03/StaffTicketDetail.test.tsx | Pass (Issue #33) |
+| UI-07 | FR-22–FR-26, AC-24–AC-30, AC-60 | Claim/assign/priority/status dialogs, owner-eligibility/concurrent/stale/terminal conflicts, and success refresh | Only permitted actions appear; safe race conflict reloads exact committed server state | client/tests/lab-03/StaffTicketActions.test.tsx | Pass (Issue #33) |
+| UI-08 | FR-27–FR-30, AC-33–AC-37 | Public versus Internal visual distinction, validation, pagination, safe rendering, announcements | Private composer is unmistakable; content is inert text | client/tests/lab-03/CommentsNotes.test.tsx | Pass (Issue #33) |
+| UI-09 | FR-17, AC-31, AC-32 | Resolution-indication confirmation, eligible controls, success, repeated, conflict, safe failure | Formal status is not represented as changed | client/tests/lab-03/ResolutionIndication.test.tsx | Pass (Issue #29) |
+| UI-10 | FR-31, AC-40, AC-41 | Admin User list/search/filter and all meaningful screen states | Required columns and Edit action; role denial safe | client/tests/lab-03/UserManagement.test.tsx | Pass (Issue #35) |
+| UI-11 | FR-32–FR-37, AC-42–AC-48, AC-57, AC-58, AC-60 | Admin create/edit/reset forms, historical-reference guidance, field errors, owner/concurrent/stale/safety conflicts, success, focus return | Minimal operations complete without excluded controls, history rewrites, or misleading race success | client/tests/lab-03/UserManagement.test.tsx | Pass (Issue #35) |
+| STYLE-01 | FR-41, AC-53, AC-54 | Zen Green tokens, badges, editable/read-only fields, focus, labels, live regions, non-color cues | Shared accessible visual contract is present | client/tests/lab-03/UiStyleAccessibility.test.tsx | Pass (Issue #37) |
+| RESP-01 | FR-41, AC-53 | All six major screens at exactly 390 x 844, 834 x 1112, and 1440 x 900 with the 18 named screenshot paths in ui-spec.md | Each exact viewport screenshot exists; assertions find no page overflow, clipped/overlapping essential content, or hidden required action | e2e/lab-03/responsive.spec.ts | Pass (Issue #37) |
+| RESP-02 | FR-41, AC-54 | All six screens at 200% browser zoom: keyboard focus, controls/validation, content geometry, Comments/Notes distinction, editable/read-only distinction | Named assertions prove visible focus, usability, no essential clipping/overlap/overflow, and non-color distinctions | e2e/lab-03/responsive.spec.ts | Pass (Issue #37) |
+
+### 2.6 End-to-End Tests
+
+| Test ID | Requirement / AC | What It Tests | Expected Result | Planned Automated Test File | Status |
+| --- | --- | --- | --- | --- | --- |
+| E2E-01 | AC-01–AC-09, AC-61 | Approved-Origin valid/invalid/inactive/throttled Login, Origin-safe UI failure, mandatory change, reload, logout, blocked reuse | Complete secure authentication lifecycle with session creation only after approved Origin | e2e/lab-03/authentication.spec.ts | Pass (Issue #29) |
+| E2E-02 | AC-10–AC-16, AC-31–AC-35, AC-39 | Requester role shell, create/list/detail/Attachment, Public Comment, resolution indication, ownership attack | Existing workflow continues under authenticated identity | e2e/lab-03/requester-regression.spec.ts | Pass (Issue #29) |
+| E2E-03 | AC-17–AC-30, AC-36–AC-38, AC-59 | Queue query, migrated unassigned Detail/claim, Attachment read, reassign, priority, transitions, Comment, Note | Complete operational Staff workflow with preserved migrated status and privacy distinction | e2e/lab-03/staff-ticket-flow.spec.ts | Pass (Issue #33) |
+| E2E-04 | AC-40–AC-48, AC-57, AC-58, AC-60 | Admin list/search/filter, create, duplicate error, role/history edits, owner/admin/concurrent safety conflicts, reset, forced change | Complete minimal User Management workflow with preserved history and fresh-state race feedback | e2e/lab-03/user-administration.spec.ts | Pass (Issue #35) |
+| E2E-05 | AC-10, AC-11, AC-13, AC-22, AC-37, AC-41, AC-52 | Direct navigation/API role and ownership matrix plus safe browser-visible failures | No unauthorized content appears before or after navigation | e2e/lab-03/authorization.spec.ts | Pass (Issue #37) |
+
+## 3. Acceptance-Criterion Traceability
+
+Every Acceptance Criterion maps to at least one Test ID in the current status matrix.
+
+| AC | Test IDs |
+| --- | --- |
+| AC-01 | API-01, API-24, UI-01, E2E-01 |
+| AC-02 | UNIT-03, API-01, API-24, SEC-03, UI-01, E2E-01 |
+| AC-03 | API-02, UI-01, E2E-01 |
+| AC-04 | UNIT-03, API-02, SEC-03, UI-01, E2E-01 |
+| AC-05 | UNIT-01, API-04, MIG-03, UI-02, E2E-01 |
+| AC-06 | UNIT-01, API-04, UI-02, E2E-01 |
+| AC-07 | UNIT-02, API-03, SEC-01, E2E-01 |
+| AC-08 | API-03, SEC-01, UI-03, E2E-01 |
+| AC-09 | UNIT-02, API-05, SEC-06, E2E-01 |
+| AC-10 | SEC-02, UI-03, E2E-02, E2E-05 |
+| AC-11 | API-04, SEC-01, SEC-02, UI-03, E2E-05 |
+| AC-12 | API-06, SEC-04, UI-04, E2E-02 |
+| AC-13 | API-07, API-08, SEC-04, E2E-02, E2E-05 |
+| AC-14 | UNIT-08, API-06, API-07, REG-02, REG-03, UI-04, E2E-02 |
+| AC-15 | UNIT-08, API-06, UI-04, E2E-02 |
+| AC-16 | REG-03, UI-03, UI-04, E2E-02 |
+| AC-17 | API-09, UI-05, E2E-03 |
+| AC-18 | UNIT-04, API-09, UI-05, E2E-03 |
+| AC-19 | UNIT-04, API-09, UI-05, E2E-03 |
+| AC-20 | UNIT-04, API-09, UI-05 |
+| AC-21 | API-09, UI-05, E2E-03 |
+| AC-22 | API-10, SEC-02, UI-05, E2E-05 |
+| AC-23 | API-10, UI-06, E2E-03 |
+| AC-24 | UNIT-05, API-11, API-23, SEC-07, SEC-09, UI-07, E2E-03 |
+| AC-25 | UNIT-05, API-11, SEC-07, SEC-10, SEC-11, SEC-12, SEC-13, UI-07, E2E-03 |
+| AC-26 | UNIT-05, API-11, UI-07, E2E-03 |
+| AC-27 | API-12, SEC-07, UI-07, E2E-03 |
+| AC-28 | UNIT-05, API-13, SEC-07, SEC-14, UI-07, E2E-03 |
+| AC-29 | UNIT-05, API-13, SEC-07, SEC-14, UI-07, E2E-03 |
+| AC-30 | UNIT-05, API-12, API-13, UI-07, E2E-03 |
+| AC-31 | UNIT-06, API-16, UI-09, E2E-02 |
+| AC-32 | UNIT-06, API-16, UI-09, E2E-02 |
+| AC-33 | UNIT-06, API-14, UI-04, UI-08, E2E-02 |
+| AC-34 | API-14, UI-08, E2E-02 |
+| AC-35 | UNIT-06, API-14, UI-08, E2E-02 |
+| AC-36 | UNIT-06, API-15, UI-08, E2E-03 |
+| AC-37 | API-15, SEC-05, UI-08, E2E-05 |
+| AC-38 | API-08, API-10, UI-06, E2E-03 |
+| AC-39 | UNIT-08, API-08, REG-02, UI-04, E2E-02 |
+| AC-40 | API-17, UI-10, E2E-04 |
+| AC-41 | API-17, SEC-02, UI-10, E2E-05 |
+| AC-42 | UNIT-07, API-18, UI-11, E2E-04 |
+| AC-43 | UNIT-07, API-18, UI-11, E2E-04 |
+| AC-44 | UNIT-07, API-19, API-22, SEC-07, SEC-15, UI-11, E2E-04 |
+| AC-45 | UNIT-07, API-19, UI-11, E2E-04 |
+| AC-46 | UNIT-07, API-19, SEC-07, SEC-15, UI-11, E2E-04 |
+| AC-47 | UNIT-07, API-19, API-22, SEC-07, SEC-08, SEC-10, SEC-11, SEC-12, SEC-13, SEC-14, SEC-15, UI-11, E2E-04 |
+| AC-48 | UNIT-07, API-20, UI-11, E2E-04 |
+| AC-49 | MIG-01, MIG-03, MIG-05, MIG-06 |
+| AC-50 | API-23, MIG-02, MIG-06 |
+| AC-51 | MIG-04 |
+| AC-52 | API-21, SEC-03, SEC-05, E2E-05 |
+| AC-53 | STYLE-01, RESP-01 |
+| AC-54 | STYLE-01, RESP-02 |
+| AC-55 | REG-01, REG-02, REG-03 |
+| AC-56 | MIG-03, MIG-05 |
+| AC-57 | UNIT-07, API-22, SEC-08, UI-11, E2E-04 |
+| AC-58 | UNIT-07, API-22, SEC-07, SEC-08, SEC-15, UI-11, E2E-04 |
+| AC-59 | API-23, MIG-01, MIG-02, MIG-06, UI-05, UI-06, E2E-03 |
+| AC-60 | UNIT-05, UNIT-07, API-11, API-13, API-19, API-22, SEC-07, SEC-08, SEC-09, SEC-10, SEC-11, SEC-12, SEC-13, SEC-14, SEC-15, UI-07, UI-11, E2E-04 |
+| AC-61 | UNIT-02, API-01, API-05, API-24, SEC-06, UI-01, E2E-01 |
+
+## 4. Required Test Data and Isolation
+
+- Each test run creates unique email, Ticket Summary, Comment, and Note markers.
+- Password fixtures are injected through test environment setup and are redacted from assertion output.
+- Session and CSRF cookies are parsed only in memory; raw values are never snapshot-tested.
+- Concurrency tests coordinate both requests with barriers so each prescribed lock order is exercised. They inspect committed User role/isActive/updatedAt, Ticket owner/status/updatedAt, AuthSession deletion/retention, and status-history rows after both responses; HTTP assertions alone are insufficient.
+- Lock-protocol tests instrument query order to prove ascending User-id locks precede ascending Ticket-id locks, inject SQLSTATE 40001 to prove no more than two retries, and prove business conflicts and non-40001 failures are not retried.
+- Migration tests begin from a fixture database created by applying the Lab 2 migrations and seed before Lab 3. The fixture includes every Lab 2 status, representative Attachments/timestamps/references, and a controlled unsupported-status preflight fixture; equivalent snapshots are migrated twice for checksum comparison.
+- E2E cleanup deletes only records with the run marker and never uses the development database.
+- Time-bound tests use a controllable clock rather than real sleeps.
+
+## 5. Planned Verification Commands
+
+From server:
+
+    npm test
+    npm run build
+
+From client:
+
+    npm test
+    npm run build
+
+From repository root:
+
+    npm run test:e2e
+
+Migration verification shall additionally run the documented Lab 2-to-Lab 3 migration command against two equivalent disposable populated snapshots and compare preflight/postflight counts and checksums. It then exercises Staff Queue and Claim against each mapped status. The final implementation record shall add exact command output and counts only after execution.
+
+## 6. Responsive and Evidence Plan
+
+Playwright shall check Login, mandatory Change Password, authenticated Requester shell/updated Ticket Detail, Staff Queue, Staff Ticket Detail, and Administrator User Management at exactly 390 x 844, 834 x 1112, and 1440 x 900. RESP-01 captures the 18 exact paths specified in ui-spec.md and asserts geometry/required-action visibility; screenshots supplement semantic assertions and are not a pixel-diff baseline.
+
+RESP-02 runs all six screens separately at 200% browser zoom and names assertions for visible keyboard focus, usable controls/validation, unclipped essential content, non-overlap, no unintended horizontal page overflow, Public Comment/Internal Note distinction, and editable/read-only distinction. Optional retained zoom screenshots use artifacts/lab-03/screenshots/zoom-200/{screen}.png.
+
+Required visual states include:
+
+- Login invalid, inactive, busy, missing/disallowed-Origin, and safe-failure feedback.
+- Mandatory Change Password validation and success.
+- Populated and no-results Queue with visible filters, owner, priorities, status, and migrated unassigned Tickets.
+- Operational Detail with Public Comments and unmistakably private Internal Notes.
+- Assignment, priority, status confirmation, conflict, and success.
+- Admin list, create/edit validation, safety conflict, and initial-password reset confirmation.
+- Keyboard focus and mobile navigation.
+
+## 7. Completion Rule
+
+No Planned entry may be changed to Pass until its file exists, the asserted behavior matches the approved contract, and the command has passed on the implementation branch. Skipped, commented-out, quarantined, or weakened tests do not satisfy an AC.
+
+## 8. Issue #29 Semantic-Coverage Correction Evidence
+
+The four Issue #29 Pass rows challenged by the final audit now have direct coverage in their designated files:
+
+- `UNIT-08` asserts authenticated Requester ownership, `NEW`, `ownerId = null`, copied Requested/IT Priority, and rejection of submitted current or legacy ownership fields.
+- `API-08` performs a successful owning-Requester upload and soft removal, verifies the persisted relationship and metadata, checks response redaction, and retains Staff/Administrator mutation denials.
+- `SEC-04` proves that a spoofed legacy identity header cannot replace the authenticated Requester and that foreign and missing Ticket probes have the same safe response without protected details; the existing body-spoof and Attachment-probe cases remain.
+- `UI-04` exercises Public Comment submission/rendering, Attachment upload/removal, resolution indication without formal status mutation, and loading, empty, no-results, validation, dependency-failure, and safe not-found states.
+
+Tests-only RED commit `6dd78d4` failed only the new `UNIT-08` creation-data assertion because the pure builder was not yet exported; the other newly asserted production behavior already existed and passed. GREEN commit `8fd1e16` introduced and used the smallest pure creation-data builder without changing the API. Test-only commit `815155e` made the existing password boundary tables deterministic under the ordinary full client run by setting exact field values through change events; it retained the same boundary, Unicode, internal-whitespace, submission, and rejection assertions.
+
+After these commits, the focused server run passed 3 files / 10 tests and the focused Requester UI run passed 1 file / 8 tests. The ordinary complete commands passed 30 server files / 203 tests and 12 client files / 94 tests. All 8 Playwright scenarios, both production builds, and the compiled-server health smoke passed. No Test ID status changed: the matrix remains 75 = 16 `Pass (Issue #27)` + 13 `Pass (Issue #29)` + 46 `Planned`; `API-16` and `SEC-01` remain `Planned`.
+
+## 9. PR #30 Requested-Changes Regression Evidence
+
+Corrective RED commit `25e7c24` added deterministic database-lock/barrier coverage in `server/tests/lab-03/requester-mutation-concurrency.api.test.ts` for Ticket creation, Public Comment creation, resolution indication, Attachment upload, and Attachment removal. Each mutation is covered against both Requester deactivation and role change in both meaningful commit orders. The 10 cases initially failed only because stale eligibility could commit or because a committed eligibility change did not produce the safe conflict. The focused client RED run covered 17 tests; 13 passed and four failed for the intended missing authoritative conflict reload, safe reload-failure state, modal keyboard/focus behavior, and later-page Comment success flow.
+
+GREEN commit `5043200` made the 5-file / 21-test focused server run and 2-file / 17-test focused client run pass. The 10-test concurrency file also passed three further consecutive stress runs after the combined focused run. Follow-up `9b249b4` preserved the Lab 2 safe-unexpected-error assertion at the new transaction boundary and applied a narrow 30-second timeout to the existing credential-preflight parameterized cases without changing their assertions.
+
+Plain `npm test` then passed 31 server files / 213 tests with no command-line or global timeout override, and plain client `npm test` passed 12 files / 97 tests. All 8 Playwright scenarios, both production builds, and the compiled-server health smoke passed. No Test ID status changed: the matrix remains 75 = 16 `Pass (Issue #27)` + 13 `Pass (Issue #29)` + 46 `Planned`; `API-16` and `SEC-01` remain `Planned`.
+
+## 10. Transaction-Scoped Gate Correction Evidence
+
+Tests-only RED commit `bad31ad` added three focused database assertions without adding a Test ID or changing a matrix status. The same-session assertion failed against the previous implementation because the granted advisory lock and mutation transaction reported different PostgreSQL backend PIDs. The rollback-release and second-callback exclusion assertions passed, confirming that the RED failure isolated the transaction-boundary defect.
+
+GREEN commit `31cada3` moved ordered coordination into each Prisma SERIALIZABLE attempt. The gate and mutation now use the same `Prisma.TransactionClient`; PostgreSQL transaction-scoped locks release on commit or rollback without explicit unlock. A transaction that waits for a gate raises structured SQLSTATE `40001` before its mutation callback, rolls back its stale snapshot, and restarts within the existing three-attempt bound. The subsequent callback executes once, after the fresh transaction has acquired its gates. User locking still precedes Ticket locking, and Attachment upload staging/rollback cleanup and post-commit physical removal are unchanged.
+
+The gate file passed 3 tests. A combined focused run passed 5 files / 67 tests, including all 10 eligibility races, all 9 retry/exhaustion and storage-cleanup cases, all 3 role-aware Attachment cases, and all 42 retained Attachment cases including the concurrent fifth-file limit. The eligibility file passed five further consecutive 10-test runs. Plain server `npm test` passed 33 files / 225 tests with no global or command-line timeout override; plain client `npm test` passed 12 files / 98 tests. All 8 Playwright scenarios, both builds, and the compiled-server health smoke passed.
+
+No Test ID status changed. The matrix remains 75 = 16 `Pass (Issue #27)` + 13 `Pass (Issue #29)` + 46 `Planned`; `API-16` and `SEC-01` remain `Planned`, and all 61 Acceptance Criteria retain valid traceability.
+
+## 11. Issue #31 IT Staff Queue Evidence
+
+RED commit `d95abc1` added only the three designated Issue #31 test files. The focused runs failed for the expected missing Queue parser/business ordering, absent Staff Queue and assignee routes, and placeholder Queue UI; they did not fail for syntax, dependency, setup, or unsafe-database reasons.
+
+GREEN commit `5e77396` implements only OP-19 plus the read-only OP-21 eligible-assignee summary used by Queue filtering. `UNIT-04` passed 18 tests, `API-09` passed 21 tests against the validated isolated `toktickit_test/public` target, and `UI-05` passed 10 tests including every mapped status rendered as Unassigned. The ordinary commands passed 35 server files / 264 tests and 13 client files / 111 tests. The six retained Lab 2 Playwright scenarios, both production builds, and the compiled-server health smoke passed; the smoke process was terminated and port 3199 was closed.
+
+Read-only development snapshots before and after verification remained Lab 2 with 5 Development Requesters, 182 Tickets, 92 Attachments, 4 Categories, and 7 Related Systems. Status totals remained 182 NEW, and the User, Ticket-without-status, and Attachment SHA-256 checksums matched exactly. Regenerated Lab 2 screenshots and generated build/test output were removed. No schema, migration, seed, dependency, Staff mutation/detail, Administrator workflow, final responsive evidence, or GitHub state change is claimed.
+
+The matrix is now 75 = 16 `Pass (Issue #27)` + 13 `Pass (Issue #29)` + 3 `Pass (Issue #31)` + 43 `Planned`. `API-10`, `SEC-01`, `SEC-02`, and `E2E-03` remain `Planned`, and all 61 Acceptance Criteria retain their existing traceability rows.
+
+## 12. Issue #31 Pre-PR Correction Evidence
+
+After the initial Issue #31 chain through `9c831d5` was pushed, tests-only RED `e84dc71` added API-09 and UI-05 regressions for OP-21 query rejection, terminal historical Requester owners, Ticket Number links, and the persistent accessible Queue loading state. The corrected RED run had exactly two intended API failures with 22 retained API tests passing and four intended UI failures with seven retained UI tests passing. No failure came from syntax, dependencies, database selection, or invalid setup.
+
+GREEN `0bded01` rejects every OP-21 query parameter with the safe `400 INVALID_QUERY` response; keeps historical owner roles separate from active eligible-assignee roles; renders Requester, IT Staff, and Administrator explicitly; links Ticket Numbers to the later Detail route in both responsive representations; and keeps a named Queue heading, status, inert skeleton, and disabled dependent controls throughout loading. Focused verification passed 2 server files / 42 tests and 1 client file / 11 tests. The ordinary complete commands passed 35 server files / 267 tests and 13 client files / 112 tests. Both production builds and the compiled-server health smoke passed; the smoke process terminated and port 3199 closed.
+
+The earlier Issue #31 implementation verification executed the six retained Lab 2 Playwright scenarios only. A later unfiltered repository run after that audit discovered and passed all eight existing scenarios in three specs: the same six Lab 2 scenarios plus the existing Lab 3 Authentication and authenticated Requester scenarios. The corrective unfiltered run again discovered and passed those eight scenarios. These are local execution results, not hosted CI evidence.
+
+Read-only development snapshots before and after the correction remained Lab 2 with 5 Development Requesters, 182 Tickets, 92 Attachments, 4 Categories, 7 Related Systems, and 182 NEW statuses; all three SHA-256 row-set checksums matched exactly. Generated builds and Playwright output were removed, regenerated tracked screenshots were restored, and the temporary snapshot helper was deleted. Test statuses remain unchanged at 75 = 16 `Pass (Issue #27)` + 13 `Pass (Issue #29)` + 3 `Pass (Issue #31)` + 43 `Planned`; `UNIT-04`, `API-09`, and `UI-05` remain the only Issue #31 Pass IDs.
+
+## 13. PR #32 Requested-Changes Correction Evidence
+
+At the 2026-09-26 review event, PR #32 returned Requested Changes at reviewed HEAD `4f68765` for unescaped PostgreSQL LIKE characters in Queue search, the missing Queue table caption, mobile priority/status values that did not reuse badges, and PR wording that said title instead of Summary.
+
+Tests-only RED `09bc991` added direct `UNIT-04` escaping cases for percent, underscore, backslash, combined special characters, and unchanged Unicode text; database-backed `API-09` confusable-value coverage across Ticket Number, Summary, Requester name, and Requester email; and `UI-05` caption/mobile-card assertions. The server RED run had 42 retained passes and six intended failures: five for the absent helper and one for wildcard-expanded database results. The client RED run had nine retained passes and two parameterized failures at the absent caption; the same new test cases also contained the mobile badge assertions, and inspection confirmed the existing cards still used plain text.
+
+GREEN `5f878f1` escapes backslash first, then percent and underscore, before the same escaped value reaches all four parameterized Prisma `contains` filters. It adds an actual visually hidden caption while retaining the table and region names, and reuses the existing text badge helper for Requested Priority, IT Priority, and human-readable status in mobile cards without removing `dt`/`dd` labels or the resolution indication. Focused verification passed 2 server files / 48 tests and 1 client file / 11 tests against the validated test configuration.
+
+Ordinary verification passed 35 server files / 273 tests, 13 client files / 112 tests, and all 8 existing Playwright scenarios in 3 specs. Both production builds and the compiled-server health smoke passed; the smoke process terminated and port 3199 closed. Read-only development evidence remained exactly 5 Development Requesters, 182 Tickets, 92 Attachments, 4 Categories, 7 Related Systems, and 182 NEW statuses with all three SHA-256 row-set checksums unchanged. The test database retained zero disposable schemas and zero literal-search fixtures after cleanup. Generated builds/Playwright output were removed and tracked screenshots were restored.
+
+No Test ID status changed. The matrix remains 75 = 16 `Pass (Issue #27)` + 13 `Pass (Issue #29)` + 3 `Pass (Issue #31)` + 43 `Planned`, and all 61 Acceptance Criteria retain valid traceability.
+
+## 14. Issue #33 IT Staff Workflow Evidence
+
+Tests-only RED commit `5c48e6383223bf2d26dcc8473388bf8f2daaa308` added the seven assigned server files, three assigned client files, the Staff browser scenario, and test helpers without production or documentation changes. The focused server command ran 7 files / 23 tests: 18 failed for the missing workflow validation, routes, transaction behavior, and persistence while 5 retained behavior checks passed. The focused client command ran 3 files / 9 tests and all 9 failed for the absent operational Detail UI. After correcting a test-order race, the browser RED reached the Queue/Detail boundary and failed at the missing operational heading. No RED failure came from syntax, dependencies, database selection, or invalid fixtures.
+
+GREEN commit `46a21cc5f8957d76cbcc02eddcec38772007e34c` made the same focused commands pass at 7 server files / 23 tests and 3 client files / 9 tests. Plain server `npm test` passed 40 files / 291 tests with no command-line timeout override; plain client `npm test` passed 16 files / 121 tests. The ordinary unfiltered `npm run test:e2e` command passed all 9 scenarios: 6 retained Lab 2, existing Authentication and authenticated Requester scenarios, and the new Staff operational scenario. Server and client production builds passed. The compiled health smoke returned the expected `ok` response, after which the process was terminated and port 31933 was closed.
+
+Mutation-based verification used only validated `toktickit_test`. Read-only development snapshots before and after remained exactly 92 Attachments, 4 Categories, 5 Development Requesters, 7 Related Systems, 182 Tickets, and 1 TicketNumberSequence row, with every recorded SHA-256 row-set checksum unchanged. The disposable Playwright schema was removed, tracked screenshots were restored, generated output and temporary helpers were removed, and no repository Node process or verification listener remained.
+
+The matrix is now 75 = 16 `Pass (Issue #27)` + 13 `Pass (Issue #29)` + 3 `Pass (Issue #31)` + 12 `Pass (Issue #33)` + 31 `Planned`. The Issue #33 Pass IDs are `UNIT-05`, `UNIT-06`, `API-10`, `API-11`, `API-12`, `API-13`, `API-15`, `API-16`, `UI-06`, `UI-07`, `UI-08`, and `E2E-03`. All 61 Acceptance Criteria retain valid traceability.
+
+## 15. Issue #33 Pre-Push Audit Correction Evidence
+
+The pre-push audit found four evidence and state-handling gaps: owner requirements were derived from the current rather than selected target status; dialog submission bypassed the focus-aware close path and could close after an ordinary failure; a reused Detail route could retain or accept a late response from the previous Ticket; and the existing `API-11`, `API-13`, `UI-06`, `UI-07`, `UI-08`, and `E2E-03` evidence did not directly assert every semantic obligation in their matrix rows.
+
+Tests-only RED commit `ac63701` added complete focused regressions without production or documentation changes. The 3-file / 26-test client run retained 13 passes and produced 13 intended failures for the missing target-status, dialog outcome/focus, route isolation, and Comment/Note reconciliation behavior. The new database-backed concurrency cases passed while proving actual PostgreSQL blocking through an external advisory-lock barrier plus `pg_locks` and `pg_blocking_pids`; the expanded browser scenario also passed after its fixture setup awaited the authenticated My Tickets destination. No RED failure came from syntax, dependencies, unsafe database selection, invalid fixtures, or broken setup.
+
+GREEN commit `af8dbf2` made the focused 3-file / 26-test client run pass by deriving the owner prerequisite from the selected target status, returning explicit mutation outcomes, routing every dialog close through focus restoration, keeping failed dialogs and input mounted, making the page background inert, distinguishing exact forbidden/not-found/safe-failure states, retaining exact server-created Comments and Notes across authoritative pagination, and keying Staff Detail to the route Ticket ID so stale state and late responses cannot cross routes. During the required repeated concurrency verification, one valid competing-claim execution exhausted three structured serialization attempts and returned the contract-approved `CONCURRENT_UPDATE` instead of `OWNER_CONFLICT`. Transparent test-only follow-up `92f6c66` corrected that oracle to accept only those two exact documented conflict bodies without changing production behavior or weakening redaction, overlap, final-state, or no-partial-write assertions.
+
+After the correction, all Issue #33 tests passed at 7 server files / 25 tests, 3 client files / 26 tests, and the complete `E2E-03` browser scenario. The two concurrency files passed five consecutive combined runs at 2 files / 9 tests per run (45 test executions total), with no global or command-line timeout override. Plain verification passed 40 server files / 293 tests and 16 client files / 138 tests. The ordinary unfiltered Playwright command passed all 9 scenarios, both production builds passed, and the compiled health smoke returned the expected response before its process was terminated and listener closed.
+
+Mutation verification used only validated `toktickit_test`. Read-only development snapshots before and after remained exactly 92 Attachments, 4 Categories, 5 Development Requesters, 7 Related Systems, 182 Tickets, and 1 TicketNumberSequence row; all six SHA-256 row-set checksums matched exactly. Disposable schemas, E2E fixtures, build and Playwright output, regenerated tracked screenshots, temporary helpers, repository test processes, and verification listeners were cleaned.
+
+No Test ID status changed during this correction. The matrix remains 75 = 16 `Pass (Issue #27)` + 13 `Pass (Issue #29)` + 3 `Pass (Issue #31)` + 12 `Pass (Issue #33)` + 31 `Planned`, and all 61 Acceptance Criteria retain valid traceability.
+
+## 16. PR #34 Pre-Review Presentation Correction Evidence
+
+PR #34 was open at reviewed HEAD `af1a3e2bdadbf38e24387b695ae6b8afa5191ede` when this corrective work began. Tests-only RED `bab4e1bbdd9e628bec603cfe9f8b2fd90726e123` added direct regressions for Staff Attachment loading/error/empty/metadata states, authoritative Comment and Internal Note pagination, accessible dialog errors, and the approved Operational Detail presentation. The focused 3-file / 30-test run retained 21 passes and produced exactly nine intended failures for those four findings; no failure came from syntax, dependencies, unsafe database selection, or invalid setup.
+
+GREEN `5e95d3baabc074aaba77a1630cae66f78ec95d62` implemented explicit read-only Attachment states and complete metadata, cleared temporary created-entry retention after authoritative page reconciliation, kept ordinary mutation errors inside active dialogs, and added Ticket Date plus authoritative status/priority badges and distinct Public Comment/Internal Note presentation. The focused run then passed 3 files / 30 tests. Retained Attachment and Requester UI coverage passed 4 files / 26 tests, and all Issue #33 server tests passed 7 files / 25 tests against validated `toktickit_test`.
+
+The first unfiltered Playwright run exposed one ambiguous substring locator after the required removal metadata introduced several visible strings containing “Removed”; eight scenarios passed and the Staff scenario stopped at that locator without an application failure. Transparent test-only follow-up `32d2e78a996cdbf9c81c57dd3bc1497df62edd9e` targets the exact `Removed` badge and retains the same visibility and no-content-action obligations. Its focused scenario passed, followed by all 9 unfiltered scenarios. Plain verification passed 40 server files / 293 tests and 16 client files / 142 tests. Both production builds and the compiled health smoke passed; the owned smoke process terminated and port 3199 closed.
+
+Mutation verification used only the validated isolated test database. Read-only development counts and status totals remained 92 Attachments, 4 Categories, 5 Development Requesters, 7 Related Systems, 182 Tickets, 1 TicketNumberSequence row, and 182 `NEW` Tickets, with the recorded pre/post row-set checksums unchanged. Zero disposable schemas and zero E2E fixture Tickets remained. Generated builds and Playwright output were removed, tracked screenshots were restored, and no repository Node process or listener remained.
+
+No Test ID status changed. The matrix remains 75 = 16 `Pass (Issue #27)` + 13 `Pass (Issue #29)` + 3 `Pass (Issue #31)` + 12 `Pass (Issue #33)` + 31 `Planned`, with all 61 Acceptance Criteria traced. `STYLE-01`, `RESP-01`, and `RESP-02` remain `Planned`. The correction chain through `e1942c8014d99f364abe5b93e3fc69eee46b6b5f` was later pushed, and governance sync `ede8c00a28f715be56289791624b0115ca33fb8f` recorded that evidence cutoff. No hosted CI, approval, merge, Issue closure, thread resolution, or Project Done transition is claimed here.
+
+## 17. PR #34 Final Claim-Semantics Correction Evidence
+
+PR #34 was re-reviewed at exact pushed HEAD `ede8c00a28f715be56289791624b0115ca33fb8f`. The previous Attachment, Comment/Note pagination, dialog-error, and presentation findings were confirmed corrected. The remaining substantive gaps were stale-version replay by the current owner, the Claim button's pending label, and the owner-conflict announcement; the review also identified this file's stale governance wording and a PR-description wording mismatch.
+
+Tests-only RED `92103f5` added an API regression requiring an already-owning eligible actor to receive the current authoritative Ticket on a stale replay without changing owner or status. It also added client regressions requiring a disabled `Claiming…` state and an authoritative owner-name announcement after `OWNER_CONFLICT`. Against the reviewed implementation, the focused client run retained 16 passes and produced exactly the two intended UI failures. The API test could not execute in the current workspace because global setup rejected the absent `TEST_DATABASE_URL` before collecting tests; no database was selected or mutated.
+
+GREEN `a4bfdd2` makes own-claim replay idempotent only after current actor eligibility, terminal-state, and foreign-owner checks; unassigned claims still enforce the submitted version. The Staff Detail now exposes the claim-specific pending label and, after a successful authoritative conflict reload, announces the current owner's name. Transparent test-only follow-up `9672569` aligns one retained exact-message assertion with that approved owner-name behavior and changes no production code.
+
+Final database verification passed the focused API-11 ownership regression with 1 file / 5 tests and the ordinary complete server suite with 40 files / 294 tests. Both used the validated isolated test database, and migration setup reported no pending migrations. Earlier local verification remains unchanged: the focused client file passed 18 tests, the complete client suite passed 16 files / 144 tests, and both production builds passed. These results are local verification evidence, not hosted GitHub Actions evidence.
+
+At the evidence cutoff when this documentation sync began, corrective RED `92103f5`, corrective GREEN `a4bfdd2`, the transparent test-only follow-up `9672569`, and documentation evidence `a655935fddbed54236c6eaab06addd056e3bb8d6` had been pushed to PR #34. PR #34 and Issue #33 remained open. No approval, merge, Issue closure, resolved review thread, Project Done transition, or hosted CI result is claimed. This documentation commit does not claim events after that cutoff; GitHub remains authoritative for later state. No Test ID status changed: the 75-row matrix and all 61 traced Acceptance Criteria remain unchanged.
+
+## 18. Issue #35 Administrator User Management Evidence
+
+Tests-only RED `daf98434c60197f2131fe168af04f281f8fa4b6d` defined the assigned Administrator unit, API, security, UI, and browser obligations before production implementation. The focused server run retained one retry test and produced 21 intended missing-feature failures; the focused client file produced eight intended missing-UI failures; and the browser scenario failed at the absent Administrator control rather than from setup, syntax, dependencies, or unsafe database selection. GREEN `c01bb32` implemented OP-28 through OP-31. Transparent test-only commits `6af9ba8` and `95a3be2` made two ambiguous accessible-name locators exact without changing behavior.
+
+Corrective tests-only RED `3fb1abf` added deterministic PostgreSQL blocking evidence for every required claim, assignment, reassignment, and status-versus-eligibility race in both meaningful lock orders. It retained 18 passes and produced four intended failures where an owner that became ineligible during the transaction received a safe 404 instead of the required exact conflict. Production GREEN `26e00f8` maps only that observed race to `409 OWNER_ELIGIBILITY_CONFLICT`; initially missing or ineligible targets retain safe not-found behavior. Tests-only `a33aea9` completed reset/session, name-only edit, crossing-admin, role-route, safe-error, retained-input, and dialog-focus assertions and exposed the focus-wrap defect; production `ebe0fc2` corrects only the dialog keyboard boundary. Test-only `d1d781b` completes the two E2E-04 flows and precise boundary-key events. Test-only `dc30031` makes the race-test change union type-safe after the ordinary server build identified the defect; the affected 22-test race file and server build then passed.
+
+The read-only pre-PR audit then found that API-17's “literal search” test covered ordinary case-insensitive text but not PostgreSQL LIKE metacharacters. Tests-only RED `3343de997e0cf64c18042d05298eb43923cb0dd1` adds real Users whose names and normalized emails contain literal `%`, `_`, and backslash, plus a wildcard decoy, and asserts exact returned ID sets and redaction. Six retained tests passed and only the new semantic case failed: `%` and `_` matched broad decoys while raw backslash matched nothing. GREEN `cffebb4f86967d4d5d2179f0571d0638b5c068d7` reuses the existing backslash-then-percent-then-underscore escaping helper and applies one escaped value consistently to the User name and email Prisma filters. It changes no Requester or Staff Queue behavior and introduces no raw SQL.
+
+Final focused local verification passed 7 server files / 42 tests, including 7/7 in the corrected API-17 through API-20 file, 1 client file / 13 tests, and 2 E2E-04 scenarios. The current 2-file / 26-test concurrency selection passed three consecutive runs (78 executions), followed by another 22-test race run after the type-only correction. After the literal-search correction, ordinary `npm test` passed 47 server files / 336 tests without a timeout override and the server production build passed. Previously recorded client evidence remains 17 files / 157 tests, the unfiltered Playwright command remains all 11 scenarios, and the client build and compiled-server health smoke remain passed because the correction is confined to one server service and its API test.
+
+Mutation verification used only validated `toktickit_test`. Read-only development counts remained 92 Attachments, 4 Categories, 5 Development Requesters, 7 Related Systems, 182 Tickets, 1 TicketNumberSequence row, and 182 `NEW` Tickets; all six canonical SHA-256 row-set checksums matched their preflight values. Generated builds and Playwright output were removed, tracked screenshots were restored, and known test/smoke ports were closed. No hosted CI, push, pull request, review, approval, merge, Issue closure, review-thread resolution, or Project transition is claimed.
+
+Only the 18 assigned IDs changed status: `UNIT-07`, `API-17`–`API-20`, `API-22`, `SEC-07`–`SEC-15`, `UI-10`, `UI-11`, and `E2E-04` are `Pass (Issue #35)`. The matrix is 75 = 16 `Pass (Issue #27)` + 13 `Pass (Issue #29)` + 3 `Pass (Issue #31)` + 12 `Pass (Issue #33)` + 18 `Pass (Issue #35)` + 13 `Planned`; all 61 Acceptance Criteria retain valid traceability.
+
+## 19. Issue #37 Final Hardening and Release Verification Evidence
+
+Tests-only RED `4037d415d4591c97c3cb6ccddf3bbfe2be87dcf1` defined direct semantic coverage for the 13 final IDs. The valid RED run isolated missing safe Argon2 dependency classification, incomplete Login/Change Password/Create Ticket field associations, the absent Staff read-only marker, and the missing 200% zoom distinction. Production GREEN `28b9eadee3ed0127bbb541799987369777350025` added only the minimum safe dependency mapping and accessible field/read-only semantics. Transparent test-only follow-ups `849d983`, `5b12a93`, `6dcb4eb`, and `9e14d59` aligned exact approved copy and typed failure injection, changed responsive captures from full-page to exact viewport pixels, kept the verification tests production-build compatible, and removed all new timeout overrides after the affected 3-file / 7-test selection passed under repository defaults. No accepted behavior or assertion was broadened.
+
+Focused verification passed 4 server files / 11 tests, 1 client file / 5 tests, and 5 new browser scenarios. Ordinary local verification passed 51 server files / 347 tests, 18 client files / 175 tests, and all 16 unfiltered Playwright scenarios. Server and client production builds passed. The compiled server returned `status: ok`; its process terminated and port 3199 closed. The 18 retained screenshots have exact dimensions at 390 x 844, 834 x 1112, and 1440 x 900. The initially recorded 200% run exercised all six screens, but its zoom mechanism was later rejected as non-tab zoom and is superseded by the genuine tab-zoom correction below.
+
+Migration and database verification used only validated `toktickit_test/public`. Two equivalent populated migrations produced identical preservation checksums and operational mapped-Ticket results. Read-only development postflight remained `toktickit/public`, Lab 2, with 5 users, 182 Tickets, 92 Attachments, 4 Categories, 7 Related Systems, and 182 `NEW` statuses; all three canonical row-set checksums exactly matched preflight. The isolated test database retained zero disposable schemas and zero Issue fixture users. The known disposable demo Administrator was preserved with zero sessions and zero business-data relationships after its stale session was revoked. Generated builds and Playwright output were removed, tracked Lab 2 screenshots were restored, and only the 18 required Lab 3 screenshots were retained.
+
+The 13 assigned IDs are now `Pass (Issue #37)`: `API-21`, `API-23`, `SEC-01`, `SEC-02`, `SEC-05`, `MIG-06`, `REG-01`, `REG-02`, `REG-03`, `STYLE-01`, `RESP-01`, `RESP-02`, and `E2E-05`. The final matrix is 75 completed Test IDs with 16 attributed to Issue #27, 13 to Issue #29, 3 to Issue #31, 12 to Issue #33, 18 to Issue #35, and 13 to Issue #37. All 61 Acceptance Criteria retain valid traceability. These are local results, not hosted GitHub Actions evidence; no push, review, approval, merge, Issue closure, thread resolution, or Project transition is claimed.
+
+### Responsive audit correction
+
+A local read-only audit found that the initial `RESP-01` and `RESP-02` implementation relied on horizontal-width checks, CSS zoom, and script-assigned focus, so it did not prove the full contract. Tests-only RED `bab0aa1` replaced those checks with explicit required elements and actions for all six screens; exact viewport geometry, overflow-ancestor clipping, material-overlap, hit-testing, and action-visibility checks at 390 x 844, 834 x 1112, and 1440 x 900; and real Tab, Shift+Tab, Enter, Space, and Escape interactions under what was then incorrectly treated as browser-level 200% zoom. The three exact-viewport cases passed, while that zoom case failed only because focus left the active Staff owner dialog after an ordinary mutation failure.
+
+Client-only GREEN `f7463a2` keeps the safe failure alert inside the active Staff owner/status dialog and moves focus to that alert after processing settles. Transparent test-only follow-up `e87288e` corrects only the exact existing Administrator field-error IDs used by the accessibility oracle; it does not broaden matching or weaken an assertion. That correction incorrectly classified Chromium DevTools Protocol `Emulation.setPageScaleFactor` as browser zoom. Its `visualViewport.scale` change from 1 to 2 and halved visual viewport with unchanged `innerWidth` proved page/pinch-scale emulation instead, so it is not accepted as `RESP-02` evidence.
+
+The focused responsive file passed twice at 4/4, and the affected Staff action file passed 1 file / 18 tests. The ordinary unfiltered Playwright command passed all 16 scenarios, the client production build passed, and a final ordinary client run passed 18 files / 175 tests without an override. An earlier client/build run performed concurrently was rejected as evidence after resource contention produced eight timing/loading failures; the first subsequent isolated client run had one existing five-second timeout before the final ordinary rerun passed. These are local results, not hosted CI. The 18 tracked screenshots were restored after verification and retain the approved names, paths, and exact dimensions. No Test-ID status or AC mapping changed.
+
+### Genuine Chromium tab-zoom correction
+
+Tests-only correction `94c466f` removes `Emulation.setPageScaleFactor` and adds a minimal Manifest V3 extension loaded in a temporary Playwright Chromium persistent context. The extension service worker locates the exact tested tab, invokes `chrome.tabs.setZoom(tabId, 2)`, and returns the authoritative `chrome.tabs.getZoom(tabId)` value. Each of the six screen cycles asserts `getZoom` is exactly 1 before, 2 during, and 1 after cleanup. `visualViewport.scale` remains exactly 1 throughout, proving the test is not using pinch zoom. Exact viewport screenshot capture remains in the separate `RESP-01` cases.
+
+No production correction was required under genuine tab zoom. The focused `RESP-02` case passed once and then passed three consecutive repeats; the complete responsive file passed 4/4; ordinary unfiltered Playwright passed 16/16; the affected Staff action file passed 1 file / 18 tests; the complete client suite passed 18 files / 175 tests; and the client production build passed. The extension uses no production dependency, CSS zoom, transform, page-scale emulation, device-scale-factor substitution, viewport-halving substitute, scripted focus evidence, sleep, retry, skip, quarantine, or timeout increase. These are local results, not hosted CI, and the 75 Test-ID statuses and 61 AC traceability rows remain unchanged.
+
+### Final PR #38 semantic-evidence correction
+
+Tests-only RED `8451c96` replaces the synthetic mapped-Ticket API proof with a direct production seam: a populated Lab 2 disposable schema is migrated through the production path, eligible Staff and Administrator actors authenticate, and the real Queue returns all seven authoritative mapped statuses. It initially claimed one migrated `NEW` Ticket without rewriting its status or relationships. External re-review correctly found that API-23 and MIG-06 required direct Claim API evidence for every migration-produced mapped status. Tests-only correction `7e2e9e1` now proves that all five non-terminal statuses return HTTP 200 with the authenticated Staff owner and unchanged status/requester/reference relationships, while migrated `CLOSED` and `CANCELLED` return exact `409 TERMINAL_TICKET` bodies and remain unassigned without unrelated mutation. Every case verifies redaction and authoritative persisted/Queue state. It does not assign an owner through Prisma or substitute already-mapped synthetic Tickets. The expanded seam passed against the existing production implementation, so no migration/Queue/Claim production correction was fabricated.
+
+The same RED commit adds actual `argon2.verify()` exception coverage. Its normal mismatch controls passed, while Login returned `401` instead of the required dependency `503` and Change Password returned `400` instead of `503`. GREEN `5f5021f` makes verification exceptions raise the existing `PasswordHashingUnavailableError`; both routes already map that condition to the exact redacted `503 SERVICE_UNAVAILABLE` body. The tests assert no Login throttle or Session write and no Change Password hash, User, or Session mutation. Transparent tests-only follow-up `100930e` accepts Supertest's actual `string | string[] | undefined` `set-cookie` header type and changes no assertion or accepted result.
+
+The focused correction passed 2 files / 5 tests, the relevant authentication/security/migration selection passed 15 files / 86 tests, ordinary server `npm test` passed 52 files / 351 tests without a timeout override, and the server production build passed. Read-only development counts, status totals, and all three canonical checksums matched before and after. Cleanup found zero disposable migration schemas, zero Issue fixture users, and zero throttle rows. `MIG-06`, `API-21`, `API-23`, and `AC-59` now have direct semantic evidence. No Test-ID status or traceability mapping changed: all 75 Test IDs remain completed and all 61 ACs remain traced.
+
+The latest all-status seam passed 1 file / 1 test, and the relevant migration/Queue/Claim/workflow/authorization/security selection passed 7 files / 44 tests. The ordinary server suite again passed 52 files / 351 tests and the server production build passed. Development counts, status totals, and checksums remained exact; disposable schemas, Issue fixture users, and throttle rows remained zero. These are local results, not hosted CI evidence.

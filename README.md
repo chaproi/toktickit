@@ -6,7 +6,8 @@ TokTickIT is a full-stack IT service desk application started for CPE334 Lab 01 
 
 * React, TypeScript, Vite, and Bootstrap
 * Node.js, Express, and TypeScript
-* Prisma ORM
+* Prisma ORM with PostgreSQL-backed authentication sessions
+* Argon2id password hashing
 * PostgreSQL
 * Vitest and Supertest
 
@@ -35,18 +36,32 @@ PORT=3000
 
 `TEST_DATABASE_URL` must target a dedicated database whose name contains `test`. It must never identify the same normalized host, port, database, and schema as `DATABASE_URL`, and it must not point to a development or production database. Database integration and E2E tests fail before Prisma access when this isolation check is missing or unsafe.
 
-### Initialize the Database
+### Initialize or Upgrade the Database
 
-After configuring `.env`, run the migration and seed commands:
+For a fresh Lab 1/Lab 2 database, first apply the existing pre-Lab-3 migrations as documented for those increments. To upgrade a populated Lab 2 database, configure these additional runtime-only values in the untracked `server/.env`:
+
+```env
+AUTH_ALLOWED_ORIGINS="http://localhost:5173"
+LOGIN_THROTTLE_HMAC_SECRET="<RUNTIME_RANDOM_SECRET>"
+LAB3_MIGRATION_INITIAL_CREDENTIALS='{"<USER_ID>":"<UNIQUE_RUNTIME_INITIAL_PASSWORD>"}'
+LAB3_SEED_INITIAL_CREDENTIALS='{"<SEEDED_USER_EMAIL>":"<UNIQUE_RUNTIME_INITIAL_PASSWORD>"}'
+```
+
+The migration mapping must contain every existing Development Requester numeric ID and no other keys. The seed mapping must contain every deterministic seeded User email. Every value must be unique and satisfy the 12–128 character, three-category password policy. These complete mappings and their values must never be committed, printed, or shared in logs.
+
+Run the guarded Lab 3 migration and then the idempotent seed:
 
 ```bash
 cd server
-npx prisma migrate dev --name init
+npm run prisma:migrate:lab3
 npm run prisma:seed
 ```
-The development migration creates the required database tables. The seed command adds the required reference data and can be run repeatedly without creating duplicates.
 
-Server integration and E2E commands validate `TEST_DATABASE_URL`, apply the repository's existing migrations to that test target using `prisma migrate deploy`, and idempotently seed its required fixtures before tests start. They do not rewrite `server/.env` or migrate `DATABASE_URL`.
+The guarded migration validates the entire credential mapping and legacy data before mutation, runs transactionally, verifies preserved counts/checksums and relationships, then records the migration with Prisma. The seed preserves existing password hashes and can be repeated without duplicating Users, Tickets, Comments, or Notes.
+
+If migration fails before commit, confirm the database still has the Lab 2 schema and data before using `prisma migrate resolve --rolled-back 20260918060000_lab3_authentication_foundation`. Correct the runtime mapping or data problem and rerun the guarded command. Do not reset a populated database and do not mark the migration applied unless postflight verification actually succeeded.
+
+Normal server integration setup validates `TEST_DATABASE_URL` and requires the two runtime credential mappings before upgrading a populated shared test schema. Issue #27 verification uses a disposable `issue27_*` schema in the dedicated test database, injects unique synthetic credentials in memory, and drops only that schema afterward. Neither path rewrites `server/.env` or migrates the development target.
 
 Do not commit the `.env` file because it contains private credentials.
 
@@ -109,15 +124,24 @@ cd server
 npm test
 ```
 
-## Lab 2 Verification and Operations
-
-Before running Lab 2 tests or the application, configure `server/.env` with both database URLs. Apply development migrations and reference data only when preparing the normal application database:
+Issue #27 isolated migration/authentication regression suite:
 
 ```bash
 cd server
-npm run prisma:migrate
+npm run test:issue27
+```
+
+## Lab 2 Verification and Operations
+
+Before running the retained Lab 2 workflows on this branch, configure `server/.env` with both database URLs and the Lab 3 runtime-only values described above. Upgrade a populated application database only through the guarded Lab 3 command:
+
+```bash
+cd server
+npm run prisma:migrate:lab3
 npm run prisma:seed
 ```
+
+Do not run a direct Prisma migration command for this populated Lab 2-to-Lab 3 upgrade; direct Prisma execution cannot inject or preflight the per-User credential mapping.
 
 Run the complete Lab 2 browser workflow from the repository root:
 

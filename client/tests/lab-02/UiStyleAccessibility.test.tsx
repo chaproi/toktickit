@@ -26,6 +26,8 @@ const TICKET = {
   category: { id: 11, name: "Hardware" },
   relatedSystem: { id: 21, name: "Corporate Laptop" },
   requestedPriority: "MEDIUM",
+  itPriority: "MEDIUM",
+  owner: null,
   currentStatus: "NEW",
   createdAt: "2026-09-06T08:00:00.000Z",
   updatedAt: "2026-09-06T09:00:00.000Z",
@@ -72,6 +74,13 @@ function installApplicationApi(): void {
     "fetch",
     vi.fn(async (input: RequestInfo | URL) => {
       const url = new URL(String(input));
+
+      if (url.pathname === "/api/auth/me") {
+        return jsonResponse({
+          user: { ...REQUESTER, role: "REQUESTER", mustChangePassword: false },
+          session: { expiresAt: "2099-01-01T00:00:00.000Z" },
+        });
+      }
 
       if (url.pathname === "/api/development-requesters") {
         return jsonResponse([REQUESTER]);
