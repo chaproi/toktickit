@@ -1,14 +1,14 @@
 # Sprint 4 Engineering Contract
 
-Status: **Student decisions accepted — Pending peer review**. Issue: #41, repository `chaproi/toktickit`. Working branch: `feat/41-lab4-contract`; integration branch: `lab4-staging`. Prepared 2026-10-04 (Asia/Bangkok). All 55 product test scenarios are **Planned**; product completion is unchecked. Formal peer review is the next gate; student acceptance does not establish implementation or release readiness.
+Status: **Student decisions accepted — Contract peer review approved**. Issue: #41, repository `chaproi/toktickit`. Publication branch: `feat/41-lab4-contract`; review-record branch: `feat/41-lab4-review-record`; integration branch: `lab4-staging`. Prepared 2026-10-04 (Asia/Bangkok); review recorded 2026-10-05 (Asia/Bangkok). Approval applies to reviewed HEAD `fec388a3c2ab63cabb1bf20f3fa913fb023d9241`, not this new metadata change. All 55 product scenarios remain **Planned**; only the contract-review Product DoD item is complete. Actual GitHub Issues for remaining work items are required before RED–GREEN implementation; no implementation or release readiness is claimed.
 
 ## 1. Goal, baseline, sources and authority
 
-Extend TokTickIT with Actions Taken, an enforced Ticket resolution gate, Requester and IT Staff dashboards, and complete earlier-lab regression. This document records the student-accepted design for formal peer review, not evidence of delivered functionality.
+Extend TokTickIT with Actions Taken, an enforced Ticket resolution gate, Requester and IT Staff dashboards, and complete earlier-lab regression. This document records the student-accepted, peer-reviewed contract, not evidence of delivered functionality.
 
 Before drafting, the branch matched the requested branch and the working tree was clean. HEAD and local `lab4-staging` both resolved to `64ff04ea8fb1395f569c1095aea556ee6a695ebd`. No changes were discarded. Local refs are not a verification of remote branch state. No applicable AGENTS.md was found in the repository or the searched ancestor locations.
 
-Publication evidence: the six contract documents were committed as `010cfb86620a53b0bdd130dd9e255c6061a9e23c`, pushed normally to `origin/feat/41-lab4-contract`, and published in [PR #42](https://github.com/chaproi/toktickit/pull/42) targeting `lab4-staging` on **2026-10-04, Asia/Bangkok**. The original drafting baseline above remains unchanged as historical evidence. See the [publication ledger](reviewer.md#publication-evidence); formal peer review/approval remains Pending, and no merge or product completion is recorded.
+Publication evidence: the six contract documents were committed as `010cfb86620a53b0bdd130dd9e255c6061a9e23c`, pushed normally to `origin/feat/41-lab4-contract`, and published in [PR #42](https://github.com/chaproi/toktickit/pull/42) targeting `lab4-staging` on **2026-10-04, Asia/Bangkok**. cottonlnwza [APPROVED reviewed HEAD fec388a3c2ab63cabb1bf20f3fa913fb023d9241](https://github.com/chaproi/toktickit/pull/42#pullrequestreview-5405737951) at 2026-10-04T11:31:01Z (2026-10-04 18:31:01 Asia/Bangkok). PR #42 was merged into lab4-staging as `25368774a1f61ac372918bd7d9187ca8cedd74c4`. The original drafting baseline remains historical evidence; see the [publication ledger](reviewer.md#publication-evidence) and [completed peer review](reviewer.md#completed-peer-review). No application test or product completion is recorded, and this metadata change is not covered by the earlier approval.
 
 Sources read and compared:
 
@@ -23,17 +23,17 @@ Sources read and compared:
 
 The SRS referenced by the SDS was not supplied. No SRS requirement IDs or additional scope are inferred. Attached documents are source material; their deployment/submission instructions do not authorize actions beyond this documentation task.
 
-Source labels below: **H** = handout requirement (including rubric); **L** = inherited approved Lab 2/3 rule; **S** = SDS guidance; **E** = observed implementation; **P** = design introduced through a decision, now accepted by the student (not an H mandate). Follow Lab 2 D-02: H controls sprint scope; S guides architecture where compatible; conflicts with L remain explicit. Every D decision below is **Accepted by student**, selecting its previously Recommended option, including retention of L when S conflicts. Dependent P requirements/tests now describe that accepted design; formal peer/design review is still pending. Student acceptance does not rewrite source provenance or historical Lab 2/3 approvals.
+Source labels below: **H** = handout requirement (including rubric); **L** = inherited approved Lab 2/3 rule; **S** = SDS guidance; **E** = observed implementation; **P** = design introduced through a decision, now accepted by the student (not an H mandate). Follow Lab 2 D-02: H controls sprint scope; S guides architecture where compatible; conflicts with L remain explicit. Every D decision below is **Accepted by student**, selecting its previously Recommended option, including retention of L when S conflicts. Dependent P requirements/tests describe that accepted design; formal contract peer review approved the reviewed HEAD recorded above. Future design changes still require documented review. Student acceptance does not rewrite source provenance or historical Lab 2/3 approvals.
 
 ## 2. Scope and rubric mapping
 
 Included: action fields/list/detail/create/edit/assignment/lifecycle/complete/cancel; inactive-assignee rejection; requester read-only visibility of all action items on owned Tickets; eight-status workflow and backend gate; two dashboards including current-user Actions Taken; additive migration/recovery/index/seed planning; authorization, duplicate requests, concurrency, safe failures; Zen Green responsive accessible UI; all earlier-lab regression; review and submission evidence planning.
 
-Excluded: SLA/on-call/escalation/breach, inventory/parts/procurement/cost/payroll/billing, approval signatures, external notifications, advanced BI/export/warehouse, multi-tenancy/cloud deployment, unrelated features. SDS notification/category-management/deployment expansion and an architecture-wide UUID/API/audit rewrite are outside this sprint scope. This Issue maintains the six contract documents; no application implementation, tests execution, DB operation or historical-contract edit is authorized here. Commit/push/PR were excluded from the earlier drafting and decision-recording steps; the later explicit publication authorization produced PR #42. This metadata correction updates only specification.md, reviewer.md and ai-use.md through a new commit and normal push to that existing PR; no amend, force-push, new PR or merge.
+Excluded: SLA/on-call/escalation/breach, inventory/parts/procurement/cost/payroll/billing, approval signatures, external notifications, advanced BI/export/warehouse, multi-tenancy/cloud deployment, unrelated features. SDS notification/category-management/deployment expansion and an architecture-wide UUID/API/audit rewrite are outside this sprint scope. This Issue maintains the six contract documents; no application implementation, tests execution, DB operation or historical-contract edit is authorized here. Earlier drafting/decision-recording steps excluded commit/push/PR; later explicit publication and three-file evidence-update authorizations produced PR #42 and its reviewed HEAD. This review-record step permits only necessary metadata changes in the six existing docs/lab-04 files; no application tests, commit, push, new PR or merge is authorized. The pre-existing PR merge is recorded as evidence; local lab4-staging was updated by fast-forward only.
 
 | Handout/rubric area | Contract feature and evidence (product evidence Planned) | Planned work item |
 | --- | --- | --- |
-| Part 1 Git Use with Engineering Workflow — 10 | Eight-Issue plan, feature branches→lab4-staging→main, actual commits/PR links, peer review and check evidence; authoritative integrated main. #41 records the plan and published contract commit/PR #42; peer review and integration remain Pending. | All eight work items; Release Integration and submission report assembles Git evidence |
+| Part 1 Git Use with Engineering Workflow — 10 | Eight-Issue plan, feature branches→lab4-staging→main, actual commits/PR links, peer review and check evidence; authoritative integrated main. #41 records published contract PR #42, its approval and merge into lab4-staging; remaining GitHub Issues and final main integration are still required. | All eight work items; Release Integration and submission report assembles Git evidence |
 | Part 2 Spec DD — 5 | Six engineering-contract documents, FR/BR/GWT ACs, authorization/transition matrices, source decisions, API/data/migration/seed/recovery/UI definitions and Product DoD; dated actual contract review after student decisions. | Engineering Contract #41; later issues implement and maintain the approved contract |
 | Part 3 Test DD and Traceability — 10 | FR/BR→AC→Planned test paths now; later meaningful unit/API/UI/style/responsive/migration/seed/concurrency/performance/E2E execution reports and full regression evidence. Migration/seed/API evidence supports this part and Spec DD, not separate invented grading parts. | Engineering Contract #41 plans; Actions Taken Backend, Actions Taken UI, Ticket Workflow and both Dashboards implement tests; Final Hardening validates |
 | Part 4 AI Use with Reflection — 5 | Actual prompts/model/activities in ai-use.md, student-authored reflection and real verification decisions; do not invent extra prompts or a completed reflection. | All work items record actual AI use; Release Integration and submission report assembles selected prompts/reflection |
@@ -43,11 +43,11 @@ Excluded: SLA/on-call/escalation/breach, inventory/parts/procurement/cost/payrol
 | Part 8 Working Requester Dashboard and Final Regression UI — 5 | Owned attention/recent/outstanding metrics and drill-down plus all earlier-lab UI flows; later Requester screenshots/demo and complete Labs 1–3 regression results. | Requester Dashboard; Final Hardening; Release Integration and submission report collects evidence |
 | Part 9 Zen Green UI, Responsive, Accessibility, and Final Polish — 5 | Common Zen Green controls on all major screens, desktop/tablet/mobile and genuine 200% zoom, keyboard/labels/focus/contrast, no broken links/console errors/placeholders; later checklist/screenshots/results. | Actions Taken UI, Ticket Workflow and both Dashboards apply conventions; Final Hardening; Release Integration and submission report |
 
-Total: 60 points. Final report headings remain Answer Part 1–9 in this order; their evidence must match these areas, not the superseded migration/API-as-separate-parts mapping. Contract publication evidence is recorded above; product execution, formal peer review, final integration and submission evidence remain Planned/Pending.
+Total: 60 points. Final report headings remain Answer Part 1–9 in this order; their evidence must match these areas, not the superseded migration/API-as-separate-parts mapping. Contract publication, peer approval and staging merge evidence are recorded above; product execution, final integration and submission evidence remain Planned/Pending.
 
-## 3. Student-accepted decisions — Pending peer review
+## 3. Student-accepted decisions — Contract peer review approved
 
-Each heading is a stable decision link. All D-01–D-20 retain the reviewed Recommended behavior, rationale and alternatives; the student selected that option for each decision. Alternatives are retained for traceability and were not selected. Actual formal peer review remains required; no implementation or release readiness is asserted.
+Each heading is a stable decision link. All D-01–D-20 retain the reviewed Recommended behavior, rationale and alternatives; the student selected that option for each decision. Alternatives are retained for traceability and were not selected. Formal peer approval is recorded for the reviewed HEAD; it does not approve this new metadata change or assert implementation/release readiness.
 
 ### Student acceptance evidence
 
@@ -55,9 +55,9 @@ Each heading is a stable decision link. All D-01–D-20 retain the reviewed Reco
 - Acceptance date: **2026-10-04, Asia/Bangkok**; no time of day supplied.
 - Scope: **D-01–D-20, Recommended option accepted for every decision**.
 - Actual student message supplied as evidence: “ยอมรับ Recommended ทั้ง 20 ข้อ ว่าแต่อันนี้ถูกทั้งตาม lab4 ใช่มั้ยถ้าถูกฉันยอมรับ”.
-- The current user request reports the assistant's subsequent confirmation that the reviewed contract matches Lab 4 scope/rubric. This is student design acceptance and AI-assisted documentation review; the assistant is not a formal peer reviewer.
+- The earlier decision-recording request reports the assistant's subsequent confirmation that the reviewed contract matches Lab 4 scope/rubric. This is student design acceptance and AI-assisted documentation review; the assistant is not a formal peer reviewer.
 
-This common evidence applies to each individually marked decision below and the [student decision record](reviewer.md#student-acceptance-evidence). Formal peer reviewer/approval remains Pending; [PR #42](https://github.com/chaproi/toktickit/pull/42) is open for review. All product tests remain Planned and all Product DoD items unchecked.
+This common evidence applies to each individually marked decision below and the [student decision record](reviewer.md#student-acceptance-evidence). Separate [formal peer approval](reviewer.md#completed-peer-review) and PR #42's staging merge are recorded. All product tests remain Planned; only the combined student-acceptance/contract-review Product DoD item is complete, with the other ten unchecked.
 
 ### D-01
 
@@ -230,7 +230,7 @@ Target list query extensions (`statusGroup`, updated/resolved UTC bounds, sortBy
 
 ## 7. Functional requirements and business rules
 
-IDs are Sprint 4-local; prefix references with “Lab 4” when comparing historical IDs. P entries are student-accepted design choices; H/L retain their source authority. The next contract gate is formal peer review; implementation/testing is still future work.
+IDs are Sprint 4-local; prefix references with “Lab 4” when comparing historical IDs. P entries are student-accepted design choices; H/L retain their source authority. Contract peer review is complete for the reviewed HEAD; remaining work items must become actual GitHub Issues before RED–GREEN implementation/testing begins.
 
 | ID | Requirement | Basis / decision | AC |
 | --- | --- | --- | --- |
@@ -261,7 +261,7 @@ IDs are Sprint 4-local; prefix references with “Lab 4” when comparing histor
 | FR-25 | Apply Zen Green responsive layouts and accessible interaction. | H/L, D-19 | AC-37, AC-38 |
 | FR-26 | Keep Attachment Notes as plain text, separate from actual attachments/Notes. | H/L, D-04 | AC-05, AC-39 |
 | FR-27 | Plan complete Labs 1–3 regression and meaningful performance smoke. | H/S | AC-40 |
-| FR-28 | Publish a decision-linked planned test for every AC and truthfully pending review. | H | AC-40 |
+| FR-28 | Publish a decision-linked planned test for every AC and truthfully record review status. | H | AC-40 |
 | FR-29 | Plan Product DoD, nine-part submission evidence and ordered integration. | H | AC-40 |
 | FR-30 | Keep SDS conflicts, decision provenance and student-accepted design choices visible for formal peer review. | L/P, D-01–D-20 | AC-40 |
 | FR-31 | Preserve validated optional reasons on every successful status transition without rewriting historical rows. | L/P, D-20 | AC-43 |
@@ -317,7 +317,7 @@ IDs are Sprint 4-local; prefix references with “Lab 4” when comparing histor
 
 ## 8. Acceptance criteria
 
-Every row is Given–When–Then. Test IDs and concrete paths are in [tests](tests.md); all are Planned. “Then” with D IDs describes the student-accepted design outcome, not a handout mandate or completed implementation. Formal peer review remains pending.
+Every row is Given–When–Then. Test IDs and concrete paths are in [tests](tests.md); all are Planned. “Then” with D IDs describes the student-accepted design outcome, not a handout mandate or completed implementation. Formal contract peer review is complete for the reviewed HEAD.
 
 | ID | Given | When | Then | Accepted decisions | Planned tests |
 | --- | --- | --- | --- | --- | --- |
@@ -403,7 +403,7 @@ Seed plan (D-17): stable UUID fixture submission keys for Tickets, stable action
 
 | Order | Work item | Confirmed Issue | Depends on | Review boundary |
 | --- | --- | --- | --- | --- |
-| 1 | Engineering Contract | #41 | Sources, recorded student decisions and formal peer review | Six docs: Student decisions accepted — Pending peer review; source conflicts/alternatives retained |
+| 1 | Engineering Contract | #41 | Sources, recorded student decisions and formal peer review | Six docs: student decisions accepted, reviewed HEAD approved and PR #42 merged into lab4-staging; source conflicts/alternatives retained; this metadata change unreviewed |
 | 2 | Actions Taken Backend, including migration/seed/API | Not assigned | 1 and relevant decisions | Schema, action services, auth/eligibility, API and seed |
 | 3 | Actions Taken UI | Not assigned | 1, 2 | All rubric action controls and requester read-only views |
 | 4 | Ticket Workflow | Not assigned | 1, 2; coordinate 3 | Gate/cancellation/concurrency, existing matrix UI and student-accepted D-20 reason preservation (no backfill) |
@@ -412,11 +412,11 @@ Seed plan (D-17): stable UUID fixture submission keys for Tickets, stable action
 | 7 | Final Hardening | Not assigned | 2–6 | Complete regression, races, responsive/accessibility, performance smoke |
 | 8 | Release Integration and submission report | Not assigned | 7, actual peer approval and green required checks | Feature→lab4-staging→main, nine-part evidence/report |
 
-Only #41 is confirmed; no issue numbers invented. Dashboards can progress independently after shared contracts pass the formal peer gate, but final integration waits for all planned issues. Student acceptance is recorded here; formal peer review/approval and future merges are not performed by this documentation task.
+Only #41 is confirmed; no issue numbers invented. The reviewer requires remaining planned work items to become actual GitHub Issues before RED–GREEN implementation begins. No Issues are created by this review-record task. Dashboards can progress independently after shared contracts pass their required gates, but final integration waits for all planned issues. Student acceptance, contract peer approval and PR #42's existing staging merge are recorded; future implementation reviews/merges and final main integration are still required.
 
 ## 11. Product Definition of Done
 
-- [ ] Student acceptance of D-01–D-20 and conflict choices is recorded; actual dated formal contract review/approval is also required and remains Pending, so this combined DoD item is not complete.
+- [x] Student acceptance of D-01–D-20 and conflict choices is recorded; actual dated formal contract review/approval is evidenced by cottonlnwza's APPROVED review of fec388a3c2ab63cabb1bf20f3fa913fb023d9241 on 2026-10-04 18:31:01 Asia/Bangkok. See [completed peer review](reviewer.md#completed-peer-review); this completes only the contract-review item, not approval of the new metadata change.
 - [ ] All H fields, assignment/lifecycle/complete/cancel/inactive rejection and current-user Actions are implemented under approved decisions.
 - [ ] Every approved FR/BR/AC maps to implemented tests with actual results; all eight status edges/forbidden edges and direct backend gates verified.
 - [ ] Data-preserving migration, legacy zero actions, recovery rehearsal and operational-edit non-destructive reseed demonstrated on isolated databases.
@@ -428,4 +428,4 @@ Only #41 is confirmed; no issue numbers invented. Dashboards can progress indepe
 - [ ] Actual peer review, feature/staging/main integration and one PDF with Answer Part 1–9 and working evidence links completed by release issue.
 - [ ] AI prompts/activities truthful and student reflection written by the student; final authoritative main linked only after integration.
 
-Companion contracts: [planned tests](tests.md), [UI](ui-spec.md), [API](api-spec.md), [pending review](reviewer.md), [actual AI use](ai-use.md).
+Companion contracts: [planned tests](tests.md), [UI](ui-spec.md), [API](api-spec.md), [review record](reviewer.md), [actual AI use](ai-use.md).

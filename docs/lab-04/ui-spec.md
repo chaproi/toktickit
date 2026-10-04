@@ -1,6 +1,6 @@
 # Sprint 4 UI Contract
 
-Status: **Student decisions accepted — Pending peer review**. Product completion unchecked; all product tests **Planned**. H = handout/rubric, L = inherited Lab 3, P = student-accepted design choice (not an H mandate). Read [specification](specification.md), [API](api-spec.md) and [tests](tests.md). Screens/mockup interpretations do not create permissions. Formal peer review is the next gate; no implementation or release readiness claimed.
+Status: **Student decisions accepted — Contract peer review approved**. Product completion incomplete; all product tests **Planned**. H = handout/rubric, L = inherited Lab 3, P = student-accepted design choice (not an H mandate). Read [specification](specification.md), [API](api-spec.md) and [tests](tests.md). Screens/mockup interpretations do not create permissions. [Formal approval](reviewer.md#completed-peer-review) applies to reviewed HEAD fec388a3c2ab63cabb1bf20f3fa913fb023d9241; this metadata change is unreviewed. Only the contract-review DoD item is complete; remaining GitHub Issues are required before RED–GREEN implementation, with no implementation or release readiness claimed.
 
 ## 1. Navigation and visual foundation
 
