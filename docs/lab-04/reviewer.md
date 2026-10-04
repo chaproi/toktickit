@@ -2,13 +2,13 @@
 
 Status: **Student decisions accepted — Pending peer review**.
 
-Issue #41; branch `feat/41-lab4-contract`; integration `lab4-staging`. Baseline `64ff04ea8fb1395f569c1095aea556ee6a695ebd`. Formal peer reviewer: **Pending (not assigned)**. Formal peer review date: **Pending (not performed)**. Peer approval: **Pending**. Student decision approval: **Accepted by student — D-01–D-20, Recommended option**. PR: **Pending (not opened)**. No commit, push, implementation or product acceptance claimed.
+Issue #41; branch `feat/41-lab4-contract`; integration `lab4-staging`. Baseline `64ff04ea8fb1395f569c1095aea556ee6a695ebd`. Formal peer reviewer: **Pending (not assigned)**. Formal peer review date: **Pending (not performed)**. Peer approval: **Pending**. Student decision approval: **Accepted by student — D-01–D-20, Recommended option**. PR: [#42](https://github.com/chaproi/toktickit/pull/42), open for review. Contract commit `010cfb86620a53b0bdd130dd9e255c6061a9e23c` was pushed normally on 2026-10-04 Asia/Bangkok; no implementation or product acceptance claimed.
 
 This file records actual student design acceptance and the pending formal peer gate. The assistant's scope/rubric confirmation and documentation checks are AI-assisted review, not peer approval; the assistant is not the peer reviewer. Historical Lab 2/3 approvals remain in their original documents and are not a new Lab 4 sign-off.
 
 ## 1. Review package
 
-Read [specification](specification.md), [tests](tests.md), [UI](ui-spec.md), [API](api-spec.md), [AI use](ai-use.md), the supplied 11-page handout including pages 10–11 rubric, and the supplied SDS v1.0. D-01 through D-20 are all **Accepted by student (Recommended option)**; chosen behavior/rationale/alternatives retained. The SRS referenced by SDS was not supplied; no SRS IDs inferred. No applicable AGENTS.md found during source inventory. Application test evidence is absent; this task records decisions only in the six Markdown documents.
+Read [specification](specification.md), [tests](tests.md), [UI](ui-spec.md), [API](api-spec.md), [AI use](ai-use.md), the supplied 11-page handout including pages 10–11 rubric, and the supplied SDS v1.0. D-01 through D-20 are all **Accepted by student (Recommended option)**; chosen behavior/rationale/alternatives retained. The SRS referenced by SDS was not supplied; no SRS IDs inferred. No applicable AGENTS.md found during source inventory. Application test evidence is absent; the six-document contract is published in PR #42, with this publication-evidence correction limited to three metadata documents.
 
 ### Student acceptance evidence
 
@@ -75,7 +75,16 @@ Historical P-03 revision record: the user's seven findings were incorporated as 
 | Student decision acceptance | D-01–D-20 Accepted by student, Recommended option; สิริกร ฝันนิมิตร (ไทเกอร์), 2026-10-04 Asia/Bangkok, actual message above |
 | AI-assisted documentation review | Supplied evidence reports the assistant's Lab 4 scope/rubric confirmation; actual documentation checks recorded in ai-use.md; assistant is not a peer reviewer |
 | Formal peer review / peer approval | Pending; peer reviewer/date/results not invented |
-| Commit / push / PR / integration / submission | Not performed; outside this documentation task |
+| Contract commit / push / PR | Performed on 2026-10-04 Asia/Bangkok: commit 010cfb86620a53b0bdd130dd9e255c6061a9e23c, normal push to origin/feat/41-lab4-contract, [PR #42](https://github.com/chaproi/toktickit/pull/42) targeting lab4-staging; publication is not peer approval |
+| Integration / submission | Pending; no merge or submission performed |
+
+### Publication evidence
+
+- Publication date: **2026-10-04, Asia/Bangkok**.
+- Published contract commit: [010cfb86620a53b0bdd130dd9e255c6061a9e23c](https://github.com/chaproi/toktickit/commit/010cfb86620a53b0bdd130dd9e255c6061a9e23c), message `docs(lab4): define accepted Sprint 4 engineering contract`; six contract files only.
+- Normal push to `origin/feat/41-lab4-contract`; no force-push. PR: [#42 — Lab4: Define Sprint 4 engineering contract](https://github.com/chaproi/toktickit/pull/42), base `lab4-staging`, head `feat/41-lab4-contract`, open and not merged. Created via GitHub API because gh was unavailable, after confirming no existing matching PR.
+- Earlier no-commit/no-push/no-PR statements describe the historical drafting and decision-recording steps. The baseline `64ff04ea8fb1395f569c1095aea556ee6a695ebd` remains the original source baseline, not the current publication HEAD.
+- Formal peer review/approval remains **Pending**. All 20 decisions remain accepted; all 55 product scenarios Planned and all 11 Product DoD items unchecked. No application tests or peer approval inferred from publication.
 
 ## 5. Product acceptance
 

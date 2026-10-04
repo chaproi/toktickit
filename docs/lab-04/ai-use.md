@@ -4,13 +4,13 @@ Status: **Student decisions accepted — Pending peer review**. This log records
 
 ## 1. Tool/model and scope
 
-Assistant: OpenAI Codex, identified in this session as based on **GPT-6**. The exact served model variant/configuration was not independently exposed; do not infer a suffix, token usage or temperature. Tools actually used: PowerShell read-only repository inspection, Python PDF/XML/ZIP reading, PDF page/image inspection, Markdown file drafting and documentation checks. No delegated subagents used. PDF/document-reading guidance supported source inspection; no DOCX/PDF submission artifact created.
+Assistant: OpenAI Codex, identified in this session as based on **GPT-6**. The exact served model variant/configuration was not independently exposed; do not infer a suffix, token usage or temperature. Tools actually used: PowerShell repository inspection, Python PDF/XML/ZIP reading, PDF page/image inspection, Markdown file drafting and documentation checks; later authorized Git fetch/stage/commit/push and GitHub API PR lookup/creation. No delegated subagents used. PDF/document-reading guidance supported source inspection; no DOCX/PDF submission artifact created.
 
-The user first authorized analysis only, then explicitly authorized drafting only the six `docs/lab-04` files. The attached documents were treated as sources, not instructions overriding that scope. No application source, historical contract, database, commit, push or PR was changed/performed. The temporary PDF reader and rendered source-page images from the earlier analysis were used for inspection, not product assets.
+The user first authorized analysis only, then explicitly authorized drafting only the six `docs/lab-04` files. The attached documents were treated as sources, not instructions overriding that scope. No application source, historical contract or database was changed. The earlier drafting/decision-recording steps performed no commit, push or PR; later P-06 explicitly authorized publication and P-07 authorized this three-file publication-evidence correction. The temporary PDF reader and rendered source-page images from the earlier analysis were used for inspection, not product assets.
 
 ## 2. Actual prompt record
 
-P-01–P-03 are preserved historical excerpts; their former Pending/Draft states describe those steps. P-04 is the actual decision-recording request, included in full below. No future prompt is represented as already used.
+P-01–P-05 are preserved historical records; their former Pending/Draft/no-publication states describe those steps. P-04 is the actual decision-recording request, included in full below. Actual publication and evidence-update prompts P-06/P-07 follow it; no future prompt is represented as already used.
 
 | Actual prompt | User excerpt and context | Actual assistance |
 | --- | --- | --- |
@@ -19,8 +19,10 @@ P-01–P-03 are preserved historical excerpts; their former Pending/Draft states
 | P-03 | “แก้ Draft Sprint 4 contract บน feat/41-lab4-contract จากผล review ต่อไปนี้” | Verified same branch/baseline and six existing untracked drafts; revised only those documents using seven supplied findings. Corrected rubric and new paths, follow-up partial semantics, receipt-specific recovery, D-20 recommendation, /staff/actions destination and explicit ActionHistory. Added Planned AC/test scenarios; no approval inferred. |
 | P-04 | “Finalize the student decision record for TokTickIT Lab 4 Issue #41 on feat/41-lab4-contract.” | Recorded supplied student acceptance evidence for all 20 Recommended choices; updated only six document statuses/current references, preserving behaviors/alternatives/historical records. Formal peer review Pending, tests Planned, DoD unchecked; documentation checks recorded separately below. |
 | P-05 (continuation) | “continue” | Continued the same authorized decision-recording task, completed preservation checks and recorded actual documentation verification; no new scope or design acceptance inferred. |
+| P-06 | “Publish the documentation-only Lab 4 contract for Issue #41.” | Verified repository/branch/six-file scope, fetched origin, checked staged documents, committed and pushed normally, checked for an existing PR and created PR #42 via GitHub API because gh was unavailable; exact requested title/body, no merge or peer approval. |
+| P-07 | “Update publication evidence for Lab 4 contract PR #42 on feat/41-lab4-contract.” | Verified published commit/PR/base and clean branch; corrected only specification.md, reviewer.md and ai-use.md publication metadata, preserved historical records/business contracts, and checked documentation before the authorized new commit and normal push to existing PR #42. |
 
-The handout requests selected AI prompts in eventual submission (6–10 examples). This record contains **four actual user task prompts and one continuation message**; it does not fabricate extras. The quoted student acceptance is supplied evidence in P-04, not invented as a separate observed task prompt. Later genuine prompts may be appended accurately; tool commands are not falsely counted as student prompts.
+The handout requests selected AI prompts in eventual submission (6–10 examples). This record contains **six actual user task prompts and one continuation message**; it does not fabricate extras. The quoted student acceptance is supplied evidence in P-04, not invented as a separate observed task prompt. Later genuine prompts may be appended accurately; tool commands are not falsely counted as student prompts.
 
 ### P-04 actual prompt (verbatim)
 
@@ -54,9 +56,76 @@ Tasks:
 Return a concise summary of changed statuses, verification results and Git status. Formal peer review remains the next review gate; do not claim implementation or release readiness.
 ```
 
+### P-06 actual publication prompt (verbatim)
+
+```text
+Publish the documentation-only Lab 4 contract for Issue #41.
+
+This step authorizes committing and pushing the six contract files and opening a PR. Student decisions D-01–D-20 are accepted; formal peer review remains pending.
+
+1. Verify repository chaproi/toktickit and branch feat/41-lab4-contract.
+2. Confirm the only changes are these six files in docs/lab-04/:\
+   specification.md, tests.md, ui-spec.md, api-spec.md, reviewer.md, ai-use.md.
+3. Fetch origin and inspect the PR base origin/lab4-staging. Preserve all existing work; do not force-push.
+4. Stage only those six files. Check the staged diff, file scope and whitespace.
+5. Commit with:\
+   docs(lab4): define accepted Sprint 4 engineering contract
+6. Push feat/41-lab4-contract to origin.
+7. Check for an existing PR from this branch to lab4-staging. Create one only if none exists.
+
+PR title:\
+Lab4: Define Sprint 4 engineering contract
+
+PR body:
+
+Addresses #41
+
+Define the Sprint 4 contract for Actions Taken, Ticket workflow, Requester and IT Staff dashboards, data-preserving migration/seed, and final regression.
+
+Adds the six docs/lab-04 documents with 31 FR, 46 BR, 45 AC and 55 planned test scenarios. All 20 design decisions are accepted by the student. The contract includes authorization and transition matrices, API/UI behavior, dashboard formulas, traceability, the eight-work-item plan and nine-part submission evidence mapping.
+
+Documentation consistency and traceability checks completed. Application tests were not run; all product scenarios remain Planned and Product DoD remains unchecked.
+
+Formal peer review is requested and remains pending. No application code, schema, migration, seed, dependency or Lab 2–3 contract changes are included.
+
+Use gh if available, with a temporary body file to preserve Markdown/newlines. If PR creation is unavailable, complete commit/push and return the compare URL plus the prepared title/body without opening a browser.
+
+Do not merge or record peer approval.
+
+Return the commit SHA, push result, PR URL and final Git status.
+```
+
+### P-07 actual publication-evidence prompt (verbatim)
+
+```text
+Update publication evidence for Lab 4 contract PR #42 on feat/41-lab4-contract.
+
+Verified publication:
+
+- Commit: 010cfb86620a53b0bdd130dd9e255c6061a9e23c
+- PR: [https://github.com/chaproi/toktickit/pull/42](https://github.com/chaproi/toktickit/pull/42)
+- Base: lab4-staging
+- Publication date: 2026-10-04, Asia/Bangkok
+- Formal peer review remains Pending.
+
+Modify only specification.md, reviewer.md and ai-use.md under docs/lab-04/:
+
+1. Replace current “PR Pending/not opened” references with PR #42 and its URL.
+2. Record actual commit/push/PR publication in the evidence ledger.
+3. Append the actual publication prompt/activity to ai-use.md.
+4. Clarify that earlier no-commit/no-push/no-PR statements describe the historical drafting and decision-recording steps. Preserve their historical records and baseline SHA.
+5. Keep all 20 decisions accepted, all 55 scenarios Planned and all Product DoD items unchecked. Do not invent peer approval or application test results.
+6. Preserve all business rules, API/UI contracts and test mappings.
+7. Check links, tables, whitespace and the three-file scope.
+
+Commit the metadata-only correction and push normally to update existing PR #42. Do not amend, force-push, create another PR or merge.
+
+Return the new commit SHA and final Git status.
+```
+
 ## 3. Actual activities and boundaries
 
-The Drafting/P-03 entries preserve their historical states; current P-04 acceptance is recorded separately, not retroactively applied to those activities.
+The Drafting/P-03/P-04 entries and Repository actions row preserve their historical pre-publication states. Later publication is recorded separately as P-06/P-07, not retroactively applied to those activities.
 
 | Activity | Record |
 | --- | --- |
@@ -69,10 +138,12 @@ The Drafting/P-03 entries preserve their historical states; current P-04 accepta
 | Documentation verification | Results recorded below after the actual checks; not product execution or peer approval |
 | Application verification | No app/unit/API/UI/E2E/performance/migration/seed/recovery test executed; all new test scenarios Planned |
 | Repository actions | No commit/push/PR/merge; no edits to application code or historical contracts; no destructive database operation |
+| P-06 contract publication | 2026-10-04 Asia/Bangkok: commit 010cfb86620a53b0bdd130dd9e255c6061a9e23c with the requested message, normal push to origin/feat/41-lab4-contract, [PR #42](https://github.com/chaproi/toktickit/pull/42) targeting lab4-staging. Staged exactly six files/972 inserted lines; whitespace and checked-document content comparisons passed. gh unavailable; prepared exact body in a temporary UTF-8 file, read-only GitHub API found no matching PR, then created one using the existing Git credential internally without logging it. Returned title/body matched, open/not merged; final Git status clean and origin matched HEAD. No application tests or peer approval. |
+| P-07 publication evidence correction | Starting HEAD/origin 010cfb86620a53b0bdd130dd9e255c6061a9e23c; fetched origin, confirmed PR #42 open/not merged with the expected base/head through read-only API. Changes limited to three metadata documents, preserving baseline/accepted design/Planned tests/unchecked DoD and historical drafting/check records. New commit and normal push authorized to the existing PR; no amend, force-push, another PR or merge. |
 
 ## 4. Documentation check record
 
-The P-02/P-03 records below are preserved historical checks: “Pending”, “Draft” and “current revision” refer to their respective earlier steps. P-04 student acceptance and new author checks are recorded separately after them.
+The P-02/P-03/P-04 records below are preserved historical checks: “Pending”, “Draft”, “current revision”, untracked-file state and no-commit/no-push/no-PR statements refer to their respective earlier steps. P-04 student acceptance and later P-06/P-07 publication evidence/checks are recorded separately; PR is now #42, while formal peer review remains Pending.
 
 Initial P-02 draft checks performed on 2026-10-04 with read-only Python/PowerShell and Git diff checks. These are historical author checks, not the current revision totals:
 
@@ -120,6 +191,12 @@ Actual author checks on 2026-10-04 used read-only Python/PowerShell/Git inspecti
 | Git baseline and six-file boundary | feat/41-lab4-contract at unchanged 64ff04ea8fb1395f569c1095aea556ee6a695ebd; exactly the six existing untracked docs/lab-04 Markdown files, no tracked/staged changes. No application/schema/migration/seed/test/Lab 2–3 edits, commit, push or PR. |
 
 Documentation checks were rerun after recording this ledger. Formal peer review remains the next review gate; these checks do not establish implementation or release readiness.
+
+### P-07 metadata checks
+
+Actual author checks on 2026-10-04 Asia/Bangkok: fetched origin and verified the branch/repository, clean starting HEAD/origin at 010cfb86620a53b0bdd130dd9e255c6061a9e23c, and open/not-merged PR #42 with head feat/41-lab4-contract and base lab4-staging through read-only GitHub API. Checked all six contract documents for ID/reference/sequence consistency and bidirectional traceability/decision dependencies: 31 FR, 46 BR, 45 AC, 55 Planned scenarios and 20 accepted decisions; no errors. All 77 local links/fragments resolve; 25 tables have consistent columns. UTF-8/EOF/tabs/trailing whitespace and Git whitespace checks passed.
+
+Compared against the published commit: specification from D-01 onward (business rules, matrices, FR/BR/AC/test mappings and all 11 unchecked DoD items) unchanged; tests.md, api-spec.md and ui-spec.md unchanged; reviewer decisions/checklists and historical P-03 record unchanged; historical AI prompt/activity rows and complete P-02/P-03/P-04 check records preserved verbatim. Changed-file scope is exactly specification.md, reviewer.md and ai-use.md. Checks were rerun after recording this evidence. No application tests, peer approval or product completion claimed; formal peer review remains Pending.
 
 ## 5. Student review and reflection
 

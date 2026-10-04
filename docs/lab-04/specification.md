@@ -8,6 +8,8 @@ Extend TokTickIT with Actions Taken, an enforced Ticket resolution gate, Request
 
 Before drafting, the branch matched the requested branch and the working tree was clean. HEAD and local `lab4-staging` both resolved to `64ff04ea8fb1395f569c1095aea556ee6a695ebd`. No changes were discarded. Local refs are not a verification of remote branch state. No applicable AGENTS.md was found in the repository or the searched ancestor locations.
 
+Publication evidence: the six contract documents were committed as `010cfb86620a53b0bdd130dd9e255c6061a9e23c`, pushed normally to `origin/feat/41-lab4-contract`, and published in [PR #42](https://github.com/chaproi/toktickit/pull/42) targeting `lab4-staging` on **2026-10-04, Asia/Bangkok**. The original drafting baseline above remains unchanged as historical evidence. See the [publication ledger](reviewer.md#publication-evidence); formal peer review/approval remains Pending, and no merge or product completion is recorded.
+
 Sources read and compared:
 
 | Source | Extent and interpretation |
@@ -27,11 +29,11 @@ Source labels below: **H** = handout requirement (including rubric); **L** = inh
 
 Included: action fields/list/detail/create/edit/assignment/lifecycle/complete/cancel; inactive-assignee rejection; requester read-only visibility of all action items on owned Tickets; eight-status workflow and backend gate; two dashboards including current-user Actions Taken; additive migration/recovery/index/seed planning; authorization, duplicate requests, concurrency, safe failures; Zen Green responsive accessible UI; all earlier-lab regression; review and submission evidence planning.
 
-Excluded: SLA/on-call/escalation/breach, inventory/parts/procurement/cost/payroll/billing, approval signatures, external notifications, advanced BI/export/warehouse, multi-tenancy/cloud deployment, unrelated features. SDS notification/category-management/deployment expansion and an architecture-wide UUID/API/audit rewrite are outside this sprint scope. This Issue only maintains the six contract documents; no application implementation, tests execution, DB operation, commit, push, PR or historical-contract edit is authorized here.
+Excluded: SLA/on-call/escalation/breach, inventory/parts/procurement/cost/payroll/billing, approval signatures, external notifications, advanced BI/export/warehouse, multi-tenancy/cloud deployment, unrelated features. SDS notification/category-management/deployment expansion and an architecture-wide UUID/API/audit rewrite are outside this sprint scope. This Issue maintains the six contract documents; no application implementation, tests execution, DB operation or historical-contract edit is authorized here. Commit/push/PR were excluded from the earlier drafting and decision-recording steps; the later explicit publication authorization produced PR #42. This metadata correction updates only specification.md, reviewer.md and ai-use.md through a new commit and normal push to that existing PR; no amend, force-push, new PR or merge.
 
-| Handout/rubric area | Contract feature and planned evidence (not yet produced) | Planned work item |
+| Handout/rubric area | Contract feature and evidence (product evidence Planned) | Planned work item |
 | --- | --- | --- |
-| Part 1 Git Use with Engineering Workflow — 10 | Eight-Issue plan, feature branches→lab4-staging→main, actual commits/PR links, peer review and check evidence; authoritative integrated main. #41 drafts the plan only. | All eight work items; Release Integration and submission report assembles Git evidence |
+| Part 1 Git Use with Engineering Workflow — 10 | Eight-Issue plan, feature branches→lab4-staging→main, actual commits/PR links, peer review and check evidence; authoritative integrated main. #41 records the plan and published contract commit/PR #42; peer review and integration remain Pending. | All eight work items; Release Integration and submission report assembles Git evidence |
 | Part 2 Spec DD — 5 | Six engineering-contract documents, FR/BR/GWT ACs, authorization/transition matrices, source decisions, API/data/migration/seed/recovery/UI definitions and Product DoD; dated actual contract review after student decisions. | Engineering Contract #41; later issues implement and maintain the approved contract |
 | Part 3 Test DD and Traceability — 10 | FR/BR→AC→Planned test paths now; later meaningful unit/API/UI/style/responsive/migration/seed/concurrency/performance/E2E execution reports and full regression evidence. Migration/seed/API evidence supports this part and Spec DD, not separate invented grading parts. | Engineering Contract #41 plans; Actions Taken Backend, Actions Taken UI, Ticket Workflow and both Dashboards implement tests; Final Hardening validates |
 | Part 4 AI Use with Reflection — 5 | Actual prompts/model/activities in ai-use.md, student-authored reflection and real verification decisions; do not invent extra prompts or a completed reflection. | All work items record actual AI use; Release Integration and submission report assembles selected prompts/reflection |
@@ -41,7 +43,7 @@ Excluded: SLA/on-call/escalation/breach, inventory/parts/procurement/cost/payrol
 | Part 8 Working Requester Dashboard and Final Regression UI — 5 | Owned attention/recent/outstanding metrics and drill-down plus all earlier-lab UI flows; later Requester screenshots/demo and complete Labs 1–3 regression results. | Requester Dashboard; Final Hardening; Release Integration and submission report collects evidence |
 | Part 9 Zen Green UI, Responsive, Accessibility, and Final Polish — 5 | Common Zen Green controls on all major screens, desktop/tablet/mobile and genuine 200% zoom, keyboard/labels/focus/contrast, no broken links/console errors/placeholders; later checklist/screenshots/results. | Actions Taken UI, Ticket Workflow and both Dashboards apply conventions; Final Hardening; Release Integration and submission report |
 
-Total: 60 points. Final report headings remain Answer Part 1–9 in this order; their evidence must match these areas, not the superseded migration/API-as-separate-parts mapping. All evidence in this table is Planned.
+Total: 60 points. Final report headings remain Answer Part 1–9 in this order; their evidence must match these areas, not the superseded migration/API-as-separate-parts mapping. Contract publication evidence is recorded above; product execution, formal peer review, final integration and submission evidence remain Planned/Pending.
 
 ## 3. Student-accepted decisions — Pending peer review
 
@@ -55,7 +57,7 @@ Each heading is a stable decision link. All D-01–D-20 retain the reviewed Reco
 - Actual student message supplied as evidence: “ยอมรับ Recommended ทั้ง 20 ข้อ ว่าแต่อันนี้ถูกทั้งตาม lab4 ใช่มั้ยถ้าถูกฉันยอมรับ”.
 - The current user request reports the assistant's subsequent confirmation that the reviewed contract matches Lab 4 scope/rubric. This is student design acceptance and AI-assisted documentation review; the assistant is not a formal peer reviewer.
 
-This common evidence applies to each individually marked decision below and the [student decision record](reviewer.md#student-acceptance-evidence). Formal peer reviewer/approval and PR remain pending; all product tests remain Planned and all Product DoD items unchecked.
+This common evidence applies to each individually marked decision below and the [student decision record](reviewer.md#student-acceptance-evidence). Formal peer reviewer/approval remains Pending; [PR #42](https://github.com/chaproi/toktickit/pull/42) is open for review. All product tests remain Planned and all Product DoD items unchecked.
 
 ### D-01
 
