@@ -2,21 +2,22 @@ export type CreateActionValidationData = {
   description: string;
   followUpRequired: boolean;
   followUpNote: string | null;
-  assigneeId: unknown;
-  expectedTicketUpdatedAt: unknown;
-  clientMutationId: unknown;
-  result: unknown;
-  attachmentNotes: unknown;
+  assigneeId: number;
+  expectedTicketUpdatedAt: string;
+  clientMutationId: string;
+  result: string | null;
+  attachmentNotes: string | null;
 };
 
 export type CreateActionValidationResult =
   | { success: true; data: CreateActionValidationData }
   | { success: false; fields: Record<string, string> };
 
-// T-05 / AC-05 and T-49 / AC-41 create-validation foundation only.
-// Before API use, later tests-first batches must validate result and
-// attachmentNotes types/bounds, assigneeId, strict UTC tokens and UUID keys.
-// Those fields remain unknown here; success is not complete API-04 validation.
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+// Pure API-04 create-payload validation only (T-05 / AC-05, T-49 / AC-41).
+// Authorization, eligibility, stale tokens and persistence require API coverage.
 export function validateCreateActionInput(
   input: unknown,
 ): CreateActionValidationResult {
@@ -65,16 +66,57 @@ export function validateCreateActionInput(
     }
   }
 
-  if (Object.keys(fields).length > 0) {
-    return { success: false, fields };
+  let result: string | null = null;
+  if (body.result != null) {
+    if (typeof body.result !== "string") {
+      fields.result = "Result must be text or null.";
+    } else {
+      result = body.result.trim();
+      if (result.length < 1 || result.length > 2000) {
+        fields.result = "Result must contain between 1 and 2000 characters.";
+      }
+    }
   }
 
-  // Normalize supplied strings without interpreting HTML or coercing types.
-  // Non-string values in these not-yet-validated fields are retained as unknown.
-  const result = typeof body.result === "string" ? body.result.trim() : body.result ?? null;
-  const attachmentNotes = typeof body.attachmentNotes === "string"
-    ? body.attachmentNotes.trim() || null
-    : body.attachmentNotes ?? null;
+  let attachmentNotes: string | null = null;
+  if (body.attachmentNotes != null) {
+    if (typeof body.attachmentNotes !== "string") {
+      fields.attachmentNotes = "Attachment Notes must be text or null.";
+    } else {
+      attachmentNotes = body.attachmentNotes.trim() || null;
+      if (attachmentNotes !== null && attachmentNotes.length > 2000) {
+        fields.attachmentNotes = "Attachment Notes must contain at most 2000 characters.";
+      }
+    }
+  }
+
+  const assigneeId = typeof body.assigneeId === "number" ? body.assigneeId : null;
+  if (assigneeId === null || !Number.isSafeInteger(assigneeId) || assigneeId <= 0) {
+    fields.assigneeId = "Assignee must be a positive safe integer.";
+  }
+
+  const expectedTicketUpdatedAt = typeof body.expectedTicketUpdatedAt === "string"
+    ? body.expectedTicketUpdatedAt
+    : null;
+  // Match the inherited timestamp convention: canonical ISO UTC, including
+  // exactly three millisecond digits, and no calendar rollover or padding.
+  if (expectedTicketUpdatedAt === null ||
+      Number.isNaN(Date.parse(expectedTicketUpdatedAt)) ||
+      new Date(expectedTicketUpdatedAt).toISOString() !== expectedTicketUpdatedAt) {
+    fields.expectedTicketUpdatedAt = "Expected Ticket update time must be an ISO UTC timestamp.";
+  }
+
+  // Inherited UUID validation trims whitespace but preserves hexadecimal case.
+  const clientMutationId = typeof body.clientMutationId === "string"
+    ? body.clientMutationId.trim()
+    : "";
+  if (!UUID_PATTERN.test(clientMutationId)) {
+    fields.clientMutationId = "Mutation identifier must be a valid UUID.";
+  }
+
+  if (Object.keys(fields).length > 0 || assigneeId === null || expectedTicketUpdatedAt === null) {
+    return { success: false, fields };
+  }
 
   return {
     success: true,
@@ -82,9 +124,9 @@ export function validateCreateActionInput(
       description,
       followUpRequired: body.followUpRequired === true,
       followUpNote,
-      assigneeId: body.assigneeId,
-      expectedTicketUpdatedAt: body.expectedTicketUpdatedAt,
-      clientMutationId: body.clientMutationId,
+      assigneeId,
+      expectedTicketUpdatedAt,
+      clientMutationId,
       result,
       attachmentNotes,
     },
