@@ -486,3 +486,396 @@ describe("T-05 / AC-05: remaining pure create fields (second RED batch)", () => 
     });
   });
 });
+
+import * as actionValidationModule from "../../src/actions/action-validation.js";
+
+// Planned public interfaces for API-05; these are declarations, not validators.
+// Parsing validates supplied fields/tokens without applying create defaults.
+// patch contains ONLY supplied editable keys, preserving their raw text/nulls.
+// Trimming and conditional follow-up validation happen during final-state merge.
+// Receipts must fingerprint the unchanged original request, not merged values
+// or normalized tokens. UI clearing confirmation is not a request field.
+type PlannedEditableActionValues = {
+  description: string;
+  result: string | null;
+  assigneeId: number;
+  followUpRequired: boolean;
+  followUpNote: string | null;
+  attachmentNotes: string | null;
+};
+type PlannedEditActionPatch = Partial<PlannedEditableActionValues>;
+type PlannedEditActionRequest = {
+  expectedVersion: number;
+  expectedTicketUpdatedAt: string;
+  clientMutationId: string;
+  patch: PlannedEditActionPatch;
+};
+type PlannedEditValidation<T> =
+  | { success: true; data: T }
+  | { success: false; fields: Record<string, string> };
+
+// Namespace access keeps existing create tests collectible when these exports
+// are absent. Missing functions produce real TypeErrors at their call sites;
+// there are no mocks, fallbacks, stubs or assertions that manufacture failure.
+const plannedActionEditValidation = actionValidationModule as typeof actionValidationModule & {
+  validateEditActionInput(input: unknown): PlannedEditValidation<PlannedEditActionRequest>;
+  mergeAndValidateActionEdit(
+    current: Readonly<PlannedEditableActionValues>,
+    patch: Readonly<PlannedEditActionPatch>,
+  ): PlannedEditValidation<PlannedEditableActionValues>;
+};
+
+const validEditTokens = {
+  expectedVersion: 7,
+  expectedTicketUpdatedAt: "2026-10-05T03:00:00.000Z",
+  clientMutationId: "5b7f6b32-e929-4ac8-9c95-079956888f2f",
+};
+const currentActionWithFollowUp: PlannedEditableActionValues = {
+  description: "Investigate the reported connection failure",
+  result: "Initial checks recorded",
+  assigneeId: 21,
+  followUpRequired: true,
+  followUpNote: "Arrange a diagnostic session",
+  attachmentNotes: "See the Ticket attachment panel",
+};
+const currentActionWithoutFollowUp: PlannedEditableActionValues = {
+  ...currentActionWithFollowUp,
+  followUpRequired: false,
+  followUpNote: null,
+};
+
+function editInput(
+  overrides: Record<string, unknown> = {},
+  omittedFields: readonly string[] = [],
+): Record<string, unknown> {
+  const input: Record<string, unknown> = {
+    ...validEditTokens,
+    description: "Check the network",
+    ...overrides,
+  };
+  for (const field of omittedFields) delete input[field];
+  return input;
+}
+
+function parseEditWithoutInputMutation(input: unknown) {
+  const before = structuredClone(input);
+  const result = plannedActionEditValidation.validateEditActionInput(input);
+  expect(input).toStrictEqual(before);
+  return result;
+}
+
+function expectEditFieldError(input: unknown, field: string) {
+  expect(parseEditWithoutInputMutation(input)).toMatchObject({
+    success: false,
+    fields: { [field]: expect.any(String) },
+  });
+}
+
+function mergeEditWithoutInputMutation(
+  current: PlannedEditableActionValues,
+  patch: PlannedEditActionPatch,
+) {
+  const beforeCurrent = structuredClone(current);
+  const beforePatch = structuredClone(patch);
+  const result = plannedActionEditValidation.mergeAndValidateActionEdit(current, patch);
+  expect(current).toStrictEqual(beforeCurrent);
+  expect(patch).toStrictEqual(beforePatch);
+  return result;
+}
+
+describe("T-05 / AC-05: pure API-05 PATCH parsing (edit RED batch)", () => {
+  it("returns tokens and only the supplied editable field, without create defaults", () => {
+    expect(parseEditWithoutInputMutation(editInput({ description: "  Check the network  " })))
+      .toEqual({
+        success: true,
+        data: { ...validEditTokens, patch: { description: "  Check the network  " } },
+      });
+  });
+
+  it.each([
+    { label: "omitted", overrides: {}, expected: {} },
+    { label: "null", overrides: { followUpNote: null }, expected: { followUpNote: null } },
+    { label: "empty", overrides: { followUpNote: "" }, expected: { followUpNote: "" } },
+    { label: "whitespace", overrides: { followUpNote: " \n\t " }, expected: { followUpNote: " \n\t " } },
+  ])("preserves $label note presence for merging and original-input fingerprinting", ({ overrides, expected }) => {
+    expect(parseEditWithoutInputMutation(editInput(overrides))).toEqual({
+      success: true,
+      data: { ...validEditTokens, patch: { description: "Check the network", ...expected } },
+    });
+  });
+
+  it.each([
+    { field: "result", value: null },
+    { field: "attachmentNotes", value: "" },
+    { field: "assigneeId", value: 22 },
+    { field: "followUpRequired", value: false },
+    { field: "followUpNote", value: null },
+  ])("accepts $field alone as the required editable field", ({ field, value }) => {
+    expect(parseEditWithoutInputMutation(editInput({ [field]: value }, ["description"])))
+      .toEqual({ success: true, data: { ...validEditTokens, patch: { [field]: value } } });
+  });
+
+  it("rejects tokens alone without any editable field", () => {
+    expectEditFieldError(editInput({}, ["description"]), "body");
+  });
+
+  it.each([null, undefined, [], "patch", 42])("rejects non-object request %s", (input) => {
+    expectEditFieldError(input, "body");
+  });
+
+  it.each(["expectedVersion", "expectedTicketUpdatedAt", "clientMutationId"])(
+    "requires token %s even with a valid editable field",
+    (field) => expectEditFieldError(editInput({}, [field]), field),
+  );
+
+  it.each([1, 7, 2147483648])("accepts positive numeric version %s without a new 32-bit cap", (value) => {
+    expect(parseEditWithoutInputMutation(editInput({ expectedVersion: value })))
+      .toMatchObject({ success: true, data: { expectedVersion: value } });
+  });
+
+  it.each([null, undefined, 0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY, "7", true, {}, []])(
+    "rejects invalid expectedVersion %s",
+    (value) => expectEditFieldError(editInput({ expectedVersion: value }), "expectedVersion"),
+  );
+
+  it.each(["2026-10-05T03:00:00.000Z", "2024-02-29T23:59:59.999Z"])(
+    "preserves valid UTC millisecond token %s exactly",
+    (value) => {
+      expect(parseEditWithoutInputMutation(editInput({ expectedTicketUpdatedAt: value })))
+        .toMatchObject({ success: true, data: { expectedTicketUpdatedAt: value } });
+    },
+  );
+
+  it.each([
+    null, undefined, 42, true, {}, [], "not-a-date", "2026-10-05T03:00:00Z",
+    "2026-10-05T03:00:00.00Z", "2026-10-05T03:00:00.000+00:00",
+    "2026-02-30T03:00:00.000Z", "2025-02-29T03:00:00.000Z",
+    " 2026-10-05T03:00:00.000Z ",
+  ])("rejects invalid expectedTicketUpdatedAt %s", (value) => {
+    expectEditFieldError(editInput({ expectedTicketUpdatedAt: value }), "expectedTicketUpdatedAt");
+  });
+
+  it.each([
+    { supplied: "123e4567-e89b-12d3-a456-426614174000", expected: "123e4567-e89b-12d3-a456-426614174000" },
+    { supplied: " \n5B7F6B32-E929-4AC8-9C95-079956888F2F\t ", expected: "5B7F6B32-E929-4AC8-9C95-079956888F2F" },
+  ])("uses inherited UUID trimming/case handling for $supplied", ({ supplied, expected }) => {
+    expect(parseEditWithoutInputMutation(editInput({ clientMutationId: supplied })))
+      .toMatchObject({ success: true, data: { clientMutationId: expected } });
+  });
+
+  it.each([null, undefined, 42, false, {}, [], "", "not-a-uuid", "5b7f6b32e9294ac89c95079956888f2f"])(
+    "rejects invalid clientMutationId %s",
+    (value) => expectEditFieldError(editInput({ clientMutationId: value }), "clientMutationId"),
+  );
+
+  it.each([
+    "unexpected", "id", "ticketId", "createdById", "createdBy", "performedById", "performedBy",
+    "status", "actionAt", "createdAt", "updatedAt", "completedAt", "cancelledAt",
+    "cancellationReason", "version", "history", "attachmentId", "attachmentIds", "attachments", "confirm",
+  ])("rejects immutable/unknown field %s with safe field errors", (field) => {
+    const result = parseEditWithoutInputMutation(editInput({ [field]: "supplied" }));
+    expect(result).toMatchObject({ success: false, fields: expect.any(Object) });
+    if (!result.success) {
+      expect(Object.keys(result.fields).length).toBeGreaterThan(0);
+      expect(Object.keys(result.fields).every((key) => [
+        "body", "description", "result", "assigneeId", "followUpRequired", "followUpNote",
+        "attachmentNotes", "expectedVersion", "expectedTicketUpdatedAt", "clientMutationId",
+      ].includes(key))).toBe(true);
+      expect(Object.values(result.fields).every((value) => typeof value === "string")).toBe(true);
+    }
+  });
+
+  it.each([
+    { field: "description", value: "  abcde  " },
+    { field: "description", value: `  ${"x".repeat(2000)}  ` },
+    { field: "result", value: null },
+    { field: "result", value: "  x  " },
+    { field: "result", value: `  ${"x".repeat(2000)}  ` },
+    { field: "attachmentNotes", value: null },
+    { field: "attachmentNotes", value: "" },
+    { field: "attachmentNotes", value: " \n\t " },
+    { field: "attachmentNotes", value: "  x  " },
+    { field: "attachmentNotes", value: `  ${"x".repeat(2000)}  ` },
+    { field: "assigneeId", value: 1 },
+    { field: "assigneeId", value: 2147483648 },
+    { field: "followUpRequired", value: true },
+    { field: "followUpRequired", value: false },
+    { field: "followUpNote", value: "  x  " },
+    { field: "followUpNote", value: `  ${"x".repeat(2000)}  ` },
+  ])("validates supplied $field while preserving its raw value", ({ field, value }) => {
+    expect(parseEditWithoutInputMutation(editInput({ [field]: value }, ["description"])))
+      .toEqual({ success: true, data: { ...validEditTokens, patch: { [field]: value } } });
+  });
+
+  it.each([
+    { field: "description", value: "  abcd  " },
+    { field: "description", value: " \n\t " },
+    { field: "description", value: "x".repeat(2001) },
+    { field: "description", value: null },
+    { field: "description", value: 42 },
+    { field: "result", value: "" },
+    { field: "result", value: " \n\t " },
+    { field: "result", value: "x".repeat(2001) },
+    { field: "result", value: false },
+    { field: "result", value: {} },
+    { field: "attachmentNotes", value: "x".repeat(2001) },
+    { field: "attachmentNotes", value: 42 },
+    { field: "attachmentNotes", value: [] },
+    { field: "assigneeId", value: null },
+    { field: "assigneeId", value: 0 },
+    { field: "assigneeId", value: -1 },
+    { field: "assigneeId", value: 1.5 },
+    { field: "assigneeId", value: Number.POSITIVE_INFINITY },
+    { field: "assigneeId", value: 9007199254740992 },
+    { field: "assigneeId", value: "21" },
+    { field: "followUpRequired", value: null },
+    { field: "followUpRequired", value: "false" },
+    { field: "followUpRequired", value: 0 },
+    { field: "followUpNote", value: "x".repeat(2001) },
+    { field: "followUpNote", value: 42 },
+    { field: "followUpNote", value: {} },
+    { field: "followUpNote", value: [] },
+  ])("rejects invalid supplied $field with its field error", ({ field, value }) => {
+    expectEditFieldError(editInput({ [field]: value }), field);
+  });
+
+  it.each([42, false, {}, []])("rejects wrong-type note %s even with an explicit false flag", (value) => {
+    expectEditFieldError(editInput({ followUpRequired: false, followUpNote: value }), "followUpNote");
+  });
+
+  it("parses all six editable fields without changing the original request", () => {
+    const input = editInput({
+      description: "  Check the network  ", result: null, assigneeId: 22,
+      followUpRequired: false, followUpNote: null, attachmentNotes: " \n\t ",
+    });
+    expect(parseEditWithoutInputMutation(input)).toEqual({
+      success: true,
+      data: {
+        ...validEditTokens,
+        patch: {
+          description: "  Check the network  ", result: null, assigneeId: 22,
+          followUpRequired: false, followUpNote: null, attachmentNotes: " \n\t ",
+        },
+      },
+    });
+  });
+});
+
+describe("T-05 edit / T-08 / T-50: pure merged state (AC-05 / AC-08 / AC-41)", () => {
+  it.each([
+    { patch: { description: "  Check the network  " }, expected: { description: "Check the network" } },
+    { patch: { assigneeId: 22 }, expected: { assigneeId: 22 } },
+  ])("preserves omitted editable values for patch $patch", ({ patch, expected }) => {
+    expect(mergeEditWithoutInputMutation(currentActionWithFollowUp, patch)).toEqual({
+      success: true, data: { ...currentActionWithFollowUp, ...expected },
+    });
+  });
+
+  it.each([
+    { label: "omitted", patch: { followUpRequired: false } },
+    { label: "empty", patch: { followUpRequired: false, followUpNote: "" } },
+    { label: "whitespace", patch: { followUpRequired: false, followUpNote: " \n\t " } },
+    { label: "nonempty", patch: { followUpRequired: false, followUpNote: "Changed note" } },
+  ])("rejects true-to-false with $label note instead of silently clearing history input", ({ patch }) => {
+    expect(mergeEditWithoutInputMutation(currentActionWithFollowUp, patch)).toMatchObject({
+      success: false, fields: { followUpNote: expect.any(String) },
+    });
+  });
+
+  it("accepts true-to-false only with explicit null and retains the old input note", () => {
+    const patch = { followUpRequired: false, followUpNote: null };
+    expect(mergeEditWithoutInputMutation(currentActionWithFollowUp, patch)).toEqual({
+      success: true,
+      data: { ...currentActionWithFollowUp, followUpRequired: false, followUpNote: null },
+    });
+    expect(currentActionWithFollowUp.followUpNote).toBe("Arrange a diagnostic session");
+  });
+
+  it.each([
+    { supplied: " \nx\t ", expected: "x" },
+    { supplied: `  ${"x".repeat(2000)}  `, expected: "x".repeat(2000) },
+  ])("accepts false-to-true with a valid trimmed note", ({ supplied, expected }) => {
+    expect(mergeEditWithoutInputMutation(currentActionWithoutFollowUp, {
+      followUpRequired: true, followUpNote: supplied,
+    })).toEqual({
+      success: true,
+      data: { ...currentActionWithoutFollowUp, followUpRequired: true, followUpNote: expected },
+    });
+  });
+
+  it.each([
+    { label: "omitted", patch: { followUpRequired: true } },
+    { label: "null", patch: { followUpRequired: true, followUpNote: null } },
+    { label: "empty", patch: { followUpRequired: true, followUpNote: "" } },
+    { label: "whitespace", patch: { followUpRequired: true, followUpNote: " \n\t " } },
+  ])("rejects false-to-true with $label final note", ({ patch }) => {
+    expect(mergeEditWithoutInputMutation(currentActionWithoutFollowUp, patch)).toMatchObject({
+      success: false, fields: { followUpNote: expect.any(String) },
+    });
+  });
+
+  it("retains an existing valid note when remaining true and omitting the note", () => {
+    expect(mergeEditWithoutInputMutation(currentActionWithFollowUp, { followUpRequired: true }))
+      .toEqual({ success: true, data: currentActionWithFollowUp });
+  });
+
+  it.each([null, "", " \n\t "])("rejects clearing %s while the merged flag remains true", (note) => {
+    expect(mergeEditWithoutInputMutation(currentActionWithFollowUp, { followUpNote: note }))
+      .toMatchObject({ success: false, fields: { followUpNote: expect.any(String) } });
+  });
+
+  it.each([null, "", " \n\t "])("normalizes explicit %s when current and final follow-up are false", (note) => {
+    expect(mergeEditWithoutInputMutation(currentActionWithoutFollowUp, { followUpNote: note }))
+      .toEqual({ success: true, data: currentActionWithoutFollowUp });
+  });
+
+  it.each(["x", "  Arrange a diagnostic session  "])("rejects nonempty %s with final false flag", (note) => {
+    expect(mergeEditWithoutInputMutation(currentActionWithoutFollowUp, { followUpNote: note }))
+      .toMatchObject({ success: false, fields: { followUpNote: expect.any(String) } });
+  });
+
+  it("returns exact final values for combined content, assignment and follow-up edits", () => {
+    expect(mergeEditWithoutInputMutation(currentActionWithFollowUp, {
+      description: "  Check the network  ", result: "  Second checks recorded  ", assigneeId: 22,
+      followUpRequired: false, followUpNote: null, attachmentNotes: " \n\t ",
+    })).toEqual({
+      success: true,
+      data: {
+        description: "Check the network", result: "Second checks recorded", assigneeId: 22,
+        followUpRequired: false, followUpNote: null, attachmentNotes: null,
+      },
+    });
+  });
+
+  it("clears result and Attachment Notes without changing omitted follow-up values", () => {
+    expect(mergeEditWithoutInputMutation(currentActionWithFollowUp, {
+      result: null, attachmentNotes: " \n\t ",
+    })).toEqual({
+      success: true, data: { ...currentActionWithFollowUp, result: null, attachmentNotes: null },
+    });
+  });
+
+  it("accepts an effective no-op as valid; ACTION_UNCHANGED belongs to the service", () => {
+    expect(mergeEditWithoutInputMutation(currentActionWithFollowUp, {
+      description: "  Investigate the reported connection failure  ",
+    })).toEqual({ success: true, data: currentActionWithFollowUp });
+  });
+
+  it("preserves literal text across parsing and merging without mutating either input", () => {
+    const literal = "<script>alert('diagnostic')</script> & <b>plain text</b>";
+    const input = editInput({
+      description: `  ${literal}  `, result: literal, followUpRequired: true,
+      followUpNote: `  ${literal}  `, attachmentNotes: literal,
+    });
+    const parsed = parseEditWithoutInputMutation(input);
+    expect(parsed.success).toBe(true);
+    if (!parsed.success) throw new Error("The valid literal-text request was rejected.");
+    expect(mergeEditWithoutInputMutation(currentActionWithFollowUp, parsed.data.patch)).toEqual({
+      success: true,
+      data: {
+        description: literal, result: literal, assigneeId: 21,
+        followUpRequired: true, followUpNote: literal, attachmentNotes: literal,
+      },
+    });
+  });
+});
