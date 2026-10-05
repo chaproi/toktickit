@@ -38,6 +38,7 @@ model Category {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
   tickets   Ticket[]
+  seedFixtures SeedFixture[]
 }
 
 model RelatedSystem {
@@ -47,6 +48,7 @@ model RelatedSystem {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
   tickets   Ticket[]
+  seedFixtures SeedFixture[]
 
   @@index([isActive, name])
 }
@@ -71,6 +73,12 @@ model User {
   publicComments        PublicComment[]
   internalNotes         InternalNote[]
   ticketStatusHistory   TicketStatusHistory[]
+  createdActions        Action[]              @relation("ActionCreator")
+  assignedActions       Action[]              @relation("ActionAssignee")
+  performedActions      Action[]              @relation("ActionPerformer")
+  actionHistory         ActionHistory[]
+  mutationReceipts       MutationReceipt[]
+  seedFixtures          SeedFixture[]
 
   @@index([role, isActive, name])
 }
@@ -130,6 +138,9 @@ model Ticket {
   publicComments                   PublicComment[]
   internalNotes                    InternalNote[]
   statusHistory                    TicketStatusHistory[]
+  actions                          Action[]
+  mutationReceipts                  MutationReceipt[]
+  seedFixtures                     SeedFixture[]
 
   @@unique([requesterId, clientSubmissionId])
   @@index([requesterId, updatedAt])
@@ -197,6 +208,115 @@ model TicketStatusHistory {
   createdAt  DateTime     @default(now())
   ticket     Ticket       @relation(fields: [ticketId], references: [id], onDelete: Restrict, onUpdate: Cascade)
   actor      User         @relation(fields: [actorId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  actionCancellationHistory ActionHistory[] @relation("ActionCancellationSource")
 
   @@index([ticketId, createdAt, id])
+}
+
+enum ActionStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum ActionHistoryEvent {
+  ACTION_CREATED
+  ACTION_EDITED
+  ACTION_REASSIGNED
+  ACTION_STARTED
+  ACTION_COMPLETED
+  ACTION_CANCELLED
+  ACTION_CANCELLED_BY_TICKET
+}
+
+// Row CHECK constraints live in the additive SQL migration. Eligibility and
+// immutable attribution/strictly increasing update times are service rules.
+model Action {
+  id                 Int          @id @default(autoincrement())
+  ticketId           Int
+  createdById        Int
+  assigneeId         Int
+  performedById      Int?
+  description        String       @db.Text
+  result             String?      @db.Text
+  status             ActionStatus @default(PLANNED)
+  followUpRequired   Boolean      @default(false)
+  followUpNote       String?      @db.Text
+  attachmentNotes    String?      @db.Text
+  actionAt           DateTime     @default(dbgenerated("timezone('UTC'::text, CURRENT_TIMESTAMP)")) @db.Timestamp(3)
+  createdAt          DateTime     @default(dbgenerated("timezone('UTC'::text, CURRENT_TIMESTAMP)")) @db.Timestamp(3)
+  updatedAt          DateTime     @default(dbgenerated("timezone('UTC'::text, CURRENT_TIMESTAMP)")) @db.Timestamp(3)
+  completedAt        DateTime?    @db.Timestamp(3)
+  cancelledAt        DateTime?    @db.Timestamp(3)
+  cancellationReason String?      @db.VarChar(500)
+  version            Int          @default(1)
+  ticket             Ticket       @relation(fields: [ticketId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  createdBy          User         @relation("ActionCreator", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  assignee           User         @relation("ActionAssignee", fields: [assigneeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  performedBy        User?        @relation("ActionPerformer", fields: [performedById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  history            ActionHistory[]
+  mutationReceipts   MutationReceipt[]
+  seedFixtures       SeedFixture[]
+
+  @@index([ticketId, createdAt, id])
+  @@index([ticketId, status])
+  @@index([assigneeId, status, createdAt, id])
+}
+
+// Snapshot projection and source-event same-Ticket validation remain service
+// obligations; SQL enforces object/null, event/version and source-presence rules.
+model ActionHistory {
+  id                          Int                @id @default(autoincrement())
+  actionId                    Int
+  actorId                     Int
+  event                       ActionHistoryEvent
+  createdAt                   DateTime           @default(dbgenerated("timezone('UTC'::text, CURRENT_TIMESTAMP)")) @db.Timestamp(3)
+  actionVersion               Int
+  before                      Json?              @db.JsonB
+  after                       Json               @db.JsonB
+  sourceTicketStatusHistoryId Int?
+  action                      Action             @relation(fields: [actionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  actor                       User               @relation(fields: [actorId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  sourceTicketStatusHistory   TicketStatusHistory? @relation("ActionCancellationSource", fields: [sourceTicketStatusHistoryId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([actionId, createdAt, id])
+  @@unique([actionId, actionVersion])
+}
+
+// Only the canonical original-input digest and projected safe response belong
+// here. Services must never persist credentials, sessions or raw private input.
+model MutationReceipt {
+  id               Int      @id @default(autoincrement())
+  actorId          Int
+  clientMutationId String   @db.Uuid
+  operation        String   @db.Text
+  ticketId         Int
+  actionId         Int
+  inputFingerprint String   @db.Char(64)
+  safeResponse     Json     @db.JsonB
+  createdAt        DateTime @default(dbgenerated("timezone('UTC'::text, CURRENT_TIMESTAMP)")) @db.Timestamp(3)
+  actor            User     @relation(fields: [actorId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  ticket           Ticket   @relation(fields: [ticketId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  action           Action   @relation(fields: [actionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@unique([actorId, clientMutationId])
+}
+
+// SQL requires exactly one typed target. Registry population/reseeding is a
+// later change; the migration creates no domain or registry fixtures.
+model SeedFixture {
+  id              Int            @id @default(autoincrement())
+  fixtureKey      String         @unique @db.Text
+  userId          Int?
+  categoryId      Int?
+  relatedSystemId Int?
+  ticketId        Int?
+  actionId        Int?
+  createdAt       DateTime       @default(dbgenerated("timezone('UTC'::text, CURRENT_TIMESTAMP)")) @db.Timestamp(3)
+  user            User?          @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  category        Category?      @relation(fields: [categoryId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  relatedSystem   RelatedSystem? @relation(fields: [relatedSystemId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  ticket          Ticket?        @relation(fields: [ticketId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  action          Action?        @relation(fields: [actionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 }
