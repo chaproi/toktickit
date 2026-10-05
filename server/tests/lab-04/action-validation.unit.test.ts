@@ -880,3 +880,258 @@ describe("T-05 edit / T-08 / T-50: pure merged state (AC-05 / AC-08 / AC-41)", (
     });
   });
 });
+
+// Planned pure API-06 public interface; request validation has no current
+// Action, Ticket or assignee. PLANNED is a recognized enum target even though
+// no permitted edge reaches it: the service must return the transition 409.
+// Follow-up belongs to current state, not the completion request body.
+type PlannedActionStatusTokens = {
+  expectedVersion: number;
+  expectedTicketUpdatedAt: string;
+  clientMutationId: string;
+};
+type PlannedActionStatusData = PlannedActionStatusTokens & (
+  | { targetStatus: "PLANNED" | "IN_PROGRESS" }
+  | { targetStatus: "COMPLETED"; confirm: true; result: string }
+  | { targetStatus: "CANCELLED"; confirm: true; reason: string }
+);
+type PlannedActionStatusValidationResult =
+  | { success: true; data: PlannedActionStatusData }
+  | { success: false; fields: Record<string, string> };
+const plannedActionStatusValidation = actionValidationModule as typeof actionValidationModule & {
+  validateActionStatusInput(input: unknown): PlannedActionStatusValidationResult;
+};
+
+function actionStatusInput(
+  overrides: Record<string, unknown> = {},
+  omittedFields: readonly string[] = [],
+): Record<string, unknown> {
+  const input: Record<string, unknown> = {
+    ...validEditTokens,
+    targetStatus: "IN_PROGRESS",
+    ...overrides,
+  };
+  for (const field of omittedFields) delete input[field];
+  return input;
+}
+
+function validateStatusWithoutInputMutation(input: unknown) {
+  const before = structuredClone(input);
+  const result = plannedActionStatusValidation.validateActionStatusInput(input);
+  expect(input).toStrictEqual(before);
+  return result;
+}
+
+function expectStatusFieldError(input: unknown, field: string) {
+  expect(validateStatusWithoutInputMutation(input)).toMatchObject({
+    success: false,
+    fields: { [field]: expect.any(String) },
+  });
+}
+
+describe("T-05 / AC-05, T-09 / AC-09: pure API-06 lifecycle request shape", () => {
+  it.each([
+    { overrides: { targetStatus: "PLANNED" }, expected: { targetStatus: "PLANNED" } },
+    { overrides: { targetStatus: "IN_PROGRESS" }, expected: { targetStatus: "IN_PROGRESS" } },
+    {
+      overrides: { targetStatus: "COMPLETED", confirm: true, result: "  Checks completed  " },
+      expected: { targetStatus: "COMPLETED", confirm: true, result: "Checks completed" },
+    },
+    {
+      overrides: { targetStatus: "CANCELLED", confirm: true, reason: "  No longer needed  " },
+      expected: { targetStatus: "CANCELLED", confirm: true, reason: "No longer needed" },
+    },
+  ])("recognizes $expected.targetStatus and returns exactly its validated fields", ({ overrides, expected }) => {
+    expect(validateStatusWithoutInputMutation(actionStatusInput(overrides))).toEqual({
+      success: true,
+      data: { ...validEditTokens, ...expected },
+    });
+  });
+
+  it("requires targetStatus", () => {
+    expectStatusFieldError(actionStatusInput({}, ["targetStatus"]), "targetStatus");
+  });
+
+  it.each([null, undefined, 42, false, [], {}, "", "planned", "OPEN", "RESOLVED", "UNKNOWN"])(
+    "rejects unknown or wrong-type targetStatus %s without confusing it with a forbidden edge",
+    (value) => expectStatusFieldError(actionStatusInput({ targetStatus: value }), "targetStatus"),
+  );
+
+  it.each([null, undefined, [], "status", 42])("rejects non-object body %s", (input) => {
+    expectStatusFieldError(input, "body");
+  });
+
+  // Shared token validation is exercised once with a valid start shape,
+  // rather than duplicating identical cases for every lifecycle operation.
+  it.each(["expectedVersion", "expectedTicketUpdatedAt", "clientMutationId"])(
+    "requires shared token %s",
+    (field) => expectStatusFieldError(actionStatusInput({}, [field]), field),
+  );
+
+  it.each([1, 7, 2147483648, 9007199254740991])("preserves positive safe version %s without a 32-bit cap", (value) => {
+    expect(validateStatusWithoutInputMutation(actionStatusInput({ expectedVersion: value })))
+      .toEqual({ success: true, data: { ...validEditTokens, expectedVersion: value, targetStatus: "IN_PROGRESS" } });
+  });
+
+  it.each([
+    null, undefined, 0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY,
+    Number.NEGATIVE_INFINITY, 9007199254740992, "7", true, [], {},
+  ])("rejects invalid shared expectedVersion %s", (value) => {
+    expectStatusFieldError(actionStatusInput({ expectedVersion: value }), "expectedVersion");
+  });
+
+  it.each(["2026-10-05T03:00:00.000Z", "2024-02-29T23:59:59.999Z"])(
+    "preserves valid strict UTC millisecond token %s exactly",
+    (value) => {
+      expect(validateStatusWithoutInputMutation(actionStatusInput({ expectedTicketUpdatedAt: value })))
+        .toEqual({ success: true, data: { ...validEditTokens, expectedTicketUpdatedAt: value, targetStatus: "IN_PROGRESS" } });
+    },
+  );
+
+  it.each([
+    null, undefined, 42, false, [], {}, "not-a-date", "2026-10-05T03:00:00Z",
+    "2026-10-05T03:00:00.00Z", "2026-10-05T03:00:00.0000Z",
+    "2026-10-05T03:00:00.000+00:00", "2026-10-05T10:00:00.000+07:00",
+    "2026-02-30T03:00:00.000Z", "2025-02-29T03:00:00.000Z",
+    " 2026-10-05T03:00:00.000Z ",
+  ])("rejects invalid shared expectedTicketUpdatedAt %s", (value) => {
+    expectStatusFieldError(actionStatusInput({ expectedTicketUpdatedAt: value }), "expectedTicketUpdatedAt");
+  });
+
+  it.each([
+    { supplied: "123e4567-e89b-12d3-a456-426614174000", expected: "123e4567-e89b-12d3-a456-426614174000" },
+    { supplied: "01890f47-7e5a-7cc8-98c9-9c9c72c40a63", expected: "01890f47-7e5a-7cc8-98c9-9c9c72c40a63" },
+    { supplied: " \n5B7F6B32-E929-4AC8-9C95-079956888F2F\t ", expected: "5B7F6B32-E929-4AC8-9C95-079956888F2F" },
+  ])("validates shared UUID with inherited normalization for $supplied", ({ supplied, expected }) => {
+    expect(validateStatusWithoutInputMutation(actionStatusInput({ clientMutationId: supplied })))
+      .toEqual({ success: true, data: { ...validEditTokens, clientMutationId: expected, targetStatus: "IN_PROGRESS" } });
+  });
+
+  it.each([
+    null, undefined, 42, false, [], {}, "", "not-a-uuid",
+    "5b7f6b32e9294ac89c95079956888f2f", "gb7f6b32-e929-4ac8-9c95-079956888f2f",
+    "{5b7f6b32-e929-4ac8-9c95-079956888f2f}",
+  ])("rejects invalid shared clientMutationId %s", (value) => {
+    expectStatusFieldError(actionStatusInput({ clientMutationId: value }), "clientMutationId");
+  });
+
+  it.each([
+    "unexpected", "id", "actionId", "ticketId", "createdById", "createdBy", "performedById", "performedBy",
+    "status", "actionAt", "createdAt", "updatedAt", "completedAt", "cancelledAt",
+    "cancellationReason", "version", "history", "assigneeId", "description", "attachmentNotes",
+    "attachmentId", "attachments", "followUpRequired", "followUpNote",
+  ])("rejects unknown/server-owned or edit-only field %s with safe errors", (field) => {
+    const result = validateStatusWithoutInputMutation(actionStatusInput({ [field]: "supplied" }));
+    expect(result).toMatchObject({ success: false, fields: expect.any(Object) });
+    if (!result.success) {
+      expect(Object.keys(result.fields).length).toBeGreaterThan(0);
+      expect(Object.keys(result.fields).every((key) => [
+        "body", "targetStatus", "expectedVersion", "expectedTicketUpdatedAt", "clientMutationId",
+        "confirm", "result", "reason",
+      ].includes(key))).toBe(true);
+      expect(Object.values(result.fields).every((message) => typeof message === "string")).toBe(true);
+    }
+  });
+
+  it.each([
+    { field: "confirm", value: true }, { field: "confirm", value: false }, { field: "confirm", value: null },
+    { field: "result", value: "Checks completed" }, { field: "result", value: false }, { field: "result", value: null },
+    { field: "reason", value: "No longer needed" }, { field: "reason", value: false }, { field: "reason", value: null },
+  ])("rejects supplied irrelevant $field on IN_PROGRESS even when null/false", ({ field, value }) => {
+    const result = validateStatusWithoutInputMutation(actionStatusInput({ [field]: value }));
+    expect(result).toMatchObject({ success: false, fields: expect.any(Object) });
+    if (!result.success) expect(Object.keys(result.fields).length).toBeGreaterThan(0);
+  });
+});
+
+describe("T-05 / AC-05, T-10 / AC-10: pure completion request validation", () => {
+  it.each([
+    { supplied: " \nx\t ", expected: "x" },
+    { supplied: `  ${"x".repeat(2000)}  `, expected: "x".repeat(2000) },
+  ])("accepts confirmed completion with trimmed result at a valid boundary", ({ supplied, expected }) => {
+    expect(validateStatusWithoutInputMutation(actionStatusInput({
+      targetStatus: "COMPLETED", confirm: true, result: supplied,
+    }))).toEqual({
+      success: true, data: { ...validEditTokens, targetStatus: "COMPLETED", confirm: true, result: expected },
+    });
+  });
+
+  it("requires result even with explicit confirmation", () => {
+    expectStatusFieldError(actionStatusInput({ targetStatus: "COMPLETED", confirm: true }), "result");
+  });
+
+  it.each([null, undefined, "", " \n\t ", "x".repeat(2001), 42, false, [], {}])(
+    "rejects invalid completion result %s",
+    (value) => expectStatusFieldError(actionStatusInput({ targetStatus: "COMPLETED", confirm: true, result: value }), "result"),
+  );
+
+  it("requires confirmation even with valid completion result", () => {
+    expectStatusFieldError(actionStatusInput({ targetStatus: "COMPLETED", result: "Checks completed" }), "confirm");
+  });
+
+  it.each([false, null, undefined, "true", "false", 1, 0, [], {}])(
+    "rejects invalid completion confirmation %s",
+    (value) => expectStatusFieldError(actionStatusInput({ targetStatus: "COMPLETED", confirm: value, result: "Checks completed" }), "confirm"),
+  );
+
+  it.each([null, false, "No longer needed"])("rejects irrelevant reason %s on COMPLETED", (value) => {
+    expect(validateStatusWithoutInputMutation(actionStatusInput({
+      targetStatus: "COMPLETED", confirm: true, result: "Checks completed", reason: value,
+    }))).toMatchObject({ success: false, fields: expect.any(Object) });
+  });
+
+  it("preserves literal completion text without requiring a follow-up flag", () => {
+    const literal = "<script>alert('diagnostic')</script> & <b>plain text</b>";
+    expect(validateStatusWithoutInputMutation(actionStatusInput({
+      targetStatus: "COMPLETED", confirm: true, result: `  ${literal}  `,
+    }))).toEqual({
+      success: true, data: { ...validEditTokens, targetStatus: "COMPLETED", confirm: true, result: literal },
+    });
+  });
+});
+
+describe("T-05 / AC-05, T-11 / AC-11: pure cancellation request validation", () => {
+  it.each([
+    { supplied: " \nabcde\t ", expected: "abcde" },
+    { supplied: `  ${"x".repeat(500)}  `, expected: "x".repeat(500) },
+  ])("accepts confirmed cancellation with trimmed reason at a valid boundary", ({ supplied, expected }) => {
+    expect(validateStatusWithoutInputMutation(actionStatusInput({
+      targetStatus: "CANCELLED", confirm: true, reason: supplied,
+    }))).toEqual({
+      success: true, data: { ...validEditTokens, targetStatus: "CANCELLED", confirm: true, reason: expected },
+    });
+  });
+
+  it("requires cancellation reason even with explicit confirmation", () => {
+    expectStatusFieldError(actionStatusInput({ targetStatus: "CANCELLED", confirm: true }), "reason");
+  });
+
+  it.each([null, undefined, "", " \n\t ", "  abcd  ", "x".repeat(501), 42, false, [], {}])(
+    "rejects invalid cancellation reason %s",
+    (value) => expectStatusFieldError(actionStatusInput({ targetStatus: "CANCELLED", confirm: true, reason: value }), "reason"),
+  );
+
+  it("requires confirmation even with valid cancellation reason", () => {
+    expectStatusFieldError(actionStatusInput({ targetStatus: "CANCELLED", reason: "No longer needed" }), "confirm");
+  });
+
+  it.each([false, null, undefined, "true", "false", 1, 0, [], {}])(
+    "rejects invalid cancellation confirmation %s",
+    (value) => expectStatusFieldError(actionStatusInput({ targetStatus: "CANCELLED", confirm: value, reason: "No longer needed" }), "confirm"),
+  );
+
+  it.each([null, false, "Checks completed"])("rejects irrelevant result %s on CANCELLED", (value) => {
+    expect(validateStatusWithoutInputMutation(actionStatusInput({
+      targetStatus: "CANCELLED", confirm: true, reason: "No longer needed", result: value,
+    }))).toMatchObject({ success: false, fields: expect.any(Object) });
+  });
+
+  it("preserves literal cancellation reason without supplying performer or status times", () => {
+    const literal = "<script>alert('diagnostic')</script> & <b>plain text</b>";
+    expect(validateStatusWithoutInputMutation(actionStatusInput({
+      targetStatus: "CANCELLED", confirm: true, reason: `  ${literal}  `,
+    }))).toEqual({
+      success: true, data: { ...validEditTokens, targetStatus: "CANCELLED", confirm: true, reason: literal },
+    });
+  });
+});
