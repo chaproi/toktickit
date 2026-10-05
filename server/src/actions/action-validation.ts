@@ -132,3 +132,204 @@ export function validateCreateActionInput(
     },
   };
 }
+
+export type EditableActionValues = {
+  description: string;
+  result: string | null;
+  assigneeId: number;
+  followUpRequired: boolean;
+  followUpNote: string | null;
+  attachmentNotes: string | null;
+};
+
+// Only supplied keys are present, and editable text remains untrimmed here.
+export type ActionEditPatch = Partial<EditableActionValues>;
+export type EditActionValidationData = {
+  expectedVersion: number;
+  expectedTicketUpdatedAt: string;
+  clientMutationId: string;
+  patch: ActionEditPatch;
+};
+
+type ActionValidationResult<T> =
+  | { success: true; data: T }
+  | { success: false; fields: Record<string, string> };
+export type EditActionValidationResult = ActionValidationResult<EditActionValidationData>;
+export type MergedActionEditValidationResult = ActionValidationResult<EditableActionValues>;
+
+const EDITABLE_ACTION_FIELDS = [
+  "description", "result", "assigneeId", "followUpRequired", "followUpNote", "attachmentNotes",
+] as const;
+
+function validNullableEditText(value: unknown, minimum: number): value is string | null {
+  return value === null || (typeof value === "string" &&
+    value.trim().length >= minimum && value.trim().length <= 2000);
+}
+
+// Validate supplied values without defaults, normalization or current-state rules.
+function validateEditableActionPatch(
+  body: Readonly<Record<string, unknown>>,
+): ActionValidationResult<ActionEditPatch> {
+  const patch: ActionEditPatch = {};
+  const fields: Record<string, string> = {};
+
+  if (Object.hasOwn(body, "description")) {
+    const value = body.description;
+    if (typeof value !== "string" || value.trim().length < 5 || value.trim().length > 2000) {
+      fields.description = "Description must contain between 5 and 2000 characters.";
+    } else {
+      patch.description = value;
+    }
+  }
+  if (Object.hasOwn(body, "result")) {
+    const value = body.result;
+    if (!validNullableEditText(value, 1)) {
+      fields.result = "Result must be null or text containing between 1 and 2000 characters.";
+    } else {
+      patch.result = value;
+    }
+  }
+  if (Object.hasOwn(body, "attachmentNotes")) {
+    const value = body.attachmentNotes;
+    if (!validNullableEditText(value, 0)) {
+      fields.attachmentNotes = "Attachment Notes must be null or text of at most 2000 characters.";
+    } else {
+      patch.attachmentNotes = value;
+    }
+  }
+  if (Object.hasOwn(body, "assigneeId")) {
+    const value = body.assigneeId;
+    if (typeof value !== "number" || !Number.isSafeInteger(value) || value <= 0) {
+      fields.assigneeId = "Assignee must be a positive safe integer.";
+    } else {
+      patch.assigneeId = value;
+    }
+  }
+  if (Object.hasOwn(body, "followUpRequired")) {
+    const value = body.followUpRequired;
+    if (typeof value !== "boolean") {
+      fields.followUpRequired = "Follow-up Required must be true or false.";
+    } else {
+      patch.followUpRequired = value;
+    }
+  }
+  if (Object.hasOwn(body, "followUpNote")) {
+    const value = body.followUpNote;
+    // Empty/null may be valid when the final state is false. Preserve them so
+    // the merge can distinguish explicit null from an empty replacement.
+    if (!validNullableEditText(value, 0)) {
+      fields.followUpNote = "Follow-up Note must be null or text of at most 2000 characters.";
+    } else {
+      patch.followUpNote = value;
+    }
+  }
+
+  return Object.keys(fields).length > 0
+    ? { success: false, fields }
+    : { success: true, data: patch };
+}
+
+// Receipt handling must retain/fingerprint the original request, including
+// field presence; neither these normalized tokens nor merged values replace it.
+export function validateEditActionInput(input: unknown): EditActionValidationResult {
+  if (typeof input !== "object" || input === null || Array.isArray(input)) {
+    return { success: false, fields: { body: "Request body must be an object." } };
+  }
+  const body = input as Record<string, unknown>;
+  const parsedPatch = validateEditableActionPatch(body);
+  const fields: Record<string, string> = parsedPatch.success ? {} : { ...parsedPatch.fields };
+  const allowedFields: readonly string[] = [
+    ...EDITABLE_ACTION_FIELDS, "expectedVersion", "expectedTicketUpdatedAt", "clientMutationId",
+  ];
+  if (Object.keys(body).some((key) => !allowedFields.includes(key))) {
+    fields.body = "Unknown fields are not allowed.";
+  }
+  if (!EDITABLE_ACTION_FIELDS.some((key) => Object.hasOwn(body, key))) {
+    fields.body = "At least one editable field is required.";
+  }
+
+  const expectedVersion = typeof body.expectedVersion === "number" ? body.expectedVersion : null;
+  if (expectedVersion === null || !Number.isSafeInteger(expectedVersion) || expectedVersion <= 0) {
+    fields.expectedVersion = "Expected version must be a positive safe integer.";
+  }
+  const expectedTicketUpdatedAt = typeof body.expectedTicketUpdatedAt === "string"
+    ? body.expectedTicketUpdatedAt
+    : null;
+  if (expectedTicketUpdatedAt === null ||
+      Number.isNaN(Date.parse(expectedTicketUpdatedAt)) ||
+      new Date(expectedTicketUpdatedAt).toISOString() !== expectedTicketUpdatedAt) {
+    fields.expectedTicketUpdatedAt = "Expected Ticket update time must be an ISO UTC timestamp.";
+  }
+  const clientMutationId = typeof body.clientMutationId === "string"
+    ? body.clientMutationId.trim()
+    : "";
+  if (!UUID_PATTERN.test(clientMutationId)) {
+    fields.clientMutationId = "Mutation identifier must be a valid UUID.";
+  }
+
+  if (Object.keys(fields).length > 0 || expectedVersion === null ||
+      expectedTicketUpdatedAt === null || !parsedPatch.success) {
+    return { success: false, fields };
+  }
+  return {
+    success: true,
+    data: { expectedVersion, expectedTicketUpdatedAt, clientMutationId, patch: parsedPatch.data },
+  };
+}
+
+export function mergeAndValidateActionEdit(
+  current: Readonly<EditableActionValues>,
+  patch: Readonly<ActionEditPatch>,
+): MergedActionEditValidationResult {
+  const checkedPatch = validateEditableActionPatch(patch);
+  if (!checkedPatch.success) return checkedPatch;
+
+  // Explicit projection keeps identity/status/tokens out of the editable state.
+  const final: EditableActionValues = {
+    description: current.description,
+    result: current.result,
+    assigneeId: current.assigneeId,
+    followUpRequired: current.followUpRequired,
+    followUpNote: current.followUpNote,
+    attachmentNotes: current.attachmentNotes,
+  };
+  const values = checkedPatch.data;
+  if (values.followUpRequired !== undefined) final.followUpRequired = values.followUpRequired;
+
+  // Check raw presence/null BEFORE empty text normalization can erase intent.
+  if (current.followUpRequired && current.followUpNote !== null && !final.followUpRequired &&
+      (!Object.hasOwn(values, "followUpNote") || values.followUpNote !== null)) {
+    return {
+      success: false,
+      fields: { followUpNote: "Explicit null is required to clear the existing follow-up note." },
+    };
+  }
+
+  if (values.description !== undefined) final.description = values.description.trim();
+  if (values.result !== undefined) final.result = values.result === null ? null : values.result.trim();
+  if (values.assigneeId !== undefined) final.assigneeId = values.assigneeId;
+  if (values.attachmentNotes !== undefined) {
+    final.attachmentNotes = values.attachmentNotes === null ? null : values.attachmentNotes.trim() || null;
+  }
+  if (values.followUpNote !== undefined) {
+    final.followUpNote = values.followUpNote === null ? null : values.followUpNote.trim() || null;
+  }
+
+  const checkedFinal = validateEditableActionPatch(final);
+  if (!checkedFinal.success) return checkedFinal;
+  if (final.followUpRequired && (final.followUpNote === null || final.followUpNote.trim().length < 1)) {
+    return {
+      success: false,
+      fields: { followUpNote: "Follow-up Note must contain between 1 and 2000 characters." },
+    };
+  }
+  if (!final.followUpRequired && final.followUpNote !== null) {
+    return {
+      success: false,
+      fields: { followUpNote: "Follow-up Note must be empty when follow-up is not required." },
+    };
+  }
+
+  // Effective no-ops remain valid here; the service owns ACTION_UNCHANGED (409).
+  return { success: true, data: final };
+}
