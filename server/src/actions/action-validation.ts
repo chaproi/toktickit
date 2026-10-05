@@ -333,3 +333,94 @@ export function mergeAndValidateActionEdit(
   // Effective no-ops remain valid here; the service owns ACTION_UNCHANGED (409).
   return { success: true, data: final };
 }
+
+export type ActionStatusTokens = {
+  expectedVersion: number;
+  expectedTicketUpdatedAt: string;
+  clientMutationId: string;
+};
+export type ActionStatusValidationData = ActionStatusTokens & (
+  | { targetStatus: "PLANNED" | "IN_PROGRESS" }
+  | { targetStatus: "COMPLETED"; confirm: true; result: string }
+  | { targetStatus: "CANCELLED"; confirm: true; reason: string }
+);
+export type ActionStatusValidationResult = ActionValidationResult<ActionStatusValidationData>;
+
+// Pure API-06 shape validation. Recognized targets include PLANNED; current
+// state, forbidden/same-state edges, parent gates and eligibility are service
+// obligations. Existing follow-up state does not belong to this request.
+export function validateActionStatusInput(input: unknown): ActionStatusValidationResult {
+  if (typeof input !== "object" || input === null || Array.isArray(input)) {
+    return { success: false, fields: { body: "Request body must be an object." } };
+  }
+  const body = input as Record<string, unknown>;
+  const fields: Record<string, string> = {};
+  const suppliedTarget = body.targetStatus;
+  const targetStatus = suppliedTarget === "PLANNED" || suppliedTarget === "IN_PROGRESS" ||
+    suppliedTarget === "COMPLETED" || suppliedTarget === "CANCELLED"
+    ? suppliedTarget
+    : null;
+  if (targetStatus === null) {
+    fields.targetStatus = "Target status must be a recognized Action status.";
+  }
+
+  const allowedFields = [
+    "targetStatus", "expectedVersion", "expectedTicketUpdatedAt", "clientMutationId",
+  ];
+  if (targetStatus === "COMPLETED") allowedFields.push("confirm", "result");
+  if (targetStatus === "CANCELLED") allowedFields.push("confirm", "reason");
+  // Presence matters: irrelevant null/false fields are still supplied fields.
+  if (Object.keys(body).some((field) => !allowedFields.includes(field))) {
+    fields.body = "Unknown or irrelevant fields are not allowed.";
+  }
+
+  const expectedVersion = typeof body.expectedVersion === "number" ? body.expectedVersion : null;
+  if (expectedVersion === null || !Number.isSafeInteger(expectedVersion) || expectedVersion <= 0) {
+    fields.expectedVersion = "Expected version must be a positive safe integer.";
+  }
+  const expectedTicketUpdatedAt = typeof body.expectedTicketUpdatedAt === "string"
+    ? body.expectedTicketUpdatedAt
+    : null;
+  if (expectedTicketUpdatedAt === null ||
+      Number.isNaN(Date.parse(expectedTicketUpdatedAt)) ||
+      new Date(expectedTicketUpdatedAt).toISOString() !== expectedTicketUpdatedAt) {
+    fields.expectedTicketUpdatedAt = "Expected Ticket update time must be an ISO UTC timestamp.";
+  }
+  const clientMutationId = typeof body.clientMutationId === "string"
+    ? body.clientMutationId.trim()
+    : "";
+  if (!UUID_PATTERN.test(clientMutationId)) {
+    fields.clientMutationId = "Mutation identifier must be a valid UUID.";
+  }
+
+  let result = "";
+  let reason = "";
+  if (targetStatus === "COMPLETED" || targetStatus === "CANCELLED") {
+    if (body.confirm !== true) fields.confirm = "Confirmation must be true.";
+  }
+  if (targetStatus === "COMPLETED") {
+    result = typeof body.result === "string" ? body.result.trim() : "";
+    if (result.length < 1 || result.length > 2000) {
+      fields.result = "Result must contain between 1 and 2000 characters.";
+    }
+  }
+  if (targetStatus === "CANCELLED") {
+    reason = typeof body.reason === "string" ? body.reason.trim() : "";
+    if (reason.length < 5 || reason.length > 500) {
+      fields.reason = "Cancellation reason must contain between 5 and 500 characters.";
+    }
+  }
+
+  if (Object.keys(fields).length > 0 || targetStatus === null ||
+      expectedVersion === null || expectedTicketUpdatedAt === null) {
+    return { success: false, fields };
+  }
+  const tokens: ActionStatusTokens = { expectedVersion, expectedTicketUpdatedAt, clientMutationId };
+  if (targetStatus === "COMPLETED") {
+    return { success: true, data: { ...tokens, targetStatus, confirm: true, result } };
+  }
+  if (targetStatus === "CANCELLED") {
+    return { success: true, data: { ...tokens, targetStatus, confirm: true, reason } };
+  }
+  return { success: true, data: { ...tokens, targetStatus } };
+}
