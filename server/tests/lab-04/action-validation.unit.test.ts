@@ -703,7 +703,8 @@ describe("T-05 / AC-05: pure API-05 PATCH parsing (edit RED batch)", () => {
     { field: "followUpNote", value: "  x  " },
     { field: "followUpNote", value: `  ${"x".repeat(2000)}  ` },
   ])("validates supplied $field while preserving its raw value", ({ field, value }) => {
-    expect(parseEditWithoutInputMutation(editInput({ [field]: value }, ["description"])))
+    const input = editInput({ [field]: value }, field === "description" ? [] : ["description"]);
+    expect(parseEditWithoutInputMutation(input))
       .toEqual({ success: true, data: { ...validEditTokens, patch: { [field]: value } } });
   });
 
