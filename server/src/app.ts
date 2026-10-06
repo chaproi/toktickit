@@ -2,6 +2,8 @@ import cors from "cors";
 import express, { type NextFunction, type Request, type Response } from "express";
 import multer from "multer";
 import { Prisma, type UserRole } from "@prisma/client";
+import { parseActionListQuery, parseActionHistoryQuery, validateActionDetailQuery } from "./actions/action-query.js";
+import { listTicketActions, getTicketAction, listTicketActionHistory } from "./actions/action-read-service.js";
 import {
   getAttachmentContentForRequester,
   getAttachmentForRequester,
@@ -952,6 +954,81 @@ app.post("/api/tickets/:ticketId/attachments", async (req, res) => {
       sendMutationError(res, error, "uploading an Attachment");
     }
   });
+});
+
+app.get("/api/tickets/:ticketId/actions", async (req, res) => {
+  res.set("Cache-Control", "private, no-store");
+  const live = await authenticated(req, res, ["REQUESTER", "IT_STAFF", "ADMINISTRATOR"]);
+  if (!live) return;
+  const ticketId = parsePositiveIdentifier(req.params.ticketId);
+  if (ticketId === null) {
+    res.status(400).json(errorBody("INVALID_TICKET_ID", "Ticket identifier must be a positive integer."));
+    return;
+  }
+  const validation = parseActionListQuery(req.query as Record<string, unknown>);
+  if (!validation.success) {
+    res.status(400).json(errorBody("INVALID_QUERY", "One or more query parameters are invalid.", validation.fields));
+    return;
+  }
+  try {
+    const result = await listTicketActions(live.user.id, live.user.role, ticketId, validation.data);
+    if (result.kind === "ticket-not-found") { sendTicketNotFound(res); return; }
+    res.status(200).json({ items: result.items, pagination: result.pagination });
+  } catch (error) { sendDatabaseError(res, error, "listing Actions"); }
+});
+
+app.get("/api/tickets/:ticketId/actions/:actionId", async (req, res) => {
+  res.set("Cache-Control", "private, no-store");
+  const live = await authenticated(req, res, ["REQUESTER", "IT_STAFF", "ADMINISTRATOR"]);
+  if (!live) return;
+  const ticketId = parsePositiveIdentifier(req.params.ticketId);
+  const actionId = parsePositiveIdentifier(req.params.actionId);
+  if (ticketId === null || actionId === null) {
+    res.status(400).json(errorBody(ticketId === null ? "INVALID_TICKET_ID" : "INVALID_ACTION_ID",
+      "Ticket and Action identifiers must be positive integers."));
+    return;
+  }
+  const validation = validateActionDetailQuery(req.query as Record<string, unknown>);
+  if (!validation.success) {
+    res.status(400).json(errorBody("INVALID_QUERY", "One or more query parameters are invalid.", validation.fields));
+    return;
+  }
+  try {
+    const result = await getTicketAction(live.user.id, live.user.role, ticketId, actionId);
+    if (result.kind === "ticket-not-found") { sendTicketNotFound(res); return; }
+    if (result.kind === "action-not-found") {
+      res.status(404).json(errorBody("ACTION_NOT_FOUND", "Action not found."));
+      return;
+    }
+    res.status(200).json({ action: result.action, ticketUpdatedAt: result.ticketUpdatedAt });
+  } catch (error) { sendDatabaseError(res, error, "reading an Action"); }
+});
+
+app.get("/api/tickets/:ticketId/actions/:actionId/history", async (req, res) => {
+  res.set("Cache-Control", "private, no-store");
+  const live = await authenticated(req, res, ["REQUESTER", "IT_STAFF", "ADMINISTRATOR"]);
+  if (!live) return;
+  const ticketId = parsePositiveIdentifier(req.params.ticketId);
+  const actionId = parsePositiveIdentifier(req.params.actionId);
+  if (ticketId === null || actionId === null) {
+    res.status(400).json(errorBody(ticketId === null ? "INVALID_TICKET_ID" : "INVALID_ACTION_ID",
+      "Ticket and Action identifiers must be positive integers."));
+    return;
+  }
+  const validation = parseActionHistoryQuery(req.query as Record<string, unknown>);
+  if (!validation.success) {
+    res.status(400).json(errorBody("INVALID_QUERY", "One or more query parameters are invalid.", validation.fields));
+    return;
+  }
+  try {
+    const result = await listTicketActionHistory(live.user.id, live.user.role, ticketId, actionId, validation.data);
+    if (result.kind === "ticket-not-found") { sendTicketNotFound(res); return; }
+    if (result.kind === "action-not-found") {
+      res.status(404).json(errorBody("ACTION_NOT_FOUND", "Action not found."));
+      return;
+    }
+    res.status(200).json({ items: result.items, pagination: result.pagination });
+  } catch (error) { sendDatabaseError(res, error, "listing Action history"); }
 });
 
 app.get("/api/tickets/:ticketId/comments", async (req, res) => {
