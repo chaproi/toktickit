@@ -49,6 +49,34 @@ export function seedActionSnapshot(action: Action): Prisma.InputJsonObject {
   };
 }
 
+async function seedActionDTO(transaction: Prisma.TransactionClient, action: Action): Promise<Prisma.InputJsonObject> {
+  // Seed already holds the relevant User locks before its Ticket/Action work.
+  // This projection only reads id/name; it acquires no later User row locks.
+  const ids = [...new Set([action.createdById, action.assigneeId,
+    ...(action.performedById === null ? [] : [action.performedById])])];
+  const users = new Map((await transaction.user.findMany({
+    where: { id: { in: ids } }, select: { id: true, name: true },
+  })).map((user) => [user.id, user]));
+  const identity = (id: number) => {
+    const user = users.get(id);
+    if (!user) throw new Error("Seed Action identity unavailable.");
+    return { id: user.id, name: user.name };
+  };
+  // API-spec section 3's exact ActionDTO, captured at this operation. History
+  // keeps its separate scalar snapshot; older receipts are never rewritten.
+  return {
+    id: action.id, ticketId: action.ticketId, actionAt: action.actionAt.toISOString(),
+    description: action.description, result: action.result,
+    createdBy: identity(action.createdById), assignee: identity(action.assigneeId),
+    performedBy: action.performedById === null ? null : identity(action.performedById),
+    status: action.status, followUpRequired: action.followUpRequired, followUpNote: action.followUpNote,
+    attachmentNotes: action.attachmentNotes, cancellationReason: action.cancellationReason,
+    createdAt: action.createdAt.toISOString(), updatedAt: action.updatedAt.toISOString(),
+    completedAt: action.completedAt?.toISOString() ?? null,
+    cancelledAt: action.cancelledAt?.toISOString() ?? null, version: action.version,
+  };
+}
+
 function canonical(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(canonical);
   if (value !== null && typeof value === "object") {
@@ -77,7 +105,7 @@ async function record(
       operation, ticketId: after.ticketId, actionId: operation === "CREATE_ACTION" ? null : after.id,
       input: { ...originalInput, clientMutationId: mutationKey(fixture, ordinal) },
     }))).digest("hex"),
-    safeResponse: { action: snapshot, ticketUpdatedAt: after.updatedAt.toISOString() },
+    safeResponse: { action: await seedActionDTO(transaction, after), ticketUpdatedAt: after.updatedAt.toISOString() },
     createdAt: after.updatedAt,
   } });
   await transaction.ticket.update({ where: { id: after.ticketId }, data: { updatedAt: after.updatedAt } });
