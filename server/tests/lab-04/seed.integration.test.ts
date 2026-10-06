@@ -397,3 +397,184 @@ describe("AC-32 / T-32: whole-seed failure and safe retry", () => {
     });
   }, 30_000);
 });
+
+// API-spec section 3 / API-04 / API-06 / D-13: receipt responses are ActionDTOs,
+// distinct from section 9's scalar-ID history snapshots. Expected allowlists
+// and operation states are explicit; no production projection helper is used.
+const actionDTOFields = [
+  "id", "ticketId", "actionAt", "description", "result", "createdBy", "assignee", "performedBy",
+  "status", "followUpRequired", "followUpNote", "attachmentNotes", "cancellationReason",
+  "createdAt", "updatedAt", "completedAt", "cancelledAt", "version",
+];
+const actionHistoryFields = [
+  "id", "ticketId", "createdById", "assigneeId", "performedById", "status", "description", "result",
+  "followUpRequired", "followUpNote", "attachmentNotes", "actionAt", "createdAt", "updatedAt",
+  "completedAt", "cancelledAt", "cancellationReason", "version",
+];
+const privateUserFields = [
+  "email", "role", "isActive", "passwordHash", "mustChangePassword", "passwordChangedAt",
+  "sessions", "authSessions", "tokenHash", "csrfTokenHash",
+];
+function isJsonRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+function receiptObject(value: unknown, label: string): Record<string, unknown> {
+  expect(isJsonRecord(value), `${label} is a JSON object; contents redacted`).toBe(true);
+  return value as Record<string, unknown>;
+}
+function assertSafeReceiptIdentity(value: unknown, expected: { id: number; name: string }, label: string) {
+  expect.soft(isJsonRecord(value), `${label} uses the identity projection`).toBe(true);
+  expect.soft(isJsonRecord(value) ? Object.keys(value).sort() : [], `${label} has only id/name`)
+    .toEqual(["id", "name"]);
+  expect.soft(isJsonRecord(value) && value.id === expected.id && value.name === expected.name,
+    `${label} identifies the observed fixture User; values redacted`).toBe(true);
+  for (const field of privateUserFields) {
+    expect.soft(isJsonRecord(value) && Object.hasOwn(value, field), `${label} excludes ${field}`).toBe(false);
+  }
+}
+
+describe("Seed receipt ActionDTO versus ActionHistory representation", () => {
+  it.each([
+    ["CREATE_ACTION", "PLANNED", 1, "ACTION_CREATED"],
+    ["START_ACTION", "IN_PROGRESS", 2, "ACTION_STARTED"],
+    ["COMPLETE_ACTION", "COMPLETED", 3, "ACTION_COMPLETED"],
+    ["CANCEL_ACTION", "CANCELLED", 2, "ACTION_CANCELLED"],
+  ] as const)("stores an exact operation-time ActionDTO for %s", async (operation, status, version, event) => {
+    await withSeedSchema(async (prisma) => {
+      await reportedSeed(prisma);
+      const receipts = await prisma.mutationReceipt.findMany({ orderBy: { id: "asc" } });
+      const selected = receipts.filter((receipt) => receipt.operation === operation);
+      expect(selected.length, `Real clean seed produces ${operation} receipts`).toBeGreaterThan(0);
+      const actions = await prisma.action.findMany();
+      const users = new Map((await prisma.user.findMany({ select: { id: true, name: true } }))
+        .map((user) => [user.id, user]));
+      let advanced = 0;
+      for (const receipt of selected) {
+        const current = actions.find((action) => action.id === receipt.actionId);
+        expect(current !== undefined, "Receipt references a real Action").toBe(true);
+        const action = current!;
+        const history = await prisma.actionHistory.findUniqueOrThrow({ where: {
+          actionId_actionVersion: { actionId: action.id, actionVersion: version },
+        } });
+        expect(history.event).toBe(event);
+        expect(history.actorId).toBe(receipt.actorId);
+        const historical = receiptObject(history.after, "History after");
+        expect.soft(Object.keys(historical).sort(), "History keeps its exact scalar snapshot fields")
+          .toEqual([...actionHistoryFields].sort());
+        expect.soft(historical.createdById).toBe(action.createdById);
+        expect.soft(historical.assigneeId).toBe(action.assigneeId);
+        expect.soft(historical.performedById).toBe(operation === "COMPLETE_ACTION" ? receipt.actorId : null);
+        const response = receiptObject(receipt.safeResponse, "Stored response");
+        const dto = receiptObject(response.action, "Stored response ActionDTO");
+        expect.soft(Object.keys(dto).sort(), `${operation} response has exactly the approved ActionDTO fields`)
+          .toEqual([...actionDTOFields].sort());
+        for (const field of ["createdById", "assigneeId", "performedById", ...privateUserFields]) {
+          expect.soft(Object.hasOwn(dto, field), `ActionDTO excludes history/private field ${field}`).toBe(false);
+        }
+        const creator = users.get(action.createdById)!;
+        const assignee = users.get(action.assigneeId)!;
+        assertSafeReceiptIdentity(dto.createdBy, creator, "createdBy");
+        assertSafeReceiptIdentity(dto.assignee, assignee, "assignee");
+        const performer = operation === "COMPLETE_ACTION" ? users.get(receipt.actorId)! : null;
+        if (performer !== null) {
+          assertSafeReceiptIdentity(dto.performedBy, performer, "performedBy");
+          expect(receipt.actorId).toBe(action.performedById);
+        } else expect.soft(dto.performedBy, "Performer is null before completion and on cancellation").toBeNull();
+        const instant = receipt.createdAt.toISOString();
+        const laterCompletion = receipts.some((candidate) => candidate.actionId === action.id && candidate.operation === "COMPLETE_ACTION");
+        const expected: Record<string, unknown> = {
+          id: action.id, ticketId: action.ticketId, actionAt: action.actionAt.toISOString(),
+          description: action.description,
+          result: operation !== "COMPLETE_ACTION" && laterCompletion ? null : action.result,
+          createdBy: { id: creator.id, name: creator.name }, assignee: { id: assignee.id, name: assignee.name },
+          performedBy: performer === null ? null : { id: performer.id, name: performer.name },
+          status, followUpRequired: action.followUpRequired, followUpNote: action.followUpNote,
+          attachmentNotes: action.attachmentNotes,
+          cancellationReason: operation === "CANCEL_ACTION" ? action.cancellationReason : null,
+          createdAt: action.createdAt.toISOString(), updatedAt: instant,
+          completedAt: operation === "COMPLETE_ACTION" ? instant : null,
+          cancelledAt: operation === "CANCEL_ACTION" ? instant : null, version,
+        };
+        // Compare observed values without depending on PostgreSQL JSONB key
+        // order. Boolean output also redacts accidental future User leaks.
+        const matches = Object.entries(expected).every(([field, value]) => {
+          const actual = dto[field];
+          return isJsonRecord(value) ? isJsonRecord(actual) && Object.keys(value).every((key) => actual[key] === value[key])
+            : actual === value;
+        });
+        expect.soft(matches,
+          `${operation} stores the complete observed operation-time DTO; values redacted`).toBe(true);
+        expect.soft(dto.status).toBe(status);
+        expect.soft(dto.version).toBe(version);
+        expect.soft(dto.updatedAt).toBe(instant);
+        expect.soft(dto.updatedAt).toBe(historical.updatedAt);
+        expect.soft(response.ticketUpdatedAt).toBe(instant);
+        expect.soft(history.createdAt.toISOString()).toBe(instant);
+        if (action.version > version) {
+          advanced += 1;
+          expect.soft(dto.version === action.version, "Receipt must not use the later Action version").toBe(false);
+          expect.soft(dto.updatedAt === action.updatedAt.toISOString(), "Receipt must not use the later Action timestamp").toBe(false);
+        }
+      }
+      if (operation === "CREATE_ACTION" || operation === "START_ACTION") {
+        expect(advanced, "Real fixtures exercise receipt retention after later Action transitions").toBeGreaterThan(0);
+      }
+    });
+  }, 30_000);
+
+  it("keeps full scalar-ID before/after histories independently of receipt DTO identity objects", async () => {
+    await withSeedSchema(async (prisma, client) => {
+      await reportedSeed(prisma);
+      const histories = await prisma.actionHistory.findMany();
+      expect(histories.length).toBeGreaterThan(0);
+      const states = { ACTION_CREATED: "PLANNED", ACTION_STARTED: "IN_PROGRESS", ACTION_COMPLETED: "COMPLETED", ACTION_CANCELLED: "CANCELLED" };
+      for (const history of histories) {
+        const after = receiptObject(history.after, "History after");
+        expect(Object.keys(after).sort()).toEqual([...actionHistoryFields].sort());
+        expect(typeof after.createdById).toBe("number");
+        expect(typeof after.assigneeId).toBe("number");
+        expect(after.performedById).toBe(history.event === "ACTION_COMPLETED" ? history.actorId : null);
+        expect(after.version).toBe(history.actionVersion);
+        expect(after.status).toBe(states[history.event as keyof typeof states]);
+        expect(after.updatedAt).toBe(history.createdAt.toISOString());
+        expect(history.sourceTicketStatusHistoryId).toBeNull();
+        if (history.event === "ACTION_CREATED") {
+          expect(history.before).toBeNull();
+          expect(history.actionVersion).toBe(1);
+        } else {
+          const before = receiptObject(history.before, "History before");
+          expect(Object.keys(before).sort()).toEqual([...actionHistoryFields].sort());
+          expect(before.version).toBe(history.actionVersion - 1);
+          for (const field of ["id", "ticketId", "createdById", "assigneeId", "actionAt", "createdAt"]) {
+            expect(before[field]).toBe(after[field]);
+          }
+        }
+      }
+      const creationNull = await query<{ valid: boolean }>(client,
+        `SELECT bool_and("before" IS NULL) AS valid FROM "ActionHistory" WHERE event='ACTION_CREATED'`);
+      expect(creationNull.rows[0]?.valid, "Creation before is database NULL, not JSON null").toBe(true);
+    });
+  }, 30_000);
+
+  it("preserves recorded identity names and prior-format receipts on two reseeds without backfill", async () => {
+    await withSeedSchema(async (prisma, client, schema) => {
+      await reportedSeed(prisma);
+      const receipt = await prisma.mutationReceipt.findFirstOrThrow({ where: { operation: "CREATE_ACTION" } });
+      const history = await prisma.actionHistory.findUniqueOrThrow({ where: {
+        actionId_actionVersion: { actionId: receipt.actionId, actionVersion: 1 },
+      } });
+      // Test-only reconstruction of a pre-fix persisted response, in this owned
+      // schema. Production reseeding must neither backfill it nor refresh names
+      // in the other, correctly projected operation-time responses.
+      await prisma.mutationReceipt.update({ where: { id: receipt.id }, data: {
+        safeResponse: { action: history.after as Prisma.InputJsonObject, ticketUpdatedAt: receipt.createdAt.toISOString() },
+      } });
+      await prisma.user.update({ where: { id: receipt.actorId }, data: { name: "Operationally renamed receipt actor" } });
+      const before = await snapshot(client, schema, undefined, tables);
+      for (const run of [1, 2]) {
+        await reportedSeed(prisma);
+        await assertPreserved(client, schema, before, `Stored receipt preservation rerun ${run}`);
+      }
+    });
+  }, 30_000);
+});
