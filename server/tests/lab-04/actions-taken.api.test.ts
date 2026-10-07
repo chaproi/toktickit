@@ -118,3 +118,124 @@ describe("API-01/02 read contract (partial AC-02/03/06/12/34; T-02/03/06/12/34)"
     assertSafeEqual(responses.map((response) => response.status), [200, 200, 200], "All read operations succeed without domain writes");
   });
 });
+
+import { ActionCreateFixtures, FULL_CONTENT, MINIMUM_CONTENT } from "./action-create-test-fixtures.js";
+
+describe("API-04 creation (partial AC-04/05/06/12/13/15/34/41/45; T-04/05/06/12/13/15/34/49/55)", () => {
+  const creates = new ActionCreateFixtures();
+  beforeAll(() => creates.initialize());
+  afterAll(() => creates.cleanup());
+
+  it.each([
+    { role: "staff", full: false, self: false, unassigned: false },
+    { role: "administrator", full: true, self: false, unassigned: true },
+    { role: "staff", full: true, self: true, unassigned: true },
+    { role: "administrator", full: false, self: true, unassigned: false },
+  ] as const)("$role creates full=$full self=$self unassigned=$unassigned with atomic attribution/history/receipt", async ({ role, full, self, unassigned }) => {
+    const actor = creates[role];
+    const parent = await creates.parent("OPEN", unassigned);
+    expect(parent.ownerId === actor.user.id).toBe(false);
+    const assigneeId = self ? actor.user.id : creates.read.who("assignee").user.id;
+    const input = full ? creates.fullInput(parent, assigneeId) : creates.input(parent, assigneeId);
+    await creates.create(parent, input, actor, full ? FULL_CONTENT : MINIMUM_CONTENT);
+  });
+
+  it.each(["NEW", "IN_PROGRESS", "WAITING_FOR_REQUESTER", "REOPENED"] as const)("allows an eligible create on editable %s without changing Ticket ownership", async (status) => {
+    const parent = await creates.parent(status);
+    await creates.create(parent, creates.input(parent), creates.staff);
+  });
+
+  it.each([
+    { label: "omitted", supplied: false, note: undefined },
+    { label: "null", supplied: true, note: null },
+    { label: "empty", supplied: true, note: "" },
+    { label: "whitespace", supplied: true, note: " \t\n " },
+  ])("normalizes false follow-up with $label note to persisted/DTO/history null", async ({ supplied, note }) => {
+    const parent = await creates.parent();
+    const input = creates.input(parent);
+    if (supplied) input.followUpNote = note;
+    await creates.create(parent, input, creates.staff, MINIMUM_CONTENT);
+  });
+
+  it.each([
+    { label: "short description", patch: { description: "four" }, field: "description" },
+    { label: "missing description", patch: { description: undefined }, field: "description" },
+    { label: "nonboolean follow-up", patch: { followUpRequired: "false" }, field: "followUpRequired" },
+    { label: "fractional assignee", patch: { assigneeId: 1.5 }, field: "assigneeId" },
+    { label: "invalid UUID", patch: { clientMutationId: "not-a-uuid" }, field: "clientMutationId" },
+    { label: "missing parent token", patch: { expectedTicketUpdatedAt: undefined }, field: "expectedTicketUpdatedAt" },
+    { label: "non-UTC token", patch: { expectedTicketUpdatedAt: "2026-10-04T03:00:00.000+00:00" }, field: "expectedTicketUpdatedAt" },
+    { label: "impossible date token", patch: { expectedTicketUpdatedAt: "2026-02-30T03:00:00.000Z" }, field: "expectedTicketUpdatedAt" },
+    { label: "blank supplied result", patch: { result: " " }, field: "result" },
+    { label: "wrong attachment text type", patch: { attachmentNotes: [] }, field: "attachmentNotes" },
+    { label: "false nonempty note", patch: { followUpNote: "Retain this rather than silently discard" }, field: "followUpNote" },
+    { label: "false wrong-type note", patch: { followUpNote: 17 }, field: "followUpNote" },
+    { label: "true missing note", patch: { followUpRequired: true }, field: "followUpNote" },
+    { label: "true null note", patch: { followUpRequired: true, followUpNote: null }, field: "followUpNote" },
+    { label: "true blank note", patch: { followUpRequired: true, followUpNote: " \t " }, field: "followUpNote" },
+  ])("rejects $label with field errors and no partial domain writes", async ({ patch, field }) => {
+    const parent = await creates.parent();
+    const response = await creates.rejected(creates.path(parent.id), { ...creates.input(parent), ...patch });
+    assertSafeError(response, 400, "VALIDATION_ERROR");
+    expect(typeof response.body.error.fields[field]).toBe("string");
+  });
+
+  it.each([
+    ["status", "COMPLETED"], ["createdById", 1], ["performedById", 1], ["ticketId", 1],
+    ["actionAt", "2000-01-01T00:00:00.000Z"], ["createdAt", "2000-01-01T00:00:00.000Z"],
+    ["version", 99], ["history", []], ["attachmentIds", [1]], ["unexpected", true],
+  ])("rejects server-owned/unknown %s without accepting spoofed attribution or relationships", async (field, value) => {
+    const parent = await creates.parent();
+    const response = await creates.rejected(creates.path(parent.id), { ...creates.input(parent), [String(field)]: value });
+    assertSafeError(response, 400, "VALIDATION_ERROR");
+    expect(typeof response.body.error.fields.body).toBe("string");
+  });
+
+  it("rejects a non-object JSON array without writes", async () => {
+    const parent = await creates.parent();
+    const response = await creates.rejected(creates.path(parent.id), []);
+    assertSafeError(response, 400, "VALIDATION_ERROR");
+    expect(typeof response.body.error.fields.body).toBe("string");
+  });
+
+  it("preserves inherited malformed-JSON handling before route processing", async () => {
+    const parent = await creates.parent();
+    const response = await creates.rejected(creates.path(parent.id), "{");
+    assertSafeError(response, 400, "VALIDATION_ERROR");
+    // This can already pass with no Action POST route; it is not creation-validation completion.
+  });
+
+  it.each(["0", "-1", "1.5", "not-a-number", "2147483648"])("rejects malformed/overflowing parent path %s without writes", async (id) => {
+    const parent = await creates.parent();
+    const response = await creates.rejected(creates.path(id), creates.input(parent));
+    assertSafeError(response, 400, "INVALID_TICKET_ID");
+  });
+
+  it.each(["RESOLVED", "CLOSED", "CANCELLED"] as const)("rejects new creation on frozen %s", async (status) => {
+    const parent = await creates.parent(status);
+    const response = await creates.rejected(creates.path(parent.id), creates.input(parent));
+    assertSafeError(response, 409, "TICKET_ACTIONS_LOCKED");
+  });
+
+  it("rejects a stale but valid parent token without Action/history/receipt writes", async () => {
+    const parent = await creates.parent();
+    const response = await creates.rejected(creates.path(parent.id), {
+      ...creates.input(parent), expectedTicketUpdatedAt: "2000-01-01T00:00:00.000Z",
+    });
+    assertSafeError(response, 409, "STALE_WRITE");
+  });
+
+  it("rolls back Action/history/parent writes when the owned late receipt insertion fails", async () => {
+    const parent = await creates.parent();
+    const input = creates.input(parent);
+    await creates.withReceiptFailure(creates.staff, input, parent, async (reached) => {
+      const response = await creates.rejected(creates.path(parent.id), input);
+      assertSafeError(response, 500, "INTERNAL_ERROR");
+      expect(await reached(), "Failpoint observed Action, creation history and advanced parent inside the failed transaction").toBe(true);
+      expect(await creates.prisma.action.count({ where: { ticketId: parent.id } })).toBe(0);
+      expect(await creates.prisma.actionHistory.count({ where: { action: { ticketId: parent.id } } })).toBe(0);
+      expect(await creates.prisma.mutationReceipt.count({ where: { actorId: creates.staff.user.id, clientMutationId: String(input.clientMutationId) } })).toBe(0);
+      expect((await creates.prisma.ticket.findUniqueOrThrow({ where: { id: parent.id } })).updatedAt.toISOString()).toBe(parent.updatedAt.toISOString());
+    });
+  });
+});

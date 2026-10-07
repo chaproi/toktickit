@@ -82,3 +82,53 @@ describe("API-01/02/03 authorization (partial AC-01/02/03/12; T-01/02/03/12)", (
     expect(/(?:public|s-maxage)/iu.test(owner.headers["cache-control"] ?? "")).toBe(false);
   });
 });
+
+import { ActionCreateFixtures } from "./action-create-test-fixtures.js";
+
+describe("API-04 write authorization (partial AC-01/03; T-01/03)", () => {
+  const creates = new ActionCreateFixtures();
+  beforeAll(() => creates.initialize());
+  afterAll(() => creates.cleanup());
+
+  it.each(["owned", "missing", "malformed"])("Requester is ROLE_FORBIDDEN before %s parent lookup", async (kind) => {
+    const parent = await creates.parent();
+    const id = kind === "owned" ? parent.id : kind === "missing" ? MISSING_ID : "not-a-number";
+    const response = await creates.rejected(creates.path(id), creates.input(parent), creates.read.who("requester"));
+    assertSafeError(response, 403, "ROLE_FORBIDDEN");
+    expect(Object.keys(response.body.error).sort()).toEqual(["code", "message"]);
+  });
+
+  it.each(["missing", "absolute-expired", "idle-expired", "revoked", "inactive", "forced-change"])("preserves inherited %s write session denial", async (state) => {
+    const parent = await creates.parent();
+    const actor = state === "missing" ? null : await creates.read.actor(`write-${state}`, "IT_STAFF");
+    if (actor) {
+      const where = { userId: actor.user.id };
+      if (state === "absolute-expired") await creates.prisma.authSession.updateMany({ where, data: { expiresAt: new Date("2000-01-01T00:00:00.000Z") } });
+      if (state === "idle-expired") await creates.prisma.authSession.updateMany({ where, data: { lastSeenAt: new Date("2000-01-01T00:00:00.000Z") } });
+      if (state === "revoked") await creates.prisma.authSession.deleteMany({ where });
+      if (state === "inactive") await creates.prisma.user.update({ where: { id: actor.user.id }, data: { isActive: false } });
+      if (state === "forced-change") await creates.prisma.user.update({ where: { id: actor.user.id }, data: { mustChangePassword: true } });
+    }
+    const response = await creates.rejected(creates.path(parent.id), creates.input(parent), actor);
+    assertSafeError(response, state === "forced-change" ? 403 : 401,
+      state === "forced-change" ? "PASSWORD_CHANGE_REQUIRED" : "AUTHENTICATION_REQUIRED");
+  });
+
+  it.each([
+    { label: "missing Origin", options: { origin: undefined }, code: "ORIGIN_REQUIRED" },
+    { label: "foreign Origin", options: { origin: "https://attacker.invalid" }, code: "ORIGIN_FORBIDDEN" },
+    { label: "missing CSRF header", options: { csrf: undefined }, code: "CSRF_INVALID" },
+    { label: "wrong CSRF header", options: { csrf: "synthetic-mismatch" }, code: "CSRF_INVALID" },
+    { label: "missing CSRF cookie", options: { omitCsrfCookie: true }, code: "CSRF_INVALID" },
+  ])("rejects $label with inherited code and unchanged domain state", async ({ options, code }) => {
+    const parent = await creates.parent();
+    const response = await creates.rejected(creates.path(parent.id), creates.input(parent), creates.staff, options);
+    assertSafeError(response, 403, code);
+  });
+
+  it.each(["staff", "administrator"] as const)("authorized %s receives safe TICKET_NOT_FOUND for a missing parent", async (role) => {
+    const parent = await creates.parent();
+    const response = await creates.rejected(creates.path(MISSING_ID), creates.input(parent), creates[role]);
+    assertSafeError(response, 404, "TICKET_NOT_FOUND");
+  });
+});
