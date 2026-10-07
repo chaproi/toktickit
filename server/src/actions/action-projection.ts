@@ -1,4 +1,4 @@
-import { ActionStatus, Prisma } from "@prisma/client";
+import { ActionStatus, Prisma, type Action } from "@prisma/client";
 
 const identitySelect = { id: true, name: true } as const;
 
@@ -35,6 +35,19 @@ export function toActionDTO(action: SelectedAction) {
 }
 
 export type ActionDTO = ReturnType<typeof toActionDTO>;
+
+export function toActionSnapshot(action: Action) {
+  return {
+    id: action.id, ticketId: action.ticketId, createdById: action.createdById,
+    assigneeId: action.assigneeId, performedById: action.performedById, status: action.status,
+    description: action.description, result: action.result, followUpRequired: action.followUpRequired,
+    followUpNote: action.followUpNote, attachmentNotes: action.attachmentNotes,
+    actionAt: action.actionAt.toISOString(), createdAt: action.createdAt.toISOString(),
+    updatedAt: action.updatedAt.toISOString(), completedAt: action.completedAt?.toISOString() ?? null,
+    cancelledAt: action.cancelledAt?.toISOString() ?? null, cancellationReason: action.cancellationReason,
+    version: action.version,
+  };
+}
 
 function invalidSnapshot(): never {
   // Do not attach stored JSON to errors or repair history during a read.
@@ -93,5 +106,30 @@ export function toActionHistoryDTO(history: SelectedHistory) {
     sourceTicketStatusHistoryId: history.sourceTicketStatusHistoryId,
     before: history.before === null ? null : projectActionHistorySnapshot(history.before),
     after: projectActionHistorySnapshot(history.after),
+  };
+}
+
+function storedIdentity(value: Prisma.JsonValue | undefined) {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return invalidSnapshot();
+  return { id: scalarId(value.id), name: scalarText(value.name) };
+}
+
+export function projectStoredActionDTO(value: Prisma.JsonValue): ActionDTO {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return invalidSnapshot();
+  const createdBy = storedIdentity(value.createdBy);
+  const assignee = storedIdentity(value.assignee);
+  const performedBy = value.performedBy === null ? null : storedIdentity(value.performedBy);
+  const snapshot = projectActionHistorySnapshot({
+    ...value, createdById: createdBy.id, assigneeId: assignee.id, performedById: performedBy?.id ?? null,
+  });
+  // All values come from the saved operation-time response, never current rows.
+  // Reuse scalar validation and explicitly retain only the approved DTO fields.
+  return {
+    id: snapshot.id, ticketId: snapshot.ticketId, actionAt: snapshot.actionAt,
+    description: snapshot.description, result: snapshot.result, createdBy, assignee, performedBy,
+    status: snapshot.status, followUpRequired: snapshot.followUpRequired, followUpNote: snapshot.followUpNote,
+    attachmentNotes: snapshot.attachmentNotes, cancellationReason: snapshot.cancellationReason,
+    createdAt: snapshot.createdAt, updatedAt: snapshot.updatedAt, completedAt: snapshot.completedAt,
+    cancelledAt: snapshot.cancelledAt, version: snapshot.version,
   };
 }

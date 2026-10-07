@@ -4,6 +4,8 @@ import multer from "multer";
 import { Prisma, type UserRole } from "@prisma/client";
 import { parseActionListQuery, parseActionHistoryQuery, validateActionDetailQuery } from "./actions/action-query.js";
 import { listTicketActions, getTicketAction, listTicketActionHistory } from "./actions/action-read-service.js";
+import { createTicketAction } from "./actions/action-create-service.js";
+import { validateCreateActionInput } from "./actions/action-validation.js";
 import {
   getAttachmentContentForRequester,
   getAttachmentForRequester,
@@ -954,6 +956,50 @@ app.post("/api/tickets/:ticketId/attachments", async (req, res) => {
       sendMutationError(res, error, "uploading an Attachment");
     }
   });
+});
+
+app.post("/api/tickets/:ticketId/actions", async (req, res) => {
+  res.set("Cache-Control", "private, no-store");
+  const live = await authenticated(req, res, ["IT_STAFF", "ADMINISTRATOR"], true);
+  if (!live) return;
+  const ticketId = parsePositiveIdentifier(req.params.ticketId);
+  if (ticketId === null) {
+    res.status(400).json(errorBody("INVALID_TICKET_ID", "Ticket identifier must be a positive integer."));
+    return;
+  }
+  const validation = validateCreateActionInput(req.body);
+  if (!validation.success) {
+    res.status(400).json(errorBody("VALIDATION_ERROR", "Please correct the highlighted fields.", validation.fields));
+    return;
+  }
+  try {
+    const result = await createTicketAction({ actorId: live.user.id, sessionId: live.session.id,
+      tokenHash: live.session.tokenHash, csrfTokenHash: live.session.csrfTokenHash }, ticketId, validation.data);
+    if (result.kind === "created") { res.status(201).json(result.response); return; }
+    if (result.kind === "replayed") { res.status(200).json({ ...result.response, replayed: true }); return; }
+    if (result.kind === "ticket-not-found") { sendTicketNotFound(res); return; }
+    if (result.kind === "invalid-assignee") {
+      res.status(400).json(errorBody("INVALID_ASSIGNEE", "Please select an active eligible assignee.",
+        { assigneeId: "Select an active IT Staff member or Administrator." }));
+      return;
+    }
+    const denials: Record<string, [number, string, string]> = {
+      "authentication-required": [401, "AUTHENTICATION_REQUIRED", "Authentication is required."],
+      "password-change-required": [403, "PASSWORD_CHANGE_REQUIRED", "Change your initial password before continuing."],
+      "role-forbidden": [403, "ROLE_FORBIDDEN", "You do not have permission to perform this action."],
+      "csrf-invalid": [403, "CSRF_INVALID", "CSRF validation failed."],
+      "assignee-ineligible": [409, "ASSIGNEE_INELIGIBLE", "Assignee eligibility changed. Reload and try again."],
+      "duplicate-conflict": [409, "DUPLICATE_REQUEST_CONFLICT", "This mutation identifier was already used for another request."],
+      frozen: [409, "TICKET_ACTIONS_LOCKED", "Actions cannot be added to this Ticket in its current status."],
+      stale: [409, "STALE_WRITE", "This Ticket changed. Reload and try again."],
+    };
+    const [status, code, message] = denials[result.kind];
+    res.status(status).json(errorBody(code, message));
+  } catch (error) {
+    if (error instanceof ConcurrentUpdateError) {
+      sendConflict(res, "CONCURRENT_UPDATE", "This Ticket changed concurrently. Reload and try again.");
+    } else sendDatabaseError(res, error, "creating an Action");
+  }
 });
 
 app.get("/api/tickets/:ticketId/actions", async (req, res) => {
