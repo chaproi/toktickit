@@ -239,3 +239,184 @@ describe("API-04 creation (partial AC-04/05/06/12/13/15/34/41/45; T-04/05/06/12/
     });
   });
 });
+
+import { ActionPatchFixtures, EDIT_TEXT } from "./action-patch-test-fixtures.js";
+
+describe("API-05/06 edits and lifecycle (partial AC-05/06/08/09/10/11/12/15/41/45; T-05/06/08/09/10/11/12/15/50/55)", () => {
+  const patches = new ActionPatchFixtures();
+  beforeAll(() => patches.initialize());
+  afterAll(() => patches.cleanup());
+
+  it.each(["PLANNED", "IN_PROGRESS"] as const)("partially edits %s, normalizes supplied content and retains all omitted values", async (state) => {
+    const source = await patches.setup(state);
+    await patches.successful(source, "edit", patches.editInput(source, {
+      description: `  ${EDIT_TEXT}  `, result: "  Changed draft  ", attachmentNotes: " \t ",
+    }), patches.administrator, { description: EDIT_TEXT, result: "Changed draft", attachmentNotes: null });
+  });
+
+  it.each([
+    { state: "PLANNED", role: "IT_STAFF", combined: false },
+    { state: "PLANNED", role: "ADMINISTRATOR", combined: true },
+    { state: "IN_PROGRESS", role: "IT_STAFF", combined: true },
+    { state: "IN_PROGRESS", role: "ADMINISTRATOR", combined: false },
+  ] as const)("reassigns $state to $role combined=$combined with exactly one ACTION_REASSIGNED", async ({ state, role, combined }) => {
+    const source = await patches.setup(state);
+    const target = await patches.read.actor(`patch-target-${source.action.id}`, role);
+    expect([source.parent.ownerId, source.action.createdById, patches.administrator.user.id].includes(target.user.id)).toBe(false);
+    const supplied = { assigneeId: target.user.id, ...(combined ? { description: `  ${EDIT_TEXT}  ` } : {}) };
+    await patches.successful(source, "edit", patches.editInput(source, supplied), patches.administrator,
+      { assigneeId: target.user.id, ...(combined ? { description: EDIT_TEXT } : {}) }, "ACTION_REASSIGNED");
+  });
+
+  it.each(["description", "result", "assignment", "follow-up"])("normalized effective %s no-op is ACTION_UNCHANGED without receipt/history", async (kind) => {
+    const source = await patches.setup();
+    const supplied = kind === "description" ? { description: `  ${source.action.description}  ` } :
+      kind === "result" ? { result: `  ${source.action.result}  ` } :
+      kind === "assignment" ? { assigneeId: source.action.assigneeId } : { followUpRequired: true };
+    assertSafeError(await patches.rejected(patches.path(source, "edit"), patches.editInput(source, supplied)), 409, "ACTION_UNCHANGED");
+  });
+
+  it("explicit null clears true follow-up and preserves the original note in history.before", async () => {
+    const source = await patches.setup();
+    const changed = await patches.successful(source, "edit", patches.editInput(source, { followUpRequired: false, followUpNote: null }),
+      patches.administrator, { followUpRequired: false, followUpNote: null });
+    expect(changed.history.before).toHaveProperty("followUpNote", FULL_CONTENT.followUpNote);
+    expect(changed.history.after).toHaveProperty("followUpNote", null);
+  });
+
+  it("false to true accepts a supplied trimmed final note", async () => {
+    const source = await patches.setup("PLANNED", { followUpRequired: false });
+    await patches.successful(source, "edit", patches.editInput(source, { followUpRequired: true, followUpNote: "  New follow-up note  " }),
+      patches.staff, { followUpRequired: true, followUpNote: "New follow-up note" });
+  });
+
+  it("already-false empty note normalizes to null alongside a material content edit", async () => {
+    const source = await patches.setup("PLANNED", { followUpRequired: false });
+    await patches.successful(source, "edit", patches.editInput(source, { description: EDIT_TEXT, followUpNote: " \t " }),
+      patches.staff, { description: EDIT_TEXT, followUpNote: null });
+  });
+
+  it.each([
+    { label: "omitted", supplied: false, note: undefined }, { label: "empty", supplied: true, note: "" },
+    { label: "whitespace", supplied: true, note: " \t " }, { label: "nonempty", supplied: true, note: "Replacement cannot silently clear" },
+  ])("true to false rejects $label clearing rather than silently erasing history", async ({ supplied, note }) => {
+    const source = await patches.setup();
+    const input = patches.editInput(source, { followUpRequired: false });
+    if (supplied) input.followUpNote = note;
+    const response = await patches.rejected(patches.path(source, "edit"), input);
+    assertSafeError(response, 400, "VALIDATION_ERROR");
+    expect(typeof response.body.error.fields.followUpNote).toBe("string");
+  });
+
+  it.each([null, ""])("remaining true rejects a cleared note %s", async (note) => {
+    const source = await patches.setup();
+    const response = await patches.rejected(patches.path(source, "edit"), patches.editInput(source, { followUpNote: note }));
+    assertSafeError(response, 400, "VALIDATION_ERROR");
+    expect(typeof response.body.error.fields.followUpNote).toBe("string");
+  });
+
+  it.each(["omitted", "null", "blank"])("false to true rejects %s final note", async (kind) => {
+    const source = await patches.setup("PLANNED", { followUpRequired: false });
+    const input = patches.editInput(source, { followUpRequired: true, ...(kind === "omitted" ? {} : { followUpNote: kind === "null" ? null : " " }) });
+    const response = await patches.rejected(patches.path(source, "edit"), input);
+    assertSafeError(response, 400, "VALIDATION_ERROR");
+    expect(typeof response.body.error.fields.followUpNote).toBe("string");
+  });
+
+  const states = ["PLANNED", "IN_PROGRESS", "COMPLETED", "CANCELLED"] as const;
+  it.each(states.flatMap((from) => states.map((to) => ({ from, to }))))("lifecycle $from -> $to obeys the full matrix", async ({ from, to }) => {
+    const source = await patches.setup(from);
+    const input = patches.statusInput(source, to);
+    const allowed = from === "PLANNED" && (to === "IN_PROGRESS" || to === "CANCELLED") ||
+      from === "IN_PROGRESS" && (to === "COMPLETED" || to === "CANCELLED");
+    if (allowed) {
+      const operation = to === "IN_PROGRESS" ? "start" : to === "COMPLETED" ? "complete" : "cancel";
+      const changed = await patches.successful(source, operation, input);
+      expect(changed.action.followUpRequired).toBe(true);
+      expect(changed.action.followUpNote).toBe(FULL_CONTENT.followUpNote);
+      if (operation === "complete") expect(new Set([source.parent.ownerId, source.action.createdById, source.action.assigneeId, changed.action.performedById]).size).toBe(4);
+    } else {
+      const response = await patches.rejected(patches.path(source, "start"), input);
+      if (from === "COMPLETED" || from === "CANCELLED") assertSafeError(response, 409); // Terminal/same/edge precedence overlaps.
+      else assertSafeError(response, 409, from === to ? "ACTION_STATUS_UNCHANGED" : "INVALID_ACTION_TRANSITION");
+    }
+  });
+
+  it.each(["COMPLETED", "CANCELLED"] as const)("terminal %s rejects edit on an otherwise editable parent", async (state) => {
+    const source = await patches.setup(state);
+    assertSafeError(await patches.rejected(patches.path(source, "edit"), patches.editInput(source)), 409, "ACTION_TERMINAL");
+  });
+
+  it.each(["RESOLVED", "CLOSED", "CANCELLED"].flatMap((status) => ["edit", "start"].map((operation) => ({ status, operation }))) as Array<{ status: "RESOLVED" | "CLOSED" | "CANCELLED"; operation: "edit" | "start" }>)(
+    "$operation rejects frozen $status without mutation", async ({ status, operation }) => {
+      const source = await patches.setup();
+      source.parent = await patches.prisma.ticket.update({ where: { id: source.parent.id }, data: { currentStatus: status, updatedAt: source.parent.updatedAt } });
+      assertSafeError(await patches.rejected(patches.path(source, operation), patches.input(source, operation)), 409, "TICKET_ACTIONS_LOCKED");
+    },
+  );
+
+  it.each(["edit", "start"].flatMap((operation) => ["action-version", "parent-token"].map((token) => ({ operation, token }))) as Array<{ operation: "edit" | "start"; token: string }>)(
+    "$operation independently rejects stale $token", async ({ operation, token }) => {
+      const source = await patches.setup();
+      const input = { ...patches.input(source, operation), ...(token === "action-version" ? { expectedVersion: source.action.version + 1 } : { expectedTicketUpdatedAt: "2000-01-01T00:00:00.000Z" }) };
+      assertSafeError(await patches.rejected(patches.path(source, operation), input), 409, "STALE_WRITE");
+    },
+  );
+
+  it.each([
+    { label: "short description", patch: { description: "four" }, field: "description" },
+    { label: "blank result", patch: { result: " " }, field: "result" },
+    { label: "string assignee", patch: { assigneeId: "1" }, field: "assigneeId" },
+    { label: "nonboolean follow-up", patch: { followUpRequired: "true" }, field: "followUpRequired" },
+    { label: "bad version", patch: { expectedVersion: 0 }, field: "expectedVersion" },
+    { label: "bad UTC token", patch: { expectedTicketUpdatedAt: "2026-10-04" }, field: "expectedTicketUpdatedAt" },
+    { label: "bad UUID", patch: { clientMutationId: "invalid" }, field: "clientMutationId" },
+    { label: "API confirmation field", patch: { confirm: true }, field: "body" },
+  ])("edit rejects $label safely", async ({ patch, field }) => {
+    const source = await patches.setup();
+    const response = await patches.rejected(patches.path(source, "edit"), { ...patches.editInput(source), ...patch });
+    assertSafeError(response, 400, "VALIDATION_ERROR");
+    expect(typeof response.body.error.fields[field]).toBe("string");
+  });
+
+  it("rejects tokens-only edit rather than treating it as a material mutation", async () => {
+    const source = await patches.setup();
+    const response = await patches.rejected(patches.path(source, "edit"), patches.tokens(source));
+    assertSafeError(response, 400, "VALIDATION_ERROR");
+    expect(typeof response.body.error.fields.body).toBe("string");
+  });
+
+  it.each(["createdById", "performedById", "ticketId", "actionAt", "createdAt", "status", "version", "history"])("edit rejects immutable/server-owned %s", async (field) => {
+    const source = await patches.setup();
+    const response = await patches.rejected(patches.path(source, "edit"), { ...patches.editInput(source), [field]: field.endsWith("At") ? "2000-01-01T00:00:00.000Z" : 1 });
+    assertSafeError(response, 400, "VALIDATION_ERROR");
+    expect(typeof response.body.error.fields.body).toBe("string");
+  });
+
+  it.each([
+    { target: "IN_PROGRESS", label: "confirm false", patch: { confirm: false }, field: "body" },
+    { target: "IN_PROGRESS", label: "result null", patch: { result: null }, field: "body" },
+    { target: "IN_PROGRESS", label: "reason null", patch: { reason: null }, field: "body" },
+    { target: "COMPLETED", label: "missing confirmation", patch: { confirm: undefined }, field: "confirm" },
+    { target: "COMPLETED", label: "false confirmation", patch: { confirm: false }, field: "confirm" },
+    { target: "COMPLETED", label: "nonboolean confirmation", patch: { confirm: "true" }, field: "confirm" },
+    { target: "COMPLETED", label: "missing result", patch: { result: undefined }, field: "result" },
+    { target: "COMPLETED", label: "blank result", patch: { result: " " }, field: "result" },
+    { target: "COMPLETED", label: "irrelevant reason", patch: { reason: null }, field: "body" },
+    { target: "CANCELLED", label: "missing confirmation", patch: { confirm: undefined }, field: "confirm" },
+    { target: "CANCELLED", label: "false confirmation", patch: { confirm: false }, field: "confirm" },
+    { target: "CANCELLED", label: "short reason", patch: { reason: "four" }, field: "reason" },
+    { target: "CANCELLED", label: "missing reason", patch: { reason: undefined }, field: "reason" },
+    { target: "CANCELLED", label: "irrelevant result", patch: { result: null }, field: "body" },
+    { target: "IN_PROGRESS", label: "unknown target", patch: { targetStatus: "UNKNOWN" }, field: "targetStatus" },
+    { target: "IN_PROGRESS", label: "bad version", patch: { expectedVersion: 0 }, field: "expectedVersion" },
+    { target: "IN_PROGRESS", label: "bad UUID", patch: { clientMutationId: "invalid" }, field: "clientMutationId" },
+    { target: "IN_PROGRESS", label: "bad UTC token", patch: { expectedTicketUpdatedAt: "2026-10-04" }, field: "expectedTicketUpdatedAt" },
+    { target: "IN_PROGRESS", label: "spoofed performer", patch: { performedById: 1 }, field: "body" },
+  ] as const)("$target rejects $label before domain writes", async ({ target, patch, field }) => {
+    const source = await patches.setup(target === "COMPLETED" ? "IN_PROGRESS" : "PLANNED");
+    const response = await patches.rejected(patches.path(source, "start"), { ...patches.statusInput(source, target), ...patch });
+    assertSafeError(response, 400, "VALIDATION_ERROR");
+    expect(typeof response.body.error.fields[field]).toBe("string");
+  });
+});

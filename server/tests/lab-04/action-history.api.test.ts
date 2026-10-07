@@ -115,3 +115,40 @@ describe("API-03 history projection (partial AC-02/12/13/45; T-02/12/13/55)", ()
     assertSafeError(response, 400);
   });
 });
+
+import { ActionPatchFixtures, PATCH_OPERATIONS } from "./action-patch-test-fixtures.js";
+
+describe("API-05/06 history and rollback (partial AC-13/34/45; T-13/34/55)", () => {
+  const patches = new ActionPatchFixtures();
+  beforeAll(() => patches.initialize());
+  afterAll(() => patches.cleanup());
+
+  it.each(PATCH_OPERATIONS)("%s exposes exactly one new full safe event to the owning Requester", async (operation) => {
+    const source = await patches.setup(operation === "complete" ? "IN_PROGRESS" : "PLANNED");
+    const changed = await patches.successful(source, operation);
+    const response = await patches.read.get(`/api/tickets/${source.parent.id}/actions/${source.action.id}/history?pageSize=100`, patches.read.who("requester"));
+    expect(response.status).toBe(200);
+    const event = response.body.items.filter((item: { actionVersion: number }) => item.actionVersion === changed.action.version);
+    expect(event).toHaveLength(1);
+    assertSafeEqual(event[0], { id: changed.history.id, actionId: changed.action.id,
+      actor: { id: patches.administrator.user.id, name: patches.administrator.user.name }, event: changed.history.event,
+      createdAt: changed.history.createdAt.toISOString(), actionVersion: changed.action.version, sourceTicketStatusHistoryId: null,
+      before: changed.history.before, after: changed.history.after }, "Approved Requester history projection only");
+    expect(/email|passwordHash|tokenHash|internalNotes|inputFingerprint|safeResponse/u.test(JSON.stringify(response.body))).toBe(false);
+  });
+
+  it.each(PATCH_OPERATIONS)("%s receipt insertion failure rolls back updated Action, full history and advanced parent", async (operation) => {
+    const source = await patches.setup(operation === "complete" ? "IN_PROGRESS" : "PLANNED");
+    const input = patches.input(source, operation);
+    await patches.withReceiptFailure(source, operation, input, patches.administrator, async (reached) => {
+      const response = await patches.rejected(patches.path(source, operation), input);
+      assertSafeError(response, 500, "INTERNAL_ERROR");
+      expect(await reached(), "Operation-specific marker saw updated Action/version, correct new history and advanced parent").toBe(true);
+      assertSafeEqual(await patches.prisma.action.findUniqueOrThrow({ where: { id: source.action.id } }), source.action, "Full Action rollback");
+      assertSafeEqual(await patches.prisma.ticket.findUniqueOrThrow({ where: { id: source.parent.id } }), source.parent, "Full parent rollback");
+      expect(await patches.prisma.actionHistory.count({ where: { actionId: source.action.id, actionVersion: source.action.version + 1 } })).toBe(0);
+      expect(await patches.prisma.mutationReceipt.count({ where: { actorId: patches.administrator.user.id, clientMutationId: String(input.clientMutationId) } })).toBe(0);
+    });
+    // Until PATCH exists, marker=false and actual rollback assertions remain unreached.
+  });
+});

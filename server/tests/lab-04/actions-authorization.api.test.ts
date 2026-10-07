@@ -132,3 +132,71 @@ describe("API-04 write authorization (partial AC-01/03; T-01/03)", () => {
     assertSafeError(response, 404, "TICKET_NOT_FOUND");
   });
 });
+
+import { ActionPatchFixtures } from "./action-patch-test-fixtures.js";
+
+describe("API-05/06 authorization and scoping (partial AC-01/02/03; T-01/02/03)", () => {
+  const patches = new ActionPatchFixtures();
+  beforeAll(() => patches.initialize());
+  afterAll(() => patches.cleanup());
+  const endpoints = ["edit", "start"] as const;
+
+  it.each(endpoints.flatMap((operation) => ["owned", "missing", "malformed"].map((parent) => ({ operation, parent }))))(
+    "$operation denies Requester before $parent lookup", async ({ operation, parent }) => {
+      const source = await patches.setup();
+      const id = parent === "owned" ? source.parent.id : parent === "missing" ? MISSING_ID : "bad-id";
+      assertSafeError(await patches.rejected(patches.path(source, operation, id), patches.input(source, operation), patches.read.who("requester")), 403, "ROLE_FORBIDDEN");
+    },
+  );
+
+  it.each(endpoints.flatMap((operation) => ["missing", "absolute-expired", "idle-expired", "revoked", "inactive", "forced-change"].map((state) => ({ operation, state }))))(
+    "$operation preserves $state session denial", async ({ operation, state }) => {
+      const source = await patches.setup();
+      const actor = state === "missing" ? null : await patches.read.actor(`${operation}-${state}-${source.action.id}`, "IT_STAFF");
+      if (actor) {
+        const where = { userId: actor.user.id };
+        if (state === "absolute-expired") await patches.prisma.authSession.updateMany({ where, data: { expiresAt: new Date("2000-01-01T00:00:00.000Z") } });
+        if (state === "idle-expired") await patches.prisma.authSession.updateMany({ where, data: { lastSeenAt: new Date("2000-01-01T00:00:00.000Z") } });
+        if (state === "revoked") await patches.prisma.authSession.deleteMany({ where });
+        if (state === "inactive") await patches.prisma.user.update({ where: { id: actor.user.id }, data: { isActive: false } });
+        if (state === "forced-change") await patches.prisma.user.update({ where: { id: actor.user.id }, data: { mustChangePassword: true } });
+      }
+      assertSafeError(await patches.rejected(patches.path(source, operation), patches.input(source, operation), actor), state === "forced-change" ? 403 : 401,
+        state === "forced-change" ? "PASSWORD_CHANGE_REQUIRED" : "AUTHENTICATION_REQUIRED");
+    },
+  );
+
+  const csrfCases = [
+    { label: "missing Origin", options: { origin: undefined }, code: "ORIGIN_REQUIRED" },
+    { label: "wrong Origin", options: { origin: "https://attacker.invalid" }, code: "ORIGIN_FORBIDDEN" },
+    { label: "missing CSRF header", options: { csrf: undefined }, code: "CSRF_INVALID" },
+    { label: "wrong CSRF header", options: { csrf: "synthetic-mismatch" }, code: "CSRF_INVALID" },
+    { label: "missing CSRF cookie", options: { omitCsrfCookie: true }, code: "CSRF_INVALID" },
+  ];
+  it.each(endpoints.flatMap((operation) => csrfCases.map((test) => ({ operation, ...test }))))(
+    "$operation rejects $label with inherited protection", async ({ operation, options, code }) => {
+      const source = await patches.setup();
+      assertSafeError(await patches.rejected(patches.path(source, operation), patches.input(source, operation), patches.administrator, options), 403, code);
+    },
+  );
+
+  it.each(endpoints.flatMap((operation) => ["parent", "action", "mismatch"].map((missing) => ({ operation, missing }))))(
+    "$operation safely rejects missing $missing", async ({ operation, missing }) => {
+      const source = await patches.setup();
+      const other = missing === "mismatch" ? await patches.setup() : source;
+      const ticketId = missing === "parent" ? MISSING_ID : source.parent.id;
+      const actionId = missing === "action" ? MISSING_ID : other.action.id;
+      const response = await patches.rejected(patches.path(source, operation, ticketId, actionId), patches.input(source, operation));
+      assertSafeError(response, 404, missing === "parent" ? "TICKET_NOT_FOUND" : "ACTION_NOT_FOUND");
+    },
+  );
+
+  it.each(endpoints.flatMap((operation) => ["parent", "action"].map((field) => ({ operation, field }))))(
+    "$operation rejects malformed/overflowing $field identifier", async ({ operation, field }) => {
+      const source = await patches.setup();
+      const response = await patches.rejected(patches.path(source, operation,
+        field === "parent" ? "2147483648" : source.parent.id, field === "action" ? "not-an-id" : source.action.id), patches.input(source, operation));
+      assertSafeError(response, 400, field === "parent" ? "INVALID_TICKET_ID" : "INVALID_ACTION_ID");
+    },
+  );
+});
