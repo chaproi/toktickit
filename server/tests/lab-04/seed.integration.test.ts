@@ -637,3 +637,60 @@ describe("Safe seed failure diagnostics", () => {
     });
   }, 30_000);
 });
+
+
+describe("Bounded atomic seed bootstrap transaction", () => {
+  it("commits a bootstrap exceeding Prisma's default five seconds and remains stable on rerun", async () => {
+    // Controlled database delay demonstrates transaction-budget behavior; it
+    // does not reproduce the CPU/resource cause of an earlier loaded full run.
+    await withSeedSchema(async (prisma, client, schema) => {
+      const before = await snapshot(client, schema, undefined, tables);
+      let expired = false;
+      prisma.$use(async (parameters, next) => {
+        try { return await next(parameters); }
+        catch (error) {
+          // Inspect transiently, retain only this allowlisted classification.
+          // Never retain/log messages, parameters, metadata or nested errors.
+          if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2028") {
+            expired = /expired transaction|transaction.*expired|timeout.*transaction/iu.test(error.message);
+          }
+          throw error;
+        }
+      });
+      await query(client, 'CREATE SEQUENCE "seed_budget_probe"');
+      await query(client, `CREATE FUNCTION "seed_budget_delay"() RETURNS trigger LANGUAGE plpgsql AS $$
+        BEGIN
+          IF nextval('${identifier(schema)}."seed_budget_probe"'::regclass) = 1 THEN
+            PERFORM pg_sleep(6);
+          END IF;
+          RETURN NEW;
+        END $$`);
+      await query(client, `CREATE TRIGGER "seed_budget_delay" BEFORE INSERT ON "InternalNote"
+        FOR EACH ROW EXECUTE FUNCTION "seed_budget_delay"()`);
+      try {
+        const started = performance.now();
+        let succeeded = false;
+        let safe: FixtureSeedError["diagnostic"] | undefined;
+        try { await reportedSeed(prisma); succeeded = true; }
+        catch (error) { if (error instanceof FixtureSeedError) safe = error.diagnostic; }
+        const elapsedMs = Math.round(performance.now() - started);
+        console.info(JSON.stringify({ stage: "seed.bounded-bootstrap", elapsedMs,
+          errorClass: safe?.errorClass ?? null, code: safe?.code ?? null,
+          classification: expired ? "transaction-expired" : succeeded ? "committed" : "other-failure" }));
+        const probe = await query<{ is_called: boolean }>(client, 'SELECT is_called FROM "seed_budget_probe"');
+        expect(probe.rows[0]?.is_called, "Late real seed write reached the owned delay trigger").toBe(true);
+        expect(elapsedMs, "Bootstrap intentionally exceeds the installed default transaction budget").toBeGreaterThanOrEqual(6_000);
+        if (!succeeded) await assertPreserved(client, schema, before, "Expired bootstrap rollback");
+        expect(succeeded, "Atomic bootstrap must support bounded real hashing plus a six-second late write").toBe(true);
+        await assertRegistry(prisma);
+        const seeded = await snapshot(client, schema, undefined, tables);
+        await reportedSeed(prisma);
+        await assertPreserved(client, schema, seeded, "Bounded bootstrap stable rerun");
+      } finally {
+        await query(client, 'DROP TRIGGER "seed_budget_delay" ON "InternalNote"');
+        await query(client, 'DROP FUNCTION "seed_budget_delay"()');
+        await query(client, 'DROP SEQUENCE "seed_budget_probe"');
+      }
+    });
+  }, 30_000); // Includes real hashing, controlled six-second SQL work and rerun.
+});
