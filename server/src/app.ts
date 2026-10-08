@@ -5,6 +5,8 @@ import { Prisma, type UserRole } from "@prisma/client";
 import { parseActionListQuery, parseActionHistoryQuery, validateActionDetailQuery } from "./actions/action-query.js";
 import { listTicketActions, getTicketAction, listTicketActionHistory } from "./actions/action-read-service.js";
 import { createTicketAction } from "./actions/action-create-service.js";
+import { parseStaffActionQuery } from "./actions/staff-action-query.js";
+import { listStaffActions } from "./actions/staff-action-service.js";
 import { patchTicketAction, type ActionPatchCommand } from "./actions/action-patch-service.js";
 import { validateCreateActionInput, validateEditActionInput, validateActionStatusInput } from "./actions/action-validation.js";
 import {
@@ -1072,6 +1074,25 @@ for (const operation of ["edit", "status"] as const) {
     }
   });
 }
+
+app.get("/api/staff/actions", async (req, res) => {
+  res.set("Cache-Control", "private, no-store");
+  const live = await authenticated(req, res, ["IT_STAFF", "ADMINISTRATOR"]);
+  if (!live) return;
+  const validation = parseStaffActionQuery(req.query as Record<string, unknown>);
+  if (!validation.success) {
+    res.status(400).json(errorBody("INVALID_QUERY", "One or more query parameters are invalid.", validation.fields));
+    return;
+  }
+  try {
+    const result = await listStaffActions(live.user.id, validation.data);
+    if (result.kind === "invalid-query") {
+      res.status(400).json(errorBody("INVALID_QUERY", "One or more query parameters are invalid.", result.fields));
+      return;
+    }
+    res.status(200).json({ items: result.items, pagination: result.pagination });
+  } catch (error) { sendDatabaseError(res, error, "listing current-user Actions"); }
+});
 
 app.get("/api/tickets/:ticketId/actions", async (req, res) => {
   res.set("Cache-Control", "private, no-store");
