@@ -1,38 +1,16 @@
-import { Prisma, type AuthSession, type TicketStatus, type UserRole } from "@prisma/client";
+import { Prisma, type TicketStatus } from "@prisma/client";
 import { runSerializableMutation, type MutationGateKey } from "../auth/eligibility-transaction.js";
-import { evaluateSessionLifetime } from "../auth/session.js";
 import { getPrisma } from "../prisma.js";
 import { actionSelect, toActionDTO, toActionSnapshot } from "./action-projection.js";
 import { fingerprintCreateAction, storedActionResponse } from "./action-receipt.js";
 import type { CreateActionValidationData } from "./action-validation.js";
+import {
+  currentActionAuthorization as currentAuthorization, eligibleActionUser as eligible,
+  MAX_ACTION_DATABASE_ID as MAX_DATABASE_ID, type ActionMutationAuthorization, type LockedActionUser as LockedUser,
+} from "./action-mutation-protocol.js";
 
-export type ActionMutationAuthorization = {
-  actorId: number; sessionId: string; tokenHash: string; csrfTokenHash: string;
-};
-type LockedUser = { id: number; role: UserRole; isActive: boolean; mustChangePassword: boolean };
+export type { ActionMutationAuthorization } from "./action-mutation-protocol.js";
 type LockedTicket = { id: number; currentStatus: TicketStatus; updatedAt: Date };
-type LockedSession = Pick<AuthSession, "userId" | "tokenHash" | "csrfTokenHash" | "createdAt" | "lastSeenAt" | "expiresAt">;
-const MAX_DATABASE_ID = 2_147_483_647;
-
-function eligible(user: { role: UserRole; isActive: boolean } | undefined | null): boolean {
-  return Boolean(user?.isActive && (user.role === "IT_STAFF" || user.role === "ADMINISTRATOR"));
-}
-
-async function currentAuthorization(transaction: Prisma.TransactionClient, context: ActionMutationAuthorization, users: LockedUser[]) {
-  const actor = users.find((user) => user.id === context.actorId);
-  // User rows are locked first; SHARE prevents revocation of this session until the transaction finishes.
-  const [session] = await transaction.$queryRaw<LockedSession[]>`
-    SELECT "userId", "tokenHash", "csrfTokenHash", "createdAt", "lastSeenAt", "expiresAt"
-    FROM "AuthSession" WHERE "id"=${context.sessionId}::uuid FOR SHARE`;
-  if (!actor?.isActive || !session || session.userId !== context.actorId ||
-      session.tokenHash !== context.tokenHash || !evaluateSessionLifetime(session, new Date()).live) {
-    return "authentication-required" as const;
-  }
-  if (actor.mustChangePassword) return "password-change-required" as const;
-  if (!eligible(actor)) return "role-forbidden" as const;
-  if (session.csrfTokenHash !== context.csrfTokenHash) return "csrf-invalid" as const;
-  return null;
-}
 
 export async function createTicketAction(context: ActionMutationAuthorization, ticketId: number, input: CreateActionValidationData) {
   // Preserve positive-safe-integer body validation. IDs unrepresentable in this database

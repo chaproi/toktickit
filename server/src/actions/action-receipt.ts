@@ -12,6 +12,16 @@ function canonical(value: unknown): unknown {
   return value;
 }
 
+export type ActionPatchOperation = "EDIT_ACTION" | "START_ACTION" | "COMPLETE_ACTION" | "CANCEL_ACTION";
+
+export function fingerprintActionPatch(
+  operation: ActionPatchOperation, ticketId: number, actionId: number, input: object,
+): string {
+  // Caller supplies validated original tokens/fields, never merged current state.
+  // Recursive ordering retains omitted keys versus supplied null/empty text.
+  return createHash("sha256").update(JSON.stringify(canonical({ operation, ticketId, actionId, input }))).digest("hex");
+}
+
 export function fingerprintCreateAction(ticketId: number, input: CreateActionValidationData): string {
   // Same recursive key ordering/envelope as seeded CREATE_ACTION receipts.
   // Only validated original input enters identity; no live/session/current-row data.
