@@ -371,6 +371,7 @@ app.patch("/api/admin/users/:userId", async (req, res) => {
       "self-change": ["SELF_ADMIN_CHANGE_FORBIDDEN", "You cannot deactivate your own account or change your own role."],
       "last-administrator": ["LAST_ACTIVE_ADMIN_REQUIRED", "At least one active Administrator is required."],
       "non-terminal-owner": ["USER_HAS_NON_TERMINAL_TICKETS", "Reassign or unassign this User's non-terminal Tickets first."],
+      "open-action-assignee": ["USER_HAS_OPEN_ACTIONS", "Complete, cancel or reassign this User's unfinished Actions first."],
       stale: ["STALE_WRITE", "This User changed. Reload and try again."],
       "actor-conflict": ["CONCURRENT_UPDATE", "This User changed concurrently. Reload and try again."],
     };
