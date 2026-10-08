@@ -345,7 +345,15 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
         }
       }
       return [...report];
-    }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted });
+    }, {
+      isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted,
+      // Bootstrap may hash eleven new passwords and create dependent fixtures
+      // atomically. Loaded verification reported P2028 near 5s; a controlled
+      // late-write regression confirms default-budget expiry (~7.5s). Bound
+      // this seed-only transaction,
+      // retaining hashing/identity revalidation under its gates and row locks.
+      timeout: 15_000,
+    });
   } catch (error) {
     // Preserve mapping validation errors (outside this catch), but never expose
     // Prisma query arguments, credential material or database error details.
