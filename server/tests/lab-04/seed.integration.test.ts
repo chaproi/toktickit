@@ -2,7 +2,7 @@ import { randomBytes, randomUUID } from "node:crypto";
 import { Prisma, PrismaClient, type Action } from "@prisma/client";
 import type { Client } from "pg";
 import { describe, expect, it, vi } from "vitest";
-import { LAB3_SEEDED_USERS, seedDatabase } from "../../prisma/seed.js";
+import { FixtureSeedError, LAB3_SEEDED_USERS, seedDatabase } from "../../prisma/seed.js";
 import { hashPassword } from "../../src/auth/password.js";
 import {
   applyLab3Baseline, applyLaterMigrations, identifier, oldTables, query, snapshot,
@@ -65,7 +65,8 @@ async function reportedSeed(prisma: PrismaClient): Promise<string[]> {
       }).join(" "));
     }));
   try { await seedDatabase(prisma); }
-  catch {
+  catch (error) {
+    if (error instanceof FixtureSeedError) throw error;
     throw new Error("Unexpected real seed failure; credential/session and database details redacted.");
   } finally { for (const spy of spies) spy.mockRestore(); }
   return records;

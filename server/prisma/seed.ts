@@ -50,6 +50,26 @@ const SEEDED_TICKETS = [
 type Transaction = Prisma.TransactionClient;
 type RegistryTarget = "userId" | "categoryId" | "relatedSystemId" | "ticketId" | "actionId";
 type SeedUser = { id: number; name: string; email: string; role: UserRole; isActive: boolean };
+
+export class FixtureSeedError extends Error {
+  readonly diagnostic: Readonly<{ errorClass: string; code: string | null; stage: "seed.transaction"; elapsedMs: number }>;
+
+  constructor(error: unknown, elapsedMs: number) {
+    const classes = new Set(["Error", "PrismaClientKnownRequestError", "PrismaClientUnknownRequestError",
+      "PrismaClientInitializationError", "PrismaClientValidationError", "PasswordHashingUnavailableError"]);
+    const errorClass = error instanceof Error && classes.has(error.name) ? error.name : "UnknownError";
+    const candidate = typeof error === "object" && error !== null && "code" in error ? error.code : null;
+    const code = typeof candidate === "string" && /^(?:P\d{4}|[0-9A-Z]{5})$/u.test(candidate) ? candidate : null;
+    const diagnostic = Object.freeze({ errorClass, code, stage: "seed.transaction" as const,
+      elapsedMs: Number.isFinite(elapsedMs) ? Math.max(0, Math.round(elapsedMs)) : 0 });
+    super(`Fixture seeding failed; transaction rolled back; details redacted. ` +
+      `[${diagnostic.stage}; ${errorClass}; ${code ?? "unavailable"}; ${diagnostic.elapsedMs}ms]`);
+    this.name = "FixtureSeedError";
+    this.diagnostic = diagnostic;
+    // Never retain the original error/cause, message, metadata or query input.
+  }
+}
+
 export const seedUserFixtureKey = (email: string) => `lab3:user:${email}`;
 export const seedReferenceFixtureKey = (field: "categoryId" | "relatedSystemId", name: string) => `lab3:${field}:${name}`;
 const ticketKey = (key: string) => `lab3:ticket:${key}`;
@@ -99,6 +119,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   const credentials = parseCredentialMapping(process.env.LAB3_SEED_INITIAL_CREDENTIALS,
     LAB3_SEEDED_USERS.map((user) => user.email), "LAB3_SEED_INITIAL_CREDENTIALS");
   let reports: string[];
+  const transactionStarted = performance.now();
   try {
     reports = await prisma.$transaction(async (transaction) => {
       const report = new Set<string>();
@@ -325,10 +346,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       }
       return [...report];
     }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted });
-  } catch {
+  } catch (error) {
     // Preserve mapping validation errors (outside this catch), but never expose
     // Prisma query arguments, credential material or database error details.
-    throw new Error("Fixture seeding failed; transaction rolled back; details redacted.");
+    throw new FixtureSeedError(error, performance.now() - transactionStarted);
   }
   for (const report of reports) console.warn(report);
   console.log("Seeded create-only registered Lab 3/4 fixtures; operational records preserved.");
