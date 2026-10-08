@@ -197,3 +197,133 @@ describe("D-11 sequential Administrator assignment guards (partial AC-22; T-22)"
     await guards.successful(target, { isActive: false });
   });
 });
+
+
+import { orderedUserRace, ticketState } from "./actions-concurrency-test-helpers.js";
+import { actionSnapshot, assertSafeEqual, LITERAL } from "./action-read-test-fixtures.js";
+import { COMPLETION_TEXT } from "./action-patch-test-fixtures.js";
+
+// Partial AC-22/T-45 (D-11/D-12), with distinct Staff mutation and Admin
+// operators. No workflow race, retry-exhaustion or receipt recovery is claimed.
+describe("T-45 real assignment eligibility races", () => {
+  const races = new ActionAdminGuardFixtures();
+  beforeAll(() => races.initialize());
+  afterAll(() => races.cleanup());
+  const changes: Array<{ label: string; change: AdminGuardChange }> = [
+    { label: "deactivate", change: { isActive: false } },
+    { label: "demote", change: { role: "REQUESTER" } },
+  ];
+  const cases = changes.flatMap(({ label, change }) => (["create", "reassign", "complete"] as const)
+    .flatMap((operation) => [true, false].map((actionFirst) => ({ label, change, operation, actionFirst }))));
+  it.each(cases)("$operation versus $label; actionFirst=$actionFirst", async ({ change, operation, actionFirst }) => {
+    const target = await races.target(`race-${operation}`);
+    const staff = races.patches.staff; // Not an Admin locked by the other edit's all-admin guard.
+    expect(new Set([staff.user.id, races.operator.user.id, target.user.id]).size).toBe(3);
+    const source = operation === "create" ? null : await races.patches.setup(
+      operation === "complete" ? "IN_PROGRESS" : "PLANNED",
+      operation === "complete" ? { assigneeId: target.user.id } : {});
+    const parent = source?.parent ?? await races.patches.creates.parent();
+    await races.noNonterminalOwnership(target);
+    const beforeUser = await races.capture(target);
+    expect(beforeUser.sessions.length).toBe(2);
+    const before = await ticketState(races.prisma, parent.id);
+    const input = operation === "create" ? races.patches.creates.input(parent, target.user.id) :
+      operation === "reassign" ? races.patches.editInput(source!, { assigneeId: target.user.id }) : races.patches.input(source!, "complete");
+    const actionRequest = () => operation === "create" ?
+      races.patches.creates.post(races.patches.creates.path(parent.id), input, staff) :
+      races.patches.patch(races.patches.path(source!, operation === "reassign" ? "edit" : "complete"), input, staff);
+    const userRequest = () => races.edit(target, beforeUser, change);
+    const result = await orderedUserRace(target.user.id, actionFirst ? actionRequest : userRequest, actionFirst ? userRequest : actionRequest);
+    const actionResponse = actionFirst ? result.first : result.second;
+    const userResponse = actionFirst ? result.second : result.first;
+    const actionSucceeds = operation === "complete" || actionFirst;
+    const userSucceeds = operation === "complete" ? actionFirst : !actionFirst;
+    if (actionSucceeds) expect(actionResponse.status).toBe(operation === "create" ? 201 : 200);
+    else {
+      // Its wait on target's gate proves service initial eligibility discovery
+      // preceded the winning User edit's commit, so this is lost eligibility409.
+      assertSafeError(actionResponse, 409, "ASSIGNEE_INELIGIBLE");
+    }
+    if (userSucceeds) expect(userResponse.status).toBe(200);
+    else assertSafeError(userResponse, 409, "USER_HAS_OPEN_ACTIONS");
+    const afterUser = await races.capture(target);
+    if (userSucceeds) {
+      assertSafeEqual({ ...afterUser.user, updatedAt: beforeUser.user.updatedAt }, { ...beforeUser.user, ...change }, "Only requested User fields/time change; credentials retained");
+      expect(afterUser.user.updatedAt.getTime()).toBeGreaterThan(beforeUser.user.updatedAt.getTime());
+      expect(afterUser.sessions.length).toBe(0);
+    } else {
+      assertSafeEqual(afterUser.user, beforeUser.user, "Rejected eligibility loss retains complete User");
+      assertSafeEqual(afterUser.sessions, beforeUser.sessions, "Rejected eligibility loss retains both target sessions");
+    }
+    const after = await ticketState(races.prisma, parent.id);
+    if (!actionSucceeds) assertSafeEqual(after, before, "Losing assignment preserves complete parent/Action/history/receipts");
+    else {
+      expect(after.actions).toHaveLength(before.actions.length + (operation === "create" ? 1 : 0));
+      expect(after.history).toHaveLength(before.history.length + 1);
+      expect(after.receipts.length).toBe(before.receipts.length + 1);
+      assertSafeEqual(after.history.slice(0, before.history.length), before.history, "Old histories unchanged");
+      assertSafeEqual(after.receipts.slice(0, before.receipts.length), before.receipts, "Old receipts unchanged");
+      const action = after.actions[0];
+      expect(action.assigneeId).toBe(target.user.id);
+      expect(action.createdById).toBe(operation === "create" ? staff.user.id : source!.action.createdById);
+      expect(action.version).toBe(operation === "create" ? 1 : source!.action.version + 1);
+      expect(action.status).toBe(operation === "complete" ? "COMPLETED" : "PLANNED");
+      expect(action.performedById).toBe(operation === "complete" ? staff.user.id : null);
+      const expectedAction = operation === "create" ? {
+        id: action.id, ticketId: parent.id, createdById: staff.user.id, assigneeId: target.user.id,
+        performedById: null, description: LITERAL, result: null, status: "PLANNED", version: 1,
+        followUpRequired: false, followUpNote: null, attachmentNotes: null, cancellationReason: null,
+        completedAt: null, cancelledAt: null, actionAt: action.updatedAt, createdAt: action.updatedAt, updatedAt: action.updatedAt,
+      } : { ...source!.action, assigneeId: target.user.id, version: source!.action.version + 1, updatedAt: action.updatedAt,
+        ...(operation === "complete" ? { status: "COMPLETED", result: COMPLETION_TEXT, performedById: staff.user.id, completedAt: action.updatedAt } : {}),
+      };
+      assertSafeEqual(action, expectedAction, "Exact winning values and preserved omitted content/attribution/lifecycle times");
+      races.read.assertDTO(actionResponse.body.action, action);
+      const history = after.history.at(-1)!;
+      expect(history.event).toBe(operation === "create" ? "ACTION_CREATED" : operation === "reassign" ? "ACTION_REASSIGNED" : "ACTION_COMPLETED");
+      expect(history.actorId).toBe(staff.user.id);
+      expect(history.actionId).toBe(action.id);
+      expect(history.actionVersion).toBe(action.version);
+      assertSafeEqual(history.before, source ? actionSnapshot(source.action) : null, "Exact previous snapshot");
+      assertSafeEqual(history.after, actionSnapshot(action), "Exact committed snapshot");
+      expect(history.sourceTicketStatusHistoryId).toBeNull();
+      expect(history.createdAt.toISOString()).toBe(action.updatedAt.toISOString());
+      expect(after.ticket.updatedAt.getTime()).toBeGreaterThan(parent.updatedAt.getTime());
+      expect(after.ticket.updatedAt.toISOString()).toBe(action.updatedAt.toISOString());
+      expect(actionResponse.body.ticketUpdatedAt).toBe(after.ticket.updatedAt.toISOString());
+      assertSafeEqual({ ...after.ticket, updatedAt: parent.updatedAt }, parent, "Only parent time changed");
+      const receipt = after.receipts.at(-1)!;
+      expect(receipt.actorId).toBe(staff.user.id);
+      expect(receipt.clientMutationId).toBe(input.clientMutationId);
+      expect(receipt.operation).toBe(operation === "create" ? "CREATE_ACTION" : operation === "reassign" ? "EDIT_ACTION" : "COMPLETE_ACTION");
+      expect(receipt.actionId).toBe(action.id);
+      expect(receipt.ticketId).toBe(parent.id);
+      expect(receipt.createdAt.toISOString()).toBe(action.updatedAt.toISOString());
+      assertSafeEqual(receipt.safeResponse, actionResponse.body, "Only committed operation has a receipt");
+    }
+    expect(await races.prisma.action.count({ where: { assigneeId: target.user.id, status: { in: ["PLANNED", "IN_PROGRESS"] },
+      assignee: { OR: [{ isActive: false }, { role: "REQUESTER" }] } } })).toBe(0);
+    if (operation === "complete" && !actionFirst) {
+      // The rejected overlapping edit can now succeed, with a new valid token.
+      await races.successful(target, change);
+    }
+  }, 15_000); // Two observed lock waits, real HTTP authentication and independent hashed target.
+
+  it.each(changes)("reapplies current authorization after $label commits while an Action actor waits", async ({ change }) => {
+    const actor = await races.target("waiting-actor");
+    const parent = await races.patches.creates.parent();
+    await races.noNonterminalOwnership(actor);
+    const beforeUser = await races.capture(actor);
+    const before = await ticketState(races.prisma, parent.id);
+    const input = races.patches.creates.input(parent);
+    const result = await orderedUserRace(actor.user.id,
+      () => races.edit(actor, beforeUser, change),
+      () => races.patches.creates.post(races.patches.creates.path(parent.id), input, actor));
+    expect(result.first.status).toBe(200);
+    assertSafeError(result.second, 401, "AUTHENTICATION_REQUIRED");
+    const afterUser = await races.capture(actor);
+    assertSafeEqual({ ...afterUser.user, updatedAt: beforeUser.user.updatedAt }, { ...beforeUser.user, ...change }, "Committed User authorization change only");
+    expect(afterUser.sessions.length).toBe(0);
+    assertSafeEqual(await ticketState(races.prisma, parent.id), before, "Waiting revoked actor writes no Action/history/receipt/parent time");
+  }, 15_000);
+});
