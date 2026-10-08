@@ -578,3 +578,61 @@ describe("Seed receipt ActionDTO versus ActionHistory representation", () => {
     });
   }, 30_000);
 });
+
+describe("Safe seed failure diagnostics", () => {
+  it("retains allowlisted transaction failure evidence without exposing the database error", async () => {
+    await withSeedSchema(async (prisma, client, schema) => {
+      const before = await snapshot(client, schema, undefined, tables);
+      const privateMarker = `SyntheticPrivate${randomBytes(24).toString("hex")}`;
+      let observed: { errorClass: string; code: string | null } | undefined;
+      // Observe only the failing operation's safe classification before the
+      // production/test wrappers redact it. Do not retain/log the error itself.
+      prisma.$use(async (parameters, next) => {
+        const started = performance.now();
+        try { return await next(parameters); }
+        catch (error) {
+          if (parameters.model === "InternalNote" && parameters.action === "create") {
+            observed = {
+              errorClass: error instanceof Prisma.PrismaClientKnownRequestError ? "PrismaClientKnownRequestError" :
+                error instanceof Prisma.PrismaClientUnknownRequestError ? "PrismaClientUnknownRequestError" : "Error",
+              code: error instanceof Prisma.PrismaClientKnownRequestError && /^P\d{4}$/u.test(error.code) ? error.code : null,
+            };
+            console.info(JSON.stringify({ ...observed, stage: "seed.internal-note.insert", elapsedMs: Math.round(performance.now() - started) }));
+          }
+          throw error;
+        }
+      });
+      await query(client, 'CREATE SEQUENCE "seed_diagnostic_probe"');
+      await query(client, `CREATE FUNCTION "seed_diagnostic_failure"() RETURNS trigger LANGUAGE plpgsql AS $$
+        BEGIN
+          PERFORM nextval('${identifier(schema)}."seed_diagnostic_probe"'::regclass);
+          RAISE EXCEPTION USING ERRCODE='P4401', MESSAGE='${privateMarker}';
+        END $$`);
+      await query(client, `CREATE TRIGGER "seed_diagnostic_failure" BEFORE INSERT ON "InternalNote"
+        FOR EACH ROW EXECUTE FUNCTION "seed_diagnostic_failure"()`);
+      try {
+        let failure: unknown;
+        try { await reportedSeed(prisma); } catch (error) { failure = error; }
+        expect(failure instanceof Error, "The real late seed mutation fails").toBe(true);
+        const probe = await query<{ is_called: boolean }>(client, 'SELECT is_called FROM "seed_diagnostic_probe"');
+        expect(probe.rows[0]?.is_called, "The owned failing statement executed").toBe(true);
+        expect(observed, "Allowlisted underlying operation evidence was observed").toBeDefined();
+        const safe = failure as Error & { diagnostic?: { errorClass: string; code: string | null; stage: string; elapsedMs: number } };
+        expect(JSON.stringify({ message: safe.message, diagnostic: safe.diagnostic }).includes(privateMarker),
+          "Raw database content remains redacted").toBe(false);
+        expect("cause" in safe, "No original/nested error object is retained").toBe(false);
+        expect(safe.diagnostic, "Safe evidence survives both seed wrappers").toBeDefined();
+        expect(Object.keys(safe.diagnostic!).sort()).toEqual(["code", "elapsedMs", "errorClass", "stage"]);
+        expect(safe.diagnostic!.errorClass).toBe(observed!.errorClass);
+        expect(safe.diagnostic!.code).toBe(observed!.code);
+        expect(safe.diagnostic!.stage).toBe("seed.transaction");
+        expect(Number.isSafeInteger(safe.diagnostic!.elapsedMs) && safe.diagnostic!.elapsedMs >= 0).toBe(true);
+        await assertPreserved(client, schema, before, "Diagnostic handling retains full rollback");
+      } finally {
+        await query(client, 'DROP TRIGGER "seed_diagnostic_failure" ON "InternalNote"');
+        await query(client, 'DROP FUNCTION "seed_diagnostic_failure"()');
+        await query(client, 'DROP SEQUENCE "seed_diagnostic_probe"');
+      }
+    });
+  }, 30_000);
+});
