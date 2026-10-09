@@ -420,3 +420,182 @@ describe("API-05/06 edits and lifecycle (partial AC-05/06/08/09/10/11/12/15/41/4
     expect(typeof response.body.error.fields[field]).toBe("string");
   });
 });
+
+import type { Action, ActionHistoryEvent } from "@prisma/client";
+import { actionSnapshot as unicodeActionSnapshot } from "./action-read-test-fixtures.js";
+import type { ActionCase } from "./action-patch-test-fixtures.js";
+
+// AC-05/10/11/12/13/41/45; partial T-05/10/11/12/13/49/50/55.
+// Expected counts are code points, including separate combining marks.
+const apiUnicodeFace = "\u{1F600}";
+const apiUnicodeShort = "\u{1F600}\u{1F600}a"; // 3 points; invalid minimum, despite 5 UTF-16 units.
+const apiUnicodeMixed = "\u0E01e\u0301\u{1F600}b"; // 5 points, deliberately not NFC-normalized.
+
+describe("Unicode validation/storage HTTP regression and frozen finalization verification", () => {
+  const unicode = new ActionPatchFixtures();
+  beforeAll(() => unicode.initialize());
+  afterAll(() => unicode.cleanup());
+
+  async function state() {
+    const ticketIds = unicode.read.ticketIds;
+    const scope = { ticketId: { in: ticketIds } };
+    const [tickets, actions, history, receipts] = await Promise.all([
+      unicode.prisma.ticket.findMany({ where: { id: { in: ticketIds } }, orderBy: { id: "asc" } }),
+      unicode.prisma.action.findMany({ where: scope, orderBy: { id: "asc" } }),
+      unicode.prisma.actionHistory.findMany({ where: { action: scope }, orderBy: { id: "asc" } }),
+      unicode.prisma.mutationReceipt.findMany({ where: scope, orderBy: { id: "asc" } }),
+    ]);
+    return { tickets, actions, history, receipts };
+  }
+  type UnicodeState = Awaited<ReturnType<typeof state>>;
+
+  async function assertUnicodeMutation(
+    before: UnicodeState, source: ActionCase, input: Record<string, unknown>,
+    response: Awaited<ReturnType<ActionPatchFixtures["patch"]>>,
+    changes: Partial<Action>, event: ActionHistoryEvent, operation: string,
+  ) {
+    expect(response.status).toBe(200); // If current validator returns 400, later persistence assertions are unreached.
+    const after = await state();
+    const action = after.actions.find((row) => row.id === source.action.id)!;
+    const parent = after.tickets.find((row) => row.id === source.parent.id)!;
+    assertSafeEqual(action, { ...source.action, ...changes, version: source.action.version + 1, updatedAt: action.updatedAt,
+      ...(event === "ACTION_COMPLETED" ? { performedById: unicode.administrator.user.id, completedAt: action.updatedAt } : {}),
+      ...(event === "ACTION_CANCELLED" ? { performedById: null, completedAt: null, cancelledAt: action.updatedAt } : {}),
+    }, "Exact persisted Unicode fields, attribution, version and unchanged immutable content");
+    expect(action.updatedAt.getTime()).toBeGreaterThan(source.action.updatedAt.getTime());
+    expect(parent.updatedAt.getTime()).toBeGreaterThan(source.parent.updatedAt.getTime());
+    expect(parent.updatedAt.toISOString()).toBe(action.updatedAt.toISOString());
+    assertSafeEqual({ ...parent, updatedAt: source.parent.updatedAt }, source.parent, "Only parent time changes");
+    expect(Object.keys(response.body).sort()).toEqual(["action", "ticketUpdatedAt"]);
+    unicode.read.assertDTO(response.body.action, action);
+    expect(response.body.ticketUpdatedAt).toBe(parent.updatedAt.toISOString());
+    expect(after.actions.length).toBe(before.actions.length);
+    expect(after.history.length).toBe(before.history.length + 1);
+    expect(after.receipts.length).toBe(before.receipts.length + 1);
+    assertSafeEqual(after.actions.filter((row) => row.id !== action.id), before.actions.filter((row) => row.id !== action.id), "Other Actions unchanged");
+    assertSafeEqual(after.tickets.filter((row) => row.id !== parent.id), before.tickets.filter((row) => row.id !== parent.id), "Other Tickets unchanged");
+    assertSafeEqual(after.history.filter((row) => before.history.some((old) => old.id === row.id)), before.history, "Earlier histories unchanged");
+    assertSafeEqual(after.receipts.filter((row) => before.receipts.some((old) => old.id === row.id)), before.receipts, "Earlier receipts unchanged");
+    const history = after.history.filter((row) => !before.history.some((old) => old.id === row.id))[0];
+    expect({ event: history.event, actorId: history.actorId, actionId: history.actionId,
+      version: history.actionVersion, source: history.sourceTicketStatusHistoryId }).toEqual({
+      event, actorId: unicode.administrator.user.id, actionId: action.id, version: action.version, source: null,
+    });
+    assertSafeEqual(history.before, unicodeActionSnapshot(source.action), "Complete original Unicode history.before");
+    assertSafeEqual(history.after, unicodeActionSnapshot(action), "Complete literal Unicode history.after");
+    expect(history.createdAt.toISOString()).toBe(action.updatedAt.toISOString());
+    const receipt = after.receipts.filter((row) => !before.receipts.some((old) => old.id === row.id))[0];
+    expect({ operation: receipt.operation, actorId: receipt.actorId, key: receipt.clientMutationId,
+      ticketId: receipt.ticketId, actionId: receipt.actionId }).toEqual({
+      operation, actorId: unicode.administrator.user.id, key: input.clientMutationId, ticketId: parent.id, actionId: action.id,
+    });
+    assertSafeEqual(receipt.safeResponse, response.body, "Exact operation-time Unicode response stored once");
+    expect(receipt.createdAt.toISOString()).toBe(action.updatedAt.toISOString());
+  }
+
+  it.each(["create-description", "edit-description", "cancel-reason"] as const)("%s rejects three-point text with safe 400 and exact preservation", async (kind) => {
+    expect(Array.from(apiUnicodeShort).length).toBe(3);
+    if (kind === "create-description") {
+      const parent = await unicode.creates.parent();
+      const input = { ...unicode.creates.input(parent), description: ` ${apiUnicodeShort} ` };
+      const before = await state();
+      const response = await unicode.creates.rejected(unicode.creates.path(parent.id), input, unicode.staff);
+      assertSafeEqual(await state(), before, "Rejected create preserves exact Actions/versions/history/parent times/receipts even on current 500");
+      assertSafeError(response, 400, "VALIDATION_ERROR");
+      expect(typeof response.body.error.fields.description).toBe("string");
+    } else {
+      const source = await unicode.setup(kind === "cancel-reason" ? "IN_PROGRESS" : "PLANNED");
+      const operation = kind === "cancel-reason" ? "cancel" : "edit";
+      const input = kind === "cancel-reason" ? { ...unicode.input(source, "cancel"), reason: ` ${apiUnicodeShort} ` } :
+        unicode.editInput(source, { description: ` ${apiUnicodeShort} ` });
+      const before = await state();
+      const response = await unicode.rejected(unicode.path(source, operation), input);
+      assertSafeEqual(await state(), before, "Rejected Unicode PATCH preserves exact domain values even on current 500");
+      assertSafeError(response, 400, "VALIDATION_ERROR");
+      expect(typeof response.body.error.fields[kind === "cancel-reason" ? "reason" : "description"]).toBe("string");
+    }
+  });
+
+  it.each([
+    { label: "minimum 5", points: 5, text: apiUnicodeFace.repeat(5) },
+    { label: "maximum 2000", points: 2000, text: apiUnicodeFace.repeat(2000) },
+  ])("create persists supplementary description at $label", async ({ points, text }) => {
+    expect(Array.from(text).length).toBe(points);
+    const parent = await unicode.creates.parent();
+    const input = { ...unicode.creates.input(parent), description: ` \t${text}\n ` };
+    await unicode.creates.create(parent, input, unicode.staff, { ...MINIMUM_CONTENT, description: text });
+    // Existing helper independently verifies DTO/history text, version1, receipt and atomic parent time.
+  });
+
+  it("create preserves minimum supplementary result/note/Attachment Notes and mixed combining description", async () => {
+    expect(Array.from(apiUnicodeMixed).length).toBe(5);
+    const parent = await unicode.creates.parent();
+    const input = { ...unicode.creates.input(parent), description: ` ${apiUnicodeMixed} `, result: ` ${apiUnicodeFace} `,
+      followUpRequired: true, followUpNote: ` ${apiUnicodeFace} `, attachmentNotes: ` ${apiUnicodeFace} ` };
+    await unicode.creates.create(parent, input, unicode.staff, { description: apiUnicodeMixed, result: apiUnicodeFace,
+      followUpRequired: true, followUpNote: apiUnicodeFace, attachmentNotes: apiUnicodeFace });
+  });
+
+  it.each(["result", "followUpNote", "attachmentNotes"] as const)("create persists %s at 2000 supplementary code points", async (field) => {
+    const text = apiUnicodeFace.repeat(2000);
+    expect(Array.from(text).length).toBe(2000);
+    const parent = await unicode.creates.parent();
+    const input = { ...unicode.creates.input(parent), description: apiUnicodeMixed, [field]: ` ${text} `,
+      ...(field === "followUpNote" ? { followUpRequired: true } : {}) };
+    const content = { ...MINIMUM_CONTENT, description: apiUnicodeMixed, [field]: text,
+      ...(field === "followUpNote" ? { followUpRequired: true } : {}) };
+    await unicode.creates.create(parent, input, unicode.staff, content);
+  });
+
+  it.each(["mixed-minimum", "supplementary-maximum"] as const)("edit preserves %s content literally in response/history", async (kind) => {
+    const source = await unicode.setup();
+    const description = kind === "mixed-minimum" ? apiUnicodeMixed : apiUnicodeFace.repeat(2000);
+    const text = kind === "mixed-minimum" ? `${apiUnicodeMixed}<script>literal</script>` : apiUnicodeFace.repeat(2000);
+    expect(Array.from(description).length).toBe(kind === "mixed-minimum" ? 5 : 2000);
+    const changes = { description, result: text, followUpRequired: true, followUpNote: text, attachmentNotes: text };
+    const input = unicode.editInput(source, { ...changes, description: ` ${description} `, result: ` ${text} `,
+      followUpNote: ` ${text} `, attachmentNotes: ` ${text} ` });
+    const before = await state();
+    const response = await unicode.patch(unicode.path(source, "edit"), input);
+    await assertUnicodeMutation(before, source, input, response, changes, "ACTION_EDITED", "EDIT_ACTION");
+  });
+
+  it.each([
+    { operation: "complete", points: 1, text: apiUnicodeFace, target: "COMPLETED", field: "result" },
+    { operation: "complete", points: 2000, text: apiUnicodeFace.repeat(2000), target: "COMPLETED", field: "result" },
+    { operation: "cancel", points: 5, text: apiUnicodeFace.repeat(5), target: "CANCELLED", field: "reason" },
+    { operation: "cancel", points: 500, text: apiUnicodeFace.repeat(500), target: "CANCELLED", field: "reason" },
+  ] as const)("$operation persists $points-point text with exact atomic history/receipt", async ({ operation, points, text, target, field }) => {
+    expect(Array.from(text).length).toBe(points);
+    const source = await unicode.setup("IN_PROGRESS");
+    const input = { ...unicode.input(source, operation), [field]: ` \t${text}\n ` };
+    const before = await state();
+    const response = await unicode.patch(unicode.path(source, operation), input);
+    await assertUnicodeMutation(before, source, input, response,
+      { status: target, ...(operation === "complete" ? { result: text } : { cancellationReason: text }) },
+      operation === "complete" ? "ACTION_COMPLETED" : "ACTION_CANCELLED", operation === "complete" ? "COMPLETE_ACTION" : "CANCEL_ACTION");
+  });
+
+  // T-12/AC-12: fixture-constructed frozen parents, NOT Ticket workflow evidence.
+  it.each((["RESOLVED", "CLOSED", "CANCELLED"] as const).flatMap((parentStatus) => [
+    { parentStatus, operation: "complete" as const, actionStatus: "IN_PROGRESS" as const },
+    { parentStatus, operation: "cancel" as const, actionStatus: "PLANNED" as const },
+    { parentStatus, operation: "cancel" as const, actionStatus: "IN_PROGRESS" as const },
+  ]))("fresh $operation from $actionStatus under $parentStatus is frozen, never replay", async ({ parentStatus, operation, actionStatus }) => {
+    const source = await unicode.setup(actionStatus);
+    source.parent = await unicode.prisma.ticket.update({ where: { id: source.parent.id }, data: {
+      currentStatus: parentStatus, updatedAt: source.parent.updatedAt,
+    } });
+    const input = unicode.input(source, operation); // Current tokens and a new random mutation UUID.
+    expect(input.expectedVersion).toBe(source.action.version);
+    expect(input.expectedTicketUpdatedAt).toBe(source.parent.updatedAt.toISOString());
+    const receiptWhere = { actorId: unicode.administrator.user.id, clientMutationId: String(input.clientMutationId) };
+    expect(await unicode.prisma.mutationReceipt.count({ where: receiptWhere })).toBe(0);
+    const before = await state();
+    const response = await unicode.rejected(unicode.path(source, operation), input);
+    assertSafeEqual(await state(), before, "Frozen finalization preserves every Action/version/history/parent timestamp/receipt");
+    assertSafeError(response, 409, "TICKET_ACTIONS_LOCKED");
+    expect(response.body).not.toHaveProperty("replayed");
+    expect(await unicode.prisma.mutationReceipt.count({ where: receiptWhere })).toBe(0);
+  });
+});

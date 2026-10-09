@@ -1135,3 +1135,105 @@ describe("T-05 / AC-05, T-11 / AC-11: pure cancellation request validation", () 
     });
   });
 });
+
+// AC-05/10/11/41; partial T-05/10/11/49/50. Count Unicode code points,
+// matching committed PostgreSQL char_length CHECKs, not UTF-16 or graphemes.
+const unicodeFace = "\u{1F600}";
+const unicodeShort = "\u{1F600}\u{1F600}a"; // Exactly 3 code points, 5 UTF-16 units.
+const unicodeMixed = "\u0E01e\u0301\u{1F600}b"; // Exactly 5 code points; combining mark is separate.
+const unicodeTextCases = (["description", "result", "followUpNote", "attachmentNotes"] as const).flatMap((field) => {
+  const minimum = field === "description" ? 5 : 1;
+  return [
+    { field, label: "minimum", points: minimum, text: unicodeFace.repeat(minimum), valid: true },
+    { field, label: "maximum 2000", points: 2000, text: unicodeFace.repeat(2000), valid: true },
+    { field, label: "maximum plus one 2001", points: 2001, text: unicodeFace.repeat(2001), valid: false },
+    ...(field === "description" ? [{ field, label: "short three points", points: 3, text: unicodeShort, valid: false }] : []),
+  ];
+});
+
+describe("Unicode code-point create/edit boundaries (AC-05/41; T-05/49/50)", () => {
+  it.each(unicodeTextCases)("create $field at $label", ({ field, points, text, valid }) => {
+    expect(Array.from(text).length, "Independently specified fixture count").toBe(points);
+    const supplied = { [field]: ` \t${text}\n `, ...(field === "followUpNote" ? { followUpRequired: true } : {}) };
+    const result = validateWithoutInputMutation(createInput(supplied));
+    if (valid) expect(result).toMatchObject({ success: true, data: { [field]: text } });
+    else expect(result).toMatchObject({ success: false, fields: { [field]: expect.any(String) } });
+  });
+
+  it.each(unicodeTextCases)("PATCH parsing $field at $label retains supplied presence/raw text", ({ field, points, text, valid }) => {
+    expect(Array.from(text).length).toBe(points);
+    const raw = ` \t${text}\n `;
+    const result = parseEditWithoutInputMutation(editInput({ [field]: raw }, field === "description" ? [] : ["description"]));
+    if (valid) expect(result).toStrictEqual({ success: true, data: { ...validEditTokens, patch: { [field]: raw } } });
+    else expect(result).toMatchObject({ success: false, fields: { [field]: expect.any(String) } });
+  });
+
+  it.each(unicodeTextCases)("merged $field at $label normalizes only supplied text", ({ field, points, text, valid }) => {
+    expect(Array.from(text).length).toBe(points);
+    const result = mergeEditWithoutInputMutation(currentActionWithFollowUp, { [field]: ` \t${text}\n ` });
+    if (valid) expect(result).toStrictEqual({ success: true, data: { ...currentActionWithFollowUp, [field]: text } });
+    else expect(result).toMatchObject({ success: false, fields: { [field]: expect.any(String) } });
+  });
+
+  it("preserves mixed Thai/combining/supplementary literal text without NFC or grapheme rewriting", () => {
+    expect(Array.from(unicodeMixed).length).toBe(5);
+    expect(unicodeMixed.length).toBe(6);
+    const literal = `${unicodeMixed}<script>literal</script>`;
+    const input = createInput({ description: ` ${unicodeMixed} `, result: ` ${literal} `,
+      followUpRequired: true, followUpNote: ` ${literal} `, attachmentNotes: ` ${literal} ` });
+    expect(validateWithoutInputMutation(input)).toStrictEqual({ success: true, data: {
+      ...validCreateInput, description: unicodeMixed, result: literal, followUpRequired: true,
+      followUpNote: literal, attachmentNotes: literal,
+    } });
+    const patch = { description: ` ${unicodeMixed} `, result: ` ${literal} `, followUpNote: ` ${literal} `, attachmentNotes: ` ${literal} ` };
+    expect(parseEditWithoutInputMutation(editInput(patch))).toStrictEqual({ success: true, data: { ...validEditTokens, patch } });
+    expect(mergeEditWithoutInputMutation(currentActionWithFollowUp, patch)).toStrictEqual({ success: true, data: {
+      ...currentActionWithFollowUp, description: unicodeMixed, result: literal, followUpNote: literal, attachmentNotes: literal,
+    } });
+  });
+
+  it("preserves omitted maximum-size supplementary stored fields during assignment-only merge", () => {
+    const current = { ...currentActionWithFollowUp, description: unicodeFace.repeat(2000), result: unicodeFace.repeat(2000),
+      followUpNote: unicodeFace.repeat(2000), attachmentNotes: unicodeFace.repeat(2000) };
+    expect(mergeEditWithoutInputMutation(current, { assigneeId: 22 })).toStrictEqual({ success: true, data: { ...current, assigneeId: 22 } });
+  });
+
+  it.each([null, "", " \t\n "])("nullable/empty attachment note %s keeps normalization and PATCH presence", (note) => {
+    const input = createInput({ description: unicodeMixed, attachmentNotes: note });
+    expect(validateWithoutInputMutation(input)).toMatchObject({ success: true, data: { description: unicodeMixed, attachmentNotes: null } });
+    expect(parseEditWithoutInputMutation(editInput({ attachmentNotes: note }, ["description"]))).toStrictEqual({
+      success: true, data: { ...validEditTokens, patch: { attachmentNotes: note } },
+    });
+    expect(mergeEditWithoutInputMutation({ ...currentActionWithFollowUp, description: unicodeMixed }, { attachmentNotes: note }))
+      .toStrictEqual({ success: true, data: { ...currentActionWithFollowUp, description: unicodeMixed, attachmentNotes: null } });
+  });
+
+  it("explicit null clears a maximum Unicode follow-up, preserving the original history input", () => {
+    const current = { ...currentActionWithFollowUp, followUpNote: unicodeFace.repeat(2000) };
+    const patch = { followUpRequired: false, followUpNote: null };
+    expect(parseEditWithoutInputMutation(editInput(patch, ["description"]))).toStrictEqual({ success: true, data: { ...validEditTokens, patch } });
+    expect(mergeEditWithoutInputMutation(current, patch)).toStrictEqual({ success: true, data: { ...current, followUpRequired: false, followUpNote: null } });
+  });
+});
+
+describe("Unicode lifecycle result/reason boundaries (AC-05/10/11; T-05/10/11)", () => {
+  it.each([
+    { target: "COMPLETED", field: "result", label: "minimum 1", points: 1, text: unicodeFace, valid: true },
+    { target: "COMPLETED", field: "result", label: "maximum 2000", points: 2000, text: unicodeFace.repeat(2000), valid: true },
+    { target: "COMPLETED", field: "result", label: "maximum plus one 2001", points: 2001, text: unicodeFace.repeat(2001), valid: false },
+    { target: "CANCELLED", field: "reason", label: "minimum 5", points: 5, text: unicodeFace.repeat(5), valid: true },
+    { target: "CANCELLED", field: "reason", label: "maximum 500", points: 500, text: unicodeFace.repeat(500), valid: true },
+    { target: "CANCELLED", field: "reason", label: "maximum plus one 501", points: 501, text: unicodeFace.repeat(501), valid: false },
+    { target: "CANCELLED", field: "reason", label: "short three points", points: 3, text: unicodeShort, valid: false },
+  ])("$target $field at $label", ({ target, field, points, text, valid }) => {
+    expect(Array.from(text).length).toBe(points);
+    const result = validateStatusWithoutInputMutation(actionStatusInput({ targetStatus: target, confirm: true, [field]: ` \t${text}\n ` }));
+    if (valid) expect(result).toStrictEqual({ success: true, data: { ...validEditTokens, targetStatus: target, confirm: true, [field]: text } });
+    else expect(result).toMatchObject({ success: false, fields: { [field]: expect.any(String) } });
+  });
+  it.each(["COMPLETED", "CANCELLED"] as const)("%s retains literal mixed Thai/combining text", (targetStatus) => {
+    const field = targetStatus === "COMPLETED" ? "result" : "reason";
+    expect(validateStatusWithoutInputMutation(actionStatusInput({ targetStatus, confirm: true, [field]: ` ${unicodeMixed} ` })))
+      .toStrictEqual({ success: true, data: { ...validEditTokens, targetStatus, confirm: true, [field]: unicodeMixed } });
+  });
+});
