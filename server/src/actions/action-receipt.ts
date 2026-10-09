@@ -3,6 +3,25 @@ import type { Prisma } from "@prisma/client";
 import type { CreateActionValidationData } from "./action-validation.js";
 import { projectStoredActionDTO } from "./action-projection.js";
 
+const RECEIPT_KEY_CONSTRAINT = "MutationReceipt_actorId_clientMutationId_key";
+
+export function isReceiptKeyConflict(error: unknown): boolean {
+  if (typeof error !== "object" || error === null) return false;
+  const candidate = error as { code?: unknown; meta?: unknown; constraint?: unknown; table?: unknown };
+  if (candidate.code === "23505") {
+    return candidate.constraint === RECEIPT_KEY_CONSTRAINT &&
+      (candidate.table === undefined || candidate.table === "MutationReceipt");
+  }
+  if (candidate.code !== "P2002" || typeof candidate.meta !== "object" || candidate.meta === null) return false;
+  const meta = candidate.meta as { modelName?: unknown; target?: unknown; constraint?: unknown; table?: unknown };
+  if (meta.modelName !== "MutationReceipt" ||
+      (meta.constraint !== undefined && meta.constraint !== RECEIPT_KEY_CONSTRAINT) ||
+      (meta.table !== undefined && meta.table !== "MutationReceipt")) return false;
+  return meta.target === RECEIPT_KEY_CONSTRAINT ||
+    (Array.isArray(meta.target) && meta.target.length === 2 &&
+      meta.target.includes("actorId") && meta.target.includes("clientMutationId"));
+}
+
 function canonical(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(canonical);
   if (value !== null && typeof value === "object") {

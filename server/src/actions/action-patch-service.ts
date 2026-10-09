@@ -6,7 +6,8 @@ import {
   type ActionMutationAuthorization, type LockedActionUser,
 } from "./action-mutation-protocol.js";
 import { actionSelect, toActionDTO, toActionSnapshot } from "./action-projection.js";
-import { fingerprintActionPatch, storedActionResponse, type ActionPatchOperation } from "./action-receipt.js";
+import { fingerprintActionPatch, isReceiptKeyConflict, storedActionResponse, type ActionPatchOperation } from "./action-receipt.js";
+import { recoverActionReceipt } from "./action-receipt-recovery.js";
 import {
   mergeAndValidateActionEdit, type ActionStatusValidationData, type EditActionValidationData,
 } from "./action-validation.js";
@@ -135,5 +136,9 @@ export async function patchTicketAction(
       inputFingerprint: fingerprint, safeResponse: response, createdAt: instant,
     } });
     return { kind: "updated" as const, response };
-  }, undefined, gates);
+  }, undefined, gates).catch((error: unknown) => {
+    if (!isReceiptKeyConflict(error)) throw error;
+    return recoverActionReceipt(context, { operation, ticketId, actionId,
+      clientMutationId: input.clientMutationId, fingerprint });
+  });
 }

@@ -2,7 +2,8 @@ import { Prisma, type TicketStatus } from "@prisma/client";
 import { runSerializableMutation, type MutationGateKey } from "../auth/eligibility-transaction.js";
 import { getPrisma } from "../prisma.js";
 import { actionSelect, toActionDTO, toActionSnapshot } from "./action-projection.js";
-import { fingerprintCreateAction, storedActionResponse } from "./action-receipt.js";
+import { fingerprintCreateAction, isReceiptKeyConflict, storedActionResponse } from "./action-receipt.js";
+import { recoverActionReceipt } from "./action-receipt-recovery.js";
 import type { CreateActionValidationData } from "./action-validation.js";
 import {
   currentActionAuthorization as currentAuthorization, eligibleActionUser as eligible,
@@ -25,7 +26,7 @@ export async function createTicketAction(context: ActionMutationAuthorization, t
   const fingerprint = fingerprintCreateAction(ticketId, input);
 
   // Existing helper retries only positively confirmed 40001, maximum three fresh SERIALIZABLE attempts.
-  // No P2002/23505/deadlock recovery or mutation retry is introduced here.
+  // Receipt-specific recovery follows complete rollback, outside this retry loop.
   return runSerializableMutation(async (transaction) => {
     const users = await transaction.$queryRaw<LockedUser[]>(Prisma.sql`
       SELECT "id", "role", "isActive", "mustChangePassword" FROM "User"
@@ -71,5 +72,9 @@ export async function createTicketAction(context: ActionMutationAuthorization, t
       ticketId, actionId: action.id, inputFingerprint: fingerprint, safeResponse: response, createdAt: instant,
     } });
     return { kind: "created" as const, response };
-  }, undefined, gates);
+  }, undefined, gates).catch((error: unknown) => {
+    if (!isReceiptKeyConflict(error)) throw error;
+    return recoverActionReceipt(context, { operation: "CREATE_ACTION", ticketId,
+      clientMutationId: input.clientMutationId, fingerprint });
+  });
 }
