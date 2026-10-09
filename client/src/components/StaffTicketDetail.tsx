@@ -32,6 +32,9 @@ import {
   type TicketStatus,
 } from "../api.js";
 
+import ActionsTaken from "./ActionsTaken.js";
+import type { AuthUser } from "../api.js";
+
 const SAFE_ERROR = "Something went wrong. Please try again.";
 const TERMINAL = new Set<TicketStatus>(["CLOSED", "CANCELLED"]);
 const OWNER_REQUIRED = new Set<TicketStatus>([
@@ -338,7 +341,7 @@ function StaffAttachments({ ticketId }: { ticketId: number }) {
   );
 }
 
-export default function StaffTicketDetail() {
+export default function StaffTicketDetail({ user }: { user: AuthUser }) {
   const { ticketId: parameter = "" } = useParams();
   const ticketId = Number(parameter);
   const [state, setState] = useState<"loading" | "success" | "error">("loading");
@@ -569,6 +572,7 @@ export default function StaffTicketDetail() {
         </div></div>
       </div></section>
 
+      <ActionsTaken key={ticket.id} ticket={ticket} user={user} onTicketChanged={load} />
       <StaffAttachments ticketId={ticket.id} />
       <Messages title="Public Comments" privateChannel={false} ticketId={ticket.id} initialResponse={publicComments} />
       <Messages title="Internal Notes" privateChannel ticketId={ticket.id} initialResponse={internalNotes} />
