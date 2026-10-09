@@ -2,6 +2,13 @@ import cors from "cors";
 import express, { type NextFunction, type Request, type Response } from "express";
 import multer from "multer";
 import { Prisma, type UserRole } from "@prisma/client";
+import { parseActionListQuery, parseActionHistoryQuery, validateActionDetailQuery } from "./actions/action-query.js";
+import { listTicketActions, getTicketAction, listTicketActionHistory } from "./actions/action-read-service.js";
+import { createTicketAction } from "./actions/action-create-service.js";
+import { parseStaffActionQuery } from "./actions/staff-action-query.js";
+import { listStaffActions } from "./actions/staff-action-service.js";
+import { patchTicketAction, type ActionPatchCommand } from "./actions/action-patch-service.js";
+import { validateCreateActionInput, validateEditActionInput, validateActionStatusInput } from "./actions/action-validation.js";
 import {
   getAttachmentContentForRequester,
   getAttachmentForRequester,
@@ -364,6 +371,7 @@ app.patch("/api/admin/users/:userId", async (req, res) => {
       "self-change": ["SELF_ADMIN_CHANGE_FORBIDDEN", "You cannot deactivate your own account or change your own role."],
       "last-administrator": ["LAST_ACTIVE_ADMIN_REQUIRED", "At least one active Administrator is required."],
       "non-terminal-owner": ["USER_HAS_NON_TERMINAL_TICKETS", "Reassign or unassign this User's non-terminal Tickets first."],
+      "open-action-assignee": ["USER_HAS_OPEN_ACTIONS", "Complete, cancel or reassign this User's unfinished Actions first."],
       stale: ["STALE_WRITE", "This User changed. Reload and try again."],
       "actor-conflict": ["CONCURRENT_UPDATE", "This User changed concurrently. Reload and try again."],
     };
@@ -952,6 +960,214 @@ app.post("/api/tickets/:ticketId/attachments", async (req, res) => {
       sendMutationError(res, error, "uploading an Attachment");
     }
   });
+});
+
+app.post("/api/tickets/:ticketId/actions", async (req, res) => {
+  res.set("Cache-Control", "private, no-store");
+  const live = await authenticated(req, res, ["IT_STAFF", "ADMINISTRATOR"], true);
+  if (!live) return;
+  const ticketId = parsePositiveIdentifier(req.params.ticketId);
+  if (ticketId === null) {
+    res.status(400).json(errorBody("INVALID_TICKET_ID", "Ticket identifier must be a positive integer."));
+    return;
+  }
+  const validation = validateCreateActionInput(req.body);
+  if (!validation.success) {
+    res.status(400).json(errorBody("VALIDATION_ERROR", "Please correct the highlighted fields.", validation.fields));
+    return;
+  }
+  try {
+    const result = await createTicketAction({ actorId: live.user.id, sessionId: live.session.id,
+      tokenHash: live.session.tokenHash, csrfTokenHash: live.session.csrfTokenHash }, ticketId, validation.data);
+    if (result.kind === "created") { res.status(201).json(result.response); return; }
+    if (result.kind === "replayed") { res.status(200).json({ ...result.response, replayed: true }); return; }
+    if (result.kind === "ticket-not-found") { sendTicketNotFound(res); return; }
+    if (result.kind === "invalid-assignee") {
+      res.status(400).json(errorBody("INVALID_ASSIGNEE", "Please select an active eligible assignee.",
+        { assigneeId: "Select an active IT Staff member or Administrator." }));
+      return;
+    }
+    const denials: Record<string, [number, string, string]> = {
+      "authentication-required": [401, "AUTHENTICATION_REQUIRED", "Authentication is required."],
+      "password-change-required": [403, "PASSWORD_CHANGE_REQUIRED", "Change your initial password before continuing."],
+      "role-forbidden": [403, "ROLE_FORBIDDEN", "You do not have permission to perform this action."],
+      "csrf-invalid": [403, "CSRF_INVALID", "CSRF validation failed."],
+      "assignee-ineligible": [409, "ASSIGNEE_INELIGIBLE", "Assignee eligibility changed. Reload and try again."],
+      "duplicate-conflict": [409, "DUPLICATE_REQUEST_CONFLICT", "This mutation identifier was already used for another request."],
+      frozen: [409, "TICKET_ACTIONS_LOCKED", "Actions cannot be added to this Ticket in its current status."],
+      stale: [409, "STALE_WRITE", "This Ticket changed. Reload and try again."],
+    };
+    const [status, code, message] = denials[result.kind];
+    res.status(status).json(errorBody(code, message));
+  } catch (error) {
+    if (error instanceof ConcurrentUpdateError) {
+      sendConflict(res, "CONCURRENT_UPDATE", "This Ticket changed concurrently. Reload and try again.");
+    } else sendDatabaseError(res, error, "creating an Action");
+  }
+});
+
+for (const operation of ["edit", "status"] as const) {
+  const path = `/api/tickets/:ticketId/actions/:actionId${operation === "status" ? "/status" : ""}`;
+  app.patch(path, async (req, res) => {
+    res.set("Cache-Control", "private, no-store");
+    const live = await authenticated(req, res, ["IT_STAFF", "ADMINISTRATOR"], true);
+    if (!live) return;
+    const ticketId = parsePositiveIdentifier(req.params.ticketId);
+    const actionId = parsePositiveIdentifier(req.params.actionId);
+    if (ticketId === null || actionId === null) {
+      res.status(400).json(errorBody(ticketId === null ? "INVALID_TICKET_ID" : "INVALID_ACTION_ID",
+        "Ticket and Action identifiers must be positive integers."));
+      return;
+    }
+    let command: ActionPatchCommand;
+    if (operation === "edit") {
+      const validation = validateEditActionInput(req.body);
+      if (!validation.success) {
+        res.status(400).json(errorBody("VALIDATION_ERROR", "Please correct the highlighted fields.", validation.fields));
+        return;
+      }
+      command = { kind: "edit", input: validation.data };
+    } else {
+      const validation = validateActionStatusInput(req.body);
+      if (!validation.success) {
+        res.status(400).json(errorBody("VALIDATION_ERROR", "Please correct the highlighted fields.", validation.fields));
+        return;
+      }
+      command = { kind: "status", input: validation.data };
+    }
+    try {
+      const result = await patchTicketAction({ actorId: live.user.id, sessionId: live.session.id,
+        tokenHash: live.session.tokenHash, csrfTokenHash: live.session.csrfTokenHash }, ticketId, actionId, command);
+      if (result.kind === "updated") { res.status(200).json(result.response); return; }
+      if (result.kind === "replayed") { res.status(200).json({ ...result.response, replayed: true }); return; }
+      if (result.kind === "ticket-not-found") { sendTicketNotFound(res); return; }
+      if (result.kind === "action-not-found") {
+        res.status(404).json(errorBody("ACTION_NOT_FOUND", "Action not found.")); return;
+      }
+      if (result.kind === "validation-error") {
+        res.status(400).json(errorBody("VALIDATION_ERROR", "Please correct the highlighted fields.", result.fields)); return;
+      }
+      if (result.kind === "invalid-assignee") {
+        res.status(400).json(errorBody("INVALID_ASSIGNEE", "Please select an active eligible assignee.",
+          { assigneeId: "Select an active IT Staff member or Administrator." })); return;
+      }
+      const denials: Record<string, [number, string, string]> = {
+        "authentication-required": [401, "AUTHENTICATION_REQUIRED", "Authentication is required."],
+        "password-change-required": [403, "PASSWORD_CHANGE_REQUIRED", "Change your initial password before continuing."],
+        "role-forbidden": [403, "ROLE_FORBIDDEN", "You do not have permission to perform this action."],
+        "csrf-invalid": [403, "CSRF_INVALID", "CSRF validation failed."],
+        "assignee-ineligible": [409, "ASSIGNEE_INELIGIBLE", "Assignee eligibility changed. Reload and try again."],
+        "duplicate-conflict": [409, "DUPLICATE_REQUEST_CONFLICT", "This mutation identifier was already used for another request."],
+        frozen: [409, "TICKET_ACTIONS_LOCKED", "Actions cannot be changed on this Ticket in its current status."],
+        stale: [409, "STALE_WRITE", "This Action or Ticket changed. Reload and try again."],
+        terminal: [409, "ACTION_TERMINAL", "Terminal Actions cannot be changed."],
+        unchanged: [409, "ACTION_UNCHANGED", "The Action has no changes."],
+        "status-unchanged": [409, "ACTION_STATUS_UNCHANGED", "The Action already has this status."],
+        "invalid-transition": [409, "INVALID_ACTION_TRANSITION", "This Action status transition is not permitted."],
+        concurrent: [409, "CONCURRENT_UPDATE", "This Action changed concurrently. Reload and try again."],
+      };
+      const [status, code, message] = denials[result.kind];
+      res.status(status).json(errorBody(code, message));
+    } catch (error) {
+      if (error instanceof ConcurrentUpdateError) {
+        sendConflict(res, "CONCURRENT_UPDATE", "This Action changed concurrently. Reload and try again.");
+      } else sendDatabaseError(res, error, "changing an Action");
+    }
+  });
+}
+
+app.get("/api/staff/actions", async (req, res) => {
+  res.set("Cache-Control", "private, no-store");
+  const live = await authenticated(req, res, ["IT_STAFF", "ADMINISTRATOR"]);
+  if (!live) return;
+  const validation = parseStaffActionQuery(req.query as Record<string, unknown>);
+  if (!validation.success) {
+    res.status(400).json(errorBody("INVALID_QUERY", "One or more query parameters are invalid.", validation.fields));
+    return;
+  }
+  try {
+    const result = await listStaffActions(live.user.id, validation.data);
+    if (result.kind === "invalid-query") {
+      res.status(400).json(errorBody("INVALID_QUERY", "One or more query parameters are invalid.", result.fields));
+      return;
+    }
+    res.status(200).json({ items: result.items, pagination: result.pagination });
+  } catch (error) { sendDatabaseError(res, error, "listing current-user Actions"); }
+});
+
+app.get("/api/tickets/:ticketId/actions", async (req, res) => {
+  res.set("Cache-Control", "private, no-store");
+  const live = await authenticated(req, res, ["REQUESTER", "IT_STAFF", "ADMINISTRATOR"]);
+  if (!live) return;
+  const ticketId = parsePositiveIdentifier(req.params.ticketId);
+  if (ticketId === null) {
+    res.status(400).json(errorBody("INVALID_TICKET_ID", "Ticket identifier must be a positive integer."));
+    return;
+  }
+  const validation = parseActionListQuery(req.query as Record<string, unknown>);
+  if (!validation.success) {
+    res.status(400).json(errorBody("INVALID_QUERY", "One or more query parameters are invalid.", validation.fields));
+    return;
+  }
+  try {
+    const result = await listTicketActions(live.user.id, live.user.role, ticketId, validation.data);
+    if (result.kind === "ticket-not-found") { sendTicketNotFound(res); return; }
+    res.status(200).json({ items: result.items, pagination: result.pagination });
+  } catch (error) { sendDatabaseError(res, error, "listing Actions"); }
+});
+
+app.get("/api/tickets/:ticketId/actions/:actionId", async (req, res) => {
+  res.set("Cache-Control", "private, no-store");
+  const live = await authenticated(req, res, ["REQUESTER", "IT_STAFF", "ADMINISTRATOR"]);
+  if (!live) return;
+  const ticketId = parsePositiveIdentifier(req.params.ticketId);
+  const actionId = parsePositiveIdentifier(req.params.actionId);
+  if (ticketId === null || actionId === null) {
+    res.status(400).json(errorBody(ticketId === null ? "INVALID_TICKET_ID" : "INVALID_ACTION_ID",
+      "Ticket and Action identifiers must be positive integers."));
+    return;
+  }
+  const validation = validateActionDetailQuery(req.query as Record<string, unknown>);
+  if (!validation.success) {
+    res.status(400).json(errorBody("INVALID_QUERY", "One or more query parameters are invalid.", validation.fields));
+    return;
+  }
+  try {
+    const result = await getTicketAction(live.user.id, live.user.role, ticketId, actionId);
+    if (result.kind === "ticket-not-found") { sendTicketNotFound(res); return; }
+    if (result.kind === "action-not-found") {
+      res.status(404).json(errorBody("ACTION_NOT_FOUND", "Action not found."));
+      return;
+    }
+    res.status(200).json({ action: result.action, ticketUpdatedAt: result.ticketUpdatedAt });
+  } catch (error) { sendDatabaseError(res, error, "reading an Action"); }
+});
+
+app.get("/api/tickets/:ticketId/actions/:actionId/history", async (req, res) => {
+  res.set("Cache-Control", "private, no-store");
+  const live = await authenticated(req, res, ["REQUESTER", "IT_STAFF", "ADMINISTRATOR"]);
+  if (!live) return;
+  const ticketId = parsePositiveIdentifier(req.params.ticketId);
+  const actionId = parsePositiveIdentifier(req.params.actionId);
+  if (ticketId === null || actionId === null) {
+    res.status(400).json(errorBody(ticketId === null ? "INVALID_TICKET_ID" : "INVALID_ACTION_ID",
+      "Ticket and Action identifiers must be positive integers."));
+    return;
+  }
+  const validation = parseActionHistoryQuery(req.query as Record<string, unknown>);
+  if (!validation.success) {
+    res.status(400).json(errorBody("INVALID_QUERY", "One or more query parameters are invalid.", validation.fields));
+    return;
+  }
+  try {
+    const result = await listTicketActionHistory(live.user.id, live.user.role, ticketId, actionId, validation.data);
+    if (result.kind === "ticket-not-found") { sendTicketNotFound(res); return; }
+    if (result.kind === "action-not-found") {
+      res.status(404).json(errorBody("ACTION_NOT_FOUND", "Action not found."));
+      return;
+    }
+    res.status(200).json({ items: result.items, pagination: result.pagination });
+  } catch (error) { sendDatabaseError(res, error, "listing Action history"); }
 });
 
 app.get("/api/tickets/:ticketId/comments", async (req, res) => {

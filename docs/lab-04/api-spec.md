@@ -1,6 +1,6 @@
 # Sprint 4 API Contract
 
-Status: **Student decisions accepted — Contract peer review approved**. All new behavior below reflects the student-accepted decisions in [specification](specification.md). No endpoint is claimed implemented. All product tests remain **Planned**. Preserve the [approved Lab 3 API](../lab-03/api-spec.md) with the recorded student-accepted Sprint 4 extensions. [Formal approval](reviewer.md#completed-peer-review) applies to reviewed HEAD fec388a3c2ab63cabb1bf20f3fa913fb023d9241; this metadata change is unreviewed. Remaining work items must become GitHub Issues before RED–GREEN implementation; no implementation or release readiness is claimed.
+Status: **Student decisions accepted; contract peer review approved; Issue #44 backend implementation evidenced; implementation peer review Pending.** Contract approval remains limited to reviewed HEAD `fec388a3c2ab63cabb1bf20f3fa913fb023d9241` ([review evidence](reviewer.md#completed-peer-review)). Current implementation evidence is pinned to `30bc657163ddc677f851c92f1054ae2340152f1b`; this documentation update has no peer approval. All 55 product scenario rows remain **Planned**, with executed backend coverage recorded separately in [tests](tests.md#5-issue-44-backend-evidence-and-current-traceability). Only the contract-review Product DoD item is checked; overall product/release readiness is incomplete.
 
 ## 1. Compatibility, identity and safety
 
@@ -30,7 +30,7 @@ No action delete/reopen endpoint. Existing GET /api/staff/assignees supplies act
 
 ## 3. Fields and DTOs
 
-Student-accepted Action DTO (planned implementation):
+Student-accepted Action DTO (implemented in API-01–API-07; implementation review Pending):
 
 ```json
 {
@@ -61,7 +61,7 @@ Safe identity shape is `{id,name}`, without email/credentials; historical refere
 
 Required: `description`, `assigneeId`, `followUpRequired`, `expectedTicketUpdatedAt`, `clientMutationId`. Optional: `result`, `followUpNote`, `attachmentNotes` (null accepted as absent). Assignee picker defaults to current eligible user; backend still validates the supplied explicit target. Initial state is PLANNED; client cannot set status, creator, performer, ticketId, actionAt, timestamps, version or history.
 
-Trim/validate bounds in D-04: description 5–2000; result 1–2000 when present; attachmentNotes 0–2000 normalize empty to null. **Create followUpRequired=false:** omitted/null/trimmed-empty followUpNote normalizes to null; nonempty text rejected 400 VALIDATION_ERROR with followUpNote field. **Create true:** note required, trimmed 1–2000; omitted/null/empty/overlong or wrong-type rejected 400. No silent discard of nonempty note. Boolean must be actual boolean. IDs positive decimal integers; token strict UTC ISO with millisecond precision; UUID mutation key; no unknown fields. All text displayed literally. Success returns `{ action: ActionDTO, ticketUpdatedAt: UTC }`. Action and parent times/version/history/receipt commit together; invalid input changes none. Field/token/follow-up/history policies depend on D-04/D-06/D-07/D-08/D-12/D-13/D-18; AC-41/T-49.
+Trim/validate Unicode code-point bounds in D-04 (PostgreSQL char_length; no grapheme counting or normalization): description 5–2000; result 1–2000 when present; attachmentNotes 0–2000 normalize empty to null. **Create followUpRequired=false:** omitted/null/trimmed-empty followUpNote normalizes to null; nonempty text rejected 400 VALIDATION_ERROR with followUpNote field. **Create true:** note required, trimmed 1–2000; omitted/null/empty/overlong or wrong-type rejected 400. No silent discard of nonempty note. Boolean must be actual boolean. IDs positive decimal integers; token strict UTC ISO with millisecond precision; UUID mutation key; no unknown fields. All text displayed literally. Success returns `{ action: ActionDTO, ticketUpdatedAt: UTC }`. Action and parent times/version/history/receipt commit together; invalid input changes none. Field/token/follow-up/history policies depend on D-04/D-06/D-07/D-08/D-12/D-13/D-18; AC-41/T-49.
 
 ### API-05 Edit and reassignment
 
@@ -154,13 +154,13 @@ D-12 remains unchanged: only confirmed 40001 retries the **mutation** in a new t
 
 All cooperating writes, including different Tickets, acquire the same actor's User gate/row in the established ordering and hold it until commit/rollback. Same actor+key therefore cannot normally insert competing receipts: a waiting gate forces confirmed40001/fresh snapshot; pre-write receipt lookup sees winner, or bounded retry exhausts with no mutation. Across Tickets the targets differ, so loser returns409 key conflict once winner is visible. Different actors using the same UUID do not collide because actorId is part of the key. Do not weaken locks merely to manufacture a production uniqueness race. Planned T-52 verifies these real protocol guarantees in both orders; T-51 exercises rollback and defensive recovery through an isolated known-constraint failure (staged writes then duplicate insert against a previously committed receipt) and recovery-handler fault cases, explicitly not a claim of a reachable cooperating-writer race.
 
-## 7. Error catalog and planned validation
+## 7. Error catalog and validation
 
 | HTTP | Code/condition | Safe behavior |
 | --- | --- | --- |
 | 400 | VALIDATION_ERROR, INVALID_QUERY, invalid path ID, INVALID_ASSIGNEE | Specific safe fields; malformed payload/target/confirmation never changes data |
 | 401 | AUTHENTICATION_REQUIRED | Preserve L session policy |
-| 403 | FORBIDDEN, PASSWORD_CHANGE_REQUIRED, L Origin/CSRF codes | Preserve L; no protected data |
+| 403 | ROLE_FORBIDDEN, PASSWORD_CHANGE_REQUIRED, L Origin/CSRF codes | Preserve L; no protected data |
 | 404 | TICKET_NOT_FOUND, ACTION_NOT_FOUND | Ownership/path mismatch indistinguishable |
 | 409 | STALE_WRITE, INVALID_ACTION_TRANSITION, ACTION_STATUS_UNCHANGED, ACTION_UNCHANGED, ACTION_TERMINAL, TICKET_ACTIONS_LOCKED | Refetch; no auto overwrite |
 | 409 | ACTIONS_OUTSTANDING, ASSIGNEE_INELIGIBLE, USER_HAS_OPEN_ACTIONS, DUPLICATE_REQUEST_CONFLICT, CONCURRENT_UPDATE | Domain/race conflict, no partial write/history/receipt |
@@ -168,4 +168,12 @@ All cooperating writes, including different Tickets, acquire the same actor's Us
 | 500 | Unexpected fault under L safe mapping | Sanitized message/requestId where present; server internals hidden |
 | 503 | Known unavailable dependency under L safe mapping | Retryable UI; no fake counts or partial success |
 
-Required planned paths: `server/tests/lab-04/actions-taken.api.test.ts`, `ticket-workflow.api.test.ts`, `requester-dashboard.api.test.ts`, `staff-dashboard.api.test.ts`; detailed T IDs and additional race/security/failure paths are in [tests](tests.md). No request execution or API implementation is claimed.
+Required planned paths: `server/tests/lab-04/actions-taken.api.test.ts`, `ticket-workflow.api.test.ts`, `requester-dashboard.api.test.ts`, `staff-dashboard.api.test.ts`; detailed T IDs and additional race/security/failure paths are in [tests](tests.md). API-01–API-07 implementation and prior execution are recorded in [tests section5](tests.md#5-issue-44-backend-evidence-and-current-traceability); API-08/API-09 and Ticket Workflow extensions remain #47/#48/#46 work. No application verification is rerun here.
+
+## 8. Implementation status and compatibility correction
+
+#44 implements API-01–API-07 in `server/src/app.ts` with Action read/create/patch/staff services, query parsers, explicit projections and receipt/recovery modules under `server/src/actions/`. Live-session/password/Origin/CSRF/role enforcement remains; authenticated data uses `Cache-Control: private, no-store`. See [source/test coverage](tests.md#coverage-and-responsibility). Implementation peer review is Pending. #46 owns section4 Ticket gates/cascade/D-20; #47/#48 own Dashboard aggregates and Ticket-list extensions. These remain contracts for future work, not implemented claims.
+
+Catalog correction under accepted D-01/D-18: the earlier Lab4 row said `FORBIDDEN`, but inherited `authorizeRequest` in `server/src/auth/auth-router.ts` and committed Action tests/services use **ROLE_FORBIDDEN**. The row now preserves the exact role-denial code; no authorization policy/shared middleware changed. Origin/CSRF-specific codes remain distinct inherited values.
+
+The code-point correction applies to create, supplied PATCH/final merged text and lifecycle result/reason, preserving messages/null/presence/clearing rules. It does not change earlier-lab validators or D-20 Ticket reason rules. Receipt responses use safe id/name ActionDTO identities; ActionHistory retains full scalar-ID snapshots. Newly seeded receipts keep operation-time DTOs; reseeding never rewrites old receipts.

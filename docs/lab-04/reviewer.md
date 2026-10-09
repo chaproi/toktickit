@@ -1,14 +1,14 @@
 # Sprint 4 Review Record
 
-Status: **Student decisions accepted — Contract peer review approved**. Approval applies to reviewed HEAD `fec388a3c2ab63cabb1bf20f3fa913fb023d9241`; this new review-record metadata change has not been approved.
+Status: **Student decisions accepted; contract peer review approved; Issue #44 backend implementation evidenced; implementation peer review Pending.** Contract approval remains limited to reviewed HEAD `fec388a3c2ab63cabb1bf20f3fa913fb023d9241` ([review evidence](reviewer.md#completed-peer-review)). Current implementation evidence is pinned to `30bc657163ddc677f851c92f1054ae2340152f1b`; this documentation update has no peer approval. All 55 product scenario rows remain **Planned**, with executed backend coverage recorded separately in [tests](tests.md#5-issue-44-backend-evidence-and-current-traceability). Only the contract-review Product DoD item is checked; overall product/release readiness is incomplete.
 
-Issue #41; publication branch `feat/41-lab4-contract`; review-record branch `feat/41-lab4-review-record`; integration `lab4-staging`. Original baseline `64ff04ea8fb1395f569c1095aea556ee6a695ebd`. Formal peer reviewer: **cottonlnwza**. Review time: **2026-10-04T11:31:01Z = 2026-10-04 18:31:01 Asia/Bangkok**. Peer result: **APPROVED** on reviewed HEAD `fec388a3c2ab63cabb1bf20f3fa913fb023d9241`; [actual review](https://github.com/chaproi/toktickit/pull/42#pullrequestreview-5405737951). Student decision approval: **Accepted by student — D-01–D-20, Recommended option**. [PR #42](https://github.com/chaproi/toktickit/pull/42) is merged into lab4-staging as `25368774a1f61ac372918bd7d9187ca8cedd74c4`. No implementation or product acceptance claimed.
+Issue #41; publication branch `feat/41-lab4-contract`; review-record branch `feat/41-lab4-review-record`; integration `lab4-staging`. Original baseline `64ff04ea8fb1395f569c1095aea556ee6a695ebd`. Formal peer reviewer: **cottonlnwza**. Review time: **2026-10-04T11:31:01Z = 2026-10-04 18:31:01 Asia/Bangkok**. Peer result: **APPROVED** on reviewed HEAD `fec388a3c2ab63cabb1bf20f3fa913fb023d9241`; [actual review](https://github.com/chaproi/toktickit/pull/42#pullrequestreview-5405737951). Student decision approval: **Accepted by student — D-01–D-20, Recommended option**. [PR #42](https://github.com/chaproi/toktickit/pull/42) is merged into lab4-staging as `25368774a1f61ac372918bd7d9187ca8cedd74c4`. No implementation peer approval or product acceptance claimed.
 
 This file records actual student design acceptance and cottonlnwza's completed formal contract review. The assistant's scope/rubric confirmation and documentation checks are AI-assisted review, not peer approval; the assistant is not the peer reviewer. Historical Lab 2/3 approvals remain in their original documents and are not a new Lab 4 sign-off. Recording the earlier approval does not approve this new metadata change.
 
 ## 1. Review package
 
-The reviewed package comprises [specification](specification.md), [tests](tests.md), [UI](ui-spec.md), [API](api-spec.md), [AI use](ai-use.md), the supplied 11-page handout including pages 10–11 rubric, and the supplied SDS v1.0 source comparison. D-01 through D-20 are all **Accepted by student (Recommended option)**; chosen behavior/rationale/alternatives retained. The SRS referenced by SDS was not supplied; no SRS IDs inferred. No applicable AGENTS.md found during source inventory. Application test evidence is absent; PR #42's six-document contract was approved at the exact reviewed HEAD and merged. This step records that review only in the six existing Markdown documents.
+The reviewed package comprises [specification](specification.md), [tests](tests.md), [UI](ui-spec.md), [API](api-spec.md), [AI use](ai-use.md), the supplied 11-page handout including pages 10–11 rubric, and the supplied SDS v1.0 source comparison. D-01 through D-20 are all **Accepted by student (Recommended option)**; chosen behavior/rationale/alternatives retained. The SRS referenced by SDS was not supplied; no SRS IDs inferred. No applicable AGENTS.md found during source inventory. At historical #41 review, application evidence was absent. PR #42's approval remains limited to its exact reviewed HEAD; current #44 backend evidence and pending implementation review are separate in section6.
 
 ### Student acceptance evidence
 
@@ -73,7 +73,7 @@ Historical P-03 revision record: the user's seven findings were incorporated as 
 | Documentation drafting | Six Draft Markdown files created for review |
 | User feedback revision | Seven requested document changes incorporated only in the six authorized files; branch/baseline retained; no inferred decision approval |
 | Author documentation checks | P-03 revision ID/reference/traceability/decision/link/table/whitespace/content/scope checks recorded in ai-use.md; no missing mappings or link diagnostics; not peer review or application tests |
-| Product/unit/API/UI/E2E/performance/migration/seed/recovery tests | Planned; not executed |
+| Historical #41 product execution | Planned; not executed at drafting/review; later #44 evidence recorded separately in section6 |
 | Student decision acceptance | D-01–D-20 Accepted by student, Recommended option; สิริกร ฝันนิมิตร (ไทเกอร์), 2026-10-04 Asia/Bangkok, actual message above |
 | AI-assisted documentation review | Supplied evidence reports the assistant's Lab 4 scope/rubric confirmation; actual documentation checks recorded in ai-use.md; assistant is not a peer reviewer |
 | Formal peer review / peer approval | cottonlnwza: APPROVED reviewed HEAD fec388a3c2ab63cabb1bf20f3fa913fb023d9241 at 2026-10-04T11:31:01Z / 2026-10-04 18:31:01 Asia/Bangkok; [review evidence](https://github.com/chaproi/toktickit/pull/42#pullrequestreview-5405737951); no blocking changes requested |
@@ -99,8 +99,43 @@ Historical P-03 revision record: the user's seven findings were incorporated as 
 - Reviewer follow-up: remaining planned work items **must become actual GitHub Issues before RED–GREEN implementation begins**, using the required feature-branch workflow. This is a pre-implementation dependency, not a rejection of the contract. No Issues or implementation are created in this step.
 - Merge evidence: [PR #42](https://github.com/chaproi/toktickit/pull/42) merged into **lab4-staging**; [merge commit 25368774a1f61ac372918bd7d9187ca8cedd74c4](https://github.com/chaproi/toktickit/commit/25368774a1f61ac372918bd7d9187ca8cedd74c4). GitHub API reports 2026-10-04T11:31:07Z (2026-10-04 18:31:07 Asia/Bangkok). No new merge was performed by this task.
 - Evidence recorded/verified on **2026-10-05 Asia/Bangkok** using fetched Git refs and read-only GitHub PR/review API. Local lab4-staging fast-forwarded to the merge commit, then feat/41-lab4-review-record created from it; original Lab 3 baseline retained.
-- Approval is limited to the exact reviewed HEAD. **This new review-record metadata change has not been peer approved.** Application tests remain unexecuted; all product scenarios Planned and all other Product DoD items unchecked.
+- Approval is limited to the exact reviewed HEAD. At original P-08 recording, that metadata change was not yet peer approved and application tests were unexecuted. This is historical scope; later #43 integration/#44 execution are separate below. All scenario rows remain Planned and all other Product DoD items unchecked.
 
 ## 5. Product acceptance
 
-**Product acceptance remains incomplete.** Only the contract-review Product DoD item is complete; the other ten are unchecked. Contract approval and the staging merge do not establish application test results, product completion or release approval. The pre-implementation GitHub Issue dependency remains, and this new metadata change is unreviewed. Future findings/resolutions belong here only when they actually exist.
+**Product acceptance remains incomplete.** Only the contract-review Product DoD item is complete; the other ten are unchecked. Contract approval and the staging merge do not establish application test results, product completion or release approval. The Issue prerequisite is satisfied by actual #44–#50. #44 implementation and this documentation update remain unreviewed; UI/workflow/Dashboards/final release are not accepted from backend success.
+
+## 6. Issue #44 implementation review and evidence
+
+**Implementation reviewer: Pending. Implementation approval: Pending.** No implementation reviewer/time/PR/approval invented. cottonlnwza's contract approval remains limited to `fec388a3c2ab63cabb1bf20f3fa913fb023d9241`; it does not approve #44 code or this update. P-08 records its then-unreviewed state. Subsequently supplied evidence records [PR #43](https://github.com/chaproi/toktickit/pull/43) APPROVED by cottonlnwza on `e6f4a7104940a54225d90255592fbb21e002eeb2` and merged as [d4560d73819cb193c7b9c73c67402a6134cc8c57](https://github.com/chaproi/toktickit/commit/d4560d73819cb193c7b9c73c67402a6134cc8c57); no additional review date/URL invented. That is #44's baseline, not code approval.
+
+| Evidence | Actual state |
+| --- | --- |
+| Branch/published implementation | `feat/44-actions-taken-backend`, [30bc657163ddc677f851c92f1054ae2340152f1b](https://github.com/chaproi/toktickit/commit/30bc657163ddc677f851c92f1054ae2340152f1b); clean/aligned origin at documentation preflight; Lab3 baseline preserved |
+| Latest previously executed checks | 726 affected cases (527 validation + 199 API), full 65 files/1,513 executed and passed, build successful; [actual commands/isolation/cleanup](tests.md#latest-executed-commands); not rerun here |
+| Audit findings addressed | Unicode mismatch reproduced/corrected only in validator; nine fresh frozen finalization cases already passed and remain passing; T-34/T-39 distributed mappings corrected without duplicate suites |
+| Handoffs | #45 UI; #46 gates/cascade/source validation/D-20; #47/#48 aggregates/Dashboards; #49 final verification; #50 reviewed release/PDF |
+| Review/administration | #44 live body retains original To Do/not-started text; no Issue edit/closure/implementation PR/review here; implementation review Pending |
+| Product acceptance | Only contract-review DoD checked, other ten unchecked; all 55 scenario rows Planned; browser/performance/release not claimed |
+
+### Ordered implementation history
+
+Actual ordered commits, not invented per-batch executions. Missing-module/export RED differs from semantic assertion failures. Earlier dates/environments are not inferred from commit timestamps.
+
+| Batch | Actual commit sequence / interpretation |
+| --- | --- |
+| Pure create | `4dddf23a` RED missing module/0 executed → `f5b0a2f5` GREEN foundation; `71577bfc` RED remaining fields → `a2a297e8` GREEN typed eight-field payload |
+| Partial edit | `508fa43f` RED → `78049fe8` description-fixture correction, expectations unchanged → `d97a29fd` GREEN. Correction passing run included pending production edits; not independently passing test-only tree |
+| Lifecycle input | `5d1632a5` RED missing export → `de96ec93` GREEN; PLANNED recognized, forbidden edges service-owned |
+| Database | `5cef65dd` semantic missing-structure RED → `48afe0ed` additive schema/SQL GREEN → `a8282c2d` constraint/recovery/native backup/EXPLAIN verification, no invented RED |
+| Non-destructive seed | `ec1bdbdb` RED → `9527fcd1` known Issue27 fixture preparation → `09937209` transactional registry GREEN |
+| Seed receipt DTO | `3fd721e8` semantic RED → `d98d5237` GREEN id/name DTO separate from scalar history; old receipts retained |
+| Read/create/edit APIs | `ca83fdf6` read RED → `37b1becd` GREEN; `23a497ca` create RED → `5bb9fad2` GREEN; `91988123` edit/lifecycle RED → `c5e65086` GREEN |
+| Safe diagnostics | `993f06ed` RED discarded seed evidence → `68cd5196` safe stage/code/time retention; original slowdown cause not established |
+| API-07 / Admin guard | `ab8cb9b3` RED → `5177122a` GREEN API-07; `d1a1a23e` semantic guard RED → `9c302d99` GREEN owner-conflict priority retained |
+| Measured budgets | `5f07a1b8` bounded seed RED → `b0a92f0a` seed-only 15s GREEN; `89e818a9` two 10s per-test budgets, no weakened assertions/cryptography |
+| Races/retry verification | `04d58cd8` T-45/T-52 real coordination; `ec1cd76f` T-15/T-42; existing code passed, no manufactured RED |
+| Receipt recovery | `e6f81ddf` RED actual constraint/missing classifier; `ed00e23b` read-only observation; `9708391b` one authorized read after full rollback GREEN |
+| Unicode/frozen | `21efa649` RED 29 semantic failures, 9 frozen cases passed → `30bc6571` one-file GREEN; latest 726/1,513/build passed |
+
+[Coverage table](tests.md#coverage-and-responsibility) supplies T/AC/source/test/handoff edges and labels real races/controlled SQL faults/simulated reads. Remaining review gate is actual implementation source review/PR into lab4-staging plus consumer integration. AI assistance is not peer approval or student acceptance of code.

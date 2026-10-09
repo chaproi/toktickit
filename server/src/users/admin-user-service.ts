@@ -157,6 +157,14 @@ export async function editAdminUser(actorId: number, targetId: number, input: Ed
       (input.role === "IT_STAFF" || input.role === "ADMINISTRATOR");
     if (!remainsOwnerEligible && ownedTickets.length > 0) return { kind: "non-terminal-owner" as const };
 
+    // Assignment/status writes hold this target's shared User gate and row lock.
+    // Check inside each fresh SERIALIZABLE attempt, without adding child locks
+    // or discovering/acquiring another User lock after the owned Ticket locks.
+    if (!remainsOwnerEligible && await transaction.action.findFirst({
+      where: { assigneeId: targetId, status: { in: ["PLANNED", "IN_PROGRESS"] } },
+      select: { id: true },
+    })) return { kind: "open-action-assignee" as const };
+
     const duplicate = await transaction.user.findFirst({
       where: { email: { equals: input.email, mode: "insensitive" }, id: { not: targetId } },
       select: { id: true },

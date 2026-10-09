@@ -96,5 +96,5 @@ describe("MIG-06 repeatable populated Lab 2 migration", () => {
     expect(runs[0]!.verified.ownerIds).toEqual(Array(7).fill(null));
     expect(runs[1]!.verified.ownerIds).toEqual(Array(7).fill(null));
     expect(runs[0]!.visibleStatuses).toEqual(runs[1]!.visibleStatuses);
-  });
+  }, 10_000); // Two real migration/hash batches; loaded run exceeded the default 5s.
 });

@@ -287,7 +287,7 @@ describe("SEC-02 complete backend role-operation matrix", () => {
         }
       }
     }
-  });
+  }, 10_000); // 72 real role/operation cells plus hashing; loaded run exceeded 5s.
 });
 
 describe("SEC-05 Internal Note denial before resource lookup", () => {
