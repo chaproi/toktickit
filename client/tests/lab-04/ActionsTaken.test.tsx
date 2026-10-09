@@ -247,6 +247,7 @@ describe("Issue 45 Actions Taken — first partial UI RED batch", () => {
     expect(screen.getByText("Owner")).toBeInTheDocument();
     expect(screen.getByText(owner.name)).toBeInTheDocument();
     const actions = await screen.findByRole("region", { name: "Actions Taken" });
+    await within(actions).findByText(unfinished.description);
     const unfinishedRecord = actionRecord(actions, unfinished);
     const completedRecord = actionRecord(actions, completed);
     for (const label of ["Created by", "Assigned to", "Performed by"]) {
@@ -381,7 +382,7 @@ describe("Issue 45 bounded operation UI — additional RED", () => {
     const actions = await screen.findByRole("region", { name: "Actions Taken" });
     await userEvent.click(within(actionRecord(actions, unfinished)).getByRole("button", { name: /^edit\b/i }));
     const dialog = await screen.findByRole("dialog", { name: "Edit Action" });
-    const description = within(dialog).getByRole("textbox", { name: "Description" });
+    const description = await within(dialog).findByRole("textbox", { name: "Description" });
     expect(description).toHaveValue(unfinished.description);
     await userEvent.clear(description); await userEvent.type(description, next.description);
     await userEvent.click(within(dialog).getByRole("button", { name: "Save changes" }));
