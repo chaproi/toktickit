@@ -21,6 +21,7 @@ import ChangePassword from "./components/ChangePassword.js";
 import CreateTicket from "./components/CreateTicket.js";
 import Login from "./components/Login.js";
 import MyTickets from "./components/MyTickets.js";
+import MyActions from "./components/MyActions.js";
 import RequesterTicketDetail from "./components/RequesterTicketDetail.js";
 import StaffTicketQueue from "./components/StaffTicketQueue.js";
 import StaffTicketDetail from "./components/StaffTicketDetail.js";
@@ -116,8 +117,8 @@ function AppShell({
   const nav = user.role === "REQUESTER"
     ? [["/tickets", "My Tickets"], ["/tickets/new", "Create Ticket"]]
     : user.role === "IT_STAFF"
-      ? [["/staff/tickets", "Ticket Queue"]]
-      : [["/admin/users", "User Management"], ["/staff/tickets", "Ticket Queue"]];
+      ? [["/staff/tickets", "Ticket Queue"], ["/staff/actions", "My assigned Actions"]]
+      : [["/admin/users", "User Management"], ["/staff/tickets", "Ticket Queue"], ["/staff/actions", "My assigned Actions"]];
 
   async function handleLogout() {
     if (loggingOut) return;
@@ -331,6 +332,10 @@ function AuthenticatedRoutes() {
       <Route
         path="/tickets/:ticketId"
         element={user.role === "REQUESTER" ? shell(<RequesterTicketDetail user={user} />) : shell(<Forbidden user={user} />)}
+      />
+      <Route
+        path="/staff/actions"
+        element={user.role !== "REQUESTER" ? shell(<MyActions key={`${user.id}:${user.role}`} user={user} />) : shell(<Forbidden user={user} />)}
       />
       <Route
         path="/staff/tickets"

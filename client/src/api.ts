@@ -94,15 +94,15 @@ async function jsonRequest<T>(
 export async function checkHealth(): Promise<HealthStatus> {
   return jsonRequest<HealthStatus>("/api/health", {}, false, "Backend is unavailable");
 }
-export async function getCategories(): Promise<Category[]> {
-  const categories = await jsonRequest<unknown>("/api/categories", {}, false, "Unable to load categories");
+export async function getCategories(signal?: AbortSignal): Promise<Category[]> {
+  const categories = await jsonRequest<unknown>("/api/categories", signal ? { signal } : {}, false, "Unable to load categories");
   if (!Array.isArray(categories)) throw new ApiRequestError("Unable to load categories", 500, "SAFE_FAILURE");
   return categories as Category[];
 }
-export async function getRelatedSystems(): Promise<RelatedSystem[]> {
+export async function getRelatedSystems(signal?: AbortSignal): Promise<RelatedSystem[]> {
   const systems = await jsonRequest<unknown>(
     "/api/related-systems",
-    {},
+    signal ? { signal } : {},
     false,
     "Unable to load Related Systems",
   );
@@ -599,6 +599,27 @@ export interface ActionHistoryDTO {
 export interface ActionReadQuery { page?: number; pageSize?: 20 | 50 | 100; status?: ActionStatus }
 export interface ActionListResponse { items: ActionDTO[]; pagination: TicketListPagination }
 export interface ActionDetailResponse { action: ActionDTO; ticketUpdatedAt: string }
+export interface StaffActionQuery extends Omit<StaffQueueQuery, "sortBy" | "sortOrder"> {
+  assignee: "me";
+  status?: ActionStatus;
+  actionStatusGroup?: "unfinished";
+  statusGroup?: "active" | "outstanding" | "resolved";
+  updatedFrom?: string; updatedBefore?: string;
+  resolvedFrom?: string; resolvedBefore?: string;
+}
+export interface StaffActionResponse {
+  items: Array<{ ticket: Pick<StaffQueueItem, "id" | "ticketNumber" | "summary" | "currentStatus">; action: ActionDTO }>;
+  pagination: TicketListPagination;
+}
+export async function getStaffActions(query: StaffActionQuery, signal?: AbortSignal): Promise<StaffActionResponse> {
+  const parameters = new URLSearchParams();
+  for (const [name, value] of Object.entries(query)) {
+    if (value !== undefined) parameters.set(name, String(value));
+  }
+  const result = await jsonRequest<StaffActionResponse>(`/api/staff/actions?${parameters}`, { signal });
+  if (!Array.isArray(result.items) || !result.pagination) throw new Error("Invalid assigned Actions response.");
+  return result;
+}
 export interface ActionMutationResponse extends ActionDetailResponse { replayed: boolean }
 export interface ActionTokens { expectedVersion: number; expectedTicketUpdatedAt: string; clientMutationId: string }
 export interface ActionEditFields {
