@@ -9,6 +9,7 @@ export type RecoveryFault = "missing" | "unavailable" | "unexpected" | "40001";
 export type RecoveryEvidence = {
   mutationTransactions: number; recoveryTransactions: number; recoveryReceiptReads: number;
   recoveryWrites: number; recoveryIsolation: string[]; transactionIds: string[];
+  readOnlyControls: number; businessReadModes: string[];
   independentObserver: boolean; rolledBack: boolean; staged: boolean;
   collision?: { code: string; modelName: string; target: string[]; constraint: string };
 };
@@ -38,7 +39,8 @@ export async function withReceiptCollision(
   }
   const observer = new PrismaClient({ datasources: { db: { url: process.env.DATABASE_URL } } });
   const evidence: RecoveryEvidence = { mutationTransactions: 0, recoveryTransactions: 0, recoveryReceiptReads: 0,
-    recoveryWrites: 0, recoveryIsolation: [], transactionIds: [], independentObserver: false, rolledBack: false, staged: false };
+    recoveryWrites: 0, recoveryIsolation: [], transactionIds: [], readOnlyControls: 0, businessReadModes: [],
+    independentObserver: false, rolledBack: false, staged: false };
   type Operation = (tx: Prisma.TransactionClient) => Promise<unknown>;
   type Options = { isolationLevel?: Prisma.TransactionIsolationLevel; maxWait?: number; timeout?: number };
   const application = getPrisma();
@@ -114,8 +116,20 @@ export async function withReceiptCollision(
       evidence.recoveryTransactions += 1;
       expect(evidence.recoveryTransactions, "One bounded recovery read; no polling or additional attempts").toBeLessThanOrEqual(1);
       return original(async (tx) => {
-        const [actual] = await tx.$queryRaw<Array<{ id: string; isolation: string }>>`SELECT txid_current()::text AS id,current_setting('transaction_isolation') AS isolation`;
-        evidence.transactionIds.push(actual.id); evidence.recoveryIsolation.push(actual.isolation);
+        let observedIdentity = false;
+        const observeBusinessRead = async () => {
+          // Delay observer SQL until business access, so production can establish
+          // transaction characteristics before its first query.
+          const [actual] = await tx.$queryRaw<Array<{ id: string; isolation: string; readOnly: string }>>`
+            SELECT txid_current()::text AS id,current_setting('transaction_isolation') AS isolation,
+              current_setting('transaction_read_only') AS "readOnly"`;
+          expect(actual.readOnly, "Recovery business read is genuinely PostgreSQL read-only").toBe("on");
+          expect(evidence.readOnlyControls, "Exact static control precedes business reads").toBe(1);
+          evidence.businessReadModes.push(actual.readOnly);
+          if (!observedIdentity) {
+            evidence.transactionIds.push(actual.id); evidence.recoveryIsolation.push(actual.isolation); observedIdentity = true;
+          }
+        };
         const writes = new Set(["create", "createMany", "update", "updateMany", "upsert", "delete", "deleteMany"]);
         const observed = new Proxy(tx, { get(target, property) {
           const value = Reflect.get(target, property);
@@ -124,6 +138,7 @@ export async function withReceiptCollision(
             if (typeof call !== "function") return call;
             return async (...args: unknown[]) => {
               if (writes.has(String(method))) evidence.recoveryWrites += 1;
+              await observeBusinessRead();
               const result: unknown = await Reflect.apply(call, delegate, args);
               if (property === "mutationReceipt" && ["findUnique", "findFirst", "findUniqueOrThrow"].includes(String(method))) {
                 evidence.recoveryReceiptReads += 1;
@@ -137,7 +152,20 @@ export async function withReceiptCollision(
               return result;
             };
           } });
-          if (property === "$executeRaw" || property === "$executeRawUnsafe") evidence.recoveryWrites += 1;
+          if (property === "$executeRaw" || property === "$executeRawUnsafe") return async (...args: unknown[]) => {
+            // Exempt ONLY the exact static tagged control, with no parameters.
+            // Arbitrary SQL, unsafe strings or additional statements remain writes.
+            const fragments = args[0];
+            const readOnlyControl = property === "$executeRaw" && args.length === 1 &&
+              Array.isArray(fragments) && fragments.length === 1 && fragments[0] === "SET TRANSACTION READ ONLY";
+            if (readOnlyControl) evidence.readOnlyControls += 1;
+            else evidence.recoveryWrites += 1;
+            return Reflect.apply(value, target, args);
+          };
+          if (property === "$queryRaw" || property === "$queryRawUnsafe") return async (...args: unknown[]) => {
+            await observeBusinessRead();
+            return Reflect.apply(value, target, args);
+          };
           return typeof value === "function" ? value.bind(target) : value;
         } });
         return (operation as Operation)(observed);
@@ -160,5 +188,8 @@ export function assertSingleRecovery(evidence: RecoveryEvidence, receiptRead = t
   expect(evidence.recoveryIsolation).toEqual(["read committed"]);
   expect(new Set(evidence.transactionIds).size).toBe(2);
   expect(evidence.recoveryWrites).toBe(0);
+  expect(evidence.readOnlyControls).toBe(1);
+  expect(evidence.businessReadModes.length).toBeGreaterThan(0);
+  expect(evidence.businessReadModes.every((mode) => mode === "on")).toBe(true);
   expect(evidence.recoveryReceiptReads).toBe(receiptRead ? 1 : 0);
 }
