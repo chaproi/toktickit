@@ -16,6 +16,11 @@ export type CreateActionValidationResult =
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+// Match PostgreSQL char_length: count code points without rewriting text.
+function codePointLength(value: string): number {
+  return Array.from(value).length;
+}
+
 // Pure API-04 create-payload validation only (T-05 / AC-05, T-49 / AC-41).
 // Authorization, eligibility, stale tokens and persistence require API coverage.
 export function validateCreateActionInput(
@@ -44,7 +49,7 @@ export function validateCreateActionInput(
   const description = typeof body.description === "string"
     ? body.description.trim()
     : "";
-  if (description.length < 5 || description.length > 2000) {
+  if (codePointLength(description) < 5 || codePointLength(description) > 2000) {
     fields.description = "Description must contain between 5 and 2000 characters.";
   }
 
@@ -57,7 +62,7 @@ export function validateCreateActionInput(
     followUpNote = typeof body.followUpNote === "string"
       ? body.followUpNote.trim()
       : null;
-    if (followUpNote === null || followUpNote.length < 1 || followUpNote.length > 2000) {
+    if (followUpNote === null || codePointLength(followUpNote) < 1 || codePointLength(followUpNote) > 2000) {
       fields.followUpNote = "Follow-up Note must contain between 1 and 2000 characters.";
     }
   } else if (body.followUpRequired === false && body.followUpNote != null) {
@@ -72,7 +77,7 @@ export function validateCreateActionInput(
       fields.result = "Result must be text or null.";
     } else {
       result = body.result.trim();
-      if (result.length < 1 || result.length > 2000) {
+      if (codePointLength(result) < 1 || codePointLength(result) > 2000) {
         fields.result = "Result must contain between 1 and 2000 characters.";
       }
     }
@@ -84,7 +89,7 @@ export function validateCreateActionInput(
       fields.attachmentNotes = "Attachment Notes must be text or null.";
     } else {
       attachmentNotes = body.attachmentNotes.trim() || null;
-      if (attachmentNotes !== null && attachmentNotes.length > 2000) {
+      if (attachmentNotes !== null && codePointLength(attachmentNotes) > 2000) {
         fields.attachmentNotes = "Attachment Notes must contain at most 2000 characters.";
       }
     }
@@ -163,7 +168,7 @@ const EDITABLE_ACTION_FIELDS = [
 
 function validNullableEditText(value: unknown, minimum: number): value is string | null {
   return value === null || (typeof value === "string" &&
-    value.trim().length >= minimum && value.trim().length <= 2000);
+    codePointLength(value.trim()) >= minimum && codePointLength(value.trim()) <= 2000);
 }
 
 // Validate supplied values without defaults, normalization or current-state rules.
@@ -175,7 +180,7 @@ function validateEditableActionPatch(
 
   if (Object.hasOwn(body, "description")) {
     const value = body.description;
-    if (typeof value !== "string" || value.trim().length < 5 || value.trim().length > 2000) {
+    if (typeof value !== "string" || codePointLength(value.trim()) < 5 || codePointLength(value.trim()) > 2000) {
       fields.description = "Description must contain between 5 and 2000 characters.";
     } else {
       patch.description = value;
@@ -317,7 +322,7 @@ export function mergeAndValidateActionEdit(
 
   const checkedFinal = validateEditableActionPatch(final);
   if (!checkedFinal.success) return checkedFinal;
-  if (final.followUpRequired && (final.followUpNote === null || final.followUpNote.trim().length < 1)) {
+  if (final.followUpRequired && (final.followUpNote === null || codePointLength(final.followUpNote.trim()) < 1)) {
     return {
       success: false,
       fields: { followUpNote: "Follow-up Note must contain between 1 and 2000 characters." },
@@ -400,13 +405,13 @@ export function validateActionStatusInput(input: unknown): ActionStatusValidatio
   }
   if (targetStatus === "COMPLETED") {
     result = typeof body.result === "string" ? body.result.trim() : "";
-    if (result.length < 1 || result.length > 2000) {
+    if (codePointLength(result) < 1 || codePointLength(result) > 2000) {
       fields.result = "Result must contain between 1 and 2000 characters.";
     }
   }
   if (targetStatus === "CANCELLED") {
     reason = typeof body.reason === "string" ? body.reason.trim() : "";
-    if (reason.length < 5 || reason.length > 500) {
+    if (codePointLength(reason) < 5 || codePointLength(reason) > 500) {
       fields.reason = "Cancellation reason must contain between 5 and 500 characters.";
     }
   }
