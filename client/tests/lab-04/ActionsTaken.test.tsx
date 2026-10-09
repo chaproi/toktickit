@@ -832,3 +832,387 @@ describe("Issue 45 Create Action UI — bounded 12-case RED", () => {
     expect(harness.writes).toHaveLength(0);
   });
 });
+
+
+// History rendering only: partial AC-12/13/36/39/41/45 and T-12/13/36/39/50/55.
+// Fixtures model separate legal lifecycles; no cascade execution or database atomicity is claimed.
+import type { ActionHistoryDTO, ActionSnapshot } from "../../src/api.js";
+
+const historyActor = { id: 191, name: "Historical Editor" };
+const historyCompleter = { id: 195, name: "Historical Completing Actor" };
+const historyOldNote = "Retained original follow-up 😀 e\u0301";
+const historyLiteral = '<script>window.historyNoteExecuted=true</script> <a href="/api/tickets/999/attachments/777/content">history-evidence.pdf</a>';
+
+function historyInitial(actionId = 901): ActionSnapshot {
+  return {
+    id: actionId, ticketId: 501, createdById: 173, assigneeId: 174, performedById: null,
+    status: "PLANNED", description: "Original historical description", result: null,
+    followUpRequired: true, followUpNote: historyOldNote, attachmentNotes: historyLiteral,
+    actionAt: "2026-10-09T09:00:00.000Z", createdAt: "2026-10-09T09:00:00.000Z",
+    updatedAt: "2026-10-09T09:00:00.000Z", completedAt: null, cancelledAt: null,
+    cancellationReason: null, version: 1,
+  };
+}
+
+function historyEventFixture(event: ActionHistoryDTO["event"], before: ActionSnapshot | null, after: ActionSnapshot,
+  actor = historyActor, sourceTicketStatusHistoryId: number | null = null): ActionHistoryDTO {
+  return { id: after.id * 1000 + after.version, actionId: after.id, actor, event,
+    createdAt: after.updatedAt, actionVersion: after.version, sourceTicketStatusHistoryId, before, after };
+}
+
+function historyActionFixture(snapshot: ActionSnapshot): ActionFixture {
+  // Identity names are the current safe DTO names, deliberately distinct from historical scalar IDs.
+  return {
+    id: snapshot.id, ticketId: snapshot.ticketId, actionAt: snapshot.actionAt,
+    description: snapshot.description, result: snapshot.result,
+    createdBy: { id: 173, name: "Creator current display name" },
+    assignee: { id: snapshot.assigneeId, name: "Assignee current display name" },
+    performedBy: snapshot.performedById === null ? null : { id: snapshot.performedById, name: historyCompleter.name },
+    status: snapshot.status, followUpRequired: snapshot.followUpRequired, followUpNote: snapshot.followUpNote,
+    attachmentNotes: snapshot.attachmentNotes, cancellationReason: snapshot.cancellationReason,
+    createdAt: snapshot.createdAt, updatedAt: snapshot.updatedAt, completedAt: snapshot.completedAt,
+    cancelledAt: snapshot.cancelledAt, version: snapshot.version,
+  };
+}
+
+function completedHistoryFixture() {
+  const initial = historyInitial();
+  const edited: ActionSnapshot = { ...initial, followUpRequired: false, followUpNote: null, version: 2, updatedAt: "2026-10-09T09:01:00.000Z" };
+  const reassigned: ActionSnapshot = { ...edited, assigneeId: 176, description: "Combined content and assignment change", version: 3, updatedAt: "2026-10-09T09:02:00.000Z" };
+  const started: ActionSnapshot = { ...reassigned, status: "IN_PROGRESS", version: 4, updatedAt: "2026-10-09T09:03:00.000Z" };
+  const done: ActionSnapshot = { ...started, status: "COMPLETED", result: "Verified Thai ไทย 😀 e\u0301 literally", performedById: 195,
+    completedAt: "2026-10-09T09:04:00.000Z", updatedAt: "2026-10-09T09:04:00.000Z", version: 5 };
+  const events = [
+    historyEventFixture("ACTION_CREATED", null, initial, { id: 173, name: "Creator current display name" }),
+    historyEventFixture("ACTION_EDITED", initial, edited),
+    historyEventFixture("ACTION_REASSIGNED", edited, reassigned),
+    historyEventFixture("ACTION_STARTED", reassigned, started),
+    historyEventFixture("ACTION_COMPLETED", started, done, historyCompleter),
+  ];
+  return { action: historyActionFixture(done), events };
+}
+
+function cancelledHistoryFixture(cascade: boolean) {
+  const initial = historyInitial(cascade ? 903 : 902);
+  const draftEdit: ActionSnapshot = { ...initial, result: "Retained draft result", version: 2, updatedAt: "2026-10-09T09:00:30.000Z" };
+  const active: ActionSnapshot = { ...draftEdit, status: "IN_PROGRESS", version: 3, updatedAt: "2026-10-09T09:01:00.000Z" };
+  const after: ActionSnapshot = { ...active, status: "CANCELLED", cancelledAt: "2026-10-09T09:02:00.000Z",
+    cancellationReason: cascade ? "Parent cancelled with literal <b>reason</b>" : "Explicit Action cancellation reason", updatedAt: "2026-10-09T09:02:00.000Z", version: 4 };
+  const events = [
+    historyEventFixture("ACTION_CREATED", null, initial, { id: 173, name: "Creator current display name" }),
+    historyEventFixture("ACTION_EDITED", initial, draftEdit),
+    historyEventFixture("ACTION_STARTED", draftEdit, active),
+    historyEventFixture(cascade ? "ACTION_CANCELLED_BY_TICKET" : "ACTION_CANCELLED", active, after, historyActor, cascade ? 8801 : null),
+  ];
+  return { action: historyActionFixture(after), events };
+}
+
+function historyPage(events: ActionHistoryDTO[], pageNumber: number, pageSize: 20 | 50 | 100) {
+  const totalPages = Math.ceil(events.length / pageSize);
+  return {
+    items: events.slice((pageNumber - 1) * pageSize, pageNumber * pageSize),
+    pagination: { page: pageNumber, pageSize, totalItems: events.length, totalPages,
+      hasPreviousPage: pageNumber > 1, hasNextPage: pageNumber < totalPages },
+  };
+}
+
+function installHistoryFetch(options: {
+  user?: SafeUser; fixture?: ReturnType<typeof completedHistoryFixture>;
+  parentStatus?: StaffTicketDetail["currentStatus"];
+  response?: (attempt: number, pageNumber: number, pageSize: 20 | 50 | 100) => Promise<Response>;
+} = {}) {
+  const user = options.user ?? requesterUser;
+  const fixture = options.fixture ?? completedHistoryFixture();
+  const inherited = installFetch({ user, actions: [fixture.action] });
+  const inheritedFetch = globalThis.fetch;
+  const calls: Array<{ url: URL; method: string; init?: RequestInit }> = [];
+  const historyCalls: Array<{ url: URL; init?: RequestInit }> = [];
+  vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = requestUrl(input), method = init?.method ?? "GET";
+    calls.push({ url, method, init });
+    if (method === "GET" && url.pathname === `/api/tickets/501/actions/${fixture.action.id}/history`) {
+      historyCalls.push({ url, init });
+      const pageNumber = Number(url.searchParams.get("page") ?? 1);
+      const pageSize = Number(url.searchParams.get("pageSize") ?? 20) as 20 | 50 | 100;
+      return options.response?.(historyCalls.length, pageNumber, pageSize) ?? jsonResponse(historyPage(fixture.events, pageNumber, pageSize));
+    }
+    if (method === "GET" && url.pathname === `/api/tickets/501/actions/${fixture.action.id}`) return jsonResponse({ action: fixture.action, ticketUpdatedAt: requesterTicket.updatedAt });
+    const currentStatus = options.parentStatus ?? "IN_PROGRESS";
+    if (method === "GET" && url.pathname === "/api/tickets/501") return jsonResponse({ ...requesterTicket, currentStatus });
+    if (method === "GET" && url.pathname === "/api/staff/tickets/501" && user.role !== "REQUESTER") {
+      const cascade = fixture.events.find((event) => event.sourceTicketStatusHistoryId !== null);
+      return jsonResponse({ ...staffTicket, currentStatus,
+        allowedStatusTransitions: currentStatus === "RESOLVED" ? ["CLOSED", "REOPENED"] : ["CLOSED", "CANCELLED"].includes(currentStatus) ? [] : staffTicket.allowedStatusTransitions,
+        statusHistory: cascade ? [{ id: 8801, fromStatus: "IN_PROGRESS", toStatus: "CANCELLED", reason: cascade.after.cancellationReason,
+          actor: { ...historyActor, role: "IT_STAFF" }, createdAt: cascade.createdAt }] : [],
+      });
+    }
+    return inheritedFetch(input, init);
+  }));
+  return { user, fixture, calls, inheritedCalls: inherited.calls, historyCalls };
+}
+
+async function openHistory(harness: ReturnType<typeof installHistoryFetch>) {
+  await readyTicket(harness.user);
+  const actions = await screen.findByRole("region", { name: "Actions Taken" });
+  await within(actions).findByText(harness.fixture.action.description);
+  const trigger = within(actionRecord(actions, harness.fixture.action)).getByRole("button", { name: /^view history$/i });
+  await userEvent.click(trigger);
+  let presentation: HTMLElement | null = null;
+  await waitFor(() => {
+    presentation = screen.queryByRole("dialog", { name: /action history|history for action/i }) ??
+      screen.queryByRole("region", { name: /action history|history for action/i });
+    expect(presentation).not.toBeNull();
+  });
+  return { actions, trigger, presentation: presentation! as HTMLElement };
+}
+
+function historyEventRecord(presentation: HTMLElement, label: string): HTMLElement {
+  const heading = within(presentation).queryByRole("heading", { name: label }) ?? within(presentation).getByText(label, { exact: true });
+  const record = heading.closest("li, article, tr, [role=listitem], [role=row], [role=group]") ?? heading.parentElement;
+  expect(record).not.toBeNull();
+  return record as HTMLElement;
+}
+
+function snapshotPresentation(record: HTMLElement, name: "Before" | "After"): HTMLElement {
+  const matcher = new RegExp(`^${name}(?: snapshot)?$`, "i");
+  const named = within(record).queryByRole("region", { name: matcher }) ?? within(record).queryByRole("group", { name: matcher }) ?? within(record).queryByRole("table", { name: matcher });
+  if (named) return named;
+  const label = within(record).queryByRole("heading", { name: matcher }) ?? within(record).getByText(matcher);
+  expect(label.parentElement).not.toBeNull();
+  return label.parentElement!;
+}
+
+function historyDisplayedField(container: HTMLElement, name: RegExp): HTMLElement {
+  const label = within(container).getByText(name);
+  // Accept description lists, table rows or labelled field blocks; do not couple to CSS/components.
+  if (label.tagName === "DT") { expect(label.nextElementSibling).not.toBeNull(); return label.nextElementSibling as HTMLElement; }
+  const field = label.closest("tr") ?? label.parentElement;
+  expect(field).not.toBeNull();
+  return field as HTMLElement;
+}
+
+function assertHistorySnapshot(presentation: HTMLElement, snapshot: ActionSnapshot) {
+  const textFields: Array<[RegExp, string | number | null]> = [
+    [/^(?:Action ID|id)$/i, snapshot.id], [/^(?:Ticket ID|ticketId)$/i, snapshot.ticketId],
+    [/^(?:Created by ID|createdById)$/i, snapshot.createdById], [/^(?:Assigned to ID|Assignee ID|assigneeId)$/i, snapshot.assigneeId],
+    [/^(?:Performed by ID|performedById)$/i, snapshot.performedById], [/^Description$/i, snapshot.description],
+    [/^Result$/i, snapshot.result], [/^(?:Follow-up note|followUpNote)$/i, snapshot.followUpNote],
+    [/^(?:Attachment Notes|attachmentNotes)$/i, snapshot.attachmentNotes], [/^(?:Cancellation reason|cancellationReason)$/i, snapshot.cancellationReason],
+    [/^(?:Version|Action version)$/i, snapshot.version],
+  ];
+  for (const [name, value] of textFields) {
+    const field = historyDisplayedField(presentation, name);
+    expect(field).toHaveTextContent(value === null ? name.source.includes("Performed") ? "Not completed" : "Not recorded" : String(value));
+  }
+  expect(historyDisplayedField(presentation, /^Status$/i)).toHaveTextContent(snapshot.status === "IN_PROGRESS" ? /in progress|IN_PROGRESS/i : new RegExp(snapshot.status, "i"));
+  expect(historyDisplayedField(presentation, /^(?:Follow-up required|followUpRequired)$/i)).toHaveTextContent(snapshot.followUpRequired ? /yes|true|required/i : /no|false/i);
+  for (const [name, value] of [
+    [/^(?:Action Date\/Time|actionAt)$/i, snapshot.actionAt], [/^(?:Created|Created at|createdAt)$/i, snapshot.createdAt],
+    [/^(?:Updated|Updated at|updatedAt)$/i, snapshot.updatedAt], [/^(?:Completed|Completed at|completedAt)$/i, snapshot.completedAt],
+    [/^(?:Cancelled|Cancelled at|cancelledAt)$/i, snapshot.cancelledAt],
+  ] as const) {
+    const field = historyDisplayedField(presentation, name);
+    if (value === null) expect(field).toHaveTextContent(/not recorded|not completed/i);
+    else expect(field.querySelector(`time[datetime="${value}"]`)).toBeInTheDocument();
+  }
+  for (const currentName of ["Creator current display name", "Assignee current display name"]) expect(within(presentation).queryByText(currentName)).not.toBeInTheDocument();
+}
+
+function assertHistoryReadOnly(harness: ReturnType<typeof installHistoryFetch>, presentation: HTMLElement) {
+  expect(harness.calls.every(({ method }) => method === "GET")).toBe(true);
+  expect(within(presentation).queryByRole("button", { name: /^(?:create|edit|reassign|start|complete|cancel)\b/i })).not.toBeInTheDocument();
+  expect(presentation).not.toHaveTextContent(/passwordHash|csrfTokenHash|tokenHash|fingerprint|safeResponse|storageKey|Internal Notes/i);
+  if (harness.user.role === "REQUESTER") {
+    expect([...harness.calls, ...harness.inheritedCalls].filter(({ url }) => url.pathname.startsWith("/api/staff/") || url.pathname.startsWith("/api/admin/") || url.pathname.includes("/notes"))).toEqual([]);
+  }
+}
+
+function controlledHistoryResponse(events: ActionHistoryDTO[]) {
+  let resolve!: (response: Response) => void;
+  const settled = new Promise<Response>((finish) => { resolve = finish; });
+  const finish = () => resolve(jsonResponse(historyPage(events, 1, 20)));
+  pending.push({ finish, settled });
+  return { finish, settled };
+}
+
+describe("Issue 45 Action history UI — focused interaction RED", () => {
+  it.each(["REQUESTER", "IT_STAFF", "ADMINISTRATOR"] as const)(
+    "AC-13/39/45 T-13/39/55: %s reads complete safe history with actor, version, UTC instants and scalar identity snapshots",
+    async (role) => {
+      const user = role === "REQUESTER" ? requesterUser : { ...createOperator, role };
+      const harness = installHistoryFetch({ user });
+      const { presentation } = await openHistory(harness);
+      await within(presentation).findByText("No previous record");
+      for (const [index, label] of ["Created", "Edited", "Reassigned", "Started", "Completed"].entries()) {
+        const event = harness.fixture.events[index]!;
+        const record = historyEventRecord(presentation, label);
+        expect(within(record).getByText(event.actor.name)).toBeInTheDocument();
+        expect(historyDisplayedField(record, /^(?:Action version|actionVersion)$/i)).toHaveTextContent(String(event.actionVersion));
+        expect(historyDisplayedField(record, /^(?:Event time|Date\/Time|createdAt)$/i).querySelector(`time[datetime="${event.createdAt}"]`)).toBeInTheDocument();
+        expect(historyDisplayedField(record, /^(?:Source Ticket status-event ID|Ticket status-event ID|sourceTicketStatusHistoryId)$/i)).toHaveTextContent("Not recorded");
+        if (event.before === null) expect(within(record).getByText("No previous record")).toBeInTheDocument();
+        else assertHistorySnapshot(snapshotPresentation(record, "Before"), event.before);
+        assertHistorySnapshot(snapshotPresentation(record, "After"), event.after);
+      }
+      expect(harness.historyCalls).toHaveLength(1);
+      expect(harness.historyCalls[0]!.url.pathname).toBe("/api/tickets/501/actions/901/history");
+      expect(harness.historyCalls[0]!.url.searchParams.get("page")).toBe("1");
+      expect(harness.historyCalls[0]!.url.searchParams.get("pageSize")).toBe("20");
+      expect(harness.historyCalls[0]!.init?.credentials).toBe("include");
+      assertHistoryReadOnly(harness, presentation);
+    },
+  );
+
+  it("AC-41/45 T-50/55: cleared note survives before; combined content/reassignment renders exactly one Reassigned event", async () => {
+    const harness = installHistoryFetch();
+    const { presentation } = await openHistory(harness);
+    await within(presentation).findByText("No previous record");
+    const edited = historyEventRecord(presentation, "Edited");
+    expect(historyDisplayedField(snapshotPresentation(edited, "Before"), /^(?:Follow-up note|followUpNote)$/i)).toHaveTextContent(historyOldNote);
+    expect(historyDisplayedField(snapshotPresentation(edited, "After"), /^(?:Follow-up note|followUpNote)$/i)).toHaveTextContent("Not recorded");
+    const reassigned = historyEventRecord(presentation, "Reassigned");
+    const before = snapshotPresentation(reassigned, "Before"), after = snapshotPresentation(reassigned, "After");
+    expect(historyDisplayedField(before, /^Description$/i)).toHaveTextContent("Original historical description");
+    expect(historyDisplayedField(after, /^Description$/i)).toHaveTextContent("Combined content and assignment change");
+    expect(historyDisplayedField(before, /^(?:Assigned to ID|Assignee ID|assigneeId)$/i)).toHaveTextContent("174");
+    expect(historyDisplayedField(after, /^(?:Assigned to ID|Assignee ID|assigneeId)$/i)).toHaveTextContent("176");
+    expect(within(presentation).getAllByText("Reassigned", { exact: true })).toHaveLength(1);
+    expect(within(presentation).getAllByText("Edited", { exact: true })).toHaveLength(1);
+    assertHistoryReadOnly(harness, presentation);
+  });
+
+  it.each([false, true])("AC-12/45 T-12/55: renders separate cancelled lifecycle (Ticket cascade=%s) with safe source and retained draft", async (cascade) => {
+    const fixture = cancelledHistoryFixture(cascade);
+    const harness = installHistoryFetch({ fixture, parentStatus: cascade ? "CANCELLED" : "IN_PROGRESS" });
+    const { presentation } = await openHistory(harness);
+    const label = cascade ? "Cancelled with Ticket" : "Cancelled";
+    await within(presentation).findByText("No previous record");
+    const record = historyEventRecord(presentation, label);
+    const event = fixture.events[3]!;
+    expect(within(record).getByText("Historical Editor")).toBeInTheDocument();
+    expect(historyDisplayedField(record, /^(?:Source Ticket status-event ID|Ticket status-event ID|sourceTicketStatusHistoryId)$/i)).toHaveTextContent(cascade ? "8801" : "Not recorded");
+    assertHistorySnapshot(snapshotPresentation(record, "Before"), event.before!);
+    assertHistorySnapshot(snapshotPresentation(record, "After"), event.after);
+    expect(historyDisplayedField(snapshotPresentation(record, "After"), /^(?:Cancellation reason|cancellationReason)$/i)).toHaveTextContent(cascade ? "Parent cancelled with literal <b>reason</b>" : "Explicit Action cancellation reason");
+    expect(within(record).queryByText("reason", { selector: "b" })).not.toBeInTheDocument();
+    assertHistoryReadOnly(harness, presentation);
+  });
+
+  it.each(["RESOLVED", "CLOSED", "CANCELLED"] as const)("AC-12 T-12: frozen %s Ticket still opens terminal Action history", async (parentStatus) => {
+    const fixture = parentStatus === "CANCELLED" ? cancelledHistoryFixture(true) : completedHistoryFixture();
+    const harness = installHistoryFetch({ fixture, parentStatus, user: createOperator });
+    const { actions, presentation } = await openHistory(harness);
+    expect(await within(presentation).findByText("No previous record")).toBeInTheDocument();
+    expect(within(actions).queryByRole("button", { name: /^(?:create|edit|reassign|start|complete|cancel)\b/i })).not.toBeInTheDocument();
+    assertHistoryReadOnly(harness, presentation);
+  });
+
+  it("AC-39/45 T-39/55: script-like historical Attachment Notes remain literal with no generated content links", async () => {
+    const harness = installHistoryFetch();
+    const { presentation } = await openHistory(harness);
+    expect((await within(presentation).findAllByText(historyLiteral)).length).toBeGreaterThan(0);
+    expect(presentation.querySelector("script, [onclick], [onerror]")).toBeNull();
+    expect(presentation.querySelector('a[href="/api/tickets/999/attachments/777/content"]')).toBeNull();
+    expect(within(presentation).queryByRole("link", { name: "history-evidence.pdf" })).not.toBeInTheDocument();
+    assertHistoryReadOnly(harness, presentation);
+  });
+
+  it("AC-36 T-36: pending history announces loading without empty flash, then renders server events", async () => {
+    const fixture = completedHistoryFixture(), controlled = controlledHistoryResponse(fixture.events);
+    const harness = installHistoryFetch({ fixture, response: () => controlled.settled });
+    const { presentation } = await openHistory(harness);
+    expect(within(presentation).getByRole("status")).toHaveTextContent(/loading/i);
+    expect(within(presentation).queryByText(/no (?:action )?history|no history events/i)).not.toBeInTheDocument();
+    expect(within(presentation).queryByText("No previous record")).not.toBeInTheDocument();
+    await act(async () => { controlled.finish(); await controlled.settled; });
+    expect(await within(presentation).findByText("No previous record")).toBeInTheDocument();
+    expect(within(presentation).queryByText(/loading/i)).not.toBeInTheDocument();
+  });
+
+  it("AC-36 T-36: successful empty history is distinct from loading and failure without fabricated creation", async () => {
+    const harness = installHistoryFetch({ response: async () => jsonResponse(historyPage([], 1, 20)) });
+    const { presentation } = await openHistory(harness);
+    expect(await within(presentation).findByText(/no (?:action )?history|no history events/i)).toBeInTheDocument();
+    expect(within(presentation).queryByText(/loading/i)).not.toBeInTheDocument();
+    expect(within(presentation).queryByRole("alert")).not.toBeInTheDocument();
+    expect(within(presentation).queryByText("No previous record")).not.toBeInTheDocument();
+    expect(within(presentation).queryByText("Created", { exact: true })).not.toBeInTheDocument();
+    assertHistoryReadOnly(harness, presentation);
+  });
+
+  it("AC-36 T-36: safe history dependency failure offers Retry and replaces failure with authoritative events", async () => {
+    const harness = installHistoryFetch({ response: async (attempt, pageNumber, pageSize) => attempt === 1 ? jsonResponse({ error: {
+      code: "SERVICE_UNAVAILABLE", message: "Service is temporarily unavailable. Please try again.",
+    } }, 503) : jsonResponse(historyPage(completedHistoryFixture().events, pageNumber, pageSize)) });
+    const { presentation } = await openHistory(harness);
+    expect(await within(presentation).findByRole("alert")).not.toHaveTextContent(/^\s*$/);
+    expect(within(presentation).queryByText(/no (?:action )?history|no history events/i)).not.toBeInTheDocument();
+    await userEvent.click(within(presentation).getByRole("button", { name: /^(?:retry|try again)$/i }));
+    expect(await within(presentation).findByText("No previous record")).toBeInTheDocument();
+    expect(within(presentation).queryByRole("alert")).not.toBeInTheDocument();
+    expect(harness.historyCalls).toHaveLength(2);
+    expect(harness.historyCalls.map(({ url }) => url.search)).toEqual(["?page=1&pageSize=20", "?page=1&pageSize=20"]);
+  });
+
+  it("AC-36/45 T-36/55: maps 20/50/100 history pages, renders chronological server pages and resets size changes to page one", async () => {
+    const initial: ActionSnapshot = { ...historyInitial(904), description: "History content 1", followUpRequired: false, followUpNote: null, attachmentNotes: null };
+    const events = [historyEventFixture("ACTION_CREATED", null, initial, { id: 173, name: "Creator current display name" })];
+    for (let version = 2; version <= 61; version += 1) {
+      const before = events[events.length - 1]!.after;
+      const instant = new Date(Date.parse(initial.createdAt) + (version - 1) * 1000).toISOString();
+      const after: ActionSnapshot = { ...before, description: `History content ${version}`, version, updatedAt: instant,
+        ...(version === 60 ? { status: "IN_PROGRESS" as const } : {}),
+        ...(version === 61 ? { status: "COMPLETED" as const, result: "Pagination lifecycle completion", performedById: 195, completedAt: instant } : {}),
+      };
+      events.push(historyEventFixture(version === 60 ? "ACTION_STARTED" : version === 61 ? "ACTION_COMPLETED" : "ACTION_EDITED", before, after, version === 61 ? historyCompleter : historyActor));
+    }
+    const harness = installHistoryFetch({ fixture: { action: historyActionFixture(events[60]!.after), events } });
+    const { presentation } = await openHistory(harness);
+    await within(presentation).findByText("History content 20");
+    const first = within(presentation).getAllByText("History content 1")[0]!, last = within(presentation).getByText("History content 20");
+    expect(first.compareDocumentPosition(last) & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0);
+    expect(within(presentation).queryByText("History content 21")).not.toBeInTheDocument();
+    const size = within(presentation).getByRole("combobox", { name: /(?:history|events).*per page|page size/i });
+    expect(size).toHaveValue("20");
+    expect(within(size).getAllByRole("option").map((option) => option.getAttribute("value"))).toEqual(["20", "50", "100"]);
+    await userEvent.click(within(presentation).getByRole("button", { name: /^next$/i }));
+    await within(presentation).findByText("History content 40");
+    expect(within(presentation).queryByText("History content 1", { exact: true })).not.toBeInTheDocument();
+    await userEvent.selectOptions(size, "50");
+    await within(presentation).findByText("History content 50");
+    expect(within(presentation).getAllByText("History content 1").length).toBeGreaterThan(0);
+    await userEvent.click(within(presentation).getByRole("button", { name: /^next$/i }));
+    await within(presentation).findByText("History content 61");
+    expect(within(presentation).getByRole("button", { name: /^next$/i })).toBeDisabled();
+    await userEvent.selectOptions(size, "100");
+    await within(presentation).findAllByText("History content 1", { exact: true });
+    expect(within(presentation).getByRole("button", { name: /^next$/i })).toBeDisabled();
+    expect(harness.historyCalls.map(({ url }) => [url.searchParams.get("page"), url.searchParams.get("pageSize")])).toEqual([
+      ["1", "20"], ["2", "20"], ["1", "50"], ["2", "50"], ["1", "100"],
+    ]);
+    assertHistoryReadOnly(harness, presentation);
+  });
+
+  it("AC-36 T-36: history is labelled and keyboard-readable; dialog presentation dismisses and restores trigger focus", async () => {
+    const harness = installHistoryFetch();
+    const { presentation, trigger } = await openHistory(harness);
+    expect(presentation).toHaveAccessibleName(/action history|history for action/i);
+    await within(presentation).findByText("No previous record");
+    if (presentation.getAttribute("role") === "dialog") {
+      expect(presentation).toHaveAttribute("aria-modal", "true");
+      await userEvent.keyboard("{Tab}");
+      expect(presentation.contains(document.activeElement)).toBe(true);
+      await userEvent.keyboard("{Escape}");
+      expect(presentation).not.toBeInTheDocument();
+      expect(trigger).toHaveFocus();
+      await userEvent.click(trigger);
+      const reopened = await screen.findByRole("dialog", { name: /action history|history for action/i });
+      await within(reopened).findByText("No previous record");
+      await userEvent.click(within(reopened).getByRole("button", { name: /^(?:close|close history)$/i }));
+      expect(reopened).not.toBeInTheDocument();
+      expect(trigger).toHaveFocus();
+    } else expect(within(presentation).getByRole("heading", { name: /history/i })).toBeInTheDocument();
+    assertHistoryReadOnly(harness, presentation);
+  });
+});
