@@ -2,6 +2,7 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { ApiRequestError, getTicketActions, type ActionDTO, type ActionListResponse, type ActionMutationResponse, type AuthUser, type TicketDetail } from "../api.js";
 import ActionOperationDialog, { type ActionOperation } from "./ActionOperationDialog.js";
 import ActionCreateDialog from "./ActionCreateDialog.js";
+import ActionHistoryDialog from "./ActionHistoryDialog.js";
 
 const editableParents = new Set(["NEW", "OPEN", "IN_PROGRESS", "WAITING_FOR_REQUESTER", "REOPENED"]);
 const label = (value: string) => value.toLowerCase().split("_").map((part) => part[0]?.toUpperCase() + part.slice(1)).join(" ");
@@ -27,6 +28,9 @@ export default function ActionsTaken({ ticket, user, onTicketChanged }: {
   const [pageSize, setPageSize] = useState<20 | 50 | 100>(20);
   const [dialog, setDialog] = useState<{ action: ActionDTO; operation: ActionOperation; trigger: HTMLElement } | null>(null);
   const [createTrigger, setCreateTrigger] = useState<HTMLElement | null>(null);
+  const historyScope = `${ticket.id}:${user.id}:${user.role}:${user.mustChangePassword}`;
+  const [history, setHistory] = useState<{ actionId: number; trigger: HTMLElement; scope: string } | null>(null);
+  useEffect(() => { setHistory(null); }, [historyScope]);
   const mutable = user.role !== "REQUESTER" && !user.mustChangePassword && editableParents.has(ticket.currentStatus) && !warning && !refreshing;
   const load = useCallback((signal?: AbortSignal) => getTicketActions(ticket.id, { page, pageSize }, signal), [ticket.id, page, pageSize]);
 
@@ -104,7 +108,10 @@ export default function ActionsTaken({ ticket, user, onTicketChanged }: {
                 {action.completedAt && <div><dt className="fw-semibold">Completed</dt><dd><time dateTime={action.completedAt}>{date(action.completedAt)}</time></dd></div>}
                 {action.cancelledAt && <div><dt className="fw-semibold">Cancelled</dt><dd><time dateTime={action.cancelledAt}>{date(action.cancelledAt)}</time></dd></div>}
               </dl>
-              {controls.length > 0 && <div className="d-flex flex-wrap gap-2">{controls.map((operation) => <button key={operation} type="button" className={`btn ${operation === "cancel" ? "btn-outline-danger" : "btn-outline-success"}`} onClick={(event) => setDialog({ action, operation, trigger: event.currentTarget })}>{label(operation)}</button>)}</div>}
+              <div className="d-flex flex-wrap gap-2">
+                <button type="button" className="btn btn-outline-success" onClick={(event) => setHistory({ actionId: action.id, trigger: event.currentTarget, scope: historyScope })}>View history</button>
+                {controls.map((operation) => <button key={operation} type="button" className={`btn ${operation === "cancel" ? "btn-outline-danger" : "btn-outline-success"}`} onClick={(event) => setDialog({ action, operation, trigger: event.currentTarget })}>{label(operation)}</button>)}
+              </div>
             </li>;
           })}</ul>
           {!warning && !refreshing && <nav aria-label="Actions pagination" className="d-flex flex-wrap align-items-center gap-3">
@@ -118,5 +125,6 @@ export default function ActionsTaken({ ticket, user, onTicketChanged }: {
     </section>
     {dialog && <ActionOperationDialog ticketId={ticket.id} action={dialog.action} operation={dialog.operation} trigger={dialog.trigger} editable={mutable} onClose={() => setDialog(null)} onSaved={saved} />}
     {createTrigger && <ActionCreateDialog ticketId={ticket.id} ticketUpdatedAt={ticket.updatedAt} user={user} trigger={createTrigger} editable={mutable} onClose={() => setCreateTrigger(null)} onCreated={(response) => saved(response, true)} />}
+    {history && history.scope === historyScope && !user.mustChangePassword && <ActionHistoryDialog key={`${historyScope}:${history.actionId}`} ticketId={ticket.id} actionId={history.actionId} trigger={history.trigger} onClose={() => setHistory(null)} />}
   </>;
 }
