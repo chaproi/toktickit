@@ -605,6 +605,11 @@ export interface ActionEditFields {
   description?: string; result?: string | null; assigneeId?: number;
   followUpRequired?: boolean; followUpNote?: string | null; attachmentNotes?: string | null;
 }
+export interface ActionCreateInput {
+  description: string; result: string | null; assigneeId: number;
+  followUpRequired: boolean; followUpNote: string | null; attachmentNotes: string | null;
+  expectedTicketUpdatedAt: string; clientMutationId: string;
+}
 export type ActionStatusInput = ActionTokens & (
   { targetStatus: "PLANNED" | "IN_PROGRESS" } |
   { targetStatus: "COMPLETED"; confirm: true; result: string } |
@@ -628,6 +633,11 @@ export function getActionHistory(ticketId: number, actionId: number, query: Pick
 export function editAction(ticketId: number, actionId: number, input: ActionTokens & ActionEditFields): Promise<ActionMutationResponse> {
   return jsonRequest(`/api/tickets/${ticketId}/actions/${actionId}`, {
     method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(input),
+  }, true);
+}
+export function createAction(ticketId: number, input: ActionCreateInput): Promise<ActionMutationResponse> {
+  return jsonRequest(`/api/tickets/${ticketId}/actions`, {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(input),
   }, true);
 }
 export function changeActionStatus(ticketId: number, actionId: number, input: ActionStatusInput): Promise<ActionMutationResponse> {
