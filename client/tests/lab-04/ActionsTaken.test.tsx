@@ -1216,3 +1216,343 @@ describe("Issue 45 Action history UI — focused interaction RED", () => {
     assertHistoryReadOnly(harness, presentation);
   });
 });
+
+// Issue #45 recovery/validation: partial AC-05/07/14/15/34/36,
+// T-05/07/14/15/34/36. These are controlled HTTP outcomes, not database races,
+// atomicity, receipt persistence or workflow execution evidence.
+// Confirmed-clear PATCH presence also contributes to AC-41/T-50;
+// the constructed frozen-parent case contributes to AC-12/T-12.
+type RecoveryWrite = { url: URL; init: RequestInit; rawBody: string; body: Record<string, unknown> };
+type RecoveryServer = {
+  actions: ActionFixture[];
+  ticket: StaffTicketDetail;
+  workers: Array<{ id: number; name: string; role: "IT_STAFF" | "ADMINISTRATOR" }>;
+  failRefresh: boolean;
+};
+const recoveryDescription = "Retained investigation 😀 <script>literal draft</script>";
+const recoveryResult = "Verified connection 😀 after explicit confirmation";
+const recoveryReason = "No longer needed after consultation 😀";
+
+function recoveryAction(operation: "EDIT" | "START" | "COMPLETE" | "CANCEL"): ActionFixture {
+  const next = { ...unfinished, version: operation === "START" ? 2 : 3, updatedAt: createParentToken };
+  if (operation === "EDIT") return { ...next, description: recoveryDescription };
+  if (operation === "COMPLETE") return { ...next, status: "COMPLETED", result: recoveryResult,
+    performedBy: { id: createOperator.id, name: createOperator.name }, completedAt: createParentToken };
+  if (operation === "CANCEL") return { ...next, status: "CANCELLED", cancellationReason: recoveryReason, cancelledAt: createParentToken };
+  return next;
+}
+
+function installRecoveryFetch(options: {
+  actions?: ActionFixture[];
+  onMutation: (write: RecoveryWrite, attempt: number, server: RecoveryServer) => Promise<Response>;
+}) {
+  installFetch({ user: createOperator, actions: options.actions ?? [unfinished] });
+  const inheritedFetch = globalThis.fetch;
+  const server: RecoveryServer = {
+    actions: options.actions ?? [unfinished], ticket: { ...staffTicket }, failRefresh: false,
+    workers: [{ id: createOperator.id, name: createOperator.name, role: "IT_STAFF" }, { ...assignee, role: "IT_STAFF" },
+      { id: 76, name: "Selected Replacement Worker", role: "IT_STAFF" }],
+  };
+  const writes: RecoveryWrite[] = [];
+  const calls: Array<{ url: URL; method: string }> = [];
+  document.cookie = "toktickit_csrf=action-ui-csrf; path=/";
+  vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = requestUrl(input), method = init?.method ?? "GET";
+    calls.push({ url, method });
+    if (method === "GET" && url.pathname === "/api/staff/assignees") return jsonResponse({ items: server.workers });
+    if (method === "GET" && ["/api/staff/tickets/501", "/api/tickets/501/actions"].includes(url.pathname)) {
+      if (server.failRefresh) return jsonResponse({ error: { code: "SERVICE_UNAVAILABLE", message: "Service is temporarily unavailable. Please try again." } }, 503);
+      return jsonResponse(url.pathname === "/api/staff/tickets/501" ? server.ticket : page(server.actions));
+    }
+    const detail = /^\/api\/tickets\/501\/actions\/(801|803)$/u.exec(url.pathname);
+    if (method === "GET" && detail) {
+      const action = server.actions.find((record) => record.id === Number(detail[1]));
+      return action ? jsonResponse({ action, ticketUpdatedAt: server.ticket.updatedAt }) :
+        jsonResponse({ error: { code: "ACTION_NOT_FOUND", message: "Action not found." } }, 404);
+    }
+    if (method === "POST" && url.pathname === "/api/tickets/501/actions" ||
+      method === "PATCH" && /^\/api\/tickets\/501\/actions\/801(?:\/status)?$/u.test(url.pathname)) {
+      const rawBody = String(init?.body);
+      const write = { url, init: init!, rawBody, body: JSON.parse(rawBody) as Record<string, unknown> };
+      writes.push(write);
+      return options.onMutation(write, writes.length, server);
+    }
+    return inheritedFetch(input, init);
+  }));
+  return { user: createOperator, server, writes, calls };
+}
+
+function recoveryResponse(action: ActionFixture, replayed = false, status = 200) {
+  return jsonResponse({ action, ticketUpdatedAt: createParentToken, replayed }, status);
+}
+function controlledRecoveryResponse(action: ActionFixture, replayed = true) {
+  let finish!: () => void;
+  const settled = new Promise<Response>((resolve) => { finish = () => resolve(recoveryResponse(action, replayed)); });
+  pending.push({ finish, settled });
+  return { finish, settled };
+}
+function assertNoRecoverySuccess(region: HTMLElement) {
+  expect(within(region).queryByText(/action (?:created|updated|saved) successfully/i)).not.toBeInTheDocument();
+}
+async function openRecoveryOperation(region: HTMLElement, operation: "EDIT" | "START" | "COMPLETE" | "CANCEL" | "REASSIGN") {
+  const names = { EDIT: "Edit Action", START: "Start Action", COMPLETE: "Complete Action", CANCEL: "Cancel Action", REASSIGN: "Reassign Action" };
+  await userEvent.click(within(actionRecord(region, unfinished)).getByRole("button", { name: new RegExp(`^${operation}$`, "i") }));
+  const dialog = await screen.findByRole("dialog", { name: names[operation] });
+  const submit = within(dialog).getByRole("button", { name: /^(?:Save changes|Save assignment|Start action|Confirm completion|Confirm cancellation)$/i });
+  if (operation === "EDIT") {
+    const description = await within(dialog).findByRole("textbox", { name: "Description" });
+    expect(description).toHaveValue(unfinished.description);
+    await userEvent.clear(description); await userEvent.type(description, recoveryDescription);
+  } else if (operation === "COMPLETE") {
+    await userEvent.type(await within(dialog).findByRole("textbox", { name: "Result" }), recoveryResult);
+  } else if (operation === "CANCEL") {
+    await userEvent.type(await within(dialog).findByRole("textbox", { name: "Cancellation reason" }), recoveryReason);
+  } else if (operation === "REASSIGN") {
+    await within(dialog).findByRole("option", { name: "Selected Replacement Worker" });
+  }
+  await waitFor(() => expect(within(dialog).queryByText(/loading action/i)).not.toBeInTheDocument());
+  if (operation !== "REASSIGN") expect(submit).toBeEnabled();
+  return { dialog, submit };
+}
+function readsAfterLastWrite(harness: ReturnType<typeof installRecoveryFetch>) {
+  const lastWrite = harness.calls.reduce((last, { method }, index) => method === "GET" ? last : index, -1);
+  return harness.calls.slice(lastWrite + 1).filter(({ method }) => method === "GET");
+}
+
+describe("Issue 45 focused recovery/validation — partial UI verification and RED", () => {
+  it("AC-14/36 T-14/36: lost CREATE retries identical input/key and refreshes beyond the operation-time replay", async () => {
+    const created = createdActionFixture({ description: recoveryDescription, assignee: { id: createOperator.id, name: createOperator.name } });
+    const later = { ...created, status: "IN_PROGRESS" as const, version: 2, updatedAt: "2026-10-09T09:13:00.000Z" };
+    const replay = controlledRecoveryResponse(created);
+    let simulatedCommits = 0;
+    const harness = installRecoveryFetch({ onMutation: async (_write, attempt, server) => {
+      if (attempt === 1) {
+        server.actions = [unfinished, created]; server.ticket = { ...server.ticket, updatedAt: createParentToken };
+        simulatedCommits += 1;
+        throw new TypeError("Simulated loss of an already committed create response");
+      }
+      return replay.settled;
+    } });
+    const region = await readyCreateRegion(harness.user);
+    const dialog = await openCreateDialog(region, harness.user);
+    await fillCreateDescription(dialog, `  ${recoveryDescription}  `);
+    await userEvent.click(createSubmit(dialog));
+    expect(await within(dialog).findByRole("alert")).not.toHaveTextContent(/^\s*$/);
+    expect(simulatedCommits).toBe(1); expect(harness.writes).toHaveLength(1);
+    expect(within(dialog).getByRole("textbox", { name: "Description" })).toHaveValue(`  ${recoveryDescription}  `);
+    expect(within(region).queryByText(created.description)).not.toBeInTheDocument(); assertNoRecoverySuccess(region);
+    // A replay DTO may be older than the current authoritative list; do not render it as the final state.
+    harness.server.actions = [unfinished, later]; harness.server.ticket = { ...harness.server.ticket, updatedAt: later.updatedAt };
+    await userEvent.click(within(dialog).getByRole("button", { name: /retry.*create/i }));
+    expect(harness.writes).toHaveLength(2);
+    expect(harness.writes[1]!.rawBody).toBe(harness.writes[0]!.rawBody);
+    expect(harness.writes[0]!.body).toMatchObject({ description: recoveryDescription, expectedTicketUpdatedAt: staffTicket.updatedAt, assigneeId: createOperator.id });
+    expect(harness.writes[0]!.body.clientMutationId).toMatch(/^[0-9a-f-]{36}$/i);
+    expect(harness.writes.every(({ init }) => init.credentials === "include" && new Headers(init.headers).get("X-CSRF-Token") === "action-ui-csrf")).toBe(true);
+    assertNoRecoverySuccess(region);
+    await act(async () => { replay.finish(); await replay.settled; });
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    await waitFor(() => expect(actionRecord(region, later)).toHaveTextContent("In Progress"));
+    expect(within(region).getAllByText(created.description)).toHaveLength(1);
+    expect(simulatedCommits).toBe(1); expect(harness.writes).toHaveLength(2);
+    expect(readsAfterLastWrite(harness).map(({ url }) => url.pathname)).toEqual(expect.arrayContaining(["/api/tickets/501/actions", "/api/staff/tickets/501"]));
+    expect(within(region).getAllByRole("status").filter((element) => /action created successfully/i.test(element.textContent ?? ""))).toHaveLength(1);
+  });
+
+  it.each(["EDIT", "START", "COMPLETE", "CANCEL"] as const)(
+    "AC-14/36 T-14/36: lost %s response retains exact PATCH/tokens/key on explicit unchanged retry",
+    async (operation) => {
+      const initial = operation === "START" ? { ...unfinished, status: "PLANNED" as const, version: 1, updatedAt: unfinished.createdAt } : unfinished;
+      const next = recoveryAction(operation), replay = controlledRecoveryResponse(next);
+      let simulatedCommits = 0;
+      const harness = installRecoveryFetch({ actions: [initial], onMutation: async (_write, attempt, server) => {
+        if (attempt === 1) {
+          server.actions = [next]; server.ticket = { ...server.ticket, updatedAt: createParentToken }; simulatedCommits += 1;
+          throw new TypeError("Simulated loss of an already committed operation response");
+        }
+        return replay.settled;
+      } });
+      const region = await readyCreateRegion(harness.user);
+      const { dialog, submit } = await openRecoveryOperation(region, operation);
+      await userEvent.click(submit);
+      expect(await within(dialog).findByRole("alert")).not.toHaveTextContent(/^\s*$/);
+      expect(simulatedCommits).toBe(1); expect(harness.writes).toHaveLength(1); assertNoRecoverySuccess(region);
+      if (operation === "EDIT") expect(within(dialog).getByRole("textbox", { name: "Description" })).toHaveValue(recoveryDescription);
+      if (operation === "COMPLETE") expect(within(dialog).getByRole("textbox", { name: "Result" })).toHaveValue(recoveryResult);
+      if (operation === "CANCEL") expect(within(dialog).getByRole("textbox", { name: "Cancellation reason" })).toHaveValue(recoveryReason);
+      // An ordinary enabled submit may be the explicit retry; no idle-dialog lock policy is invented here.
+      const retry = within(dialog).queryByRole("button", { name: /^retry(?:.*)?$/i }) ?? submit;
+      expect(retry).toBeEnabled(); await userEvent.click(retry);
+      expect(harness.writes).toHaveLength(2); expect(harness.writes[1]!.rawBody).toBe(harness.writes[0]!.rawBody);
+      assertMutationTokens(harness.writes[0]!, initial.version);
+      expect(harness.writes[0]!.url.pathname).toBe(operation === "EDIT" ? "/api/tickets/501/actions/801" : "/api/tickets/501/actions/801/status");
+      expect(harness.writes[0]!.body).toMatchObject(operation === "EDIT" ? { description: recoveryDescription } : operation === "START" ? { targetStatus: "IN_PROGRESS" } :
+        operation === "COMPLETE" ? { targetStatus: "COMPLETED", confirm: true, result: recoveryResult } : { targetStatus: "CANCELLED", confirm: true, reason: recoveryReason });
+      if (operation === "EDIT") expect(Object.keys(harness.writes[0]!.body).sort()).toEqual(["clientMutationId", "description", "expectedTicketUpdatedAt", "expectedVersion"]);
+      assertNoRecoverySuccess(region);
+      await act(async () => { replay.finish(); await replay.settled; });
+      await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+      expect(within(region).getAllByText(next.description)).toHaveLength(1);
+      const record = actionRecord(region, next);
+      if (operation === "COMPLETE") { expect(within(record).getByText(recoveryResult)).toBeInTheDocument(); expect(within(record).getByText(createOperator.name)).toBeInTheDocument(); }
+      if (operation === "CANCEL") expect(within(record).getByText(recoveryReason)).toBeInTheDocument();
+      if (operation === "START") expect(record).toHaveTextContent("In Progress");
+      expect(simulatedCommits).toBe(1); expect(harness.writes).toHaveLength(2);
+      expect(readsAfterLastWrite(harness).map(({ url }) => url.pathname)).toEqual(expect.arrayContaining(["/api/tickets/501/actions", "/api/staff/tickets/501"]));
+    },
+  );
+
+  it.each(["CREATE", "EDIT"] as const)("AC-05/34/36 T-05/34/36: server 400 on %s keeps literal draft and accessible description feedback", async (operation) => {
+    const harness = installRecoveryFetch({ onMutation: async () => jsonResponse({ error: {
+      code: "VALIDATION_ERROR", message: "Please review the supplied fields.", fields: { description: "Description needs review." },
+    } }, 400) });
+    const region = await readyCreateRegion(harness.user);
+    const dialog = operation === "CREATE" ? await openCreateDialog(region, harness.user) : (await openRecoveryOperation(region, "EDIT")).dialog;
+    if (operation === "CREATE") await fillCreateDescription(dialog, recoveryDescription);
+    await userEvent.click(operation === "CREATE" ? createSubmit(dialog) : within(dialog).getByRole("button", { name: "Save changes" }));
+    const field = within(dialog).getByRole("textbox", { name: "Description" });
+    await expectAccessibleFieldError(field);
+    expect(field).toHaveValue(recoveryDescription); expect(harness.writes).toHaveLength(1);
+    expect(await within(dialog).findByRole("alert")).not.toHaveTextContent(/^\s*$/);
+    expect(within(region).queryByText(recoveryDescription)).not.toBeInTheDocument(); assertNoRecoverySuccess(region);
+    expect(harness.server.actions).toEqual([unfinished]);
+  });
+
+  it.each(["description", "followUpNote"] as const)("AC-05/36 T-05/36: local invalid EDIT %s has accessible feedback and no write", async (name) => {
+    const harness = installRecoveryFetch({ onMutation: async () => { unexpectedRequests.push("Unexpected invalid-edit mutation"); return recoveryResponse(recoveryAction("EDIT")); } });
+    const region = await readyCreateRegion(harness.user);
+    const { dialog, submit } = await openRecoveryOperation(region, "EDIT");
+    const field = within(dialog).getByRole("textbox", { name: name === "description" ? "Description" : "Follow-up note" });
+    await userEvent.clear(field);
+    if (name === "description") await userEvent.type(field, "😀😀a"); // three code points, not five UTF-16 units
+    await userEvent.tab();
+    expect(submit).toBeDisabled();
+    expect(field).toHaveValue(name === "description" ? "😀😀a" : "");
+    expect(harness.writes).toHaveLength(0); assertNoRecoverySuccess(region);
+    // Exercise the actual change/blur interaction; do not dispatch an artificial form submit through a disabled button.
+    await expectAccessibleFieldError(field);
+  });
+
+  it("AC-15/36 T-15/36: STALE_WRITE retains a confirmed-clear draft, requires review, then deliberate fresh-token PATCH", async () => {
+    const latest = { ...unfinished, description: "Latest independently edited server description", followUpNote: "Latest independently recorded follow-up", version: 4, updatedAt: "2026-10-09T09:13:00.000Z" };
+    const next = { ...latest, description: recoveryDescription, followUpRequired: false, followUpNote: null, version: 5, updatedAt: "2026-10-09T09:14:00.000Z" };
+    const harness = installRecoveryFetch({ onMutation: async (_write, attempt, server) => {
+      if (attempt === 1) {
+        server.actions = [latest]; server.ticket = { ...server.ticket, updatedAt: latest.updatedAt };
+        return jsonResponse({ error: { code: "STALE_WRITE", message: "The Action changed. Refresh and review before resubmitting." } }, 409);
+      }
+      server.actions = [next]; server.ticket = { ...server.ticket, updatedAt: next.updatedAt };
+      return jsonResponse({ action: next, ticketUpdatedAt: next.updatedAt, replayed: false });
+    } });
+    const region = await readyCreateRegion(harness.user);
+    let { dialog, submit } = await openRecoveryOperation(region, "EDIT");
+    await userEvent.click(within(dialog).getByRole("checkbox", { name: "Follow-up required" }));
+    const confirmation = await screen.findByRole("dialog", { name: "Clear follow-up note?" });
+    await userEvent.click(within(confirmation).getByRole("button", { name: "Clear note" }));
+    dialog = screen.getByRole("dialog", { name: "Edit Action" }); submit = within(dialog).getByRole("button", { name: "Save changes" });
+    await userEvent.click(submit); await within(dialog).findByRole("alert");
+    expect(harness.writes).toHaveLength(1); expect(submit).toBeDisabled(); assertNoRecoverySuccess(region);
+    expect(within(dialog).getByRole("textbox", { name: "Description" })).toHaveValue(recoveryDescription);
+    expect(within(dialog).getByRole("checkbox", { name: "Follow-up required" })).not.toBeChecked();
+    await userEvent.click(submit); expect(harness.writes).toHaveLength(1);
+    await userEvent.click(within(dialog).getByRole("button", { name: /refresh.*action|refresh.*ticket/i }));
+    await waitFor(() => expect(within(dialog).queryByText(/loading action/i)).not.toBeInTheDocument());
+    expect(within(dialog).getByRole("textbox", { name: "Description" })).toHaveValue(recoveryDescription);
+    expect(within(dialog).getByRole("checkbox", { name: "Follow-up required" })).not.toBeChecked();
+    expect(harness.writes).toHaveLength(1);
+    expect(await within(dialog).findByText(latest.description)).toBeInTheDocument();
+    expect(within(dialog).getByText(latest.followUpNote!)).toBeInTheDocument();
+    // The latest snapshot is review context; it must not silently replace the draft or submit it.
+    expect(submit).toBeEnabled(); await userEvent.click(submit);
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    expect(harness.writes).toHaveLength(2);
+    expect(harness.writes[1]!.body).toEqual({ description: recoveryDescription, followUpRequired: false, followUpNote: null,
+      expectedVersion: 4, expectedTicketUpdatedAt: "2026-10-09T09:13:00.000Z", clientMutationId: expect.any(String) });
+    expect(harness.writes[1]!.body.clientMutationId).not.toBe(harness.writes[0]!.body.clientMutationId);
+    expect(within(actionRecord(region, next)).getByText("No follow-up required")).toBeInTheDocument();
+  });
+
+  it("AC-36 T-36 with AC-12/T-12: parent freezes while Complete is open; explicit refresh cannot re-enable writes", async () => {
+    const harness = installRecoveryFetch({ onMutation: async (_write, _attempt, server) => {
+      server.ticket = { ...server.ticket, currentStatus: "RESOLVED", updatedAt: createParentToken, allowedStatusTransitions: ["CLOSED", "REOPENED"] };
+      return jsonResponse({ error: { code: "TICKET_ACTIONS_LOCKED", message: "This Ticket no longer permits Action changes." } }, 409);
+    } });
+    const region = await readyCreateRegion(harness.user);
+    const { dialog, submit } = await openRecoveryOperation(region, "COMPLETE");
+    await userEvent.click(submit); await within(dialog).findByRole("alert");
+    expect(within(dialog).getByRole("textbox", { name: "Result" })).toHaveValue(recoveryResult);
+    expect(submit).toBeDisabled(); expect(harness.writes).toHaveLength(1); assertNoRecoverySuccess(region);
+    const beforeReads = harness.calls.filter(({ method }) => method === "GET").length;
+    await userEvent.click(within(dialog).getByRole("button", { name: /refresh.*action|refresh.*ticket|reload.*ticket/i }));
+    await waitFor(() => expect(harness.calls.filter(({ method }) => method === "GET").length).toBeGreaterThan(beforeReads));
+    await waitFor(() => expect(within(dialog).queryByText(/loading action/i)).not.toBeInTheDocument());
+    expect(submit).toBeDisabled();
+    await userEvent.click(submit); expect(harness.writes).toHaveLength(1); assertNoRecoverySuccess(region);
+    expect(harness.server.actions).toEqual([unfinished]);
+    // The frozen parent is a fixture response, not proof of #46's transition or resolution gate.
+  });
+
+  it("AC-07/36 T-07/36: rejected reassignment retains the chosen worker through explicit reload and deliberate reselection", async () => {
+    const next = { ...unfinished, assignee: { id: createOperator.id, name: createOperator.name }, version: 3, updatedAt: createParentToken };
+    const harness = installRecoveryFetch({ onMutation: async (_write, attempt, server) => {
+      if (attempt === 1) {
+        server.workers = server.workers.filter((worker) => worker.id !== 76);
+        return jsonResponse({ error: { code: "ASSIGNEE_INELIGIBLE", message: "Assignee eligibility changed. Reload and choose an eligible worker." } }, 409);
+      }
+      server.actions = [next]; server.ticket = { ...server.ticket, updatedAt: createParentToken };
+      return recoveryResponse(next);
+    } });
+    const region = await readyCreateRegion(harness.user);
+    const { dialog, submit } = await openRecoveryOperation(region, "REASSIGN");
+    const picker = within(dialog).getByRole("combobox", { name: "Assigned to" });
+    await userEvent.selectOptions(picker, "76"); await userEvent.click(submit); await within(dialog).findByRole("alert");
+    expect(picker).toHaveValue("76"); expect(harness.writes).toHaveLength(1); assertNoRecoverySuccess(region);
+    const before = harness.calls.filter(({ url }) => url.pathname === "/api/staff/assignees").length;
+    await userEvent.click(within(dialog).getByRole("button", { name: /(?:reload|refresh).*(?:assignees|workers)|^refresh action$/i }));
+    await waitFor(() => expect(harness.calls.filter(({ url }) => url.pathname === "/api/staff/assignees").length).toBeGreaterThan(before));
+    await waitFor(() => expect(within(dialog).queryByText(/loading action/i)).not.toBeInTheDocument());
+    // Loading can unmount the picker; query its live replacement instead of operating on a detached node.
+    const refreshedPicker = within(dialog).getByRole("combobox", { name: "Assigned to" });
+    expect(refreshedPicker).toHaveValue("76"); expect(harness.writes).toHaveLength(1);
+    expect(within(refreshedPicker).getByRole("option", { selected: true })).toHaveTextContent("Selected Replacement Worker");
+    expect(submit).toBeDisabled(); expect(harness.writes).toHaveLength(1);
+    await userEvent.selectOptions(refreshedPicker, String(createOperator.id)); expect(harness.writes).toHaveLength(1);
+    await userEvent.click(submit); await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    expect(harness.writes).toHaveLength(2); expect(harness.writes[1]!.body.assigneeId).toBe(createOperator.id);
+    expect(harness.writes[1]!.body.clientMutationId).not.toBe(harness.writes[0]!.body.clientMutationId);
+    expect(within(actionRecord(region, next)).getByText(createOperator.name)).toBeInTheDocument();
+  });
+
+  it.each(["CREATE", "EDIT"] as const)("AC-34/36 T-34/36: confirmed %s plus failed refresh reports saved, offers only read recovery", async (operation) => {
+    const next = operation === "CREATE" ? createdActionFixture({ description: recoveryDescription, assignee: { id: createOperator.id, name: createOperator.name } }) : recoveryAction("EDIT");
+    const harness = installRecoveryFetch({ onMutation: async (_write, _attempt, server) => {
+      server.actions = operation === "CREATE" ? [unfinished, next] : [next];
+      server.ticket = { ...server.ticket, updatedAt: createParentToken }; server.failRefresh = true;
+      return recoveryResponse(next, false, operation === "CREATE" ? 201 : 200);
+    } });
+    const region = await readyCreateRegion(harness.user);
+    const dialog = operation === "CREATE" ? await openCreateDialog(region, harness.user) : (await openRecoveryOperation(region, "EDIT")).dialog;
+    if (operation === "CREATE") await fillCreateDescription(dialog, recoveryDescription);
+    await userEvent.click(operation === "CREATE" ? createSubmit(dialog) : within(dialog).getByRole("button", { name: "Save changes" }));
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    const warning = await within(region).findByRole("alert");
+    expect(warning).toHaveTextContent(/saved|created|updated/i); expect(warning).toHaveTextContent(/refresh.*fail|fail.*refresh/i);
+    expect(harness.writes).toHaveLength(1);
+    expect(within(region).queryByRole("button", { name: /retry.*(?:create|edit|save|mutation)|^(?:save changes|create action)$/i })).not.toBeInTheDocument();
+    harness.server.failRefresh = false;
+    const recovery = within(warning).getByRole("button", { name: /reload.*ticket|refresh.*ticket/i });
+    await userEvent.click(recovery);
+    await waitFor(() => expect(within(region).queryByText(/refresh.*fail|fail.*refresh/i)).not.toBeInTheDocument());
+    expect(within(region).getAllByText(next.description)).toHaveLength(1); expect(harness.writes).toHaveLength(1);
+    const readPaths = readsAfterLastWrite(harness).map(({ url }) => url.pathname);
+    expect(readPaths.filter((path) => path === "/api/tickets/501/actions").length).toBeGreaterThanOrEqual(2);
+    expect(readPaths.filter((path) => path === "/api/staff/tickets/501").length).toBeGreaterThanOrEqual(2);
+    // Reopen to observe authoritative refreshed values without sending a second write.
+    const edit = within(actionRecord(region, next)).getByRole("button", { name: /^edit$/i });
+    await userEvent.click(edit);
+    const reopened = await screen.findByRole("dialog", { name: "Edit Action" });
+    expect(await within(reopened).findByRole("textbox", { name: "Description" })).toHaveValue(next.description);
+    expect(harness.writes).toHaveLength(1);
+    await userEvent.keyboard("{Escape}");
+  });
+});
