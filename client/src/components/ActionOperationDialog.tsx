@@ -45,6 +45,7 @@ export default function ActionOperationDialog({ ticketId, action, operation, tri
   const original = useRef<ActionDTO | null>(null);
   const touched = useRef(new Set<keyof Draft>());
   const workerNames = useRef(new Map<number, string>());
+  const returnFromClear = useRef(false);
   const command = useRef<{ identity: string; input: ActionTokens & ActionEditFields | ActionStatusInput } | null>(null);
   const [current, setCurrent] = useState<ActionDetailResponse | null>(null);
   const [draft, setDraft] = useState<Draft | null>(null);
@@ -103,11 +104,15 @@ export default function ActionOperationDialog({ ticketId, action, operation, tri
   }, [trigger]);
 
   useEffect(() => {
-    if (error && !busy) errorRef.current?.focus();
+    if (!clearing && returnFromClear.current) {
+      returnFromClear.current = false;
+      dialogRef.current?.querySelector<HTMLInputElement>('input[type="checkbox"]')?.focus();
+    } else if (error && !busy) errorRef.current?.focus();
     else if (!reading) dialogRef.current?.querySelector<HTMLElement>("textarea, select, button")?.focus();
   }, [reading, clearing, error, busy]);
 
-  function close() { if (!sending.current) { if (clearing) setClearing(false); else onClose(); } }
+  function dismissClear() { returnFromClear.current = true; setClearing(false); }
+  function close() { if (!sending.current) { if (clearing) dismissClear(); else onClose(); } }
   function keyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (event.key === "Escape") { event.preventDefault(); close(); }
     if (event.key !== "Tab") return;
@@ -235,8 +240,8 @@ export default function ActionOperationDialog({ ticketId, action, operation, tri
         <dt>Latest server follow-up note</dt><dd>{current.action.followUpNote ?? "Not recorded"}</dd>
         <dt>Latest Action version</dt><dd>{current.action.version}</dd></dl>
     </section>}
-    {clearing ? <div className="d-flex gap-2 justify-content-end"><button type="button" className="btn btn-outline-secondary" onClick={() => setClearing(false)}>Keep note</button>
-      <button type="button" className="btn btn-danger" onClick={() => { update({ followUpRequired: false, followUpNote: "" }); setClearing(false); }}>Clear note</button></div> :
+    {clearing ? <div className="d-flex gap-2 justify-content-end"><button type="button" className="btn btn-outline-secondary" onClick={dismissClear}>Keep note</button>
+      <button type="button" className="btn btn-danger" onClick={() => { update({ followUpRequired: false, followUpNote: "" }); dismissClear(); }}>Clear note</button></div> :
       <form noValidate onSubmit={(event) => void submit(event)}>
         {draft && !reading && <fieldset disabled={busy}>
           {operation === "edit" && <>{textarea("description", "Description", true)}{textarea("result", "Result")}{textarea("attachmentNotes", "Attachment Notes")}

@@ -99,6 +99,12 @@ export default function ActionHistoryDialog({ ticketId, actionId, trigger, onClo
     };
   }, [trigger]);
 
+  useEffect(() => {
+    // A disappearing Retry/loading control must not leave focus on the inert page.
+    const dialog = dialogRef.current;
+    if (dialog && !dialog.contains(document.activeElement)) dialog.focus();
+  }, [state]);
+
   function keyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (event.key === "Escape") { event.preventDefault(); onClose(); }
     if (event.key !== "Tab") return;
