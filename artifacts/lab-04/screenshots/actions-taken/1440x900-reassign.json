@@ -1,0 +1,27 @@
+{
+  "screenshot": "1440x900-reassign.png",
+  "date": "2026-10-10 12:51:30",
+  "timezone": "Asia/Bangkok",
+  "testedCommit": "5e77f1baaa2c8191f4a69d6ba67e93a6f5b9dbea",
+  "browser": "Chromium",
+  "browserVersion": "HeadlessChrome/153.0.8010.12",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "viewportMeaning": "Configured CSS viewport at 100% zoom",
+  "role": "IT_STAFF",
+  "screenState": "Reassign Action long content",
+  "zoomFactor": 1,
+  "zoomMethod": "unmodified browser zoom",
+  "syntheticDataOnly": true,
+  "visualInspection": "Inspected by assistant: contact sheet overview and representative full-size originals; no student/peer sign-off",
+  "inspectionDate": "2026-10-10 12:54:50",
+  "verifiedImplementationCommit": "edb378d07685b343bee729f1432894d1423cf793",
+  "executionSourceNote": "Captured at recorded testedCommit HEAD with the three uncommitted production corrections subsequently committed unchanged in verifiedImplementationCommit.",
+  "verifiedProductionBlobs": {
+    "client/src/components/ActionOperationDialog.tsx": "c0c4da3e9c6751953fcff3892130be926d6d197a",
+    "client/src/components/ActionHistoryDialog.tsx": "75c1d1b64c6461c81fe43507e0326c6e43d67534",
+    "client/src/lab2.css": "e785c2a51d9862d579520684ae0a63f3327a922a"
+  }
+}
