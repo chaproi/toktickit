@@ -32,6 +32,9 @@ import {
   type TicketStatus,
 } from "../api.js";
 
+import ActionsTaken from "./ActionsTaken.js";
+import type { AuthUser } from "../api.js";
+
 const SAFE_ERROR = "Something went wrong. Please try again.";
 const TERMINAL = new Set<TicketStatus>(["CLOSED", "CANCELLED"]);
 const OWNER_REQUIRED = new Set<TicketStatus>([
@@ -338,7 +341,7 @@ function StaffAttachments({ ticketId }: { ticketId: number }) {
   );
 }
 
-export default function StaffTicketDetail() {
+export default function StaffTicketDetail({ user }: { user: AuthUser }) {
   const { ticketId: parameter = "" } = useParams();
   const ticketId = Number(parameter);
   const [state, setState] = useState<"loading" | "success" | "error">("loading");
@@ -392,7 +395,7 @@ export default function StaffTicketDetail() {
     setFocusTarget(null);
   }, [dialog, focusTarget, state, ticket]);
 
-  const load = useCallback(async (signal?: AbortSignal): Promise<LoadOutcome> => {
+  const load = useCallback(async (signal?: AbortSignal, preserveAfterActionSave = false): Promise<LoadOutcome> => {
     setError("");
     setErrorKind(null);
     try {
@@ -413,6 +416,10 @@ export default function StaffTicketDetail() {
       return "success";
     } catch (caught) {
       if (caught instanceof DOMException && caught.name === "AbortError") return "aborted";
+      // A confirmed Action write remains successful if its subsequent refresh fails.
+      // Keep the page so ActionsTaken can show its saved DTO/warning and block more writes.
+      // Authentication/access failures still clear protected data through the ordinary flow.
+      if (preserveAfterActionSave && !(caught instanceof ApiRequestError && [401, 403, 404].includes(caught.status))) return "failure";
       const forbidden = caught instanceof ApiRequestError && caught.status === 403;
       const missing = caught instanceof ApiRequestError && caught.status === 404;
       authoritativeTicketRef.current = null;
@@ -569,6 +576,7 @@ export default function StaffTicketDetail() {
         </div></div>
       </div></section>
 
+      <ActionsTaken key={ticket.id} ticket={ticket} user={user} onTicketChanged={() => load(undefined, true)} />
       <StaffAttachments ticketId={ticket.id} />
       <Messages title="Public Comments" privateChannel={false} ticketId={ticket.id} initialResponse={publicComments} />
       <Messages title="Internal Notes" privateChannel ticketId={ticket.id} initialResponse={internalNotes} />

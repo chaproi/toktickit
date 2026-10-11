@@ -1,6 +1,6 @@
 # Sprint 4 API Contract
 
-Status: **Student decisions accepted; contract peer review approved; Issue #44 backend implementation evidenced; implementation peer review Pending.** Contract approval remains limited to reviewed HEAD `fec388a3c2ab63cabb1bf20f3fa913fb023d9241` ([review evidence](reviewer.md#completed-peer-review)). Current implementation evidence is pinned to `30bc657163ddc677f851c92f1054ae2340152f1b`; this documentation update has no peer approval. All 55 product scenario rows remain **Planned**, with executed backend coverage recorded separately in [tests](tests.md#5-issue-44-backend-evidence-and-current-traceability). Only the contract-review Product DoD item is checked; overall product/release readiness is incomplete.
+Status: **Student decisions accepted; contract peer review approved; Issue #44 backend reviewed and merged; Issue #45 Actions UI domain implemented and evidenced; Issue #45 implementation peer review Pending.** Contract approval remains limited to reviewed HEAD `fec388a3c2ab63cabb1bf20f3fa913fb023d9241` ([contract review](reviewer.md#completed-peer-review)). Backend approval and merge through PR #51 are recorded separately in [backend review](reviewer.md#6-issue-44-implementation-review-and-evidence). UI source evidence is pinned to `9e81523ea7f0aaab0cd00bab911dd8a04f20b4bb`, with browser execution provenance preserved in [UI evidence](tests.md#6-issue-45-ui-evidence-and-current-traceability). This documentation/publication step runs no application tests and has no new UI implementation peer approval. All 55 product scenario rows remain **Planned**; only the contract-review Product DoD item is checked, and overall product/release readiness is incomplete.
 
 ## 1. Compatibility, identity and safety
 
@@ -30,7 +30,7 @@ No action delete/reopen endpoint. Existing GET /api/staff/assignees supplies act
 
 ## 3. Fields and DTOs
 
-Student-accepted Action DTO (implemented in API-01–API-07; implementation review Pending):
+Student-accepted Action DTO (API-01–API-07 backend approved/merged through PR #51; UI consumer implementation review Pending):
 
 ```json
 {
@@ -172,8 +172,16 @@ Required planned paths: `server/tests/lab-04/actions-taken.api.test.ts`, `ticket
 
 ## 8. Implementation status and compatibility correction
 
-#44 implements API-01–API-07 in `server/src/app.ts` with Action read/create/patch/staff services, query parsers, explicit projections and receipt/recovery modules under `server/src/actions/`. Live-session/password/Origin/CSRF/role enforcement remains; authenticated data uses `Cache-Control: private, no-store`. See [source/test coverage](tests.md#coverage-and-responsibility). Implementation peer review is Pending. #46 owns section4 Ticket gates/cascade/D-20; #47/#48 own Dashboard aggregates and Ticket-list extensions. These remain contracts for future work, not implemented claims.
+#44 implements API-01–API-07 in `server/src/app.ts` with Action read/create/patch/staff services, query parsers, explicit projections and receipt/recovery modules under `server/src/actions/`. Live-session/password/Origin/CSRF/role enforcement remains; authenticated data uses `Cache-Control: private, no-store`. See [source/test coverage](tests.md#coverage-and-responsibility). Backend implementation was approved and merged through [PR #51](https://github.com/chaproi/toktickit/pull/51); [actual review evidence](reviewer.md#6-issue-44-implementation-review-and-evidence) is separate from Pending Issue #45 UI implementation review. #46 owns section4 Ticket gates/cascade/D-20; #47/#48 own Dashboard aggregates and Ticket-list extensions. These remain contracts for future work, not implemented claims.
 
 Catalog correction under accepted D-01/D-18: the earlier Lab4 row said `FORBIDDEN`, but inherited `authorizeRequest` in `server/src/auth/auth-router.ts` and committed Action tests/services use **ROLE_FORBIDDEN**. The row now preserves the exact role-denial code; no authorization policy/shared middleware changed. Origin/CSRF-specific codes remain distinct inherited values.
 
 The code-point correction applies to create, supplied PATCH/final merged text and lifecycle result/reason, preserving messages/null/presence/clearing rules. It does not change earlier-lab validators or D-20 Ticket reason rules. Receipt responses use safe id/name ActionDTO identities; ActionHistory retains full scalar-ID snapshots. Newly seeded receipts keep operation-time DTOs; reseeding never rewrites old receipts.
+
+## 9. Issue #45 client consumers and evidence
+
+[Client adapters](../../client/src/api.ts) consume API-01–API-07 with typed ActionDTO/history/assigned-row envelopes, credentialed abortable reads and inherited CSRF write handling. [ActionsTaken](../../client/src/components/ActionsTaken.tsx) is shared by public Requester and privileged Ticket detail. [Create dialog](../../client/src/components/ActionCreateDialog.tsx) sends only the eight API-04 fields; [operation dialog](../../client/src/components/ActionOperationDialog.tsx) uses API-05/06 tokens, confirmed explicit nulls and operation-appropriate fields. [History dialog](../../client/src/components/ActionHistoryDialog.tsx) renders the public API-03 complete scalar-ID snapshots, not current-user names substituted for historical IDs.
+
+[My Actions](../../client/src/components/MyActions.tsx) and [URL query validation](../../client/src/components/my-action-query.ts) consume API-07 only, preserving actor-derived assignment and all approved AND predicates. No client-authoritative aggregate, actor/performer timestamp, attachment relation or Ticket cascade is fabricated. An Action absent from the initial Ticket list page is retrieved through API-02 without changing pagination totals or duplicating the selected DOM record.
+
+Uncertain retries preserve identical payload/key/original tokens. STALE_WRITE requires explicit Action and parent refresh before a new intentional submission with fresh tokens/key; retained PATCH field intent is not inferred from differences against refreshed server content. Frozen-parent refresh cannot unlock writes; ineligible selection requires deliberate reselection. A confirmed mutation followed by failed read refresh offers read recovery, not mutation retry. These UI HTTP simulations are distinct from backend transaction evidence; [actual traceability](tests.md#6-issue-45-ui-evidence-and-current-traceability) records both real browser writes and simulation limitations. API-08/09, Dashboard rendering/equivalence and actual Ticket workflow remain #46–#48. UI implementation peer review is Pending; backend approval does not approve these consumers.
