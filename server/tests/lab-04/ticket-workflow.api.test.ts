@@ -442,3 +442,141 @@ describe("AC-21/T-21, AC-45/T-55: atomic cancellation/source-linked history", ()
     });
   });
 });
+
+// D-20: partial AC-43/T-53; conflict cases also contribute AC-18/T-18.
+// Existing validation semantics, not a new text/Unicode validation policy.
+const statusReasonCases = [
+  { label: "omitted", supplied: false, value: undefined, expected: null },
+  { label: "explicit null", supplied: true, value: null, expected: null },
+  { label: "empty string", supplied: true, value: "", expected: "" },
+  { label: "whitespace-only", supplied: true, value: " \t\r\n ", expected: "" },
+  { label: "one character", supplied: true, value: "A", expected: "A" },
+  { label: "four characters", supplied: true, value: "four", expected: "four" },
+  {
+    label: "padded literal text", supplied: true,
+    value: "  <script>alert('reason')</script> & retained literally  ",
+    expected: "<script>alert('reason')</script> & retained literally",
+  },
+  { label: "500 ASCII characters", supplied: true, value: "R".repeat(500), expected: "R".repeat(500) },
+] as const;
+
+async function reasonParent(withUnfinished = false) {
+  const parent = await fixtures.ticket(fixtures.who("requester").user.id, "OPEN");
+  // A legitimate historical null must stay null; no retrospective backfill.
+  await fixtures.prisma.ticketStatusHistory.create({ data: {
+    ticketId: parent.id, actorId: fixtures.who("coordinator").user.id,
+    fromStatus: "NEW", toStatus: "OPEN", reason: null,
+  } });
+  // Non-vacuous terminal/content/attribution/history/receipt preservation.
+  await actionFixture(parent.id, "COMPLETED", true);
+  await actionFixture(parent.id, "CANCELLED", true);
+  if (withUnfinished) await actionFixture(parent.id, "IN_PROGRESS", true);
+  return parent.id;
+}
+
+describe("D-20 AC-43/T-53: preserve validated non-cancellation reasons", () => {
+  const cases = roles.flatMap((role) => statusReasonCases.map((reasonCase) => ({ role, ...reasonCase })));
+
+  it.each(cases)("$role OPEN to RESOLVED preserves $label", async ({ role, supplied, value, expected }) => {
+    const ticketId = await reasonParent();
+    const { actor, input: defaults } = await otherwiseValid(ticketId, role, "RESOLVED");
+    const { reason: _defaultReason, ...tokensAndTransition } = defaults;
+    const input = { ...tokensAndTransition, ...(supplied ? { reason: value } : {}) };
+    expect(Object.hasOwn(input, "reason"), "Omitted case genuinely excludes the property").toBe(supplied);
+    const before = await state(ticketId);
+    expect(before.ticketHistory.some((event) => event.reason === null)).toBe(true);
+    expect(before.actions.every((action) => ["COMPLETED", "CANCELLED"].includes(action.status))).toBe(true);
+    expect(before.receipts.length).toBeGreaterThan(0);
+
+    const response = await mutation("patch", `/api/staff/tickets/${ticketId}/status`, actor, input);
+    expect(response.status).toBe(200);
+    const after = await state(ticketId);
+    expect(after.ticket.updatedAt.getTime()).toBeGreaterThan(before.ticket.updatedAt.getTime());
+    assertSafeEqual(after.ticket, {
+      ...before.ticket, currentStatus: "RESOLVED", updatedAt: after.ticket.updatedAt,
+    }, "Reason-bearing resolution changes only status and parent timestamp");
+    assertSafeEqual(response.body, { ticket: {
+      id: ticketId,
+      owner: { id: fixtures.who("coordinator").user.id, name: fixtures.who("coordinator").user.name, role: "IT_STAFF" },
+      requestedPriority: before.ticket.requestedPriority, itPriority: before.ticket.itPriority,
+      currentStatus: "RESOLVED",
+      requesterResolutionIndicatedAt: before.ticket.requesterResolutionIndicatedAt?.toISOString() ?? null,
+      updatedAt: after.ticket.updatedAt.toISOString(),
+    } }, "Reason preservation retains the exact inherited mutation DTO");
+    expect(after.ticketHistory).toHaveLength(before.ticketHistory.length + 1);
+    assertSafeEqual(after.ticketHistory.slice(0, -1), before.ticketHistory,
+      "Every earlier event and historical null remains byte-for-byte unchanged");
+    const event = after.ticketHistory.at(-1)!;
+    expect(event.createdAt.getTime()).toBeGreaterThanOrEqual(before.ticketHistory.at(-1)!.createdAt.getTime());
+    assertSafeEqual(event, {
+      id: event.id, ticketId, actorId: actor.user.id, fromStatus: "OPEN", toStatus: "RESOLVED",
+      createdAt: event.createdAt, reason: event.reason,
+    }, "One correctly attributed event; its reason is independently asserted below");
+    for (const key of ["actions", "actionHistory", "receipts"] as const) {
+      assertSafeEqual(after[key], before[key], `Reason-bearing transition preserves exact ${key}`);
+    }
+    // Soft assertions deliberately reach both stored and projected reason checks
+    // in RED, without accepting the service's current reason loss as correct.
+    expect.soft(event.reason, "Stored reason equals the explicit D-20 expected value").toBe(expected);
+
+    const detail = await request(app).get(`/api/staff/tickets/${ticketId}`).set("Cookie", actor.cookie);
+    expect(detail.status).toBe(200);
+    expect(detail.headers["content-type"]).toMatch(/application\/json/u);
+    const history = detail.body.statusHistory as Array<Record<string, unknown>>;
+    expect(Array.isArray(history)).toBe(true);
+    expect(history).toHaveLength(after.ticketHistory.length);
+    const projected = history.find((row) => row.id === event.id)!;
+    expect(projected).toBeDefined();
+    expect(Object.keys(projected).sort()).toEqual(["actor", "createdAt", "fromStatus", "id", "reason", "toStatus"]);
+    assertSafeEqual(projected.actor, { id: actor.user.id, name: actor.user.name, role },
+      "Inherited safe status-history actor projection");
+    assertSafeEqual({ ...projected, reason: null }, {
+      id: event.id, fromStatus: "OPEN", toStatus: "RESOLVED", reason: null,
+      createdAt: event.createdAt.toISOString(), actor: { id: actor.user.id, name: actor.user.name, role },
+    }, "Status-history projection retains only the inherited event fields");
+    const oldIds = new Set(before.ticketHistory.map((row) => row.id));
+    assertSafeEqual(history.filter((row) => oldIds.has(row.id as number)), before.ticketHistory.map((row) => ({
+      id: row.id, fromStatus: row.fromStatus, toStatus: row.toStatus, reason: row.reason,
+      createdAt: row.createdAt.toISOString(), actor: {
+        id: fixtures.who("coordinator").user.id, name: fixtures.who("coordinator").user.name, role: "IT_STAFF",
+      },
+    })), "GET preserves the earlier null reason without invented backfill");
+    expect.soft(projected.reason, "GET statusHistory exposes the exact literal D-20 reason").toBe(expected);
+  });
+
+  const invalidCases = roles.flatMap((role) => [
+    { role, label: "wrong-type", reason: 37 },
+    { role, label: "501 ASCII characters", reason: "R".repeat(501) },
+  ]);
+  it.each(invalidCases)("$role rejects $label reason without writes", async ({ role, reason }) => {
+    const ticketId = await reasonParent();
+    const { actor, input } = await otherwiseValid(ticketId, role, "RESOLVED");
+    const before = await state(ticketId);
+    const digest = await fixtures.domainDigest();
+    const response = await mutation("patch", `/api/staff/tickets/${ticketId}/status`, actor, { ...input, reason });
+    assertSafeError(response, 400, "VALIDATION_ERROR");
+    expect(Object.keys(response.body.error.fields)).toEqual(["reason"]);
+    expect(typeof response.body.error.fields.reason).toBe("string");
+    expect(response.body.error.fields.reason.length).toBeGreaterThan(0);
+    assertSafeEqual(await state(ticketId), before, "Invalid reason preserves parent/children/both histories/receipts exactly");
+    expect(await fixtures.domainDigest() === digest, "Invalid reason has no owned domain writes; digest withheld").toBe(true);
+  });
+
+  const conflicts = roles.flatMap((role) =>
+    (["stale", "unfinished"] as const).map((conflict) => ({ role, conflict })));
+  it.each(conflicts)("$role rejects reason-bearing $conflict resolution without history", async ({ role, conflict }) => {
+    const ticketId = await reasonParent(conflict === "unfinished");
+    const { actor, input } = await otherwiseValid(ticketId, role, "RESOLVED");
+    const before = await state(ticketId);
+    const digest = await fixtures.domainDigest();
+    const response = await mutation("patch", `/api/staff/tickets/${ticketId}/status`, actor, {
+      ...input, reason: "Keep this valid reason only if the transition commits.",
+      ...(conflict === "stale" ? {
+        expectedUpdatedAt: new Date(before.ticket.updatedAt.getTime() - 1).toISOString(),
+      } : {}),
+    });
+    assertSafeError(response, 409, conflict === "stale" ? "STALE_WRITE" : "ACTIONS_OUTSTANDING");
+    assertSafeEqual(await state(ticketId), before, "Rejected transition preserves exact parent/children/both histories/receipts");
+    expect(await fixtures.domainDigest() === digest, "Rejected reason-bearing transition has no owned writes; digest withheld").toBe(true);
+  });
+});
