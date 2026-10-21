@@ -1,4 +1,5 @@
-import { Prisma, type RequestedPriority, type TicketStatus, type UserRole } from "@prisma/client";
+import { Prisma, type Action, type RequestedPriority, type TicketStatus, type UserRole } from "@prisma/client";
+import { toActionSnapshot } from "../actions/action-projection.js";
 import { runSerializableMutation } from "../auth/eligibility-transaction.js";
 import { getPrisma } from "../prisma.js";
 import {
@@ -233,25 +234,57 @@ export async function changeStaffTicketStatus(
       });
       if (unfinishedAction) return { kind: "actions-outstanding" as const };
     }
+    // Action writers share this parent gate/row lock. Lock only unfinished
+    // children, in ID order, after the existing User and Ticket locks.
+    const cancelledActions = targetStatus === "CANCELLED"
+      ? await transaction.$queryRaw<Action[]>`
+          SELECT * FROM "Action"
+          WHERE "ticketId" = ${ticketId} AND "status" IN ('PLANNED', 'IN_PROGRESS')
+          ORDER BY "id" ASC FOR UPDATE`
+      : [];
+    const cancellationAt = targetStatus === "CANCELLED"
+      ? new Date(cancelledActions.reduce(
+          (latest, action) => Math.max(latest, action.updatedAt.getTime() + 1),
+          Math.max(Date.now(), ticket.updatedAt.getTime() + 1),
+        ))
+      : undefined;
     await transaction.ticket.update({
       where: { id: ticketId },
       data: {
         currentStatus: targetStatus,
+        ...(cancellationAt ? { updatedAt: cancellationAt } : {}),
         ...(targetStatus === "REOPENED" ? {
           requesterResolutionIndicatedAt: null,
           requesterResolutionIndicatedById: null,
         } : {}),
       },
     });
-    await transaction.ticketStatusHistory.create({
+    const statusEvent = await transaction.ticketStatusHistory.create({
       data: {
         ticketId,
         actorId,
         fromStatus: ticket.currentStatus,
         toStatus: targetStatus,
         reason: targetStatus === "CANCELLED" ? reason : null,
+        ...(cancellationAt ? { createdAt: cancellationAt } : {}),
       },
     });
+    for (const previous of cancelledActions) {
+      const cancelled = await transaction.action.update({
+        where: { id: previous.id },
+        data: {
+          status: "CANCELLED", version: { increment: 1 }, cancellationReason: reason,
+          updatedAt: cancellationAt, cancelledAt: cancellationAt,
+          performedById: null, completedAt: null,
+        },
+      });
+      await transaction.actionHistory.create({ data: {
+        actionId: cancelled.id, actorId, event: "ACTION_CANCELLED_BY_TICKET",
+        actionVersion: cancelled.version, createdAt: cancellationAt,
+        before: toActionSnapshot(previous), after: toActionSnapshot(cancelled),
+        sourceTicketStatusHistoryId: statusEvent.id,
+      } });
+    }
     return { kind: "success" as const, ticket: await mutationSummary(transaction, ticketId) };
   }, undefined, [
     ...userIds.map((id) => ({ scope: 1 as const, id })),
