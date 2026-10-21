@@ -1,0 +1,19 @@
+{
+  "testedCommit": "31333243042a21be29442de1e0dcd3a92e958356",
+  "date": "2026-10-10",
+  "timezone": "Asia/Bangkok",
+  "focusedCommand": "npm.cmd run test:e2e -- e2e/lab-04/actions-taken-flow.spec.ts e2e/lab-04/responsive.spec.ts e2e/lab-04/accessibility.spec.ts",
+  "runAfterFixtureTrim": { "collected": 10, "executed": 10, "passed": 6, "failed": 4, "exitCode": 1 },
+  "confirmedClientFindings": [
+    "Escape from follow-up clearing preserves the note but returns focus to Description instead of the triggering checkbox.",
+    "History Retry removal leaves focus outside the dialog, so Escape no longer reaches its handler.",
+    "At mobile width 390, a long Internal Note author expands the shared record grid: page scrollWidth 489. Actions text itself wraps, but the surrounding Ticket page overflows."
+  ],
+  "harnessFindings": [
+    "Initial repeated synthetic note text had trailing whitespace and failed Action_attachmentNotes_check (23514); fixed only new fixture text. No layout evidence was reached in that run.",
+    "One-shot browser read faults can be consumed by an obsolete development-mode read. The test now holds/fails matching reads until explicit release/retry.",
+    "Emulated viewport plus tab zoom produced blank captures. Native Chromium window plus compositor capture provides genuine zoom evidence.",
+    "The zoom control check originally hit-tested a deliberately disabled lifecycle submit. The fixture now supplies valid input before checking active control reachability."
+  ],
+  "scope": "Issue45 domain contribution only; no backend, contract or broad earlier-screen changes."
+}

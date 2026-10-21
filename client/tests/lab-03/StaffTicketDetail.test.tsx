@@ -41,6 +41,7 @@ describe("UI-06 Staff operational Ticket Detail", () => {
     });
     renderAt(`/staff/tickets/${detail.id}`);
     const attachments = await screen.findByRole("region", { name: "Attachments" });
+    await waitFor(() => expect(resolveInitial).toBeTypeOf("function"));
     expect(within(attachments).getByRole("status")).toHaveTextContent("Loading attachments…");
     expect(within(attachments).queryByText("No Attachments.")).not.toBeInTheDocument();
 

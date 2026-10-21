@@ -94,15 +94,15 @@ async function jsonRequest<T>(
 export async function checkHealth(): Promise<HealthStatus> {
   return jsonRequest<HealthStatus>("/api/health", {}, false, "Backend is unavailable");
 }
-export async function getCategories(): Promise<Category[]> {
-  const categories = await jsonRequest<unknown>("/api/categories", {}, false, "Unable to load categories");
+export async function getCategories(signal?: AbortSignal): Promise<Category[]> {
+  const categories = await jsonRequest<unknown>("/api/categories", signal ? { signal } : {}, false, "Unable to load categories");
   if (!Array.isArray(categories)) throw new ApiRequestError("Unable to load categories", 500, "SAFE_FAILURE");
   return categories as Category[];
 }
-export async function getRelatedSystems(): Promise<RelatedSystem[]> {
+export async function getRelatedSystems(signal?: AbortSignal): Promise<RelatedSystem[]> {
   const systems = await jsonRequest<unknown>(
     "/api/related-systems",
-    {},
+    signal ? { signal } : {},
     false,
     "Unable to load Related Systems",
   );
@@ -575,4 +575,94 @@ export async function indicateResolution(ticketId: number): Promise<{
     },
     true,
   );
+}
+
+
+export type ActionStatus = "PLANNED" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
+export interface ActionIdentity { id: number; name: string }
+export interface ActionDTO {
+  id: number; ticketId: number; actionAt: string; description: string; result: string | null;
+  createdBy: ActionIdentity; assignee: ActionIdentity; performedBy: ActionIdentity | null;
+  status: ActionStatus; followUpRequired: boolean; followUpNote: string | null;
+  attachmentNotes: string | null; cancellationReason: string | null;
+  createdAt: string; updatedAt: string; completedAt: string | null; cancelledAt: string | null; version: number;
+}
+export type ActionSnapshot = Omit<ActionDTO, "createdBy" | "assignee" | "performedBy"> & {
+  createdById: number; assigneeId: number; performedById: number | null;
+};
+export interface ActionHistoryDTO {
+  id: number; actionId: number; actor: ActionIdentity;
+  event: "ACTION_CREATED" | "ACTION_EDITED" | "ACTION_REASSIGNED" | "ACTION_STARTED" | "ACTION_COMPLETED" | "ACTION_CANCELLED" | "ACTION_CANCELLED_BY_TICKET";
+  createdAt: string; actionVersion: number; sourceTicketStatusHistoryId: number | null;
+  before: ActionSnapshot | null; after: ActionSnapshot;
+}
+export interface ActionReadQuery { page?: number; pageSize?: 20 | 50 | 100; status?: ActionStatus }
+export interface ActionListResponse { items: ActionDTO[]; pagination: TicketListPagination }
+export interface ActionDetailResponse { action: ActionDTO; ticketUpdatedAt: string }
+export interface StaffActionQuery extends Omit<StaffQueueQuery, "sortBy" | "sortOrder"> {
+  assignee: "me";
+  status?: ActionStatus;
+  actionStatusGroup?: "unfinished";
+  statusGroup?: "active" | "outstanding" | "resolved";
+  updatedFrom?: string; updatedBefore?: string;
+  resolvedFrom?: string; resolvedBefore?: string;
+}
+export interface StaffActionResponse {
+  items: Array<{ ticket: Pick<StaffQueueItem, "id" | "ticketNumber" | "summary" | "currentStatus">; action: ActionDTO }>;
+  pagination: TicketListPagination;
+}
+export async function getStaffActions(query: StaffActionQuery, signal?: AbortSignal): Promise<StaffActionResponse> {
+  const parameters = new URLSearchParams();
+  for (const [name, value] of Object.entries(query)) {
+    if (value !== undefined) parameters.set(name, String(value));
+  }
+  const result = await jsonRequest<StaffActionResponse>(`/api/staff/actions?${parameters}`, { signal });
+  if (!Array.isArray(result.items) || !result.pagination) throw new Error("Invalid assigned Actions response.");
+  return result;
+}
+export interface ActionMutationResponse extends ActionDetailResponse { replayed: boolean }
+export interface ActionTokens { expectedVersion: number; expectedTicketUpdatedAt: string; clientMutationId: string }
+export interface ActionEditFields {
+  description?: string; result?: string | null; assigneeId?: number;
+  followUpRequired?: boolean; followUpNote?: string | null; attachmentNotes?: string | null;
+}
+export interface ActionCreateInput {
+  description: string; result: string | null; assigneeId: number;
+  followUpRequired: boolean; followUpNote: string | null; attachmentNotes: string | null;
+  expectedTicketUpdatedAt: string; clientMutationId: string;
+}
+export type ActionStatusInput = ActionTokens & (
+  { targetStatus: "PLANNED" | "IN_PROGRESS" } |
+  { targetStatus: "COMPLETED"; confirm: true; result: string } |
+  { targetStatus: "CANCELLED"; confirm: true; reason: string }
+);
+
+export async function getTicketActions(ticketId: number, query: ActionReadQuery = {}, signal?: AbortSignal): Promise<ActionListResponse> {
+  const parameters = new URLSearchParams({ page: String(query.page ?? 1), pageSize: String(query.pageSize ?? 20) });
+  if (query.status) parameters.set("status", query.status);
+  const result = await jsonRequest<ActionListResponse>(`/api/tickets/${ticketId}/actions?${parameters}`, { signal });
+  if (!Array.isArray(result.items) || !result.pagination) throw new Error("Invalid Action list response.");
+  return result;
+}
+export function getTicketAction(ticketId: number, actionId: number, signal?: AbortSignal): Promise<ActionDetailResponse> {
+  return jsonRequest(`/api/tickets/${ticketId}/actions/${actionId}`, { signal });
+}
+export function getActionHistory(ticketId: number, actionId: number, query: Pick<ActionReadQuery, "page" | "pageSize"> = {}, signal?: AbortSignal): Promise<{ items: ActionHistoryDTO[]; pagination: TicketListPagination }> {
+  const parameters = new URLSearchParams({ page: String(query.page ?? 1), pageSize: String(query.pageSize ?? 20) });
+  return jsonRequest(`/api/tickets/${ticketId}/actions/${actionId}/history?${parameters}`, { signal });
+}
+export function editAction(ticketId: number, actionId: number, input: ActionTokens & ActionEditFields): Promise<ActionMutationResponse> {
+  return jsonRequest(`/api/tickets/${ticketId}/actions/${actionId}`, {
+    method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(input),
+  }, true);
+}
+export function createAction(ticketId: number, input: ActionCreateInput): Promise<ActionMutationResponse> {
+  return jsonRequest(`/api/tickets/${ticketId}/actions`, {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(input),
+  }, true);
+}
+export function changeActionStatus(ticketId: number, actionId: number, input: ActionStatusInput): Promise<ActionMutationResponse> {
+  return jsonRequest(`/api/tickets/${ticketId}/actions/${actionId}/status`, {
+    method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(input),
+  }, true);
 }

@@ -21,6 +21,7 @@ import ChangePassword from "./components/ChangePassword.js";
 import CreateTicket from "./components/CreateTicket.js";
 import Login from "./components/Login.js";
 import MyTickets from "./components/MyTickets.js";
+import MyActions from "./components/MyActions.js";
 import RequesterTicketDetail from "./components/RequesterTicketDetail.js";
 import StaffTicketQueue from "./components/StaffTicketQueue.js";
 import StaffTicketDetail from "./components/StaffTicketDetail.js";
@@ -116,8 +117,8 @@ function AppShell({
   const nav = user.role === "REQUESTER"
     ? [["/tickets", "My Tickets"], ["/tickets/new", "Create Ticket"]]
     : user.role === "IT_STAFF"
-      ? [["/staff/tickets", "Ticket Queue"]]
-      : [["/admin/users", "User Management"], ["/staff/tickets", "Ticket Queue"]];
+      ? [["/staff/tickets", "Ticket Queue"], ["/staff/actions", "My assigned Actions"]]
+      : [["/admin/users", "User Management"], ["/staff/tickets", "Ticket Queue"], ["/staff/actions", "My assigned Actions"]];
 
   async function handleLogout() {
     if (loggingOut) return;
@@ -229,8 +230,10 @@ function AuthenticatedRoutes() {
       setState("signed-out");
       navigate("/login", { replace: true });
     };
+    const refresh = () => { setUser(null); setState("loading"); setRetry((value) => value + 1); };
+    window.addEventListener("toktickit:auth-refresh", refresh);
     window.addEventListener("toktickit:auth-expired", expire);
-    return () => window.removeEventListener("toktickit:auth-expired", expire);
+    return () => { window.removeEventListener("toktickit:auth-expired", expire); window.removeEventListener("toktickit:auth-refresh", refresh); };
   }, [navigate]);
 
   function authenticated(response: AuthenticationResponse) {
@@ -328,7 +331,11 @@ function AuthenticatedRoutes() {
       />
       <Route
         path="/tickets/:ticketId"
-        element={user.role === "REQUESTER" ? shell(<RequesterTicketDetail />) : shell(<Forbidden user={user} />)}
+        element={user.role === "REQUESTER" ? shell(<RequesterTicketDetail user={user} />) : shell(<Forbidden user={user} />)}
+      />
+      <Route
+        path="/staff/actions"
+        element={user.role !== "REQUESTER" ? shell(<MyActions key={`${user.id}:${user.role}`} user={user} />) : shell(<Forbidden user={user} />)}
       />
       <Route
         path="/staff/tickets"
@@ -338,7 +345,7 @@ function AuthenticatedRoutes() {
       />
       <Route
         path="/staff/tickets/:ticketId"
-        element={user.role !== "REQUESTER" ? shell(<StaffTicketDetail key={location.pathname} />) : shell(<Forbidden user={user} />)}
+        element={user.role !== "REQUESTER" ? shell(<StaffTicketDetail key={location.pathname} user={user} />) : shell(<Forbidden user={user} />)}
       />
       <Route
         path="/admin/users"
