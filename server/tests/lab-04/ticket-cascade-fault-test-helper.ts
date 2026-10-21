@@ -58,15 +58,15 @@ export async function withLateCascadeFailure(
             IF EXISTS (
               SELECT 1 FROM ${schema}."ActionHistory" h
               JOIN ${schema}."Action" a ON a."id"=h."actionId"
-              JOIN (VALUES ${original}) old("id","version","updatedAt") ON old."id"=a."id"
+              JOIN (VALUES ${original}) original_state("id","version","updatedAt") ON original_state."id"=a."id"
               JOIN ${schema}."TicketStatusHistory" t ON t."id"=h."sourceTicketStatusHistoryId"
               WHERE h."actionId"<>NEW."actionId" AND a."ticketId"=${ticketId}
                 AND h."event"='ACTION_CANCELLED_BY_TICKET' AND h."actorId"=${actorId}
                 AND h."sourceTicketStatusHistoryId"=NEW."sourceTicketStatusHistoryId"
                 AND t."ticketId"=${ticketId} AND t."toStatus"='CANCELLED' AND t."actorId"=${actorId}
-                AND a."status"='CANCELLED' AND a."version"=old."version"+1
-                AND a."updatedAt">old."updatedAt" AND h."actionVersion"=a."version"
-                AND h."before"->>'version'=old."version"::text
+                AND a."status"='CANCELLED' AND a."version"=original_state."version"+1
+                AND a."updatedAt">original_state."updatedAt" AND h."actionVersion"=a."version"
+                AND h."before"->>'version'=original_state."version"::text
                 AND h."after"->>'version'=a."version"::text
             ) THEN PERFORM nextval(${regclass(proof)}); END IF;
             RAISE EXCEPTION 'Owned later cascade write failure' USING ERRCODE='P0001';
