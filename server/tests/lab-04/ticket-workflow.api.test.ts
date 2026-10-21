@@ -253,3 +253,192 @@ describe("AC-19/T-19: zero, cancelled and completed follow-up cohorts permit val
     }
   });
 });
+
+// Cancellation contribution: partial AC-21/T-21 and AC-45/T-55. The earlier
+// gate-only batch and helpers above are retained byte-for-byte as history.
+import { withLateCascadeFailure } from "./ticket-cascade-fault-test-helper.js";
+
+type CascadeAction = Awaited<ReturnType<typeof state>>["actions"][number];
+type CascadeCohort = "mixed-owned" | "mixed-unassigned" | "zero" | "terminal-only";
+const cancellationReason = "Cancel this Ticket: literal <script>text</script> retained for audit.";
+const cancellationInputReason = `  ${cancellationReason}  `;
+const cascadeCohorts: CascadeCohort[] = ["mixed-owned", "mixed-unassigned", "zero", "terminal-only"];
+
+// Independent full scalar-ID expectation; never import the production projector.
+function cascadeSnapshot(action: CascadeAction) {
+  return {
+    id: action.id, ticketId: action.ticketId, createdById: action.createdById,
+    assigneeId: action.assigneeId, performedById: action.performedById,
+    status: action.status, description: action.description, result: action.result,
+    followUpRequired: action.followUpRequired, followUpNote: action.followUpNote,
+    attachmentNotes: action.attachmentNotes, actionAt: action.actionAt.toISOString(),
+    createdAt: action.createdAt.toISOString(), updatedAt: action.updatedAt.toISOString(),
+    completedAt: action.completedAt?.toISOString() ?? null,
+    cancelledAt: action.cancelledAt?.toISOString() ?? null,
+    cancellationReason: action.cancellationReason, version: action.version,
+  };
+}
+
+async function cascadeParent(cohort: CascadeCohort) {
+  const parent = await fixtures.ticket(fixtures.who("requester").user.id, "OPEN");
+  if (cohort === "mixed-unassigned") {
+    // A genuinely nullable coordinator, not a fabricated cancellation owner.
+    await fixtures.prisma.ticket.update({ where: { id: parent.id }, data: { ownerId: null } });
+  }
+  await fixtures.prisma.ticketStatusHistory.create({ data: {
+    ticketId: parent.id, actorId: fixtures.who("coordinator").user.id,
+    fromStatus: "NEW", toStatus: "OPEN", reason: "Earlier retained Ticket handoff",
+  } });
+  if (cohort !== "zero") {
+    await actionFixture(parent.id, "COMPLETED", true);
+    await actionFixture(parent.id, "CANCELLED", true);
+  }
+  if (cohort === "mixed-owned" || cohort === "mixed-unassigned") {
+    for (const status of ["PLANNED", "IN_PROGRESS"] as const) {
+      const child = await actionFixture(parent.id, status, true);
+      const ticket = await fixtures.prisma.ticket.findUniqueOrThrow({ where: { id: parent.id } });
+      const response = await mutation("patch", `/api/tickets/${parent.id}/actions/${child.id}`,
+        fixtures.who("creator"), {
+          result: `Retained ${status} draft result: <script>literal</script>`,
+          expectedVersion: child.version, expectedTicketUpdatedAt: ticket.updatedAt.toISOString(),
+          clientMutationId: randomUUID(),
+        });
+      expect(response.status, "Real Action edit prepares retained draft content").toBe(200);
+    }
+  }
+  return parent.id;
+}
+
+async function cancellationCommand(ticketId: number, role: typeof roles[number]) {
+  const actor = fixtures.who(role);
+  const parent = await fixtures.prisma.ticket.findUniqueOrThrow({ where: { id: ticketId } });
+  expect(parent.currentStatus).toBe("OPEN");
+  const currentActor = await fixtures.prisma.user.findUniqueOrThrow({ where: { id: actor.user.id } });
+  expect(currentActor.role).toBe(role);
+  expect(currentActor.isActive && !currentActor.mustChangePassword).toBe(true);
+  expect(actor.user.id).not.toBe(fixtures.who("creator").user.id);
+  expect(actor.user.id).not.toBe(fixtures.who("assignee").user.id);
+  expect(actor.user.id).not.toBe(fixtures.who("completer").user.id);
+  return { actor, input: {
+    targetStatus: "CANCELLED", expectedUpdatedAt: parent.updatedAt.toISOString(),
+    confirm: true, reason: cancellationInputReason,
+  } };
+}
+
+describe("AC-21/T-21, AC-45/T-55: atomic cancellation/source-linked history", () => {
+  const cases = roles.flatMap((role) => cascadeCohorts.map((cohort) => ({ role, cohort })));
+
+  it.each(cases)("$role cancels $cohort; only unfinished children cascade", async ({ role, cohort }) => {
+    const ticketId = await cascadeParent(cohort);
+    const { actor, input } = await cancellationCommand(ticketId, role);
+    const before = await state(ticketId);
+    const affected = before.actions.filter((action) => unfinished.includes(action.status as typeof unfinished[number]));
+    expect(affected).toHaveLength(cohort.startsWith("mixed") ? 2 : 0);
+    expect(before.ticket.ownerId === null).toBe(cohort === "mixed-unassigned");
+    if (affected.length) {
+      expect(affected.map((action) => action.status).sort()).toEqual(["IN_PROGRESS", "PLANNED"]);
+      for (const action of affected) {
+        expect(action.result).toContain("draft result");
+        expect(action.followUpRequired).toBe(true);
+        expect(action.followUpNote).toBe(followUpNote);
+      }
+    }
+    const response = await mutation("patch", `/api/staff/tickets/${ticketId}/status`, actor, input);
+    expect(response.status).toBe(200);
+    const after = await state(ticketId);
+    expect(after.ticket.updatedAt.getTime()).toBeGreaterThan(before.ticket.updatedAt.getTime());
+    assertSafeEqual(after.ticket, {
+      ...before.ticket, currentStatus: "CANCELLED", updatedAt: after.ticket.updatedAt,
+    }, "Cancellation preserves every other parent field, including nullable ownership");
+    assertSafeEqual(response.body, { ticket: {
+      id: ticketId,
+      owner: before.ticket.ownerId === null ? null : {
+        id: fixtures.who("coordinator").user.id, name: fixtures.who("coordinator").user.name, role: "IT_STAFF",
+      },
+      requestedPriority: before.ticket.requestedPriority, itPriority: before.ticket.itPriority,
+      currentStatus: "CANCELLED",
+      requesterResolutionIndicatedAt: before.ticket.requesterResolutionIndicatedAt?.toISOString() ?? null,
+      updatedAt: after.ticket.updatedAt.toISOString(),
+    } }, "Exact inherited safe cancellation DTO");
+    expect(after.ticketHistory).toHaveLength(before.ticketHistory.length + 1);
+    assertSafeEqual(after.ticketHistory.slice(0, -1), before.ticketHistory, "Earlier Ticket events preserved");
+    const source = after.ticketHistory.at(-1)!;
+    expect(source.createdAt.getTime()).toBeGreaterThanOrEqual(before.ticketHistory.at(-1)!.createdAt.getTime());
+    assertSafeEqual(source, {
+      id: source.id, ticketId, actorId: actor.user.id,
+      fromStatus: "OPEN", toStatus: "CANCELLED", reason: cancellationReason, createdAt: source.createdAt,
+    }, "One real, correctly attributed same-Ticket source event with trimmed reason");
+
+    // Reach terminal/earlier-audit/receipt preservation even while cascade is RED.
+    const terminalIds = before.actions.filter((action) => !affected.some((row) => row.id === action.id)).map((row) => row.id);
+    assertSafeEqual(after.actions.filter((action) => terminalIds.includes(action.id)),
+      before.actions.filter((action) => terminalIds.includes(action.id)), "Terminal siblings retain attribution and every field");
+    assertSafeEqual(after.actionHistory.filter((event) => terminalIds.includes(event.actionId)),
+      before.actionHistory.filter((event) => terminalIds.includes(event.actionId)), "Terminal sibling history unchanged");
+    const oldIds = new Set(before.actionHistory.map((event) => event.id));
+    assertSafeEqual(after.actionHistory.filter((event) => oldIds.has(event.id)), before.actionHistory, "Every earlier Action event unchanged");
+    assertSafeEqual(after.receipts, before.receipts, "Existing receipts untouched; no invented Ticket mutation receipt");
+    expect(after.actions.map((action) => action.id)).toEqual(before.actions.map((action) => action.id));
+    expect.soft(after.actionHistory.length, "Exactly one new cascade event per unfinished child; none for zero/terminal-only cohorts")
+      .toBe(before.actionHistory.length + affected.length);
+    for (const previous of affected) {
+      const current = after.actions.find((action) => action.id === previous.id)!;
+      expect(current.status).toBe("CANCELLED");
+      expect(current.version).toBe(previous.version + 1);
+      expect(current.updatedAt.getTime()).toBeGreaterThan(previous.updatedAt.getTime());
+      expect(current.cancelledAt?.getTime()).toBe(current.updatedAt.getTime());
+      const expected = {
+        ...previous, status: "CANCELLED" as const, version: previous.version + 1,
+        updatedAt: current.updatedAt, cancelledAt: current.updatedAt,
+        cancellationReason, performedById: null, completedAt: null,
+      };
+      assertSafeEqual(current, expected, "Only cancellation lifecycle fields/version/time change; all content and identities retained");
+      const events = after.actionHistory.filter((event) => event.actionId === previous.id && !oldIds.has(event.id));
+      expect(events).toHaveLength(1);
+      const event = events[0];
+      assertSafeEqual(event, {
+        id: event.id, actionId: previous.id, actorId: actor.user.id,
+        event: "ACTION_CANCELLED_BY_TICKET", actionVersion: previous.version + 1,
+        createdAt: current.updatedAt, sourceTicketStatusHistoryId: source.id,
+        before: cascadeSnapshot(previous), after: cascadeSnapshot(expected),
+      }, "Exact independent full before/after snapshots and real same-Ticket source link");
+    }
+  });
+
+  it.each(roles)("%s stale cancellation preserves the entire mixed cohort", async (role) => {
+    const ticketId = await cascadeParent("mixed-owned");
+    const { actor, input } = await cancellationCommand(ticketId, role);
+    const before = await state(ticketId);
+    const digest = await fixtures.domainDigest();
+    const response = await mutation("patch", `/api/staff/tickets/${ticketId}/status`, actor, {
+      ...input, expectedUpdatedAt: new Date(before.ticket.updatedAt.getTime() - 1).toISOString(),
+    });
+    assertSafeEqual(await state(ticketId), before, "Stale cancellation preserves parent/children/both histories/receipts exactly");
+    expect(await fixtures.domainDigest() === digest, "All owned domain data preserved; digest withheld").toBe(true);
+    assertSafeError(response, 409, "STALE_WRITE");
+  });
+
+  it.each(roles)("%s later cascade failure rolls back earlier real writes", async (role) => {
+    const ticketId = await cascadeParent("mixed-owned");
+    const { actor, input } = await cancellationCommand(ticketId, role);
+    const before = await state(ticketId);
+    const affected = before.actions.filter((action) => ["PLANNED", "IN_PROGRESS"].includes(action.status));
+    expect(affected).toHaveLength(2);
+    const digest = await fixtures.domainDigest();
+    await withLateCascadeFailure(fixtures.prisma, ticketId, actor.user.id, affected, async (observe) => {
+      // Await the real HTTP transaction before independent pooled observations.
+      const response = await mutation("patch", `/api/staff/tickets/${ticketId}/status`, actor, input);
+      const observation = await observe();
+      expect.soft(observation.entries, "Late injection must reach the second owned cascade event").toBe(2);
+      expect.soft(observation.earlierWritesObserved,
+        "Rollback-surviving proof of an earlier changed Action/full history/real same-Ticket source").toBe(true);
+      const after = await state(ticketId);
+      for (const key of ["ticket", "actions", "ticketHistory", "actionHistory", "receipts"] as const) {
+        expect.soft(isDeepStrictEqual(after[key], before[key]),
+          `Late failure rolls back exact ${key}; values redacted`).toBe(true);
+      }
+      expect.soft(await fixtures.domainDigest() === digest, "All staged domain writes rolled back; digest withheld").toBe(true);
+      assertSafeError(response, 500, "INTERNAL_ERROR");
+    });
+  });
+});
