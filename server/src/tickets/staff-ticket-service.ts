@@ -226,6 +226,13 @@ export async function changeStaffTicketStatus(
         return { kind: "owner-eligibility" as const };
       }
     }
+    if (targetStatus === "RESOLVED" || targetStatus === "CLOSED") {
+      const unfinishedAction = await transaction.action.findFirst({
+        where: { ticketId, status: { in: ["PLANNED", "IN_PROGRESS"] } },
+        select: { id: true },
+      });
+      if (unfinishedAction) return { kind: "actions-outstanding" as const };
+    }
     await transaction.ticket.update({
       where: { id: ticketId },
       data: {

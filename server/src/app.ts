@@ -192,6 +192,7 @@ function sendStaffMutationResult(
     unchanged: ["STATUS_UNCHANGED", "The Ticket already has that status."],
     confirmation: ["STATUS_CONFIRMATION_REQUIRED", "Confirmation is required for this status."],
     "owner-required": ["STATUS_OWNER_REQUIRED", "Assign an active Ticket Owner first."],
+    "actions-outstanding": ["ACTIONS_OUTSTANDING", "Complete or cancel unfinished Actions before resolving or closing this Ticket."],
   };
   const [code, message] = conflicts[result.kind] ?? ["STATUS_TRANSITION_NOT_ALLOWED", "This status transition is not allowed."];
   sendConflict(res, code, message);
