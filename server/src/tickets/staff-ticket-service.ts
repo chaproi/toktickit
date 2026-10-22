@@ -265,7 +265,7 @@ export async function changeStaffTicketStatus(
         actorId,
         fromStatus: ticket.currentStatus,
         toStatus: targetStatus,
-        reason: targetStatus === "CANCELLED" ? reason : null,
+        reason,
         ...(cancellationAt ? { createdAt: cancellationAt } : {}),
       },
     });
