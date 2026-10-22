@@ -365,9 +365,15 @@ test("E2E-01 authenticates and restores a Requester session, creates an owned Ti
     page.getByText("Corporate Laptop", { exact: true }),
   ).toBeVisible();
   await expect(page.getByText(createdAttachmentFilename)).toBeVisible();
+  const actions = page.getByRole("region", { name: "Actions Taken", exact: true });
+  await expect(actions).toBeVisible();
+  await expect(actions).toHaveAttribute("aria-busy", "false");
+  await expect(actions.getByText("No Actions Taken yet.", { exact: true })).toBeVisible();
+  for (const mutationControl of ["Create Action", "Edit", "Reassign", "Start", "Complete", "Cancel"]) {
+    await expect(actions.getByRole("button", { name: mutationControl, exact: true })).toHaveCount(0);
+  }
   for (const prohibitedControl of [
     "Internal Notes",
-    "Actions Taken",
     "Claim Ticket",
     "Assign Ticket",
   ]) {
