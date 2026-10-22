@@ -338,3 +338,80 @@ describe("T-42 confirmed serialization retry boundaries", () => {
     });
   });
 });
+
+import {
+  WorkflowRaceFixtures, orderedWorkflowRace, assertActionMutation, assertTicketMutation,
+  type WorkflowOperation,
+} from "./workflow-race-test-helpers.js";
+
+// Partial T-16/AC-16, T-44/AC-21, T-55/AC-45: real shared-parent races.
+// Original concurrent commands and deliberate fresh-token follow-ups are
+// asserted separately. No claim about unexecuted close-operation combinations.
+describe("Ticket/Action workflow races on the shared parent gate", () => {
+  const workflow = new WorkflowRaceFixtures();
+  beforeAll(() => workflow.initialize());
+  afterAll(() => workflow.cleanup());
+  const operations = ["create", "start", "edit", "reassign", "complete"] as const;
+  const orders = ["ticket-first", "action-first"] as const;
+  const pairs: Array<{ target: "RESOLVED" | "CLOSED" | "CANCELLED"; operation: WorkflowOperation }> = [
+    ...operations.map((operation) => ({ target: "RESOLVED" as const, operation })),
+    { target: "CLOSED", operation: "create" },
+    ...operations.map((operation) => ({ target: "CANCELLED" as const, operation })),
+  ];
+  const cases = pairs.flatMap((pair) => orders.map((order) => ({ ...pair, order })));
+
+  it.each(cases)("$target versus $operation, $order: observed overlap and exact committed state", async ({ target, operation, order }) => {
+    const scenario = await workflow.setup(operation, target === "CLOSED");
+    const { before } = scenario;
+    expect(before.actions.filter((row) => row.status === "COMPLETED")).toHaveLength(1);
+    expect(before.actions.filter((row) => row.status === "CANCELLED")).toHaveLength(1);
+    if (target === "CLOSED") {
+      expect(before.ticket.currentStatus).toBe("RESOLVED");
+      expect(before.actions.every((row) => row.status === "COMPLETED" || row.status === "CANCELLED")).toBe(true);
+    }
+    const ticketRequest = { users: scenario.ticketUsers, call: () => workflow.transition(before, target) };
+    const actionRequest = { users: scenario.actionUsers, call: scenario.actionCall };
+    const race = await orderedWorkflowRace(before.ticket.id,
+      order === "ticket-first" ? ticketRequest : actionRequest,
+      order === "ticket-first" ? actionRequest : ticketRequest);
+    const ticketResponse = order === "ticket-first" ? race.first : race.second;
+    const actionResponse = order === "action-first" ? race.first : race.second;
+    const raced = await workflow.state(before.ticket.id);
+
+    if (target === "CLOSED" || order === "ticket-first" && (target === "CANCELLED" || operation === "create")) {
+      // Close/create is legally frozen in BOTH orders. Resolve/create and
+      // cancellation first win before any losing Action command can write.
+      assertSafeError(actionResponse, 409, "TICKET_ACTIONS_LOCKED");
+      assertTicketMutation(workflow, before, raced, ticketResponse, target);
+      expect(await workflow.prisma.mutationReceipt.count({ where: {
+        actorId: workflow.who("operator").user.id, clientMutationId: String(scenario.input.clientMutationId),
+      } }), "Losing Action command creates no receipt").toBe(0);
+      console.info(`Workflow race outcome: ${target}/${operation}/${order}; original Ticket=200; original Action=409 TICKET_ACTIONS_LOCKED; no fresh command.`);
+      return;
+    }
+
+    // All remaining branches commit the Action once. A resolution that held
+    // the gate first sees outstanding work; a later original Ticket command
+    // sees a stale parent token. Neither is an automatic request retry.
+    const expectedConflict = order === "ticket-first" ? "ACTIONS_OUTSTANDING" : "STALE_WRITE";
+    assertSafeError(ticketResponse, 409, expectedConflict);
+    const committedAction = assertActionMutation(workflow, scenario, raced, actionResponse);
+    const fresh = await workflow.transition(raced, target);
+    const afterFresh = await workflow.state(before.ticket.id);
+    const canFinish = target === "CANCELLED" || operation === "complete";
+    if (canFinish) {
+      assertTicketMutation(workflow, raced, afterFresh, fresh, target);
+      if (operation === "complete") {
+        assertSafeEqual(afterFresh.actions.find((row) => row.id === committedAction.id), committedAction,
+          "Completion preceding deliberate fresh cancellation/resolution retains actual performer, result, follow-up and all timestamps");
+      }
+    } else {
+      assertSafeError(fresh, 409, "ACTIONS_OUTSTANDING");
+      assertSafeEqual(afterFresh, raced, "Deliberate fresh-token resolution remains blocked with exact domain preservation");
+    }
+    expect(afterFresh.ticket.currentStatus === "RESOLVED" || afterFresh.ticket.currentStatus === "CLOSED"
+      ? afterFresh.actions.every((row) => row.status === "COMPLETED" || row.status === "CANCELLED") : true,
+    "No newly resolved/closed parent has unfinished children").toBe(true);
+    console.info(`Workflow race outcome: ${target}/${operation}/${order}; original Action=${actionResponse.status}; original Ticket=409 ${expectedConflict}; separate fresh-token Ticket=${canFinish ? "200" : "409 ACTIONS_OUTSTANDING"}.`);
+  });
+});
