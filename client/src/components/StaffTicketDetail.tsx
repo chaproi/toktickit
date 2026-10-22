@@ -19,6 +19,7 @@ import {
   getPublicComments,
   getStaffAssignees,
   getStaffTicketDetail,
+  getTicketActions,
   setStaffTicketOwner,
   setStaffTicketPriority,
   setStaffTicketStatus,
@@ -32,7 +33,7 @@ import {
   type TicketStatus,
 } from "../api.js";
 
-import ActionsTaken from "./ActionsTaken.js";
+import ActionsTaken, { type ActionsTakenHandle } from "./ActionsTaken.js";
 import type { AuthUser } from "../api.js";
 
 const SAFE_ERROR = "Something went wrong. Please try again.";
@@ -42,7 +43,13 @@ const OWNER_REQUIRED = new Set<TicketStatus>([
 ]);
 type LoadOutcome = "success" | "failure" | "aborted";
 type MutationOutcome = "success" | "conflict-reloaded" | "failure" | "reload-failure";
-type FocusTarget = "owner-trigger" | "status-trigger" | "heading" | "error-heading";
+type FocusTarget = "owner-trigger" | "status-trigger" | "heading" | "error-heading" | "actions";
+
+function statusReasonError(target: TicketStatus | "", value: string): string {
+  const length = value.trim().length; // Inherited Ticket UTF-16 length convention.
+  if (target === "CANCELLED" && length < 5) return "Cancellation reason must contain between 5 and 500 characters.";
+  return length > 500 ? "Reason must contain no more than 500 characters." : "";
+}
 
 function label(value: string): string {
   return value.toLowerCase().split("_").map((part) => `${part[0]?.toUpperCase()}${part.slice(1)}`).join(" ");
@@ -114,9 +121,9 @@ function Dialog({
     }
     if (event.key !== "Tab") return;
     const controls = Array.from(dialog.current?.querySelectorAll<HTMLElement>(
-      "button:not(:disabled), select:not(:disabled), textarea:not(:disabled), input:not(:disabled)",
+      "button:not(:disabled), select:not(:disabled), textarea:not(:disabled), input:not(:disabled), a[href]:not([aria-disabled='true'])",
     ) ?? []);
-    if (controls.length === 0) return;
+    if (controls.length === 0) { event.preventDefault(); dialog.current?.focus(); return; }
     const first = controls[0]!;
     const last = controls.at(-1)!;
     if (event.shiftKey && document.activeElement === first) {
@@ -127,7 +134,7 @@ function Dialog({
   }
   return (
     <div className="attachment-dialog-backdrop">
-      <div ref={dialog} className="attachment-dialog" role="dialog" aria-modal="true"
+      <div ref={dialog} className="attachment-dialog" role="dialog" aria-modal="true" tabIndex={-1} aria-busy={processing}
         aria-labelledby={titleId} aria-describedby={descriptionId} onKeyDown={keyDown}>
         <h2 id={titleId} className="h4">{title}</h2>
         <p id={descriptionId}>{description}</p>
@@ -361,6 +368,12 @@ export default function StaffTicketDetail({ user }: { user: AuthUser }) {
   const [dialog, setDialog] = useState<"owner" | "status" | null>(null);
   const [selectedOwner, setSelectedOwner] = useState("");
   const [reason, setReason] = useState("");
+  const [reasonError, setReasonError] = useState("");
+  const [statusNeedsRefresh, setStatusNeedsRefresh] = useState(false);
+  const [statusReview, setStatusReview] = useState<StaffTicket | null>(null);
+  const [blocker, setBlocker] = useState<{ state: "loading" | "ready" | "error"; count?: number } | null>(null);
+  const [savedRefreshWarning, setSavedRefreshWarning] = useState("");
+  const [statusSavedPending, setStatusSavedPending] = useState(false);
   const [focusTarget, setFocusTarget] = useState<FocusTarget | null>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const errorHeadingRef = useRef<HTMLHeadingElement>(null);
@@ -371,6 +384,14 @@ export default function StaffTicketDetail({ user }: { user: AuthUser }) {
   const dialogAlertRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const authoritativeTicketRef = useRef<StaffTicket | null>(null);
+  const authoritativeAssigneesRef = useRef<EligibleAssignee[]>([]);
+  const actionsRef = useRef<ActionsTakenHandle>(null);
+  const statusRead = useRef<AbortController | null>(null);
+  const mounted = useRef(true);
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; statusRead.current?.abort(); };
+  }, []);
 
   useEffect(() => {
     if (dialog) contentRef.current?.setAttribute("inert", "");
@@ -384,10 +405,11 @@ export default function StaffTicketDetail({ user }: { user: AuthUser }) {
 
   useEffect(() => {
     if (!focusTarget || dialog) return;
+    if (focusTarget === "actions") { actionsRef.current?.focus(); setFocusTarget(null); return; }
     const target = focusTarget === "owner-trigger"
       ? assignTriggerRef.current ?? headingRef.current
       : focusTarget === "status-trigger"
-        ? statusSelectRef.current ?? headingRef.current
+        ? statusSelectRef.current && !statusSelectRef.current.disabled ? statusSelectRef.current : headingRef.current
         : focusTarget === "error-heading"
           ? errorHeadingRef.current
           : headingRef.current;
@@ -395,7 +417,7 @@ export default function StaffTicketDetail({ user }: { user: AuthUser }) {
     setFocusTarget(null);
   }, [dialog, focusTarget, state, ticket]);
 
-  const load = useCallback(async (signal?: AbortSignal, preserveAfterActionSave = false): Promise<LoadOutcome> => {
+  const load = useCallback(async (signal?: AbortSignal, preserveAfterActionSave = false, preserveStatusDraft = false): Promise<LoadOutcome> => {
     setError("");
     setErrorKind(null);
     try {
@@ -405,17 +427,23 @@ export default function StaffTicketDetail({ user }: { user: AuthUser }) {
         getPublicComments(ticketId, 1, 20, signal).catch(() => null),
         getInternalNotes(ticketId, 1, 20, signal).catch(() => null),
       ]);
+      if (signal?.aborted || !mounted.current) return "aborted";
       authoritativeTicketRef.current = detail;
+      authoritativeAssigneesRef.current = available;
       setTicket(detail);
       setAssignees(available);
       setPublicComments(comments);
       setInternalNotes(notes);
       setPriority(detail.itPriority);
-      setNextStatus("");
+      if (!preserveStatusDraft) setNextStatus("");
       setState("success");
       return "success";
     } catch (caught) {
       if (caught instanceof DOMException && caught.name === "AbortError") return "aborted";
+      if (!mounted.current || signal?.aborted) return "aborted";
+      if (caught instanceof ApiRequestError && ["PASSWORD_CHANGE_REQUIRED", "ROLE_FORBIDDEN"].includes(caught.code ?? "")) {
+        window.dispatchEvent(new Event("toktickit:auth-refresh"));
+      }
       // A confirmed Action write remains successful if its subsequent refresh fails.
       // Keep the page so ActionsTaken can show its saved DTO/warning and block more writes.
       // Authentication/access failures still clear protected data through the ordinary flow.
@@ -443,7 +471,7 @@ export default function StaffTicketDetail({ user }: { user: AuthUser }) {
     success: string,
     errorTarget: "page" | "dialog" = "page",
   ): Promise<MutationOutcome> {
-    if (busy) return "failure";
+    if (busy || statusSavedPending) return "failure";
     setBusy(true); setError(""); setDialogError(""); setNotice("");
     try {
       await action();
@@ -474,6 +502,8 @@ export default function StaffTicketDetail({ user }: { user: AuthUser }) {
     setDialogError("");
     if (kind === "status") setNextStatus("");
     setReason("");
+    setReasonError(""); setStatusNeedsRefresh(false); setStatusReview(null); setBlocker(null);
+    statusRead.current?.abort();
     setFocusTarget(target);
   }
   function closeOwner() { if (!busy) closeDialog("owner", "owner-trigger"); }
@@ -501,12 +531,142 @@ export default function StaffTicketDetail({ user }: { user: AuthUser }) {
     closeDialog(kind, outcome === "reload-failure" ? "error-heading" : kind === "owner" ? "owner-trigger" : "heading");
   }
 
+  function clearStatusAccess(caught: unknown): boolean {
+    if (!(caught instanceof ApiRequestError) || ![401, 403, 404].includes(caught.status)) return false;
+    if (["PASSWORD_CHANGE_REQUIRED", "ROLE_FORBIDDEN"].includes(caught.code ?? "")) window.dispatchEvent(new Event("toktickit:auth-refresh"));
+    statusRead.current?.abort();
+    authoritativeTicketRef.current = null;
+    setTicket(null); setDialog(null); setReason(""); setStatusReview(null);
+    setBusy(false); setStatusSavedPending(false); setSavedRefreshWarning(""); setNotice("");
+    setErrorKind(caught.status === 403 ? "forbidden" : caught.status === 404 ? "missing" : "failure");
+    setError(caught.status === 403 ? "You do not have permission to view this Ticket." : caught.status === 404 ? "Ticket not found." : SAFE_ERROR);
+    setState("error");
+    return true;
+  }
+
+  async function readBlockers() {
+    statusRead.current?.abort();
+    const controller = new AbortController(); statusRead.current = controller;
+    setBlocker({ state: "loading" });
+    try {
+      const counts = await Promise.all((["PLANNED", "IN_PROGRESS"] as const).map(async (status) => {
+        const response = await getTicketActions(ticketId, { status, page: 1, pageSize: 20 }, controller.signal);
+        const total = response.pagination.totalItems;
+        if (!Number.isSafeInteger(total) || total < 0) throw new Error("Invalid Action count.");
+        return total;
+      }));
+      if (!controller.signal.aborted && mounted.current) setBlocker({ state: "ready", count: counts[0] + counts[1] });
+    } catch (caught) {
+      if (!controller.signal.aborted && mounted.current && !clearStatusAccess(caught)) setBlocker({ state: "error" });
+    }
+  }
+
+  function targetAvailable(current: StaffTicket, target: TicketStatus | "") {
+    return target !== "" && !TERMINAL.has(current.currentStatus) && current.allowedStatusTransitions.includes(target)
+      && (!OWNER_REQUIRED.has(target) || current.owner !== null && ["IT_STAFF", "ADMINISTRATOR"].includes(current.owner.role)
+        && authoritativeAssigneesRef.current.some(({ id }) => id === current.owner!.id));
+  }
+
+  async function refreshStatusContext() {
+    if (busy) return;
+    setBusy(true);
+    statusRead.current?.abort();
+    const controller = new AbortController(); statusRead.current = controller;
+    const outcome = await load(controller.signal, true, true);
+    if (!mounted.current || controller.signal.aborted) return;
+    const current = authoritativeTicketRef.current;
+    if (outcome === "success" && current) {
+      setStatusReview(current);
+      setStatusNeedsRefresh(false);
+      setDialogError(targetAvailable(current, nextStatus) ? "" : "This transition is no longer available. Review the latest Ticket and choose another target.");
+    } else setDialogError("The latest Ticket could not be refreshed. Your draft is retained; refresh before trying again.");
+    setBusy(false);
+  }
+
+  async function refreshSavedStatus() {
+    setBusy(true);
+    statusRead.current?.abort();
+    const controller = new AbortController(); statusRead.current = controller;
+    const reads = await Promise.allSettled([
+      load(controller.signal, true),
+      actionsRef.current?.refresh() ?? Promise.reject(new Error("Actions refresh is unavailable.")),
+    ]);
+    if (!mounted.current || controller.signal.aborted) return;
+    for (const result of reads) if (result.status === "rejected" && clearStatusAccess(result.reason)) return;
+    const failed = reads.some((result) => result.status === "rejected" || result.status === "fulfilled" && result.value === "failure");
+    setStatusSavedPending(failed);
+    setSavedRefreshWarning(failed ? "The Ticket status was saved, but refresh failed. Reload the Ticket before another change." : "");
+    setNotice(failed ? "" : "Status updated successfully.");
+    setBusy(false);
+  }
+
+  async function submitStatus(confirmed: boolean) {
+    if (busy || statusSavedPending || statusNeedsRefresh || !ticket || !targetAvailable(ticket, nextStatus)) return;
+    const fieldError = statusReasonError(nextStatus, reason);
+    setReasonError(fieldError);
+    if (fieldError || !nextStatus) return;
+    setBusy(true); setError(""); setDialogError(""); setNotice("");
+    try {
+      await setStaffTicketStatus(ticket.id, nextStatus, ticket.updatedAt, confirmed, reason.trim());
+    } catch (caught) {
+      if (!mounted.current || clearStatusAccess(caught)) return;
+      const message = caught instanceof ApiRequestError ? caught.message : SAFE_ERROR;
+      if (caught instanceof ApiRequestError && caught.fields?.reason) setReasonError(caught.fields.reason);
+      if (dialog === "status") setDialogError(message); else setError(message);
+      if (caught instanceof ApiRequestError && ["STALE_WRITE", "CONCURRENT_UPDATE", "TERMINAL_TICKET", "OWNER_ELIGIBILITY_CONFLICT", "STATUS_OWNER_REQUIRED", "STATUS_TRANSITION_NOT_ALLOWED"].includes(caught.code ?? "")) setStatusNeedsRefresh(true);
+      if (caught instanceof ApiRequestError && caught.code === "ACTIONS_OUTSTANDING") await readBlockers();
+      if (mounted.current) setBusy(false);
+      return;
+    }
+    if (!mounted.current) return;
+    // The mutation has succeeded. Subsequent failures permit reads only, never
+    // another submission of the completed operation using obsolete metadata.
+    setStatusSavedPending(true);
+    closeDialog("status", "heading");
+    await refreshSavedStatus();
+  }
+
+  function reasonField(cancelled: boolean) {
+    return <div className="mt-3">
+      <label className="form-label" htmlFor="ticket-status-reason">{cancelled ? "Cancellation reason" : "Reason (optional)"}</label>
+      <textarea id="ticket-status-reason" className="form-control" required={cancelled} disabled={busy}
+        value={reason} aria-invalid={Boolean(reasonError)} aria-describedby={reasonError ? "ticket-status-reason-error" : undefined}
+        onChange={(event) => { setReason(event.target.value); setReasonError(statusReasonError(nextStatus, event.target.value)); }}
+        onBlur={() => setReasonError(statusReasonError(nextStatus, reason))} />
+      {reasonError && <p id="ticket-status-reason-error" className="text-danger">{reasonError}</p>}
+    </div>;
+  }
+
+  function statusFeedback() {
+    return <>
+      {statusNeedsRefresh && <button type="button" className="btn btn-outline-success mt-2" disabled={busy} onClick={() => void refreshStatusContext()}>Refresh Ticket</button>}
+      {statusReview && <section aria-label="Latest Ticket context" className="border rounded p-3 my-3">
+        <h3 className="h5">Latest Ticket context</h3>
+        <p>Summary: {statusReview.summary}</p><p>Status: {label(statusReview.currentStatus)}</p>
+        <p>Owner: {statusReview.owner?.name ?? "Unassigned"}</p>
+        <p>Updated: <time dateTime={statusReview.updatedAt}>{date(statusReview.updatedAt)}</time></p>
+        <p>Your reason and selected target are retained for review. No request has been resubmitted.</p>
+      </section>}
+      {blocker && <div className="my-3">
+        {blocker.state === "loading" && <p role="status">Checking unfinished Actions...</p>}
+        {blocker.state === "ready" && <p>Latest reads show {blocker.count} unfinished Actions. These separate reads can change; the server rechecks every transition.</p>}
+        {blocker.state === "error" && <p>Unable to read the unfinished Action count. The total is unknown.</p>}
+        {blocker.state !== "loading" && <button type="button" className="btn btn-outline-success me-2" disabled={busy} onClick={() => void readBlockers()}>Refresh Action count</button>}
+        <a className="btn btn-outline-success" href={`#ticket-${ticketId}-actions`} aria-disabled={busy} tabIndex={busy ? -1 : 0} onClick={(event) => {
+          event.preventDefault(); if (!busy) closeDialog("status", "actions");
+        }}>View Actions Taken</a>
+      </div>}
+    </>;
+  }
+
   if (state === "loading") return <section><h1 className="h2">Loading Ticket Detail</h1><p role="status">Loading Ticket Detail…</p></section>;
   if (state === "error" || !ticket) return <section><h1 ref={errorHeadingRef} tabIndex={-1} className="h2">{errorKind === "forbidden" ? "Forbidden" : "Operational Ticket Detail"}</h1><div role="alert" className="alert alert-danger"><p>{error}</p>{errorKind === "failure" && <button type="button" className="btn btn-success" onClick={() => setRetry((value) => value + 1)}>Try Again</button>} <Link to="/staff/tickets" className="btn btn-outline-success">Back to Queue</Link></div></section>;
 
   const terminal = TERMINAL.has(ticket.currentStatus);
   const ownerMissing = nextStatus !== "" && OWNER_REQUIRED.has(nextStatus) && ticket.owner === null;
   const needsConfirmation = nextStatus === "RESOLVED" || nextStatus === "CLOSED" || nextStatus === "CANCELLED";
+  const writesBlocked = busy || statusSavedPending;
+  const statusBlocked = writesBlocked || statusNeedsRefresh || !targetAvailable(ticket, nextStatus) || Boolean(statusReasonError(nextStatus, reason));
   return (
     <section aria-labelledby="staff-ticket-heading">
       <div ref={contentRef}>
@@ -518,6 +678,9 @@ export default function StaffTicketDetail({ user }: { user: AuthUser }) {
       </div>
       {error && <div className="alert alert-warning" role="alert">{error}</div>}
       {notice && <div className="alert alert-success" role="status">{notice}</div>}
+      {savedRefreshWarning && <div className="alert alert-warning" role="alert">{savedRefreshWarning}{" "}
+        <button type="button" className="btn btn-outline-success" disabled={busy} onClick={() => void refreshSavedStatus()}>Reload Ticket</button>
+      </div>}
       {ticket.requesterResolutionIndicatedAt && <div className="alert alert-success"><span>Requester reports that the problem appears resolved</span> · <time dateTime={ticket.requesterResolutionIndicatedAt}>{date(ticket.requesterResolutionIndicatedAt)}</time></div>}
 
       <section className="card border-0 shadow-sm mb-4" aria-labelledby="reported-heading"><div className="card-body p-4">
@@ -536,9 +699,9 @@ export default function StaffTicketDetail({ user }: { user: AuthUser }) {
         <h2 id="operations-heading" className="h4">Operations</h2>
         <p>Owner: {ticket.owner?.name ?? "Unassigned"}</p>
         <p>Current Status: <span className={`badge ${badgeClass(ticket.currentStatus)}`}>{label(ticket.currentStatus)}</span></p>
-        {!terminal && ticket.owner === null && <button className="btn btn-success me-2" type="button" disabled={busy}
+        {!terminal && ticket.owner === null && <button className="btn btn-success me-2" type="button" disabled={writesBlocked}
           onClick={() => void claimCurrentTicket()}>{claiming ? "Claiming…" : "Claim Ticket"}</button>}
-        {!terminal && <button ref={assignTriggerRef} className="btn btn-outline-success" type="button" disabled={busy}
+        {!terminal && <button ref={assignTriggerRef} className="btn btn-outline-success" type="button" disabled={writesBlocked}
           onClick={() => {
             const mayUnassign = (["NEW", "OPEN", "REOPENED"] as TicketStatus[]).includes(ticket.currentStatus);
             setSelectedOwner(ticket.owner ? String(ticket.owner.id) : mayUnassign ? "" : String(assignees[0]?.id ?? ""));
@@ -548,18 +711,19 @@ export default function StaffTicketDetail({ user }: { user: AuthUser }) {
         <div className="row mt-4 g-3"><div className="col-md-6">
           <label className="form-label" htmlFor="it-priority">IT Priority</label>
           <p><span className={`badge ${badgeClass(ticket.itPriority)}`}>IT {label(ticket.itPriority)}</span></p>
-          <select id="it-priority" className="form-select" disabled={terminal || busy} value={priority}
+          <select id="it-priority" className="form-select" disabled={terminal || writesBlocked} value={priority}
             onChange={(event) => setPriority(event.target.value as RequestedPriority)}>
             {(["LOW", "MEDIUM", "HIGH", "URGENT"] as RequestedPriority[]).map((value) => <option key={value} value={value}>{label(value)}</option>)}
           </select>
-          <button className="btn btn-success mt-2" type="button" disabled={terminal || busy || priority === ticket.itPriority}
+          <button className="btn btn-success mt-2" type="button" disabled={terminal || writesBlocked || priority === ticket.itPriority}
             onClick={() => void directMutation(() => setStaffTicketPriority(ticket.id, priority, ticket.updatedAt), "IT Priority updated successfully.")}>Save IT Priority</button>
         </div><div className="col-md-6">
           <label className="form-label" htmlFor="next-status">Next status</label>
-          <select ref={statusSelectRef} id="next-status" className="form-select" disabled={terminal || busy} value={nextStatus}
+          <select ref={statusSelectRef} id="next-status" className="form-select" disabled={terminal || writesBlocked} value={nextStatus}
             onChange={(event) => {
               const value = event.target.value as TicketStatus | "";
               setNextStatus(value);
+              setReasonError(statusReasonError(value, reason)); setStatusReview(null); setBlocker(null);
               if (["RESOLVED", "CLOSED", "CANCELLED"].includes(value) &&
                 !(value !== "" && OWNER_REQUIRED.has(value) && ticket.owner === null)) {
                 setDialogError("");
@@ -571,19 +735,21 @@ export default function StaffTicketDetail({ user }: { user: AuthUser }) {
           </select>
           {terminal && <p className="form-text">No further status changes are available.</p>}
           {ownerMissing && <p className="form-text">Assign an active Ticket Owner first.</p>}
-          <button className="btn btn-success mt-2" type="button" disabled={!nextStatus || needsConfirmation || busy || ownerMissing}
-            onClick={() => nextStatus && void directMutation(() => setStaffTicketStatus(ticket.id, nextStatus, ticket.updatedAt), "Status updated successfully.")}>Update Status</button>
+          {nextStatus && !needsConfirmation && reasonField(false)}
+          {!needsConfirmation && statusFeedback()}
+          <button className="btn btn-success mt-2" type="button" disabled={needsConfirmation || statusBlocked || ownerMissing}
+            onClick={() => void submitStatus(false)}>Update Status</button>
         </div></div>
       </div></section>
 
-      <ActionsTaken key={ticket.id} ticket={ticket} user={user} onTicketChanged={() => load(undefined, true)} />
+      <ActionsTaken ref={actionsRef} key={ticket.id} ticket={ticket} user={user} readOnly={statusSavedPending} onTicketChanged={() => load(undefined, true)} />
       <StaffAttachments ticketId={ticket.id} />
       <Messages title="Public Comments" privateChannel={false} ticketId={ticket.id} initialResponse={publicComments} />
       <Messages title="Internal Notes" privateChannel ticketId={ticket.id} initialResponse={internalNotes} />
       <section className="card border-0 shadow-sm mb-4" aria-labelledby="history-heading"><div className="card-body p-4">
         <h2 id="history-heading" className="h4">Status History</h2>
         {ticket.statusHistory.length === 0 ? <p>No status changes yet.</p> : <ol>{ticket.statusHistory.map((entry) => <li key={entry.id}>
-          <strong>{label(entry.fromStatus)} to {label(entry.toStatus)}</strong> by {entry.actor.name} on {date(entry.createdAt)}{entry.reason ? ` — ${entry.reason}` : ""}
+          <strong>{label(entry.fromStatus)} to {label(entry.toStatus)}</strong> by {entry.actor.name} on {date(entry.createdAt)} — {entry.reason || "No reason provided"}
         </li>)}</ol>}
       </div></section>
       </div>
@@ -603,14 +769,12 @@ export default function StaffTicketDetail({ user }: { user: AuthUser }) {
       </Dialog>}
 
       {dialog === "status" && nextStatus && <Dialog title={nextStatus === "CANCELLED" ? "Cancel Ticket" : `${label(nextStatus)} Ticket`}
-        description="Confirm this formal Ticket status change." initialFocus={statusCancelRef} processing={busy} onClose={closeStatus}>
+        description={nextStatus === "CANCELLED" ? "Confirm this formal Ticket status change. Unfinished Actions will also be cancelled with the same reason." : "Confirm this formal Ticket status change."} initialFocus={statusCancelRef} processing={busy} onClose={closeStatus}>
         {dialogError && <div ref={dialogAlertRef} tabIndex={-1} className="alert alert-danger" role="alert">{dialogError}</div>}
-        {nextStatus === "CANCELLED" && <><label className="form-label" htmlFor="cancellation-reason">Cancellation reason</label>
-          <textarea id="cancellation-reason" className="form-control" required minLength={5} maxLength={500} value={reason} onChange={(event) => setReason(event.target.value)} /></>}
+        {reasonField(nextStatus === "CANCELLED")}
+        {statusFeedback()}
         <div className="d-flex justify-content-end gap-2 mt-3"><button ref={statusCancelRef} className="btn btn-outline-secondary" type="button" disabled={busy} onClick={closeStatus}>Cancel</button>
-          <button className="btn btn-success" type="button" disabled={busy || (nextStatus === "CANCELLED" && reason.trim().length < 5)} onClick={() => void submitDialog("status",
-            () => setStaffTicketStatus(ticket.id, nextStatus, ticket.updatedAt, true, nextStatus === "CANCELLED" ? reason.trim() : null), "Status updated successfully.",
-          )}>{nextStatus === "CANCELLED" ? "Confirm cancellation" : `Confirm ${label(nextStatus).toLowerCase()}`}</button></div>
+          <button className="btn btn-success" type="button" disabled={statusBlocked} onClick={() => void submitStatus(true)}>{nextStatus === "CANCELLED" ? "Confirm cancellation" : `Confirm ${label(nextStatus).toLowerCase()}`}</button></div>
       </Dialog>}
     </section>
   );
