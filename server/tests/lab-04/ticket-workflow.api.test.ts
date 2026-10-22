@@ -580,3 +580,221 @@ describe("D-20 AC-43/T-53: preserve validated non-cancellation reasons", () => {
     expect(await fixtures.domainDigest() === digest, "Rejected reason-bearing transition has no owned writes; digest withheld").toBe(true);
   });
 });
+
+// AC-17/T-17: independent contract table, deliberately not production helpers.
+const edgeStates = [
+  "NEW", "OPEN", "IN_PROGRESS", "WAITING_FOR_REQUESTER",
+  "RESOLVED", "CLOSED", "REOPENED", "CANCELLED",
+] as const;
+type EdgeState = typeof edgeStates[number];
+const approvedEdges: Record<EdgeState, readonly EdgeState[]> = {
+  NEW: ["OPEN", "CANCELLED"],
+  OPEN: ["IN_PROGRESS", "WAITING_FOR_REQUESTER", "RESOLVED", "CANCELLED"],
+  IN_PROGRESS: ["WAITING_FOR_REQUESTER", "RESOLVED", "CANCELLED"],
+  WAITING_FOR_REQUESTER: ["IN_PROGRESS", "RESOLVED", "CANCELLED"],
+  RESOLVED: ["CLOSED", "REOPENED"],
+  REOPENED: ["IN_PROGRESS", "WAITING_FOR_REQUESTER", "RESOLVED", "CANCELLED"],
+  CLOSED: [], CANCELLED: [],
+};
+const sourceHistoryPaths: Record<EdgeState, readonly EdgeState[]> = {
+  NEW: ["NEW"], OPEN: ["NEW", "OPEN"], IN_PROGRESS: ["NEW", "OPEN", "IN_PROGRESS"],
+  WAITING_FOR_REQUESTER: ["NEW", "OPEN", "IN_PROGRESS", "WAITING_FOR_REQUESTER"],
+  RESOLVED: ["NEW", "OPEN", "RESOLVED"], CLOSED: ["NEW", "OPEN", "RESOLVED", "CLOSED"],
+  REOPENED: ["NEW", "OPEN", "RESOLVED", "REOPENED"], CANCELLED: ["NEW", "OPEN", "CANCELLED"],
+};
+const edgeReason = "Approved transition reason: <script>literal</script>.";
+
+async function constructedWorkflowSource(source: EdgeState) {
+  // Explicitly constructed source state and historical rows, not an HTTP proof
+  // of a complete end-to-end path. Each matrix request has its own fresh Ticket.
+  const parent = await fixtures.ticket(fixtures.who("requester").user.id, source);
+  const path = sourceHistoryPaths[source];
+  if (path.length > 1) await fixtures.prisma.ticketStatusHistory.createMany({ data: path.slice(1).map((target, index) => ({
+    ticketId: parent.id, actorId: fixtures.who("coordinator").user.id,
+    fromStatus: path[index], toStatus: target,
+    reason: target === "CANCELLED" ? "Retained historical cancellation" : index === 0 ? null : "Retained historical transition",
+    createdAt: new Date(Date.UTC(2026, 9, 4, 2, 0, index)),
+  })) });
+  if (source === "RESOLVED") await fixtures.prisma.ticket.update({
+    where: { id: parent.id }, data: {
+      requesterResolutionIndicatedAt: new Date("2026-10-04T02:30:00.000Z"),
+      requesterResolutionIndicatedById: fixtures.who("requester").user.id,
+    },
+  });
+  return parent.id;
+}
+
+async function otherWorkflowDomain(ticketId: number) {
+  const ids = fixtures.ticketIds.filter((id) => id !== ticketId);
+  const where = { ticketId: { in: ids } };
+  const [tickets, actions, ticketHistory, actionHistory, receipts] = await Promise.all([
+    fixtures.prisma.ticket.findMany({ where: { id: { in: ids } }, orderBy: { id: "asc" } }),
+    fixtures.prisma.action.findMany({ where, orderBy: { id: "asc" } }),
+    fixtures.prisma.ticketStatusHistory.findMany({ where, orderBy: { id: "asc" } }),
+    fixtures.prisma.actionHistory.findMany({ where: { action: where }, orderBy: { id: "asc" } }),
+    fixtures.prisma.mutationReceipt.findMany({ where, orderBy: { id: "asc" } }),
+  ]);
+  return { tickets, actions, ticketHistory, actionHistory, receipts };
+}
+
+function edgeInput(parent: Awaited<ReturnType<typeof state>>["ticket"], targetStatus: EdgeState) {
+  return { targetStatus, expectedUpdatedAt: parent.updatedAt.toISOString(), confirm: true, reason: `  ${edgeReason}  ` };
+}
+
+describe("AC-17/T-17 complete role/status matrix; D-20 reasons; AC-20/T-20 paired reopening", () => {
+  const cases = roles.flatMap((role) => edgeStates.flatMap((source) => edgeStates.map((target) => ({ role, source, target }))));
+
+  beforeAll(async () => {
+    // An owned, non-vacuous unrelated cohort, independent of earlier test runs.
+    await cascadeParent("mixed-owned");
+  });
+
+  it.each(cases)("$role matrix $source -> $target", async ({ role, source, target }) => {
+    const ticketId = await constructedWorkflowSource(source);
+    const actor = fixtures.who(role);
+    const before = await state(ticketId);
+    const unrelated = await otherWorkflowDomain(ticketId);
+    expect(unrelated.actions.length).toBeGreaterThan(0);
+    expect(unrelated.actionHistory.length).toBeGreaterThan(0);
+    expect(unrelated.receipts.length).toBeGreaterThan(0);
+    const digest = await fixtures.domainDigest();
+    const response = await mutation("patch", `/api/staff/tickets/${ticketId}/status`, actor, edgeInput(before.ticket, target));
+    const after = await state(ticketId);
+    assertSafeEqual(await otherWorkflowDomain(ticketId), unrelated, "Every unrelated Ticket/Action/audit/receipt row remains unchanged");
+    const terminal = source === "CLOSED" || source === "CANCELLED";
+    const allowed = approvedEdges[source].includes(target);
+    if (!allowed) {
+      assertSafeEqual(after, before, "Rejected edge preserves exact parent/children/both histories/receipts");
+      expect(await fixtures.domainDigest() === digest, "No rejected-edge domain writes; digest withheld").toBe(true);
+      const code = terminal ? "TERMINAL_TICKET" : source === target ? "STATUS_UNCHANGED" : "STATUS_TRANSITION_NOT_ALLOWED";
+      assertSafeError(response, 409, code);
+      return;
+    }
+    expect(response.status).toBe(200);
+    expect(response.headers["content-type"]).toMatch(/application\/json/u);
+    expect(after.ticket.updatedAt.getTime()).toBeGreaterThan(before.ticket.updatedAt.getTime());
+    const indication = target === "REOPENED" ? {
+      requesterResolutionIndicatedAt: null, requesterResolutionIndicatedById: null,
+    } : {};
+    if (source === "RESOLVED") {
+      expect(before.ticket.requesterResolutionIndicatedAt).not.toBeNull();
+      expect(before.ticket.requesterResolutionIndicatedById).toBe(fixtures.who("requester").user.id);
+    }
+    assertSafeEqual(after.ticket, {
+      ...before.ticket, currentStatus: target, updatedAt: after.ticket.updatedAt, ...indication,
+    }, "Allowed edge changes only status/time and the paired indication fields on REOPENED");
+    assertSafeEqual(response.body, { ticket: {
+      id: ticketId,
+      owner: { id: fixtures.who("coordinator").user.id, name: fixtures.who("coordinator").user.name, role: "IT_STAFF" },
+      requestedPriority: before.ticket.requestedPriority, itPriority: before.ticket.itPriority,
+      currentStatus: target, updatedAt: after.ticket.updatedAt.toISOString(),
+      requesterResolutionIndicatedAt: after.ticket.requesterResolutionIndicatedAt?.toISOString() ?? null,
+    } }, "Exact inherited safe matrix mutation DTO");
+    expect(after.ticketHistory).toHaveLength(before.ticketHistory.length + 1);
+    assertSafeEqual(after.ticketHistory.slice(0, -1), before.ticketHistory, "All earlier null/text reasons and attribution remain unchanged");
+    const event = after.ticketHistory.at(-1)!;
+    assertSafeEqual(event, {
+      id: event.id, ticketId, actorId: actor.user.id, fromStatus: source, toStatus: target,
+      reason: edgeReason, createdAt: event.createdAt,
+    }, "Exactly one correctly attributed event retaining the supplied trimmed D-20 reason on every allowed edge");
+    expect(event.createdAt.getTime()).toBeGreaterThanOrEqual(before.ticket.updatedAt.getTime());
+    for (const key of ["actions", "actionHistory", "receipts"] as const) {
+      assertSafeEqual(after[key], before[key], `Matrix edge preserves exact ${key}; no fabricated child work`);
+    }
+  });
+});
+
+describe("AC-17/T-17 and AC-20/T-20 deduplicated authorization/owner/confirmation/advisory guards", () => {
+  // Null-owner cancellation already has two passing mixed-unassigned cases.
+  // Meaningful Staff/Admin paired REOPENED clearing is in the matrix above.
+  const ownerCases = roles.flatMap((role) => (["null", "inactive", "requester"] as const).map((owner) => ({ role, owner })));
+  it.each(ownerCases)("$role owner-required resolution rejects $owner owner", async ({ role, owner }) => {
+    const ticketId = await constructedWorkflowSource("OPEN");
+    let ownerId: number | null = null;
+    if (owner === "requester") ownerId = fixtures.who("requester").user.id;
+    if (owner === "inactive") {
+      const worker = await fixtures.actor(`matrix-inactive-owner-${role}`, "IT_STAFF");
+      ownerId = worker.user.id;
+      await fixtures.prisma.user.update({ where: { id: ownerId }, data: { isActive: false } });
+    }
+    await fixtures.prisma.ticket.update({ where: { id: ticketId }, data: { ownerId } });
+    const before = await state(ticketId), digest = await fixtures.domainDigest();
+    const response = await mutation("patch", `/api/staff/tickets/${ticketId}/status`, fixtures.who(role), edgeInput(before.ticket, "RESOLVED"));
+    assertSafeEqual(await state(ticketId), before, "Owner conflict preserves complete Ticket/Action/audit/receipt state");
+    expect(await fixtures.domainDigest() === digest, "Owner conflict preserves all owned domain rows; digest withheld").toBe(true);
+    assertSafeError(response, 409, owner === "null" ? "STATUS_OWNER_REQUIRED" : "OWNER_ELIGIBILITY_CONFLICT");
+  });
+
+  // Six distinct target/presence pairs. Both roles have positive coverage for
+  // every edge above; multiplying identical confirmation guards adds no policy.
+  const confirmations = [
+    { role: "IT_STAFF", target: "RESOLVED", supplied: false },
+    { role: "ADMINISTRATOR", target: "RESOLVED", supplied: true },
+    { role: "ADMINISTRATOR", target: "CLOSED", supplied: false },
+    { role: "IT_STAFF", target: "CLOSED", supplied: true },
+    { role: "IT_STAFF", target: "CANCELLED", supplied: false },
+    { role: "ADMINISTRATOR", target: "CANCELLED", supplied: true },
+  ] as const;
+  it.each(confirmations)("$role $target requires confirmation; explicit false=$supplied", async ({ role, target, supplied }) => {
+    const ticketId = await constructedWorkflowSource(target === "CLOSED" ? "RESOLVED" : "OPEN");
+    const before = await state(ticketId), digest = await fixtures.domainDigest();
+    const { confirm: _confirm, ...input } = edgeInput(before.ticket, target);
+    const body = { ...input, ...(supplied ? { confirm: false } : {}) };
+    expect(Object.hasOwn(body, "confirm")).toBe(supplied);
+    const response = await mutation("patch", `/api/staff/tickets/${ticketId}/status`, fixtures.who(role), body);
+    assertSafeEqual(await state(ticketId), before, "Missing/false confirmation appends no event and changes no domain fields");
+    expect(await fixtures.domainDigest() === digest, "Confirmation rejection preserves all owned data; digest withheld").toBe(true);
+    assertSafeError(response, 409, "STATUS_CONFIRMATION_REQUIRED");
+  });
+
+  it.each(["requester", "unauthenticated"] as const)("denies representative formal resolution to %s", async (access) => {
+    const ticketId = await constructedWorkflowSource("OPEN");
+    const before = await state(ticketId), digest = await fixtures.domainDigest();
+    const path = `/api/staff/tickets/${ticketId}/status`, input = edgeInput(before.ticket, "RESOLVED");
+    const response = access === "requester"
+      ? await mutation("patch", path, fixtures.who("requester"), input)
+      : await request(app).patch(path).set("Origin", APPROVED_ORIGIN).send(input);
+    assertSafeEqual(await state(ticketId), before, "Authorization denial preserves every domain row/history/receipt");
+    expect(await fixtures.domainDigest() === digest, "Denied formal transition has no domain writes; digest withheld").toBe(true);
+    assertSafeError(response, access === "requester" ? 403 : 401,
+      access === "requester" ? "ROLE_FORBIDDEN" : "AUTHENTICATION_REQUIRED");
+  });
+
+  it("owned Requester indication remains advisory with unfinished Actions and authoritative repeat", async () => {
+    const ticketId = await cascadeParent("mixed-owned");
+    const before = await state(ticketId), unrelated = await otherWorkflowDomain(ticketId);
+    const actor = fixtures.who("requester");
+    const response = await mutation("post", `/api/tickets/${ticketId}/resolution-indication`, actor, { confirm: true });
+    expect(response.status).toBe(200);
+    const after = await state(ticketId);
+    expect(after.ticket.requesterResolutionIndicatedAt).not.toBeNull();
+    assertSafeEqual(after.ticket, {
+      ...before.ticket, requesterResolutionIndicatedAt: after.ticket.requesterResolutionIndicatedAt,
+      requesterResolutionIndicatedById: actor.user.id, updatedAt: after.ticket.updatedAt,
+    }, "Advisory indication changes only its pair and inherited update timestamp, never formal status");
+    assertSafeEqual(response.body, {
+      ticketId, currentStatus: "OPEN", requesterResolutionIndicatedAt: after.ticket.requesterResolutionIndicatedAt!.toISOString(),
+    }, "Exact safe advisory response, without a formal transition");
+    for (const key of ["actions", "ticketHistory", "actionHistory", "receipts"] as const) {
+      assertSafeEqual(after[key], before[key], `Requester indication preserves exact ${key}, including unfinished children`);
+    }
+    assertSafeEqual(await otherWorkflowDomain(ticketId), unrelated, "Advisory request preserves unrelated records");
+    const repeat = await mutation("post", `/api/tickets/${ticketId}/resolution-indication`, actor, { confirm: true });
+    expect(repeat.status).toBe(200);
+    assertSafeEqual(repeat.body, response.body, "Repeat returns the original advisory timestamp");
+    assertSafeEqual(await state(ticketId), after, "Repeat does not mutate state or append history");
+  });
+
+  it("foreign Requester indication is indistinguishable from missing Ticket with no writes", async () => {
+    const ticketId = await constructedWorkflowSource("IN_PROGRESS");
+    const foreign = await fixtures.actor("matrix-foreign-requester", "REQUESTER");
+    const before = await state(ticketId), digest = await fixtures.domainDigest();
+    const response = await mutation("post", `/api/tickets/${ticketId}/resolution-indication`, foreign, { confirm: true });
+    const missing = await mutation("post", "/api/tickets/2147483647/resolution-indication", foreign, { confirm: true });
+    assertSafeError(response, 404, "TICKET_NOT_FOUND");
+    assertSafeError(missing, 404, "TICKET_NOT_FOUND");
+    assertSafeEqual(response.body, missing.body, "Foreign and missing indication parents disclose the same safe envelope");
+    assertSafeEqual(await state(ticketId), before, "Foreign advisory request preserves parent/children/both histories/receipts");
+    expect(await fixtures.domainDigest() === digest, "Foreign/missing advisory requests have no domain writes; digest withheld").toBe(true);
+  });
+});
