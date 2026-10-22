@@ -798,3 +798,99 @@ describe("AC-17/T-17 and AC-20/T-20 deduplicated authorization/owner/confirmatio
     expect(await fixtures.domainDigest() === digest, "Foreign/missing advisory requests have no domain writes; digest withheld").toBe(true);
   });
 });
+
+// Focused HTTP boundary verification: partial AC-43/T-53 and AC-21/T-21.
+// These are zero-Action cancellations; no cascade/race completion is claimed.
+describe("Cancellation reason HTTP boundaries preserve inherited Ticket validation", () => {
+  const reasonCases = [
+    { label: "omitted property", supplied: false, value: undefined, expected: null },
+    { label: "explicit null", supplied: true, value: null, expected: null },
+    { label: "empty string", supplied: true, value: "", expected: null },
+    { label: "whitespace only", supplied: true, value: " \t\r\n ", expected: null },
+    { label: "trimmed four characters", supplied: true, value: "  four  ", expected: null },
+    { label: "exactly five characters", supplied: true, value: "valid", expected: "valid" },
+    { label: "exactly 500 ASCII characters", supplied: true, value: "R".repeat(500), expected: "R".repeat(500) },
+    { label: "501 ASCII characters", supplied: true, value: "R".repeat(501), expected: null },
+    { label: "wrong type", supplied: true, value: 37, expected: null },
+    { label: "padded five characters", supplied: true, value: "  valid \t", expected: "valid" },
+  ];
+  const cases = roles.flatMap((role) => reasonCases.map((reasonCase) => ({ role, ...reasonCase })));
+
+  it.each(cases)("$role cancellation: $label", async ({ role, supplied, value, expected }) => {
+    const ticketId = await cascadeParent("zero");
+    const { actor, input: defaults } = await cancellationCommand(ticketId, role);
+    const { reason: _defaultReason, ...tokensAndTransition } = defaults;
+    const input = { ...tokensAndTransition, ...(supplied ? { reason: value } : {}) };
+    expect(Object.hasOwn(input, "reason"), "Omitted case genuinely excludes reason").toBe(supplied);
+    const before = await state(ticketId);
+    expect(before.actions).toEqual([]);
+    expect(before.actionHistory).toEqual([]);
+    expect(before.receipts).toEqual([]);
+    expect(before.ticketHistory).toHaveLength(1);
+    const digest = await fixtures.domainDigest();
+    const unrelated = await otherWorkflowDomain(ticketId);
+    const response = await mutation("patch", `/api/staff/tickets/${ticketId}/status`, actor, input);
+
+    if (expected === null) {
+      assertSafeError(response, 400, "VALIDATION_ERROR");
+      expect(Object.keys(response.body.error.fields)).toEqual(["reason"]);
+      expect(typeof response.body.error.fields.reason).toBe("string");
+      expect(response.body.error.fields.reason.length).toBeGreaterThan(0);
+      assertSafeEqual(await state(ticketId), before,
+        "Rejected reason preserves Ticket/Actions/both histories/receipts exactly");
+      expect(await fixtures.domainDigest() === digest,
+        "Rejected cancellation has no owned domain writes; digest withheld").toBe(true);
+      return;
+    }
+
+    expect(response.status).toBe(200);
+    expect(response.headers["content-type"]).toMatch(/application\/json/u);
+    const after = await state(ticketId);
+    expect(after.ticket.updatedAt.getTime()).toBeGreaterThan(before.ticket.updatedAt.getTime());
+    assertSafeEqual(after.ticket, {
+      ...before.ticket, currentStatus: "CANCELLED", updatedAt: after.ticket.updatedAt,
+    }, "Accepted cancellation changes only parent status/timestamp");
+    assertSafeEqual(response.body, { ticket: {
+      id: ticketId,
+      owner: { id: fixtures.who("coordinator").user.id, name: fixtures.who("coordinator").user.name, role: "IT_STAFF" },
+      requestedPriority: before.ticket.requestedPriority, itPriority: before.ticket.itPriority,
+      currentStatus: "CANCELLED",
+      requesterResolutionIndicatedAt: before.ticket.requesterResolutionIndicatedAt?.toISOString() ?? null,
+      updatedAt: after.ticket.updatedAt.toISOString(),
+    } }, "Exact inherited safe cancellation response");
+    expect(after.ticketHistory).toHaveLength(before.ticketHistory.length + 1);
+    assertSafeEqual(after.ticketHistory.slice(0, -1), before.ticketHistory,
+      "All earlier status-history rows retain their original content/timestamps");
+    const event = after.ticketHistory.at(-1)!;
+    assertSafeEqual(event, {
+      id: event.id, ticketId, actorId: actor.user.id, fromStatus: "OPEN", toStatus: "CANCELLED",
+      reason: expected, createdAt: after.ticket.updatedAt,
+    }, "One attributed event preserves the independently specified trimmed reason");
+    expect(event.id).toBeGreaterThan(before.ticketHistory.at(-1)!.id);
+    for (const key of ["actions", "actionHistory", "receipts"] as const) {
+      assertSafeEqual(after[key], before[key], `Zero-Action cancellation fabricates no ${key}`);
+    }
+    assertSafeEqual(await otherWorkflowDomain(ticketId), unrelated,
+      "Accepted cancellation preserves every unrelated owned domain record");
+
+    const detail = await request(app).get(`/api/staff/tickets/${ticketId}`).set("Cookie", actor.cookie);
+    expect(detail.status).toBe(200);
+    expect(detail.headers["content-type"]).toMatch(/application\/json/u);
+    const history = detail.body.statusHistory as Array<Record<string, unknown>>;
+    expect(Array.isArray(history)).toBe(true);
+    expect(history).toHaveLength(after.ticketHistory.length);
+    const projected = history.find((row) => row.id === event.id);
+    assertSafeEqual(projected, {
+      id: event.id, fromStatus: "OPEN", toStatus: "CANCELLED", reason: expected,
+      createdAt: after.ticket.updatedAt.toISOString(),
+      actor: { id: actor.user.id, name: actor.user.name, role },
+    }, "GET exposes the exact safe event and literal stored reason");
+    const earlierIds = new Set(before.ticketHistory.map((row) => row.id));
+    assertSafeEqual(history.filter((row) => earlierIds.has(row.id as number)), before.ticketHistory.map((row) => ({
+      id: row.id, fromStatus: row.fromStatus, toStatus: row.toStatus, reason: row.reason,
+      createdAt: row.createdAt.toISOString(),
+      actor: { id: fixtures.who("coordinator").user.id, name: fixtures.who("coordinator").user.name, role: "IT_STAFF" },
+    })), "GET retains earlier history without rewriting or backfill");
+    assertSafeEqual(await state(ticketId), after, "Authoritative GET does not mutate domain state");
+  });
+});
