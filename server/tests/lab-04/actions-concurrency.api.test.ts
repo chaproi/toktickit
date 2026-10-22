@@ -415,3 +415,52 @@ describe("Ticket/Action workflow races on the shared parent gate", () => {
     console.info(`Workflow race outcome: ${target}/${operation}/${order}; original Action=${actionResponse.status}; original Ticket=409 ${expectedConflict}; separate fresh-token Ticket=${canFinish ? "200" : "409 ACTIONS_OUTSTANDING"}.`);
   });
 });
+
+
+// Remaining T-16 / AC-16 close combinations. The target is deliberately a
+// TERMINAL child of a genuinely resolved parent, never an eligible mutation.
+describe("CLOSED versus terminal-child operations: frozen-parent denial in both observed orders", () => {
+  const frozen = new WorkflowRaceFixtures();
+  beforeAll(() => frozen.initialize());
+  afterAll(() => frozen.cleanup());
+
+  it.each((["start", "edit", "reassign", "complete"] as const).flatMap((operation) =>
+    (["ticket-first", "action-first"] as const).map((order) => ({ operation, order }))))(
+    "$operation / $order: close alone commits after real shared-parent overlap", async ({ operation, order }) => {
+      // Only terminal siblings are created; setup then resolves through the
+      // real endpoint. Non-create setup(..., true) would be an invalid fixture.
+      const scenario = await frozen.setup("create", true);
+      const { before } = scenario;
+      expect(before.ticket.currentStatus).toBe("RESOLVED");
+      expect(before.actions.map((row) => row.status).sort()).toEqual(["CANCELLED", "COMPLETED"]);
+      const target = before.actions.find((row) => row.status === "COMPLETED")!;
+      const input = operation === "edit" || operation === "reassign" ? {
+        expectedVersion: target.version, expectedTicketUpdatedAt: before.ticket.updatedAt.toISOString(),
+        clientMutationId: randomUUID(), description: "Frozen parent attempted edit; must never persist.",
+        ...(operation === "reassign" ? { assigneeId: frozen.who("replacement").user.id } : {}),
+      } : frozen.statusInput(before.ticket, target, operation === "start" ? "IN_PROGRESS" : "COMPLETED");
+      const actionUsers = [frozen.who("operator").user.id, target.assigneeId,
+        ...(operation === "reassign" ? [frozen.who("replacement").user.id] : [])];
+      expect(actionUsers.some((id) => scenario.ticketUsers.includes(id)), "User gates are disjoint before observing the Ticket gate").toBe(false);
+      const actionRequest = { users: actionUsers, call: () => frozen.mutation("patch",
+        "/api/tickets/" + before.ticket.id + "/actions/" + target.id +
+          (operation === "start" || operation === "complete" ? "/status" : ""), frozen.who("operator"), input) };
+      const ticketRequest = { users: scenario.ticketUsers, call: () => frozen.transition(before, "CLOSED") };
+      const result = await orderedWorkflowRace(before.ticket.id,
+        order === "ticket-first" ? ticketRequest : actionRequest,
+        order === "ticket-first" ? actionRequest : ticketRequest);
+      const ticketResponse = order === "ticket-first" ? result.first : result.second;
+      const actionResponse = order === "action-first" ? result.first : result.second;
+      assertSafeError(actionResponse, 409, "TICKET_ACTIONS_LOCKED");
+      const after = await frozen.state(before.ticket.id);
+      assertTicketMutation(frozen, before, after, ticketResponse, "CLOSED");
+      assertSafeEqual(after.actions, before.actions, "All child fields, versions, immutable attribution and timestamps preserved");
+      assertSafeEqual(after.history, before.history, "No child audit event or duplicate event");
+      assertSafeEqual(after.receipts, before.receipts, "All original operation-time receipts retained");
+      expect(await frozen.prisma.mutationReceipt.count({ where: {
+        actorId: frozen.who("operator").user.id, clientMutationId: input.clientMutationId,
+      } }), "Denied Action attempt has no receipt").toBe(0);
+      console.info("Frozen close overlap: " + operation + "/" + order + "; Ticket=200; Action=409 TICKET_ACTIONS_LOCKED; only one Ticket event committed.");
+    },
+  );
+});
