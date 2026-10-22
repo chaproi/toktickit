@@ -1,0 +1,21 @@
+{
+  "screenshot": "zoom200-blocker.png",
+  "capturedAt": "2026-10-22T20:20:48.555Z",
+  "timezone": "Asia/Bangkok",
+  "executionHead": "430a019c8aa69d5e3140ea1fe7d1d05c87cd012c",
+  "pendingProductionFiles": [],
+  "browser": "Chrome/153.0.8010.12",
+  "configuredViewport": null,
+  "actualCSSViewport": {
+    "width": 712,
+    "height": 402,
+    "pinchScale": 1
+  },
+  "role": "IT_STAFF",
+  "state": "Genuine 2.0 tab zoom: real blocker and keyboard handoff",
+  "zoomFactor": 2,
+  "zoomMethod": "chrome.tabs.setZoom/getZoom via unchanged genuineZoom extension helper",
+  "syntheticDataOnly": true,
+  "visualInspection": "Inspected visually on 2026-10-23 Asia/Bangkok: readable labels and controls; literal text retained; no unintended horizontal overflow observed. Textareas use normal internal scrolling; zoomed blocker screenshot shows the scrolled lower dialog portion.",
+  "verifiedTabZoom": 2
+}
