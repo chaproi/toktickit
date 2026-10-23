@@ -23,6 +23,7 @@ import Login from "./components/Login.js";
 import MyTickets from "./components/MyTickets.js";
 import MyActions from "./components/MyActions.js";
 import RequesterTicketDetail from "./components/RequesterTicketDetail.js";
+import RequesterDashboard from "./components/RequesterDashboard.js";
 import StaffTicketQueue from "./components/StaffTicketQueue.js";
 import StaffTicketDetail from "./components/StaffTicketDetail.js";
 import UserManagement from "./components/UserManagement.js";
@@ -320,6 +321,10 @@ function AuthenticatedRoutes() {
             }}
           />
         )}
+      />
+      <Route
+        path="/dashboard"
+        element={user.role === "REQUESTER" ? shell(<RequesterDashboard key={`${user.id}:${user.role}`} />) : shell(<Forbidden user={user} />)}
       />
       <Route
         path="/tickets"
