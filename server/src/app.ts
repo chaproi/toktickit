@@ -36,6 +36,8 @@ import {
   validateInternalNoteBody,
 } from "./comments/comment-service.js";
 import { getPrisma } from "./prisma.js";
+import { parseRequesterDashboardQuery } from "./dashboards/requester-dashboard-query.js";
+import { getRequesterDashboard } from "./dashboards/requester-dashboard-service.js";
 import { indicateRequesterResolution } from "./tickets/resolution-indication-service.js";
 import { parseStaffQueueQuery, parseTicketListQuery } from "./tickets/ticket-query.js";
 import {
@@ -629,6 +631,24 @@ app.post("/api/staff/tickets/:ticketId/notes", async (req, res) => {
     res.status(201).json(result.note);
   } catch (error) {
     sendMutationError(res, error, "adding an Internal Note");
+  }
+});
+
+app.get("/api/dashboard/requester", async (req, res) => {
+  res.setHeader("Cache-Control", "private, no-store");
+  const live = await authenticated(req, res, ["REQUESTER"]);
+  if (!live) return;
+  const validation = parseRequesterDashboardQuery(req.query as Record<string, unknown>);
+  if (!validation.success) {
+    res.status(400).json(errorBody(
+      "INVALID_QUERY", "One or more query parameters are invalid.", validation.fields,
+    ));
+    return;
+  }
+  try {
+    res.status(200).json(await getRequesterDashboard(live.user.id, validation.data));
+  } catch (error) {
+    sendDatabaseError(res, error, "fetching Requester Dashboard");
   }
 });
 
