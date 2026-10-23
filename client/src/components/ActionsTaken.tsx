@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useId, useImperativeHandle, useRef, useState } from "react";
 import { ApiRequestError, getTicketAction, getTicketActions, type ActionDTO, type ActionListResponse, type ActionMutationResponse, type AuthUser, type TicketDetail } from "../api.js";
 import { useLocation } from "react-router-dom";
 import ActionOperationDialog, { type ActionOperation } from "./ActionOperationDialog.js";
@@ -11,14 +11,17 @@ function date(value: string) {
   return new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Bangkok", year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(value));
 }
 
-export default function ActionsTaken({ ticket, user, onTicketChanged }: {
+export type ActionsTakenHandle = { refresh: () => Promise<void>; focus: () => void };
+
+const ActionsTaken = forwardRef<ActionsTakenHandle, {
   ticket: Pick<TicketDetail, "id" | "currentStatus" | "updatedAt">;
-  user: AuthUser; onTicketChanged?: () => Promise<unknown>;
-}) {
+  user: AuthUser; onTicketChanged?: () => Promise<unknown>; readOnly?: boolean;
+}>(function ActionsTaken({ ticket, user, onTicketChanged, readOnly = false }, ref) {
   const id = useId();
   const location = useLocation();
   const heading = useRef<HTMLHeadingElement>(null);
   const live = useRef(true);
+  const externalRead = useRef<AbortController | null>(null);
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");
   const [data, setData] = useState<ActionListResponse | null>(null);
   const [error, setError] = useState<{ message: string; http: boolean } | null>(null);
@@ -39,8 +42,23 @@ export default function ActionsTaken({ ticket, user, onTicketChanged }: {
   const [selected, setSelected] = useState<{ scope: string; action: ActionDTO } | null>(null);
   const [selectedError, setSelectedError] = useState<{ scope: string; message: string } | null>(null);
   const [selectedRetry, setSelectedRetry] = useState(0);
-  const mutable = user.role !== "REQUESTER" && !user.mustChangePassword && editableParents.has(ticket.currentStatus) && !warning && !refreshing;
+  const mutable = !readOnly && user.role !== "REQUESTER" && !user.mustChangePassword && editableParents.has(ticket.currentStatus) && !warning && !refreshing;
   const load = useCallback((signal?: AbortSignal) => getTicketActions(ticket.id, { page, pageSize }, signal), [ticket.id, page, pageSize]);
+  useEffect(() => () => externalRead.current?.abort(), [load, user.id, user.role]);
+
+  // A Ticket workflow write refreshes this authoritative page without remounting
+  // dialogs/pagination or manufacturing child status changes from a Ticket DTO.
+  useImperativeHandle(ref, () => ({
+    async refresh() {
+      externalRead.current?.abort();
+      const controller = new AbortController(); externalRead.current = controller;
+      const response = await load(controller.signal);
+      if (controller.signal.aborted) throw new DOMException("Aborted", "AbortError");
+      if (page > Math.max(1, response.pagination.totalPages)) setPage(Math.max(1, response.pagination.totalPages));
+      setData(response); setState("ready"); setError(null); setWarning("");
+    },
+    focus() { heading.current?.focus(); heading.current?.scrollIntoView?.({ block: "nearest" }); },
+  }), [load, page]);
 
   useEffect(() => {
     live.current = true;
@@ -130,7 +148,7 @@ export default function ActionsTaken({ ticket, user, onTicketChanged }: {
     </li>;
   }
   return <>
-    <section className="card border-0 shadow-sm mb-4" aria-labelledby={`${id}-heading`} aria-busy={state === "loading"}>
+    <section id={`ticket-${ticket.id}-actions`} className="card border-0 shadow-sm mb-4" aria-labelledby={`${id}-heading`} aria-busy={state === "loading"}>
       <div className="card-body p-4">
         <h2 ref={heading} id={`${id}-heading`} className="h4" tabIndex={-1}>Actions Taken</h2>
         {mutable && state === "ready" && <button type="button" className="btn btn-success mb-3" onClick={(event) => { setNotice(""); setCreateTrigger(event.currentTarget); }}>Create Action</button>}
@@ -163,4 +181,6 @@ export default function ActionsTaken({ ticket, user, onTicketChanged }: {
     {createTrigger && <ActionCreateDialog ticketId={ticket.id} ticketUpdatedAt={ticket.updatedAt} user={user} trigger={createTrigger} editable={mutable} onClose={() => setCreateTrigger(null)} onCreated={(response) => saved(response, true)} />}
     {history && history.scope === historyScope && !user.mustChangePassword && <ActionHistoryDialog key={`${historyScope}:${history.actionId}`} ticketId={ticket.id} actionId={history.actionId} trigger={history.trigger} onClose={() => setHistory(null)} />}
   </>;
-}
+});
+
+export default ActionsTaken;

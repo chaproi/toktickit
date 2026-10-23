@@ -1,0 +1,23 @@
+{
+  "screenshot": "390x844-cancellation.png",
+  "capturedAt": "2026-10-22T20:20:15.979Z",
+  "timezone": "Asia/Bangkok",
+  "executionHead": "430a019c8aa69d5e3140ea1fe7d1d05c87cd012c",
+  "pendingProductionFiles": [],
+  "browser": "HeadlessChrome/153.0.8010.12",
+  "configuredViewport": {
+    "width": 390,
+    "height": 844
+  },
+  "actualCSSViewport": {
+    "width": 390,
+    "height": 844,
+    "pinchScale": 1
+  },
+  "role": "IT_STAFF",
+  "state": "Cancellation explanation, required long reason and idle controls",
+  "zoomFactor": 1,
+  "zoomMethod": "unmodified tab zoom",
+  "syntheticDataOnly": true,
+  "visualInspection": "Inspected visually on 2026-10-23 Asia/Bangkok: readable labels and controls; literal text retained; no unintended horizontal overflow observed. Textareas use normal internal scrolling; zoomed blocker screenshot shows the scrolled lower dialog portion."
+}
