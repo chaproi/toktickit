@@ -397,3 +397,293 @@ afterAll(async () => {
   } catch (error) { throw safeFixtureError("cleanup", error); }
   finally { await prisma.$disconnect(); }
 });
+
+// Additional AC-24/T-24 and AC-27/T-27 resolution-history verification.
+// Each case owns a new Requester and bounded Ticket cohort. These constructed
+// read fixtures do not execute workflow transitions or prove snapshot races.
+type ResolutionCohort = {
+  requester: Actor;
+  ids: number[];
+  rows: Map<string, Ticket>;
+  clock: number;
+};
+type ResolutionStep = readonly [TicketStatus, TicketStatus, number];
+
+async function withResolutionCohort(run: (cohort: ResolutionCohort) => Promise<void>) {
+  const ownedUsers: number[] = [];
+  const ownedTickets: number[] = [];
+  let isolated = false;
+  try {
+    const identity = configureTestDatabaseEnvironment();
+    const operational = process.env.TOKTICKIT_DEVELOPMENT_DATABASE_URL;
+    expect(Boolean(operational) &&
+      decodeURIComponent(new URL(operational!).pathname.slice(1)) !== identity.databaseName,
+    "Resolution fixture uses the dedicated database; values withheld").toBe(true);
+    const [live] = await prisma.$queryRaw<Array<{ database: string; schema: string }>>`
+      SELECT current_database() AS database, current_schema() AS schema`;
+    expect(live.database === identity.databaseName && live.schema === identity.schema,
+      "Resolution fixture live identity matches the repository guard; values withheld").toBe(true);
+    isolated = true;
+
+    const { user, password } = await createAuthUser({
+      email: `${marker}-history-${randomUUID()}@example.test`, role: "REQUESTER",
+    });
+    ownedUsers.push(user.id);
+    const login = await loginRequest(user.email, password);
+    expect(login.status, "Real resolution-cohort login; sensitive response withheld").toBe(200);
+    const [observed] = await prisma.$queryRaw<Array<{ now: Date }>>`SELECT CURRENT_TIMESTAMP AS now`;
+    await run({
+      requester: { id: user.id, name: user.name, role: user.role,
+        cookie: cookieHeader(login.headers["set-cookie"]) },
+      ids: ownedTickets, rows: new Map(), clock: observed.now.getTime(),
+    });
+  } finally {
+    if (isolated) {
+      try {
+        const owned = { ticketId: { in: ownedTickets } };
+        await prisma.$transaction([
+          prisma.seedFixture.deleteMany({ where: { OR: [
+            { userId: { in: ownedUsers } }, { ticketId: { in: ownedTickets } },
+          ] } }),
+          prisma.mutationReceipt.deleteMany({ where: owned }),
+          prisma.actionHistory.deleteMany({ where: { action: owned } }),
+          prisma.action.deleteMany({ where: owned }),
+          prisma.ticketStatusHistory.deleteMany({ where: owned }),
+          prisma.publicComment.deleteMany({ where: owned }),
+          prisma.internalNote.deleteMany({ where: owned }),
+          prisma.attachment.deleteMany({ where: owned }),
+          prisma.ticket.deleteMany({ where: { id: { in: ownedTickets } } }),
+          prisma.authSession.deleteMany({ where: { userId: { in: ownedUsers } } }),
+          prisma.user.deleteMany({ where: { id: { in: ownedUsers } } }),
+        ]);
+        const remaining = await Promise.all([
+          prisma.user.count({ where: { id: { in: ownedUsers } } }),
+          prisma.authSession.count({ where: { userId: { in: ownedUsers } } }),
+          prisma.ticket.count({ where: { id: { in: ownedTickets } } }),
+          prisma.ticketStatusHistory.count({ where: owned }),
+          prisma.action.count({ where: owned }),
+          prisma.actionHistory.count({ where: { action: owned } }),
+          prisma.mutationReceipt.count({ where: owned }),
+          prisma.publicComment.count({ where: owned }),
+          prisma.internalNote.count({ where: owned }),
+          prisma.attachment.count({ where: owned }),
+          prisma.seedFixture.count({ where: { OR: [
+            { userId: { in: ownedUsers } }, { ticketId: { in: ownedTickets } },
+          ] } }),
+        ]);
+        expect(remaining).toEqual([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+        console.info("Issue47 resolution cohort cleanup verified: zero owned rows/sessions; shared client disconnects in the existing final hook.");
+      } catch (error) { throw safeFixtureError("resolution cohort cleanup", error); }
+    }
+  }
+}
+
+function resolutionTime(cohort: ResolutionCohort, hours: number) {
+  return new Date(cohort.clock - hours * 60 * 60 * 1000);
+}
+
+async function addResolutionTicket(
+  cohort: ResolutionCohort, label: string, currentStatus: TicketStatus,
+  updatedHours: number, events: readonly ResolutionStep[],
+) {
+  try {
+    const value = await prisma.ticket.create({ data: {
+      ticketNumber: `D47-${randomUUID().replaceAll("-", "").slice(0, 12)}`,
+      clientSubmissionId: randomUUID(), requesterId: cohort.requester.id,
+      categoryId: categoryIds[0]!, relatedSystemId: systemIds[0]!,
+      ownerId: label === "closed-no-history" ? null : actor("staff").id,
+      summary: `${label} <script>literal resolution summary</script>`,
+      description: `${marker} private resolution-cohort Ticket body`,
+      currentStatus, requestedPriority: "HIGH", itPriority: "MEDIUM",
+      ticketDate: resolutionTime(cohort, 20 * 24), createdAt: resolutionTime(cohort, 20 * 24),
+      updatedAt: resolutionTime(cohort, updatedHours),
+    } });
+    cohort.ids.push(value.id); // Ledger before any dependent insert can fail.
+    cohort.rows.set(label, value);
+    if (events.length) await prisma.ticketStatusHistory.createMany({ data: events.map(([fromStatus, toStatus, hours]) => ({
+      ticketId: value.id, actorId: actor("staff").id, fromStatus, toStatus,
+      createdAt: resolutionTime(cohort, hours),
+      reason: toStatus === "CANCELLED" ? "Cancel synthetic resolution read fixture" : null,
+    })) });
+  } catch (error) { throw safeFixtureError("resolution Ticket setup", error); }
+}
+
+async function resolutionDomainDigest(cohort: ResolutionCohort) {
+  try {
+    const owned = { ticketId: { in: cohort.ids } };
+    const rows = await Promise.all([
+      domainDigest(), // Also preserve the original cohort, references and numbering.
+      prisma.user.findMany({ where: { id: cohort.requester.id }, orderBy: { id: "asc" } }),
+      prisma.ticket.findMany({ where: { id: { in: cohort.ids } }, orderBy: { id: "asc" } }),
+      prisma.ticketStatusHistory.findMany({ where: owned, orderBy: { id: "asc" } }),
+      prisma.action.findMany({ where: owned, orderBy: { id: "asc" } }),
+      prisma.actionHistory.findMany({ where: { action: owned }, orderBy: { id: "asc" } }),
+      prisma.mutationReceipt.findMany({ where: owned, orderBy: { id: "asc" } }),
+      prisma.publicComment.findMany({ where: owned, orderBy: { id: "asc" } }),
+      prisma.internalNote.findMany({ where: owned, orderBy: { id: "asc" } }),
+      prisma.attachment.findMany({ where: owned, orderBy: { id: "asc" } }),
+      prisma.seedFixture.findMany({ where: { OR: [
+        { userId: cohort.requester.id }, { ticketId: { in: cohort.ids } },
+      ] }, orderBy: { id: "asc" } }),
+    ]);
+    // AuthSession bookkeeping is deliberately outside the domain comparison.
+    return createHash("sha256").update(JSON.stringify(rows)).digest("hex");
+  } catch (error) { throw safeFixtureError("resolution domain observation", error); }
+}
+
+function assertResolutionRows(
+  actual: Array<Record<string, any>>, cohort: ResolutionCohort,
+  labels: readonly string[], resolved: readonly number[] | null,
+) {
+  expect(Array.isArray(actual)).toBe(true);
+  expect(actual.length).toBeLessThanOrEqual(5);
+  expect(actual.map((row) => row.id)).toEqual(labels.map((label) => cohort.rows.get(label)!.id));
+  actual.forEach((row, index) => {
+    const value = cohort.rows.get(labels[index]!)!;
+    const keys = ["id", "ticketNumber", "summary", "currentStatus", "requestedPriority", "itPriority", "owner", "updatedAt"];
+    expect(keys.every((key) => Object.hasOwn(row, key))).toBe(true);
+    expect(Object.keys(row).every((key) => [...keys, "resolvedAt"].includes(key))).toBe(true);
+    safeEqual(Object.fromEntries(keys.filter((key) => key !== "owner").map((key) => [key, row[key]])), {
+      id: value.id, ticketNumber: value.ticketNumber, summary: value.summary,
+      currentStatus: value.currentStatus, requestedPriority: "HIGH", itPriority: "MEDIUM",
+      updatedAt: value.updatedAt.toISOString(),
+    }, "Safe observed resolution row preserves literal content and UTC timestamp");
+    if (value.ownerId === null) expect(row.owner).toBeNull();
+    else {
+      expect(Object.keys(row.owner).every((key) => ["id", "name", "role"].includes(key))).toBe(true);
+      expect(row.owner.id).toBe(actor("staff").id);
+      expect(row.owner.name).toBe(actor("staff").name);
+      if (Object.hasOwn(row.owner, "role")) expect(row.owner.role).toBe("IT_STAFF");
+    }
+    if (resolved !== null) expect(row.resolvedAt).toBe(resolutionTime(cohort, resolved[index]!).toISOString());
+  });
+}
+
+async function assertResolutionDashboard(
+  cohort: ResolutionCohort, metrics: object, updated: readonly string[],
+  resolved: readonly string[], resolutionHours: readonly number[],
+) {
+  const before = await resolutionDomainDigest(cohort);
+  const earlierHistory = await prisma.ticketStatusHistory.findMany({
+    where: { ticketId: { in: cohort.ids } }, orderBy: { id: "asc" },
+  });
+  const startedAt = Date.now();
+  try {
+    const response = await request(app).get("/api/dashboard/requester").set("Cookie", cohort.requester.cookie);
+    const finishedAt = Date.now();
+    expect(response.status).toBe(200);
+    expect(response.headers["content-type"]).toMatch(/application\/json/u);
+    expect(response.headers["cache-control"]).toBe("private, no-store");
+    assertMetadata(response.body, startedAt, finishedAt);
+    safeEqual(response.body.metrics, metrics, "Independently authored, isolated distinct-Ticket metrics");
+    expect(Object.keys(response.body.lists).sort()).toEqual(["recentResolved", "recentUpdated"]);
+    assertResolutionRows(response.body.lists.recentUpdated, cohort, updated, null);
+    assertResolutionRows(response.body.lists.recentResolved, cohort, resolved, resolutionHours);
+    expect(/passwordHash|tokenHash|csrfTokenHash|inputFingerprint|safeResponse|internalNotes|storageKey|"email"|"description"/u
+      .test(JSON.stringify(response.body)), "No private/receipt/body fields in the resolution response").toBe(false);
+  } finally {
+    expect(await resolutionDomainDigest(cohort) === before,
+      "Resolution read preserves all owned domain state and earlier records; sensitive digests withheld").toBe(true);
+    safeEqual(await prisma.ticketStatusHistory.findMany({
+      where: { ticketId: { in: cohort.ids } }, orderBy: { id: "asc" },
+    }), earlierHistory, "Every earlier history row, including null reasons, remains unchanged");
+  }
+}
+
+describe("API-08 actual resolution history: partial AC-24/T-24 and AC-27/T-27", () => {
+  it("excludes current RESOLVED without history despite recent updatedAt", async () => {
+    await withResolutionCohort(async (cohort) => {
+      await addResolutionTicket(cohort, "resolved-no-history", "RESOLVED", 6, []);
+      await assertResolutionDashboard(cohort, {
+        outstanding: 0, needsAttention: 0, recentUpdated: 1, recentResolved: 0,
+      }, ["resolved-no-history"], [], []);
+    });
+  });
+
+  it("excludes current CLOSED without history despite recent updatedAt", async () => {
+    await withResolutionCohort(async (cohort) => {
+      await addResolutionTicket(cohort, "closed-no-history", "CLOSED", 6, []);
+      await assertResolutionDashboard(cohort, {
+        outstanding: 0, needsAttention: 0, recentUpdated: 1, recentResolved: 0,
+      }, ["closed-no-history"], [], []);
+    });
+  });
+
+  it("counts repeated qualifying resolutions once and displays the latest event", async () => {
+    await withResolutionCohort(async (cohort) => {
+      await addResolutionTicket(cohort, "resolved-twice", "RESOLVED", 24, [
+        ["NEW", "OPEN", 19 * 24], ["OPEN", "RESOLVED", 72],
+        ["RESOLVED", "REOPENED", 60], ["REOPENED", "IN_PROGRESS", 48],
+        ["IN_PROGRESS", "RESOLVED", 24],
+      ]);
+      expect(await prisma.ticketStatusHistory.count({ where: {
+        ticketId: { in: cohort.ids }, toStatus: "RESOLVED",
+      } })).toBe(2);
+      await assertResolutionDashboard(cohort, {
+        outstanding: 0, needsAttention: 0, recentUpdated: 1, recentResolved: 1,
+      }, ["resolved-twice"], ["resolved-twice"], [24]);
+    });
+  });
+
+  it("excludes a currently REOPENED Ticket with a recent resolution", async () => {
+    await withResolutionCohort(async (cohort) => {
+      await addResolutionTicket(cohort, "now-reopened", "REOPENED", 24, [
+        ["NEW", "OPEN", 19 * 24], ["OPEN", "RESOLVED", 48], ["RESOLVED", "REOPENED", 24],
+      ]);
+      await assertResolutionDashboard(cohort, {
+        outstanding: 1, needsAttention: 0, recentUpdated: 1, recentResolved: 0,
+      }, ["now-reopened"], [], []);
+    });
+  });
+
+  it("excludes current CANCELLED after legitimate resolution/reopening history", async () => {
+    await withResolutionCohort(async (cohort) => {
+      await addResolutionTicket(cohort, "now-cancelled", "CANCELLED", 24, [
+        ["NEW", "OPEN", 19 * 24], ["OPEN", "RESOLVED", 72],
+        ["RESOLVED", "REOPENED", 48], ["REOPENED", "CANCELLED", 24],
+      ]);
+      await assertResolutionDashboard(cohort, {
+        outstanding: 0, needsAttention: 0, recentUpdated: 1, recentResolved: 0,
+      }, ["now-cancelled"], [], []);
+    });
+  });
+
+  it("uses actual resolution time for CLOSED rather than newer closure/update time", async () => {
+    await withResolutionCohort(async (cohort) => {
+      await addResolutionTicket(cohort, "closed-later", "CLOSED", 6, [
+        ["NEW", "OPEN", 19 * 24], ["OPEN", "RESOLVED", 48], ["RESOLVED", "CLOSED", 6],
+      ]);
+      await assertResolutionDashboard(cohort, {
+        outstanding: 0, needsAttention: 0, recentUpdated: 1, recentResolved: 1,
+      }, ["closed-later"], ["closed-later"], [48]);
+    });
+  });
+
+  it("keeps recent updates distinct from an old out-of-window resolution", async () => {
+    await withResolutionCohort(async (cohort) => {
+      await addResolutionTicket(cohort, "old-resolution-new-update", "RESOLVED", 6, [
+        ["NEW", "OPEN", 19 * 24], ["OPEN", "RESOLVED", 10 * 24],
+      ]);
+      await assertResolutionDashboard(cohort, {
+        outstanding: 0, needsAttention: 0, recentUpdated: 1, recentResolved: 0,
+      }, ["old-resolution-new-update"], [], []);
+    });
+  });
+
+  it("counts all seven distinct Tickets but bounds tied resolution ordering to five", async () => {
+    await withResolutionCohort(async (cohort) => {
+      for (const [label, resolutionHours] of [
+        ["old-tie-1", 72], ["new-tie-1", 24], ["middle-tie-1", 48],
+        ["new-tie-2", 24], ["new-tie-3", 24], ["middle-tie-2", 48], ["old-tie-2", 72],
+      ] as const) {
+        await addResolutionTicket(cohort, label, "RESOLVED", 6, [
+          ["NEW", "OPEN", 19 * 24], ["OPEN", "RESOLVED", resolutionHours],
+        ]);
+      }
+      await assertResolutionDashboard(cohort, {
+        outstanding: 0, needsAttention: 0, recentUpdated: 7, recentResolved: 7,
+      }, ["old-tie-2", "middle-tie-2", "new-tie-3", "new-tie-2", "middle-tie-1"],
+      ["new-tie-3", "new-tie-2", "new-tie-1", "middle-tie-2", "middle-tie-1"], [24, 24, 24, 48, 48]);
+    });
+  });
+});
