@@ -687,3 +687,35 @@ describe("API-08 actual resolution history: partial AC-24/T-24 and AC-27/T-27", 
     });
   });
 });
+
+// Partial AC-28/T-28: the Dashboard boundary rejects actor/policy overrides,
+// repeated values and invalid base filters without altering any domain state.
+describe("API-08 Dashboard query rejection", () => {
+  it.each([
+    { label: "owner selector", field: "owner", entries: [["owner", "me"]] },
+    { label: "requester selector", field: "requesterId", entries: [["requesterId", "1"]] },
+    { label: "client asOf", field: "asOf", entries: [["asOf", "2026-10-01T00:00:00.000Z"]] },
+    { label: "client timezone", field: "timezone", entries: [["timezone", "UTC"]] },
+    { label: "repeated search", field: "search", entries: [["search", "first"], ["search", "second"]] },
+    { label: "repeated category", field: "categoryId", entries: [["categoryId", "1"], ["categoryId", "2"]] },
+    { label: "zero category", field: "categoryId", entries: [["categoryId", "0"]] },
+    { label: "out-of-range related system", field: "relatedSystemId", entries: [["relatedSystemId", "2147483648"]] },
+    { label: "invalid requested priority", field: "requestedPriority", entries: [["requestedPriority", "CRITICAL"]] },
+    { label: "invalid IT priority", field: "itPriority", entries: [["itPriority", "CRITICAL"]] },
+    { label: "invalid status", field: "currentStatus", entries: [["currentStatus", "PLANNED"]] },
+    { label: "search over 100 characters", field: "search", entries: [["search", "x".repeat(101)]] },
+  ])("rejects $label safely and preserves domain rows", async ({ field, entries }) => {
+    const before = await domainDigest();
+    try {
+      const query = new URLSearchParams(entries).toString();
+      const response = await request(app).get(`/api/dashboard/requester?${query}`).set("Cookie", actor("A").cookie);
+      assertDenial(response, 400, "INVALID_QUERY");
+      expect(Object.hasOwn(response.body.error.fields, field)).toBe(true);
+      expect(typeof response.body.error.fields[field]).toBe("string");
+      expect(response.body.error.fields[field].trim().length).toBeGreaterThan(0);
+    } finally {
+      expect(await domainDigest() === before,
+        "Invalid Dashboard query preserves exact domain state; sensitive digests withheld").toBe(true);
+    }
+  });
+});
