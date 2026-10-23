@@ -39,7 +39,8 @@ import { getPrisma } from "./prisma.js";
 import { parseRequesterDashboardQuery } from "./dashboards/requester-dashboard-query.js";
 import { getRequesterDashboard } from "./dashboards/requester-dashboard-service.js";
 import { indicateRequesterResolution } from "./tickets/resolution-indication-service.js";
-import { parseStaffQueueQuery, parseTicketListQuery } from "./tickets/ticket-query.js";
+import { parseStaffQueueQuery } from "./tickets/ticket-query.js";
+import { parseRequesterTicketListQuery } from "./tickets/requester-ticket-query.js";
 import {
   listEligibleAssignees,
   listStaffQueue,
@@ -653,9 +654,10 @@ app.get("/api/dashboard/requester", async (req, res) => {
 });
 
 app.get("/api/tickets", async (req, res) => {
+  res.setHeader("Cache-Control", "private, no-store");
   const live = await authenticated(req, res, ["REQUESTER"]);
   if (!live) return;
-  const validation = parseTicketListQuery(req.query as Record<string, unknown>);
+  const validation = parseRequesterTicketListQuery(req.query as Record<string, unknown>);
   if (!validation.success) {
     res.status(400).json(errorBody(
       "INVALID_QUERY",
@@ -668,6 +670,12 @@ app.get("/api/tickets", async (req, res) => {
     const result = await listTicketsForRequester(live.user.id, validation.data);
     if (result.kind === "invalid-requester") {
       res.status(401).json(errorBody("AUTHENTICATION_REQUIRED", "Authentication is required."));
+      return;
+    }
+    if (result.kind === "invalid-query") {
+      res.status(400).json(errorBody(
+        "INVALID_QUERY", "One or more query parameters are invalid.", result.fields,
+      ));
       return;
     }
     res.status(200).json({ items: result.items, pagination: result.pagination });
