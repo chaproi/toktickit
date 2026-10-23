@@ -719,3 +719,151 @@ describe("API-08 Dashboard query rejection", () => {
     }
   });
 });
+
+// Partial AC-27/T-27: controlled-clock SQL boundaries through real HTTP and
+// real PostgreSQL business queries. Authentication clocks remain real. Future
+// events below are defensive read fixtures, not legitimate workflow evidence.
+const sqlBoundaryContexts = [
+  {
+    label: "Bangkok midday", asOf: "2026-06-15T05:00:00.000Z",
+    from: "2026-06-08T17:00:00.000Z", before: "2026-06-15T17:00:00.000Z",
+    positions: [
+      ["from-minus", "2026-06-08T16:59:59.999Z"], ["from", "2026-06-08T17:00:00.000Z"],
+      ["asof-minus", "2026-06-15T04:59:59.999Z"], ["asof", "2026-06-15T05:00:00.000Z"],
+      ["asof-plus", "2026-06-15T05:00:00.001Z"], ["before-minus", "2026-06-15T16:59:59.999Z"],
+      ["before", "2026-06-15T17:00:00.000Z"],
+    ],
+    updated: ["asof", "asof-minus", "from"],
+    resolved: ["asof", "future-repeat", "asof-minus", "from"],
+    retainedResolution: "2026-06-15T04:59:59.999Z",
+  },
+  {
+    label: "final millisecond before Bangkok midnight", asOf: "2026-06-15T16:59:59.999Z",
+    from: "2026-06-08T17:00:00.000Z", before: "2026-06-15T17:00:00.000Z",
+    positions: [
+      ["from-minus", "2026-06-08T16:59:59.999Z"], ["from", "2026-06-08T17:00:00.000Z"],
+      ["asof-minus", "2026-06-15T16:59:59.998Z"], ["asof", "2026-06-15T16:59:59.999Z"],
+      ["asof-plus", "2026-06-15T17:00:00.000Z"], ["before-minus", "2026-06-15T16:59:59.999Z"],
+      ["before", "2026-06-15T17:00:00.000Z"],
+    ],
+    updated: ["before-minus", "asof", "asof-minus", "from"],
+    resolved: ["before-minus", "asof", "future-repeat", "asof-minus", "from"],
+    retainedResolution: "2026-06-15T16:59:59.998Z",
+  },
+] as const;
+
+type SqlBoundaryContext = (typeof sqlBoundaryContexts)[number];
+async function addBoundaryTicket(
+  cohort: ResolutionCohort, label: string, instant: string, resolved: boolean,
+  context: SqlBoundaryContext, foreign = false,
+) {
+  const value = await prisma.ticket.create({ data: {
+    ticketNumber: `D47-${randomUUID().replaceAll("-", "").slice(0, 12)}`,
+    clientSubmissionId: randomUUID(), requesterId: foreign ? actor("B").id : cohort.requester.id,
+    categoryId: categoryIds[0]!, relatedSystemId: systemIds[0]!, ownerId: actor("staff").id,
+    summary: `${label} <script>literal SQL boundary</script>`, description: `${marker} private boundary body`,
+    requestedPriority: "HIGH", itPriority: "MEDIUM", currentStatus: resolved ? "RESOLVED" : "OPEN",
+    ticketDate: new Date("2026-05-01T00:00:00.000Z"), createdAt: new Date("2026-05-01T00:00:00.000Z"),
+    updatedAt: new Date(instant),
+  } });
+  cohort.ids.push(value.id); cohort.rows.set(label, value);
+  const history: Array<{ fromStatus: TicketStatus; toStatus: TicketStatus; createdAt: Date }> = [
+    { fromStatus: "NEW", toStatus: "OPEN", createdAt: new Date("2026-05-02T00:00:00.000Z") },
+  ];
+  if (resolved && label === "future-repeat") {
+    history.push(
+      { fromStatus: "OPEN", toStatus: "RESOLVED", createdAt: new Date(context.retainedResolution) },
+      { fromStatus: "RESOLVED", toStatus: "REOPENED", createdAt: new Date(context.asOf) },
+      { fromStatus: "REOPENED", toStatus: "RESOLVED", createdAt: new Date(instant) },
+    );
+  } else if (resolved) history.push({ fromStatus: "OPEN", toStatus: "RESOLVED", createdAt: new Date(instant) });
+  await prisma.ticketStatusHistory.createMany({ data: history.map((event) => ({
+    ...event, ticketId: value.id, actorId: actor("staff").id, reason: null,
+  })) });
+}
+
+describe("Controlled-clock actual SQL: [from,before) and inclusive asOf", () => {
+  for (const context of sqlBoundaryContexts) {
+    it.each(["dashboardUpdated", "dashboardResolved", "listUpdated", "listResolved"] as const)(
+      `${context.label}: %s`, async (surface) => {
+        const { withDashboardReadProbe } = await import("./dashboard-snapshot-test-helpers.js");
+        await withResolutionCohort(async (cohort) => {
+          const resolved = surface === "dashboardResolved" || surface === "listResolved";
+          for (const [label, instant] of context.positions) {
+            await addBoundaryTicket(cohort, label, instant, resolved, context);
+          }
+          if (resolved) {
+            const future = context.positions.find(([label]) => label === "asof-plus")![1];
+            await addBoundaryTicket(cohort, "future-repeat", future, true, context);
+          }
+          await addBoundaryTicket(cohort, "foreign-boundary", context.asOf, resolved, context, true);
+          const before = await resolutionDomainDigest(cohort);
+          const labels = resolved ? context.resolved : context.updated;
+          const expectedTimes = new Map<string, string>(context.positions);
+          expectedTimes.set("future-repeat", context.retainedResolution);
+          try {
+            await withDashboardReadProbe({ clock: new Date(context.asOf) }, async (probe) => {
+              const dashboardSurface = surface.startsWith("dashboard");
+              const params = new URLSearchParams();
+              if (!dashboardSurface) {
+                params.set(resolved ? "resolvedFrom" : "updatedFrom", context.from);
+                params.set(resolved ? "resolvedBefore" : "updatedBefore", context.before);
+                params.set("sortBy", resolved ? "resolvedAt" : "updatedAt"); params.set("sortOrder", "desc");
+              }
+              const response = await probe.track(request(app)
+                .get(`${dashboardSurface ? "/api/dashboard/requester" : "/api/tickets"}?${params.toString()}`)
+                .set("Cookie", cohort.requester.cookie).then((value) => value));
+              expect(response.status).toBe(200);
+              expect(response.headers["cache-control"]).toBe("private, no-store");
+              let actual: Array<Record<string, any>>;
+              if (dashboardSurface) {
+                expect(response.body.asOf).toBe(context.asOf);
+                expect(response.body.timezone).toBe("Asia/Bangkok");
+                expect(response.body.recentWindow).toEqual({ from: context.from, before: context.before });
+                expect(response.body.metrics).toEqual({
+                  outstanding: resolved ? 0 : 7, needsAttention: 0,
+                  recentUpdated: context.updated.length, recentResolved: resolved ? context.resolved.length : 0,
+                });
+                actual = response.body.lists[resolved ? "recentResolved" : "recentUpdated"];
+              } else {
+                expect(response.body.pagination).toEqual({ page: 1, pageSize: 10, totalItems: labels.length,
+                  totalPages: 1, hasPreviousPage: false, hasNextPage: false });
+                actual = response.body.items;
+              }
+              expect(actual.map((row) => row.id)).toEqual(labels.map((label) => cohort.rows.get(label)!.id));
+              expect(new Set(actual.map((row) => row.id)).size).toBe(labels.length);
+              for (const [index, row] of actual.entries()) {
+                const label = labels[index]!; const ticket = cohort.rows.get(label)!;
+                expect(row.summary).toBe(ticket.summary); expect(row.updatedAt).toBe(ticket.updatedAt.toISOString());
+                expect(row.currentStatus).toBe(resolved ? "RESOLVED" : "OPEN");
+                expect(Object.keys(row.owner).every((key) => ["id", "name", "role"].includes(key))).toBe(true);
+                expect(row.owner.id).toBe(actor("staff").id); expect(row.owner.name).toBe(actor("staff").name);
+                if (resolved) expect(row.resolvedAt).toBe(expectedTimes.get(label));
+                if (dashboardSurface) {
+                  expect(Object.keys(row).every((key) => ["id", "ticketNumber", "summary", "currentStatus",
+                    "requestedPriority", "itPriority", "owner", "updatedAt", "resolvedAt"].includes(key))).toBe(true);
+                } else {
+                  expect(row.requester.id).toBe(cohort.requester.id);
+                  expect(Object.keys(row.requester).sort()).toEqual(["id", "name"]);
+                }
+              }
+              expect(/passwordHash|tokenHash|csrfTokenHash|inputFingerprint|safeResponse|internalNotes|storageKey|"description"|"email"/u
+                .test(JSON.stringify(response.body))).toBe(false);
+              expect(probe.evidence.transactions).toBe(1); expect(probe.evidence.clockReads).toBe(1);
+              expect(probe.evidence.clockOverrides).toBe(1); expect(probe.evidence.countCompleted).toBe(true);
+              expect(probe.evidence.reads.length).toBeGreaterThan(1);
+              for (const read of probe.evidence.reads) {
+                expect(read.isolation).toBe("repeatable read"); expect(read.readOnly).toBe("on");
+              }
+              expect(new Set(probe.evidence.reads.map((read) => read.pid)).size).toBe(1);
+              console.info(`Controlled-clock SQL boundary verified: ${context.label}; ${surface}; actual business SQL; one clock substitution.`);
+            });
+          } finally {
+            expect(await resolutionDomainDigest(cohort) === before,
+              "Controlled-clock HTTP read preserves all domain/history/receipt state; sensitive digests withheld").toBe(true);
+          }
+        });
+      },
+    );
+  }
+});
