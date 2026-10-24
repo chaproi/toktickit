@@ -435,8 +435,34 @@ test("E2E-01 exercises applied search, filters, sorting, pagination, and reset b
   await expect(page.getByText("Page 2 of 2")).toBeVisible();
   await expect(table.locator("tbody tr")).toHaveCount(2);
 
-  await page.getByLabel("Sort Field").selectOption("ticketNumber");
-  await page.getByLabel("Sort Direction").selectOption("asc");
+  async function sortAndWaitForRenderedPage(
+    control: "Sort Field" | "Sort Direction",
+    value: string,
+    sortOrder: "asc" | "desc",
+  ) {
+    const [response] = await Promise.all([
+      page.waitForResponse((candidate) => {
+        const url = new URL(candidate.url());
+        return candidate.request().method() === "GET" &&
+          url.origin === API_URL && url.pathname === "/api/tickets" &&
+          url.searchParams.get("search") === `${RUN_MARKER} fixture` &&
+          url.searchParams.get("sortBy") === "ticketNumber" &&
+          url.searchParams.get("sortOrder") === sortOrder &&
+          url.searchParams.get("page") === "1" &&
+          url.searchParams.get("pageSize") === "10";
+      }),
+      page.getByLabel(control).selectOption(value),
+    ]);
+    expect(response.status()).toBe(200);
+    const body = await response.json() as { items: Array<{ ticketNumber: string }> };
+    expect(body.items).toHaveLength(10);
+    const numbers = table.locator("tbody tr td:first-child a");
+    await expect(numbers).toHaveCount(10);
+    await expect(numbers).toHaveText(body.items.map((ticket) => ticket.ticketNumber));
+  }
+
+  await sortAndWaitForRenderedPage("Sort Field", "ticketNumber", "desc");
+  await sortAndWaitForRenderedPage("Sort Direction", "asc", "asc");
   await expect(page.getByText("Page 1 of 2")).toBeVisible();
   const ascendingNumbers = await table
     .locator("tbody tr td:first-child a")
@@ -445,7 +471,7 @@ test("E2E-01 exercises applied search, filters, sorting, pagination, and reset b
     [...ascendingNumbers].sort((left, right) => left.localeCompare(right)),
   );
 
-  await page.getByLabel("Sort Direction").selectOption("desc");
+  await sortAndWaitForRenderedPage("Sort Direction", "desc", "desc");
   const descendingNumbers = await table
     .locator("tbody tr td:first-child a")
     .allTextContents();
