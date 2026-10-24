@@ -9,7 +9,7 @@ import { configureTestDatabaseEnvironment } from "../../server/src/testing/test-
 export type DashboardActor = { id: number; name: string; email: string; password: string };
 export type DashboardBrowserFixture = {
   prisma: ReturnType<typeof getPrisma>; marker: string;
-  a: DashboardActor; b: DashboardActor; empty: DashboardActor;
+  a: DashboardActor; b: DashboardActor; empty: DashboardActor; archived: DashboardActor;
   staff: DashboardActor; admin: DashboardActor;
   category: { id: number; name: string }; system: { id: number; name: string };
   tickets: Map<string, Ticket>; pageErrors: string[];
@@ -61,6 +61,7 @@ export const test = base.extend<{ dashboardFixture: DashboardBrowserFixture }>({
           return { ...record, password };
         };
         const a = await user("REQUESTER", "Requester A"), b = await user("REQUESTER", "Requester B");
+        const archived = await user("REQUESTER", "Archived Tickets");
         const empty = await user("REQUESTER", "No Tickets"), staff = await user("IT_STAFF", "Support"), admin = await user("ADMINISTRATOR", "Administrator");
         const category = await prisma.category.create({ data: { name: `${marker} Network` } }); categoryIds.push(category.id);
         const otherCategory = await prisma.category.create({ data: { name: `${marker} Hardware` } }); categoryIds.push(otherCategory.id);
@@ -94,7 +95,7 @@ export const test = base.extend<{ dashboardFixture: DashboardBrowserFixture }>({
             if (status === "REOPENED") { event("OPEN", "RESOLVED", ago(72)); event("RESOLVED", "REOPENED", ticket.updatedAt); }
             if (status === "RESOLVED" || status === "CLOSED") {
               event("OPEN", "RESOLVED", ago(age > 24 ? 11 * 24 : 8));
-              if (status === "CLOSED") event("RESOLVED", "CLOSED", ago(7));
+              if (status === "CLOSED") event("RESOLVED", "CLOSED", ago(age > 24 ? age : 7));
             }
           }
           if (events.length) await prisma.ticketStatusHistory.createMany({ data: events.map((entry) => ({ ...entry, ticketId: ticket.id, actorId: staff.id })) });
@@ -110,6 +111,7 @@ export const test = base.extend<{ dashboardFixture: DashboardBrowserFixture }>({
         for (let n = 1; n <= 6; n++) await add(`A-resolved-${n}`, a, n % 2 === 0 ? "CLOSED" : "RESOLVED", 6);
         await add("A-cancelled", a, "CANCELLED", 10 * 24);
         await add("A-old-resolution", a, "RESOLVED", 10 * 24);
+        await add("Archived-old-closed", archived, "CLOSED", 10 * 24);
         await add("B-open", b, "OPEN", 1);
         await add("B-waiting", b, "WAITING_FOR_REQUESTER", 3);
         await add("B-resolved", b, "RESOLVED", 6);
@@ -118,7 +120,8 @@ export const test = base.extend<{ dashboardFixture: DashboardBrowserFixture }>({
         expect(await prisma.ticket.count({ where: { requesterId: a.id } })).toBe(30);
         expect(await prisma.ticket.count({ where: { requesterId: b.id } })).toBe(4);
         expect(await prisma.ticket.count({ where: { requesterId: empty.id } })).toBe(0);
-        fixture = { prisma, marker, a, b, empty, staff, admin, category, system, tickets, pageErrors };
+        expect(await prisma.ticket.count({ where: { requesterId: archived.id } })).toBe(1);
+        fixture = { prisma, marker, a, b, empty, archived, staff, admin, category, system, tickets, pageErrors };
       } catch (error) { throw safeError("setup", error); }
       const before = await domain();
       try { await use(fixture); }

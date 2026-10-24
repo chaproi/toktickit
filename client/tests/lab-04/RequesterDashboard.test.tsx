@@ -188,10 +188,12 @@ function metricControl(root: HTMLElement, label: RegExp) {
   return controls[0]!;
 }
 function expectMetrics(root: HTMLElement, counts: [number, number, number, number]) {
-  [/outstanding/i, /needs attention|waiting for (?:my|your) response/i, /recent(?:ly)? updated/i, /recent(?:ly)? resolved/i]
+  [/outstanding/i, /^Waiting for your response \d+$/, /recent(?:ly)? updated/i, /recent(?:ly)? resolved/i]
     .forEach((label, index) => {
       expect(within(metricControl(root, label)).getByText(String(counts[index]), { exact: true })).toBeInTheDocument();
     });
+  const attention = within(root).getByRole("link", { name: `Waiting for your response ${counts[1]}`, exact: true });
+  expect(within(attention).getByText("Waiting for your response", { exact: true })).toBeInTheDocument();
 }
 function expectNoPrivateReads(harness: ReturnType<typeof installFetch>) {
   expect(harness.calls.filter(({ url }) => /\/api\/(?:staff|admin)\//.test(url.pathname) || /\/notes(?:\/|$)/.test(url.pathname))).toEqual([]);
@@ -280,7 +282,7 @@ describe("Issue 47 Requester Dashboard UI — partial Dashboard, drill-down and 
   it("distinguishes filtered no-results and Clear filters from an account with no Tickets", async () => {
     installFetch({ dashboard: () => jsonResponse(dashboardFixture(selectedFilters, true)) });
     const root = await ready(`/dashboard?${new URLSearchParams(allFilters)}`);
-    expect(await within(root).findByText(/no .*match|no .*results/i)).toBeInTheDocument();
+    expect(await within(root).findByText("No current or recent Dashboard items match these filters.", { exact: true })).toBeInTheDocument();
     expectMetrics(root, [0, 0, 0, 0]);
     expect(within(root).queryByText(/no tickets yet|you (?:have|haven't) (?:no|not created)/i)).not.toBeInTheDocument();
     expect(within(root).getByRole("button", { name: /^clear filters$/i })).toBeInTheDocument();
@@ -354,7 +356,7 @@ describe("Issue 47 Requester Dashboard UI — partial Dashboard, drill-down and 
       url.searchParams.size ? selectedFilters : noFilters, url.searchParams.size > 0,
     )) });
     const root = await ready(`/dashboard?${new URLSearchParams(allFilters)}`);
-    await within(root).findByText(/no .*match|no .*results/i);
+    await within(root).findByText("No current or recent Dashboard items match these filters.", { exact: true });
     expect(parameters(harness.dashboardCalls[0]!.url)).toEqual(allFilters);
     await clearFilters(root);
     await within(root).findByText(literalSummary);
@@ -371,7 +373,7 @@ describe("Issue 47 Requester Dashboard UI — partial Dashboard, drill-down and 
 
   it.each([
     { widget: "outstanding", label: /outstanding/i, status: "OPEN" as const, predicates: { dashboardWidget: "outstanding", statusGroup: "outstanding" } },
-    { widget: "needsAttention", label: /needs attention|waiting for (?:my|your) response/i, status: "WAITING_FOR_REQUESTER" as const, predicates: { dashboardWidget: "attention" } },
+    { widget: "needsAttention", label: /^Waiting for your response \d+$/, status: "WAITING_FOR_REQUESTER" as const, predicates: { dashboardWidget: "attention" } },
     { widget: "recentUpdated", label: /recent(?:ly)? updated/i, status: "OPEN" as const, predicates: {
       dashboardWidget: "recentUpdated", updatedFrom: from, updatedBefore: before, sortBy: "updatedAt", sortOrder: "desc",
     } },
@@ -420,7 +422,7 @@ describe("Issue 47 Requester Dashboard UI — partial Dashboard, drill-down and 
       // A separate contradictory, valid intersection within this card case.
       cleanup();
       const contradictory = await ready(`/dashboard?${new URLSearchParams(allFilters)}`);
-      await within(contradictory).findByText(/no .*match|no .*results/i);
+      await within(contradictory).findByText("No current or recent Dashboard items match these filters.", { exact: true });
       await userEvent.click(metricControl(contradictory, label));
       await screen.findByRole("heading", { name: "My Tickets" });
       expect(await screen.findByText(/no .*match|no .*results/i)).toBeInTheDocument();
@@ -490,4 +492,36 @@ describe("Issue 47 Requester Dashboard UI — partial Dashboard, drill-down and 
     expect(harness.calls.map(({ url }) => url.pathname)).toEqual(["/api/auth/me"]);
     expect(harness.dashboardCalls).toEqual([]);
   });
+});
+
+// PR #55: partial AC-23/29/36, T-23/29/36. Widget zero does not imply
+// that the base filters matched no Tickets. HTTP simulation, not SQL evidence.
+it("keeps CLOSED filter context and truthful widget-empty wording when an owned old CLOSED Ticket exists", async () => {
+  const closedFilters: Filters = { ...noFilters, currentStatus: "CLOSED" };
+  const oldClosed: TicketListItem = {
+    ...ticketRow(890, "CLOSED"), summary: "Owned archived CLOSED Ticket outside every recent widget",
+    createdAt: "2026-09-01T02:00:00.000Z", updatedAt: "2026-09-03T02:00:00.000Z",
+  };
+  const harness = installFetch({
+    dashboard: () => jsonResponse(dashboardFixture(closedFilters, true)),
+    tickets: () => jsonResponse(page([oldClosed])),
+  });
+  const root = await ready("/dashboard?currentStatus=CLOSED");
+  expect(await within(root).findByText("No current or recent Dashboard items match these filters.", { exact: true })).toBeInTheDocument();
+  expectMetrics(root, [0, 0, 0, 0]);
+  expect(within(root).getByRole("region", { name: "Active filters", exact: true })).toHaveTextContent("Current Status: Closed");
+  expect(within(root).getByRole("combobox", { name: "Current Status", exact: true })).toHaveValue("CLOSED");
+  expect(window.location.search).toBe("?currentStatus=CLOSED");
+  expect(parameters(harness.dashboardCalls[0]!.url)).toEqual({ currentStatus: "CLOSED" });
+  expect(within(root).queryByText(/no tickets match/i)).not.toBeInTheDocument();
+  expect(within(root).queryByRole("alert")).not.toBeInTheDocument();
+  for (const name of ["Recently updated Tickets", "Recently resolved Tickets"]) {
+    expect(within(within(root).getByRole("region", { name, exact: true })).queryByRole("link")).not.toBeInTheDocument();
+  }
+  cleanup();
+  renderAt("/tickets?currentStatus=CLOSED");
+  expect(await screen.findByText(oldClosed.summary, { exact: true })).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: oldClosed.ticketNumber, exact: true })).toBeInTheDocument();
+  expect(parameters(harness.listCalls[0]!.url).currentStatus).toBe("CLOSED");
+  expectNoPrivateReads(harness);
 });

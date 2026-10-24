@@ -8,7 +8,7 @@ import { test, loginDashboardActor, type DashboardBrowserFixture } from "./reque
 // Landing/global navigation (#53), Staff Dashboard, layout/accessibility remain separate.
 const api = "http://127.0.0.1:3100";
 const dashboardPath = "/api/dashboard/requester";
-const metricLabels = { outstanding: "Outstanding", needsAttention: "Needs attention", recentUpdated: "Recently updated", recentResolved: "Recently resolved" };
+const metricLabels = { outstanding: "Outstanding", needsAttention: "Waiting for your response", recentUpdated: "Recently updated", recentResolved: "Recently resolved" };
 const aMetrics = { outstanding: 22, needsAttention: 2, recentUpdated: 28, recentResolved: 6 };
 const bMetrics = { outstanding: 2, needsAttention: 1, recentUpdated: 3, recentResolved: 1 };
 const zeros = { outstanding: 0, needsAttention: 0, recentUpdated: 0, recentResolved: 0 };
@@ -157,7 +157,7 @@ test("Requester Dashboard: all six filters, URL reload/back, intersections and r
   expect(reloaded.metrics).toEqual(filtered.metrics);
   expect(Object.fromEntries(new URL(page.url()).searchParams)).toEqual(expected);
 
-  const contradictory = await list(page, () => root(page).getByRole("link", { name: /Needs attention/i }).click());
+  const contradictory = await list(page, () => root(page).getByRole("link", { name: /Waiting for your response/i }).click());
   expect(parameters(contradictory.response)).toEqual({ ...expected, dashboardWidget: "attention", sortBy: "updatedAt", sortOrder: "desc", page: "1", pageSize: "10" });
   expect(contradictory.body.items).toEqual([]); expect(contradictory.body.pagination.totalItems).toBe(0);
   await expect(page.getByText("No Tickets match the current search and filters.", { exact: true })).toBeVisible();
@@ -266,5 +266,34 @@ test("Requester Dashboard: genuine empty state and one injected transport failur
   await expect(root(page).getByRole("alert")).toHaveCount(0);
   await expect(root(page).getByText(ticket(f, "A-open-12").summary, { exact: true })).toBeVisible();
   console.info("Issue47 recovery: exactly one browser transport abort; subsequent successful Dashboard response is the real API, not a simulated backend outage.");
+  expect(f.pageErrors).toEqual([]);
+});
+
+// PR #55: real API/PostgreSQL counterexample, not a fabricated empty response.
+test("Requester Dashboard: an owned old CLOSED Ticket matches base filters while every widget is zero", async ({ page, dashboardFixture: f }) => {
+  const old = ticket(f, "Archived-old-closed");
+  await loginDashboardActor(page, f.archived);
+  const body = await dashboard(page, () => page.goto("/dashboard?currentStatus=CLOSED"));
+  expect(body.filters.currentStatus).toBe("CLOSED");
+  expect(body.metrics).toEqual(zeros);
+  expect(body.lists).toEqual({ recentUpdated: [], recentResolved: [] });
+  expect(old.updatedAt.getTime()).toBeLessThan(Date.parse(body.recentWindow.from));
+  const history = await f.prisma.ticketStatusHistory.findMany({ where: { ticketId: old.id }, orderBy: { createdAt: "asc" } });
+  expect(history.map((entry) => [entry.fromStatus, entry.toStatus])).toEqual([["NEW", "OPEN"], ["OPEN", "RESOLVED"], ["RESOLVED", "CLOSED"]]);
+  expect(history.find((entry) => entry.toStatus === "RESOLVED")!.createdAt.getTime()).toBeLessThan(Date.parse(body.recentWindow.from));
+  await expect(root(page).getByText("No current or recent Dashboard items match these filters.", { exact: true })).toBeVisible();
+  await metrics(page, zeros);
+  await expect(root(page).getByRole("link", { name: "Waiting for your response 0", exact: true })).toBeVisible();
+  await expect(root(page).getByRole("region", { name: "Active filters", exact: true })).toContainText("Current Status: Closed");
+  await expect(root(page).getByLabel("Current Status", { exact: true })).toHaveValue("CLOSED");
+  await expect(root(page).getByText(/No Tickets match/i)).toHaveCount(0);
+  expect(new URL(page.url()).search).toBe("?currentStatus=CLOSED");
+  const matched = await list(page, () => page.goto("/tickets?currentStatus=CLOSED"));
+  expect(parameters(matched.response)).toEqual({ currentStatus: "CLOSED", sortBy: "updatedAt", sortOrder: "desc", page: "1", pageSize: "10" });
+  expect(matched.body.pagination.totalItems).toBe(1);
+  expect(matched.body.items.map((row) => row.id)).toEqual([old.id]);
+  expect(matched.body.items[0]!.requester.id).toBe(f.archived.id);
+  await expect(page.getByRole("link", { name: old.ticketNumber, exact: true })).toBeVisible();
+  await expect(page.getByText(old.summary, { exact: true })).toBeVisible();
   expect(f.pageErrors).toEqual([]);
 });

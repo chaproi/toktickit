@@ -17,7 +17,7 @@ const executionHead = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "ut
 const dashboardPath = "/api/dashboard/requester";
 const root = (page: Page) => page.getByRole("region", { name: "Requester Dashboard", exact: true });
 const filterNames = ["Search Tickets", "Category", "Related System", "Requested Priority", "IT Priority", "Current Status"] as const;
-const metricNames = ["Outstanding", "Needs attention", "Recently updated", "Recently resolved"] as const;
+const metricNames = ["Outstanding", "Waiting for your response", "Recently updated", "Recently resolved"] as const;
 const ownerName = "Support coordinator " + "Suvannaphumiphatthanawong".repeat(3);
 const requesterName = "Requester for regional infrastructure coordination and multilingual service continuity ภาษาไทย";
 const summary = (key: string) => `VPN%_ ${key} ภาษาไทย <script>literal</script> ` + "DiagnosticReference".repeat(5);
