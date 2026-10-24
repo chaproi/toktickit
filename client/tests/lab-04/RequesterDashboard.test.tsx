@@ -192,7 +192,7 @@ function expectMetrics(root: HTMLElement, counts: [number, number, number, numbe
     .forEach((label, index) => {
       expect(within(metricControl(root, label)).getByText(String(counts[index]), { exact: true })).toBeInTheDocument();
     });
-  const attention = within(root).getByRole("link", { name: `Waiting for your response ${counts[1]}`, exact: true });
+  const attention = within(root).getByRole("link", { name: `Waiting for your response ${counts[1]}` });
   expect(within(attention).getByText("Waiting for your response", { exact: true })).toBeInTheDocument();
 }
 function expectNoPrivateReads(harness: ReturnType<typeof installFetch>) {
@@ -509,19 +509,19 @@ it("keeps CLOSED filter context and truthful widget-empty wording when an owned 
   const root = await ready("/dashboard?currentStatus=CLOSED");
   expect(await within(root).findByText("No current or recent Dashboard items match these filters.", { exact: true })).toBeInTheDocument();
   expectMetrics(root, [0, 0, 0, 0]);
-  expect(within(root).getByRole("region", { name: "Active filters", exact: true })).toHaveTextContent("Current Status: Closed");
-  expect(within(root).getByRole("combobox", { name: "Current Status", exact: true })).toHaveValue("CLOSED");
+  expect(within(root).getByRole("region", { name: "Active filters" })).toHaveTextContent("Current Status: Closed");
+  expect(within(root).getByRole("combobox", { name: "Current Status" })).toHaveValue("CLOSED");
   expect(window.location.search).toBe("?currentStatus=CLOSED");
   expect(parameters(harness.dashboardCalls[0]!.url)).toEqual({ currentStatus: "CLOSED" });
   expect(within(root).queryByText(/no tickets match/i)).not.toBeInTheDocument();
   expect(within(root).queryByRole("alert")).not.toBeInTheDocument();
   for (const name of ["Recently updated Tickets", "Recently resolved Tickets"]) {
-    expect(within(within(root).getByRole("region", { name, exact: true })).queryByRole("link")).not.toBeInTheDocument();
+    expect(within(within(root).getByRole("region", { name })).queryByRole("link")).not.toBeInTheDocument();
   }
   cleanup();
   renderAt("/tickets?currentStatus=CLOSED");
   expect(await screen.findByText(oldClosed.summary, { exact: true })).toBeInTheDocument();
-  expect(screen.getByRole("link", { name: oldClosed.ticketNumber, exact: true })).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: oldClosed.ticketNumber })).toBeInTheDocument();
   expect(parameters(harness.listCalls[0]!.url).currentStatus).toBe("CLOSED");
   expectNoPrivateReads(harness);
 });
