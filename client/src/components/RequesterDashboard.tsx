@@ -15,7 +15,7 @@ const time = (value: string) => new Intl.DateTimeFormat("en-US", {
   timeZone: "Asia/Bangkok", dateStyle: "medium", timeStyle: "short",
 }).format(new Date(value));
 const metricLabels: Record<RequesterDashboardMetric, string> = {
-  outstanding: "Outstanding", needsAttention: "Needs attention",
+  outstanding: "Outstanding", needsAttention: "Waiting for your response",
   recentUpdated: "Recently updated", recentResolved: "Recently resolved",
 };
 
@@ -151,7 +151,7 @@ export default function RequesterDashboard() {
             </Link>
           </div>)}
         </div>
-        {empty && <div className="my-tickets-state mb-3"><p>{filtered ? "No Tickets match the current Dashboard filters." : "No Tickets in the current Dashboard categories."}</p>
+        {empty && <div className="my-tickets-state mb-3"><p>{filtered ? "No current or recent Dashboard items match these filters." : "No Tickets in the current Dashboard categories."}</p>
           {!filtered && <Link className="btn btn-success" to="/tickets/new">Create Ticket</Link>}
         </div>}
         {recent("recentUpdated", data.lists.recentUpdated)}
