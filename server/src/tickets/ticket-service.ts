@@ -1,4 +1,4 @@
-import { Prisma, type Ticket } from "@prisma/client";
+import { Prisma, type Ticket, type TicketStatus } from "@prisma/client";
 import {
   lockCurrentActor,
   runSerializableMutation,
@@ -6,10 +6,8 @@ import {
 import { getPrisma } from "../prisma.js";
 import { formatTicketNumber } from "./ticket-number.js";
 import type { CreateTicketInput } from "./ticket-validation.js";
-import {
-  buildTicketListOrderBy,
-  type TicketListQuery,
-} from "./ticket-query.js";
+import { buildTicketListOrderBy } from "./ticket-query.js";
+import type { RequesterStatusGroup, RequesterTicketListQuery } from "./requester-ticket-query.js";
 
 const ticketInclude = {
   requester: {
@@ -111,7 +109,7 @@ export type TicketListItem = Prisma.TicketGetPayload<{
 export type ListTicketsResult =
   | {
       kind: "success";
-      items: TicketListItem[];
+      items: Array<TicketListItem & { resolvedAt?: Date }>;
       pagination: {
         page: number;
         pageSize: number;
@@ -123,6 +121,10 @@ export type ListTicketsResult =
     }
   | {
       kind: "invalid-requester";
+    }
+  | {
+      kind: "invalid-query";
+      fields: Record<string, string>;
     };
 
 export type GetTicketDetailResult =
@@ -184,86 +186,83 @@ export async function getTicketDetailForRequester(
 
 export async function listTicketsForRequester(
   requesterId: number,
-  query: TicketListQuery,
+  query: RequesterTicketListQuery,
 ): Promise<ListTicketsResult> {
   const prisma = getPrisma();
+  const requester = await prisma.user.findFirst({
+    where: {
+      id: requesterId,
+      isActive: true,
+      role: "REQUESTER",
+    },
+    select: { id: true },
+  });
+  if (!requester) return { kind: "invalid-requester" };
 
-  const requester =
-    await prisma.user.findFirst({
-      where: {
-        id: requesterId,
-        isActive: true,
-        role: "REQUESTER",
-      },
-      select: {
-        id: true,
-      },
+  return prisma.$transaction(async (transaction) => {
+    await transaction.$executeRaw`SET TRANSACTION READ ONLY`;
+    const [clock] = await transaction.$queryRaw<Array<{ asOf: Date }>>`SELECT CURRENT_TIMESTAMP AS "asOf"`;
+
+    const statusGroups: Record<RequesterStatusGroup, TicketStatus[]> = {
+      active: ["NEW", "OPEN", "IN_PROGRESS", "WAITING_FOR_REQUESTER", "REOPENED", "RESOLVED"],
+      outstanding: ["NEW", "OPEN", "IN_PROGRESS", "WAITING_FOR_REQUESTER", "REOPENED"],
+      resolved: ["RESOLVED", "CLOSED"],
+    };
+    const filters: Prisma.TicketWhereInput[] = [];
+    if (query.itPriority != null) filters.push({ itPriority: query.itPriority });
+    if (query.statusGroup !== undefined) filters.push({ currentStatus: { in: statusGroups[query.statusGroup] } });
+    if (query.dashboardWidget === "outstanding") filters.push({ currentStatus: { in: statusGroups.outstanding } });
+    if (query.dashboardWidget === "attention") filters.push({ currentStatus: "WAITING_FOR_REQUESTER" });
+    if (query.updatedWindow !== undefined) filters.push({ updatedAt: {
+      gte: query.updatedWindow.from, lt: query.updatedWindow.before, lte: clock.asOf,
+    } });
+    const resolvedBounds = query.resolvedWindow === undefined ? undefined : {
+      gte: query.resolvedWindow.from, lt: query.resolvedWindow.before, lte: clock.asOf,
+    };
+    if (resolvedBounds !== undefined) filters.push({
+      currentStatus: { in: statusGroups.resolved },
+      statusHistory: { some: { toStatus: "RESOLVED", createdAt: resolvedBounds } },
     });
 
-  if (!requester) {
-    return {
-      kind: "invalid-requester",
+    const where: Prisma.TicketWhereInput = {
+      requesterId,
+      AND: filters,
+      ...(query.categoryId === null
+        ? {}
+        : { categoryId: query.categoryId }),
+      ...(query.relatedSystemId === null
+        ? {}
+        : { relatedSystemId: query.relatedSystemId }),
+      ...(query.requestedPriority === null
+        ? {}
+        : { requestedPriority: query.requestedPriority }),
+      ...(query.currentStatus === null
+        ? {}
+        : { currentStatus: query.currentStatus }),
+      ...(query.search === ""
+        ? {}
+        : {
+            OR: [
+              {
+                ticketNumber: {
+                  contains: query.search,
+                  mode: "insensitive" as const,
+                },
+              },
+              {
+                summary: {
+                  contains: query.search,
+                  mode: "insensitive" as const,
+                },
+              },
+            ],
+          }),
     };
-  }
 
-  const where: Prisma.TicketWhereInput = {
-    requesterId,
-    ...(query.categoryId === null
-      ? {}
-      : { categoryId: query.categoryId }),
-    ...(query.relatedSystemId === null
-      ? {}
-      : { relatedSystemId: query.relatedSystemId }),
-    ...(query.requestedPriority === null
-      ? {}
-      : { requestedPriority: query.requestedPriority }),
-    ...(query.currentStatus === null
-      ? {}
-      : { currentStatus: query.currentStatus }),
-    ...(query.search === ""
-      ? {}
-      : {
-          OR: [
-            {
-              ticketNumber: {
-                contains: query.search,
-                mode: "insensitive" as const,
-              },
-            },
-            {
-              summary: {
-                contains: query.search,
-                mode: "insensitive" as const,
-              },
-            },
-          ],
-        }),
-  };
-
-  const [totalItems, items] = await prisma.$transaction([
-    prisma.ticket.count({ where }),
-    prisma.ticket.findMany({
-      where,
-      select: ticketListSelect,
-      orderBy:
-        buildTicketListOrderBy(
-          query.sortBy,
-          query.sortOrder,
-        ) as Prisma.TicketOrderByWithRelationInput[],
-      skip: (query.page - 1) * query.pageSize,
-      take: query.pageSize,
-    }),
-  ]);
-
-  const totalPages =
-    totalItems === 0
-      ? 0
-      : Math.ceil(totalItems / query.pageSize);
-
-  return {
-    kind: "success",
-    items,
-    pagination: {
+    // Count parents (distinct Tickets), then paginate within this fresh snapshot.
+    const totalItems = await transaction.ticket.count({ where });
+    const totalPages = Math.ceil(totalItems / query.pageSize);
+    const pagination = {
       page: query.page,
       pageSize: query.pageSize,
       totalItems,
@@ -272,8 +271,55 @@ export async function listTicketsForRequester(
         totalItems > 0 && query.page > 1,
       hasNextPage:
         totalItems > 0 && query.page < totalPages,
-    },
-  };
+    };
+    if (query.page > totalPages) return { kind: "success", items: [], pagination };
+    const skip = (query.page - 1) * query.pageSize;
+    if (!Number.isSafeInteger(skip) || skip > 2_147_483_647) {
+      return { kind: "invalid-query", fields: { page: "The requested page cannot be represented safely." } };
+    }
+    if (query.sortBy === "resolvedAt") {
+      if (resolvedBounds === undefined) throw new Error("Resolution ordering requires validated bounds.");
+      const events = await transaction.ticketStatusHistory.groupBy({
+        by: ["ticketId"],
+        where: { toStatus: "RESOLVED", createdAt: resolvedBounds, ticket: { is: where } },
+        _max: { createdAt: true },
+        orderBy: [{ _max: { createdAt: query.sortOrder } }, { ticketId: query.sortOrder }],
+        skip, take: query.pageSize,
+      });
+      const tickets = await transaction.ticket.findMany({
+        where: { AND: [where, { id: { in: events.map((event) => event.ticketId) } }] },
+        select: ticketListSelect, take: query.pageSize,
+      });
+      const byId = new Map(tickets.map((ticket) => [ticket.id, ticket]));
+      const items = events.map((event) => {
+        const ticket = byId.get(event.ticketId);
+        if (!ticket || event._max.createdAt === null) throw new Error("Incomplete resolution page projection.");
+        return { ...ticket, resolvedAt: event._max.createdAt };
+      });
+      return { kind: "success", items, pagination };
+    }
+    const tickets = await transaction.ticket.findMany({
+      where, select: ticketListSelect,
+      orderBy: buildTicketListOrderBy(query.sortBy, query.sortOrder) as Prisma.TicketOrderByWithRelationInput[],
+      skip, take: query.pageSize,
+    });
+    if (resolvedBounds === undefined) return { kind: "success", items: tickets, pagination };
+    // A resolved date filter can retain another inherited sort. Project the
+    // actual latest qualifying time for only the already bounded page.
+    const events = await transaction.ticketStatusHistory.groupBy({
+      by: ["ticketId"],
+      where: { toStatus: "RESOLVED", createdAt: resolvedBounds,
+        ticket: { is: { AND: [where, { id: { in: tickets.map((ticket) => ticket.id) } }] } } },
+      _max: { createdAt: true },
+    });
+    const byId = new Map(events.map((event) => [event.ticketId, event._max.createdAt]));
+    const items = tickets.map((ticket) => {
+      const resolvedAt = byId.get(ticket.id);
+      if (resolvedAt == null) throw new Error("Missing qualifying resolution in page projection.");
+      return { ...ticket, resolvedAt };
+    });
+    return { kind: "success", items, pagination };
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead });
 }
 
 function payloadMatches(

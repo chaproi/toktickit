@@ -1,0 +1,27 @@
+{
+    "screenshot":  "834x1112-metrics-lists.png",
+    "capturedAt":  "2026-10-24T05:50:42.293Z",
+    "executionHead":  "0475989409d8d5ff73d69a6a05e379decfe05289",
+    "pendingProductionFiles":  [
+
+                               ],
+    "browser":  "HeadlessChrome/153.0.8010.12",
+    "configuredViewport":  {
+                               "width":  834,
+                               "height":  1112
+                           },
+    "actualCSSViewport":  {
+                              "width":  834,
+                              "height":  1112,
+                              "pinchScale":  1
+                          },
+    "role":  "REQUESTER",
+    "state":  "Populated textual metrics; recent lists continue below the fold on mobile",
+    "zoomFactor":  1,
+    "zoomMethod":  "unmodified tab zoom",
+    "captureScope":  "native viewport",
+    "syntheticDataOnly":  true,
+    "visualInspection":  "Inspected by Codex at original PNG resolution on 2026-10-24; no certified accessibility claim.",
+    "inspectionObservation":  "Metric labels/counts and as-of/window text are legible; lower lists continue through normal page scrolling.",
+    "executionRun":  "Combined third attempt; 9/9 passed"
+}
