@@ -9,6 +9,8 @@ import { getPrisma } from "../../src/prisma.js";
 import { configureTestDatabaseEnvironment } from "../../src/testing/test-database.js";
 import { cookieHeader, createAuthUser, loginRequest } from "../lab-03/auth-test-helpers.js";
 import { ACTION_KEYS, actionSnapshot } from "./action-read-test-fixtures.js";
+import { anchorOrder, anchorResolutions, historyClock, staffVerificationFixture } from "./staff-dashboard-verification-fixtures.js";
+import { withDashboardReadProbe } from "./dashboard-snapshot-test-helpers.js";
 
 // First API-09 RED: partial AC-25/T-25, AC-26/T-26, AC-01/T-01,
 // AC-02/T-02, AC-29/T-29; bounded history/order observations contribute to
@@ -451,5 +453,85 @@ describe("Staff Dashboard rejects client-selected identity/clock and invalid bas
     } finally {
       expect(await domainDigest() === before, "Rejected query preserves all owned domain state; digests withheld").toBe(true);
     }
+  });
+});
+
+// Partial AC-24/T-24, AC-27/T-27 and AC-28/T-28. Real SQL/HTTP with
+// a labelled substitution of only the service's observed clock SELECT result;
+// authentication remains real, with no global fake timers or writer coordination.
+// At final Bangkok millisecond, before-1ms == asOf. Exclusion at before also
+// overlaps the future cap; this is not an independently isolated upper-bound proof.
+describe("Staff resolution histories: controlled calendar edges and real descriptor execution", () => {
+  const fixture = staffVerificationFixture("history");
+  beforeAll(fixture.setup);
+  afterAll(fixture.cleanup);
+  const cases: Array<{ name: string; resolution: string | null; status: "RESOLVED" | "CLOSED" | "REOPENED"; expected: "excluded" | "oldest" | "newest" | "tie"; multiple?: boolean }> = [
+    { name: "resolution one millisecond before lower bound is excluded", resolution: "2026-06-08T16:59:59.999Z", status: "RESOLVED", expected: "excluded" },
+    { name: "resolution exactly at inclusive lower bound is included", resolution: "2026-06-08T17:00:00.000Z", status: "RESOLVED", expected: "oldest" },
+    { name: "resolution one millisecond before upper bound is included at asOf", resolution: "2026-06-15T16:59:59.999Z", status: "RESOLVED", expected: "newest" },
+    { name: "resolution exactly at exclusive upper bound is excluded", resolution: "2026-06-15T17:00:00.000Z", status: "RESOLVED", expected: "excluded" },
+    { name: "recently updated legacy RESOLVED without resolution history is excluded", resolution: null, status: "RESOLVED", expected: "excluded" },
+    { name: "subsequent CLOSED retains actual qualifying resolution time", resolution: "2026-06-15T03:00:00.000Z", status: "CLOSED", expected: "newest" },
+    { name: "subsequent REOPENED excludes otherwise recent resolution history", resolution: "2026-06-15T03:00:00.000Z", status: "REOPENED", expected: "excluded" },
+    { name: "multiple resolutions count once using latest qualifying time and ID tie-break", resolution: "2026-06-14T05:00:00.000Z", status: "RESOLVED", expected: "tie", multiple: true },
+  ];
+  it.each(cases)("$name", async ({ name, resolution, status, expected, multiple }) => {
+    const categoryId = await fixture.category(name), prefix = `${categoryId}:`;
+    const times = new Map<string, string>();
+    for (const [index, [label, instant]] of anchorResolutions.entries()) {
+      const key = `${prefix}${label}`;
+      // Increasing updates deliberately disagree with interleaved/tied history
+      // chronology. Twelve eligible anchors force two real list pages each time.
+      await fixture.addTicket(key, categoryId, "RESOLVED", "A", new Date(`2026-06-15T${String(index).padStart(2, "0")}:00:00.000Z`), [
+        ["NEW", "OPEN", "2026-05-02T00:00:00.000Z"], ["OPEN", "RESOLVED", instant],
+      ]);
+      times.set(key, instant);
+    }
+    const subject = `${prefix}subject`, history: Array<[TicketStatus, TicketStatus, string]> = [];
+    if (resolution !== null) {
+      history.push(["NEW", "OPEN", "2026-05-02T00:00:00.000Z"]);
+      if (multiple) history.push(["OPEN", "RESOLVED", "2026-06-07T05:00:00.000Z"],
+        ["RESOLVED", "REOPENED", "2026-06-08T05:00:00.000Z"], ["REOPENED", "RESOLVED", "2026-06-10T05:00:00.000Z"],
+        ["RESOLVED", "REOPENED", "2026-06-11T05:00:00.000Z"], ["REOPENED", "RESOLVED", resolution]);
+      else history.push(["OPEN", "RESOLVED", resolution]);
+      if (status === "CLOSED" || status === "REOPENED") history.push(["RESOLVED", status, "2026-06-15T04:00:00.000Z"]);
+      times.set(subject, resolution);
+    }
+    await fixture.addTicket(subject, categoryId, status, resolution === null ? null : "A", new Date("2026-06-15T04:00:00.000Z"), history);
+    const anchors = anchorOrder.map((label) => `${prefix}${label}`);
+    const order = expected === "oldest" ? [...anchors, subject] : expected === "excluded" ? anchors : [subject, ...anchors];
+    const count = expected === "excluded" ? 12 : 13, filters = new URLSearchParams({ categoryId: String(categoryId) });
+    await withDashboardReadProbe({ clock: new Date(historyClock.asOf) }, async (probe) => {
+      const response = await probe.track(fixture.read("A", "/api/dashboard/staff", filters));
+      expect(response.status).toBe(200); expect(response.headers["cache-control"]).toBe("private, no-store");
+      expect(response.body.asOf).toBe(historyClock.asOf); expect(response.body.timezone).toBe("Asia/Bangkok");
+      expect(response.body.recentWindow).toEqual({ from: historyClock.from, before: historyClock.before });
+      expect(response.body.metrics.recentResolved).toBe(count);
+      expect(response.body.metrics.byStatus.RESOLVED).toBe(status === "RESOLVED" ? 13 : 12);
+      expect(response.body.metrics.mine).toBe(status === "CLOSED" || resolution === null ? 12 : 13);
+      // RESOLVED remains active (mine) without being one of the unresolved bins.
+      expect(response.body.metrics.byStatus.OPEN + response.body.metrics.byStatus.IN_PROGRESS + response.body.metrics.byStatus.WAITING_FOR_REQUESTER).toBe(0);
+      fixture.assertResolutionRows(response.body.lists.recentResolved, order.slice(0, 5), times, true);
+      const descriptor = response.body.drillDown.recentResolved;
+      const params = fixture.descriptorParams(descriptor, "/api/staff/tickets", filters);
+      expect(params.get("resolvedFrom")).toBe(historyClock.from); expect(params.get("resolvedBefore")).toBe(historyClock.before);
+      expect(params.get("dashboardWidget")).toBe("recentResolved"); expect(params.get("statusGroup")).toBe("resolved");
+      expect(params.get("sortBy")).toBe("resolvedAt"); expect(params.get("sortOrder")).toBe("desc");
+      const seen: number[] = [];
+      for (const page of [1, 2]) {
+        params.set("page", String(page)); params.set("pageSize", "10");
+        const list = await probe.track(fixture.read("A", descriptor.path, params));
+        expect(list.status).toBe(200);
+        expect(list.body.pagination).toEqual({ page, pageSize: 10, totalItems: count, totalPages: 2, hasPreviousPage: page > 1, hasNextPage: page < 2 });
+        expect(list.body.pagination.totalItems).toBe(response.body.metrics.recentResolved);
+        fixture.assertResolutionRows(list.body.items, order.slice((page - 1) * 10, page * 10), times, false);
+        seen.push(...list.body.items.map((row: { id: number }) => row.id));
+      }
+      expect(seen).toEqual(order.map(fixture.ticketId)); expect(new Set(seen).size).toBe(count);
+      if (expected === "excluded") expect(seen).not.toContain(fixture.ticketId(subject));
+      else expect(seen.filter((id) => id === fixture.ticketId(subject))).toHaveLength(1);
+      expect(probe.evidence.transactions).toBe(3); expect(probe.evidence.clockReads).toBe(3); expect(probe.evidence.clockOverrides).toBe(3);
+      for (const read of probe.evidence.reads) { expect(read.isolation).toBe("repeatable read"); expect(read.readOnly).toBe("on"); }
+    });
   });
 });

@@ -8,6 +8,7 @@ import { getPrisma } from "../../src/prisma.js";
 import { configureTestDatabaseEnvironment } from "../../src/testing/test-database.js";
 import { cookieHeader, createAuthUser, loginRequest } from "../lab-03/auth-test-helpers.js";
 import { createStaffDrilldownFixture, type StaffActor, type StaffDescriptor, type StaffDrilldownDashboard, type StaffDrilldownList, type StaffTicketMetrics } from "./staff-drilldown-test-fixtures.js";
+import { staffVerificationFixture } from "./staff-dashboard-verification-fixtures.js";
 
 // Partial AC-27/T-27 and AC-28/T-28. Real authenticated HTTP/database reads
 // follow actual descriptors against unchanged fixtures. Each HTTP request has
@@ -527,4 +528,64 @@ describe("Staff Dashboard descriptors execute as intersected Staff Ticket-list p
       "Field feedback identifies the invalid extension/combination without prescribing prose").toBe(true);
     expect(/passwordHash|tokenHash|csrfTokenHash|inputFingerprint|safeResponse|internalNotes|PrismaClient|stack|postgres/iu.test(JSON.stringify(response.body))).toBe(false);
   });
+});
+
+// Partial AC-26/T-26, AC-28/T-28 and AC-44/T-54. Real descriptors and
+// API-07 reads verify assignment selection, not who may operate an Action.
+describe("Staff current-user Action widgets execute their returned API-07 descriptors", () => {
+  const fixture = staffVerificationFixture("actions");
+  let base: URLSearchParams;
+  beforeAll(async () => { await fixture.setup(); base = await fixture.actionCohort(); });
+  afterAll(fixture.cleanup);
+  const planned = ["P01", "P02", "P03", "P04", "P05", "P06", "P07", "P08", "P09", "P10", "P11"];
+  const unfinished = [...planned, "S01", "S02"];
+  const cases = [
+    { name: "PLANNED status", status: "PLANNED", count: 11, suffixes: planned },
+    { name: "IN_PROGRESS status", status: "IN_PROGRESS", count: 2, suffixes: ["S01", "S02"] },
+    { name: "COMPLETED status", status: "COMPLETED", count: 2, suffixes: ["C01", "C02"] },
+    { name: "CANCELLED status", status: "CANCELLED", count: 1, suffixes: ["X01"] },
+    { name: "unfinished PLANNED/IN_PROGRESS aggregate", status: null, count: 13, suffixes: unfinished },
+  ];
+  for (const actor of ["A", "B"] as const) {
+    it.each(cases)(`${actor}: $name descriptor preserves actor assignment, exact order and pagination`, async ({ status, count, suffixes }) => {
+      const dashboard = await fixture.read(actor, "/api/dashboard/staff", base);
+      expect(dashboard.status).toBe(200); expect(dashboard.headers["cache-control"]).toBe("private, no-store");
+      expect(dashboard.body.metrics.myActionsByStatus).toEqual({ PLANNED: 11, IN_PROGRESS: 2, COMPLETED: 2, CANCELLED: 1 });
+      expect(dashboard.body.metrics.myUnfinishedActions).toBe(13);
+      const preview = unfinished.slice(0, 5).map((suffix) => `${actor}-${suffix}`);
+      expect(dashboard.body.lists.myUnfinishedActions.map((row: { action: { id: number } }) => row.action.id))
+        .toEqual(preview.map(fixture.actionId));
+      fixture.assertActionRows(dashboard.body.lists.myUnfinishedActions, preview);
+      const descriptor = status === null ? dashboard.body.drillDown.myUnfinishedActions : dashboard.body.drillDown.myActionsByStatus[status];
+      const params = fixture.descriptorParams(descriptor, "/api/staff/actions", base);
+      expect(params.get("assignee")).toBe("me");
+      if (status === null) { expect(params.get("actionStatusGroup")).toBe("unfinished"); expect(params.has("status")).toBe(false); }
+      else { expect(params.get("status")).toBe(status); expect(params.has("actionStatusGroup")).toBe(false); }
+      expect(params.has("actorId") || params.has("assigneeId") || params.has("dashboardWidget")).toBe(false);
+      const labels = suffixes.map((suffix) => `${actor}-${suffix}`), seen: number[] = [];
+      const totalPages = Math.ceil(count / 10);
+      for (let page = 1; page <= totalPages; page++) {
+        params.set("page", String(page)); params.set("pageSize", "10");
+        const response = await fixture.read(actor, descriptor.path, params);
+        expect(response.status).toBe(200); expect(response.headers["cache-control"]).toBe("private, no-store");
+        expect(response.body.pagination).toEqual({ page, pageSize: 10, totalItems: count, totalPages,
+          hasPreviousPage: page > 1, hasNextPage: page < totalPages });
+        expect(response.body.pagination.totalItems).toBe(status === null ? dashboard.body.metrics.myUnfinishedActions : dashboard.body.metrics.myActionsByStatus[status]);
+        const pageLabels = labels.slice((page - 1) * 10, page * 10);
+        expect(response.body.items.map((row: { action: { id: number } }) => row.action.id)).toEqual(pageLabels.map(fixture.actionId));
+        fixture.assertActionRows(response.body.items, pageLabels);
+        for (const row of response.body.items) {
+          expect(row.action.assignee.id).toBe(fixture.actorId(actor));
+          expect(row.ticket.id).toBe(fixture.ticketId(`${actor}-${status === "COMPLETED" || status === "CANCELLED" ? "terminal" : "editable"}`));
+          if (status === null) expect(["PLANNED", "IN_PROGRESS"]).toContain(row.action.status);
+          else expect(row.action.status).toBe(status);
+          seen.push(row.action.id);
+        }
+      }
+      expect(seen).toEqual(labels.map(fixture.actionId)); expect(new Set(seen).size).toBe(count);
+      expect(seen).not.toContain(fixture.actionId(`${actor}-decoy`));
+      expect(seen).not.toContain(fixture.actionId("historical-decoy"));
+      expect(seen.some((id) => suffixes.some((suffix) => id === fixture.actionId(`${actor === "A" ? "B" : "A"}-${suffix}`)))).toBe(false);
+    });
+  }
 });
