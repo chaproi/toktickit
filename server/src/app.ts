@@ -38,6 +38,8 @@ import {
 import { getPrisma } from "./prisma.js";
 import { parseRequesterDashboardQuery } from "./dashboards/requester-dashboard-query.js";
 import { getRequesterDashboard } from "./dashboards/requester-dashboard-service.js";
+import { parseStaffDashboardQuery } from "./dashboards/staff-dashboard-query.js";
+import { getStaffDashboard } from "./dashboards/staff-dashboard-service.js";
 import { indicateRequesterResolution } from "./tickets/resolution-indication-service.js";
 import { parseStaffQueueQuery } from "./tickets/ticket-query.js";
 import { parseRequesterTicketListQuery } from "./tickets/requester-ticket-query.js";
@@ -650,6 +652,24 @@ app.get("/api/dashboard/requester", async (req, res) => {
     res.status(200).json(await getRequesterDashboard(live.user.id, validation.data));
   } catch (error) {
     sendDatabaseError(res, error, "fetching Requester Dashboard");
+  }
+});
+
+app.get("/api/dashboard/staff", async (req, res) => {
+  res.setHeader("Cache-Control", "private, no-store");
+  const live = await authenticated(req, res, ["IT_STAFF", "ADMINISTRATOR"]);
+  if (!live) return;
+  const validation = parseStaffDashboardQuery(req.query as Record<string, unknown>);
+  if (!validation.success) {
+    res.status(400).json(errorBody(
+      "INVALID_QUERY", "One or more query parameters are invalid.", validation.fields,
+    ));
+    return;
+  }
+  try {
+    res.status(200).json(await getStaffDashboard(live.user.id, validation.data));
+  } catch (error) {
+    sendDatabaseError(res, error, "fetching Staff Dashboard");
   }
 });
 
