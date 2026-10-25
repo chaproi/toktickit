@@ -9,6 +9,7 @@ import { configureTestDatabaseEnvironment } from "../../src/testing/test-databas
 import { cookieHeader, createAuthUser, loginRequest } from "../lab-03/auth-test-helpers.js";
 import { createStaffDrilldownFixture, type StaffActor, type StaffDescriptor, type StaffDrilldownDashboard, type StaffDrilldownList, type StaffTicketMetrics } from "./staff-drilldown-test-fixtures.js";
 import { staffVerificationFixture } from "./staff-dashboard-verification-fixtures.js";
+import { withStaffDateReadProbe } from "./staff-dashboard-verification-fixtures.js";
 
 // Partial AC-27/T-27 and AC-28/T-28. Real authenticated HTTP/database reads
 // follow actual descriptors against unchanged fixtures. Each HTTP request has
@@ -588,4 +589,162 @@ describe("Staff current-user Action widgets execute their returned API-07 descri
       expect(seen.some((id) => suffixes.some((suffix) => id === fixture.actionId(`${actor === "A" ? "B" : "A"}-${suffix}`)))).toBe(false);
     });
   }
+});
+
+// Additional partial AC-24/T-24, AC-27/T-27, AC-28/T-28: real list SQL,
+// deterministic service instants and transaction-local timezone observation.
+// Custom narrower bounds below are direct list-contract requests, NOT invented
+// Dashboard descriptors. Only future-cap cases execute the actual descriptors.
+describe("Staff list date predicates: independent upper bounds, caps and actual-backend timezones", () => {
+  const fixture = staffVerificationFixture("history");
+  beforeAll(fixture.setup);
+  afterAll(fixture.cleanup);
+  const asOf = "2026-06-15T05:00:00.000Z", from = "2026-06-10T05:00:00.000Z", before = "2026-06-12T05:00:00.000Z";
+  const ascendingAnchors = ["D01", "D02", "D03", "D04", "D05", "D06", "D07", "D08", "D09", "D10", "D11", "D12"];
+  const orderedAnchors = ["D12", "D11", "D10", "D09", "D08", "D07", "D06", "D05", "D04", "D03", "D02", "D01"];
+  const cases = [
+    { id: 1, name: "updated immediately before inclusive lower bound is excluded", surface: "updated", mode: "lower-minus" },
+    { id: 2, name: "updated exactly at inclusive lower bound is included", surface: "updated", mode: "lower" },
+    { id: 3, name: "updated immediately before independent exclusive upper bound is included", surface: "updated", mode: "upper-minus" },
+    { id: 4, name: "updated exactly at independent exclusive upper bound is excluded", surface: "updated", mode: "upper" },
+    { id: 5, name: "resolution immediately before independent explicit upper bound is included", surface: "resolved", mode: "upper-minus" },
+    { id: 6, name: "resolution exactly at independent explicit upper bound is excluded", surface: "resolved", mode: "upper" },
+    { id: 7, name: "updated future cap includes asOf-minus and asOf but excludes asOf-plus", surface: "updated", mode: "cap" },
+    { id: 8, name: "resolution future cap retains latest qualifying history at or before asOf", surface: "resolved", mode: "cap" },
+    { id: 9, name: "updated dates intersect widget and status predicates across all pages", surface: "updated", mode: "intersection" },
+    { id: 10, name: "resolution dates intersect widget, status and current-state eligibility", surface: "resolved", mode: "intersection" },
+    { id: 11, name: "updated results are invariant on actual UTC and Asia/Bangkok backends", surface: "updated", mode: "timezone" },
+    { id: 12, name: "resolution results are invariant on actual UTC and Asia/Bangkok backends", surface: "resolved", mode: "timezone" },
+  ] as const;
+  it.each(cases)("$name", async ({ id, name, surface, mode }) => {
+    const categoryId = await fixture.category(`date-${id}`), parents = new Map<string, Ticket>(), resolutions = new Map<string, string>();
+    const resolved = surface === "resolved", prefix = `${categoryId}:`;
+    async function add(label: string, instant: string, status: TicketStatus = resolved ? "RESOLVED" : mode === "intersection" ? "OPEN" : "RESOLVED",
+      options: { legacy?: boolean; repeated?: boolean } = {}) {
+      const history: Array<[TicketStatus, TicketStatus, string]> = [["NEW", "OPEN", "2026-05-02T00:00:00.000Z"]];
+      const resolution = resolved ? instant : "2026-05-31T00:00:00.000Z";
+      if (status === "IN_PROGRESS") history.push(["OPEN", "IN_PROGRESS", "2026-05-03T00:00:00.000Z"]);
+      if (!options.legacy && (status === "RESOLVED" || status === "CLOSED" || status === "REOPENED")) {
+        if (options.repeated) history.push(["OPEN", "RESOLVED", "2026-06-12T05:00:00.000Z"],
+          ["RESOLVED", "REOPENED", "2026-06-13T05:00:00.000Z"], ["REOPENED", "RESOLVED", resolution]);
+        else history.push(["OPEN", "RESOLVED", resolution]);
+        if (status === "CLOSED" || status === "REOPENED") history.push(["RESOLVED", status, "2026-06-14T05:00:00.000Z"]);
+      }
+      const key = `${prefix}${label}`;
+      const ticket = await fixture.addTicket(key, categoryId, status, "A", new Date(resolved ? "2026-06-14T06:00:00.000Z" : instant), options.legacy ? [] : history);
+      parents.set(label, ticket);
+      if (resolved && !options.legacy) resolutions.set(label, options.repeated ? "2026-06-12T05:00:00.000Z" : resolution);
+    }
+    for (const label of ascendingAnchors) await add(label, "2026-06-11T05:00:00.000Z");
+    let order: string[] = [...orderedAnchors];
+    if (mode === "lower-minus") await add("subject", "2026-06-10T04:59:59.999Z");
+    if (mode === "lower") { await add("subject", from); order = [...orderedAnchors, "subject"]; }
+    if (mode === "upper-minus") { await add("subject", "2026-06-12T04:59:59.999Z"); order = ["subject", ...orderedAnchors]; }
+    if (mode === "upper") await add("subject", before);
+    if (mode === "cap") {
+      await add("cap-minus", "2026-06-15T04:59:59.999Z"); await add("cap-at", asOf); await add("cap-plus", "2026-06-15T05:00:00.001Z");
+      order = ["cap-at", "cap-minus", ...orderedAnchors];
+      if (resolved) { await add("future-repeat", "2026-06-15T05:00:00.001Z", "RESOLVED", { repeated: true }); order = ["cap-at", "cap-minus", "future-repeat", ...orderedAnchors]; }
+    }
+    if (mode === "intersection") {
+      if (resolved) {
+        await add("closed-date-only", "2026-06-11T05:00:00.000Z", "CLOSED");
+        await add("reopened", "2026-06-11T05:00:00.000Z", "REOPENED");
+        await add("legacy", "2026-06-11T05:00:00.000Z", "RESOLVED", { legacy: true });
+        await add("status-only", "2026-06-13T05:00:00.000Z", "RESOLVED");
+      } else {
+        await add("date-only", "2026-06-11T05:00:00.000Z", "RESOLVED");
+        await add("widget-only", "2026-06-13T05:00:00.000Z", "OPEN");
+        await add("other-widget", "2026-06-11T05:00:00.000Z", "IN_PROGRESS");
+      }
+    }
+    if (mode === "timezone") {
+      await add("lower", from, resolved ? "CLOSED" : "RESOLVED");
+      await add("upper-minus", "2026-06-12T04:59:59.999Z"); await add("upper", before);
+      order = ["upper-minus", ...orderedAnchors, "lower"];
+    }
+    // All four explicit upper-bound cases are strictly earlier than asOf,
+    // including the timestamp that must be excluded. No future-cap overlap.
+    if (id >= 3 && id <= 6) {
+      expect(Date.parse(before)).toBeLessThan(Date.parse(asOf));
+      expect(Date.parse(mode === "upper" ? before : "2026-06-12T04:59:59.999Z")).toBeLessThan(Date.parse(asOf));
+    }
+    const first = parents.get("D01")!;
+    const [requester, owner, category, system] = await Promise.all([
+      prisma.user.findUniqueOrThrow({ where: { id: first.requesterId }, select: { id: true, name: true, email: true } }),
+      prisma.user.findUniqueOrThrow({ where: { id: fixture.actorId("A") }, select: { id: true, name: true, role: true } }),
+      prisma.category.findUniqueOrThrow({ where: { id: categoryId }, select: { id: true, name: true } }),
+      prisma.relatedSystem.findUniqueOrThrow({ where: { id: first.relatedSystemId }, select: { id: true, name: true } }),
+    ]);
+    function expectedRow(label: string, dashboard: boolean) {
+      const source = parents.get(label)!;
+      const common = { id: source.id, ticketNumber: source.ticketNumber, summary: source.summary, currentStatus: source.currentStatus,
+        requestedPriority: source.requestedPriority, itPriority: source.itPriority, owner, updatedAt: source.updatedAt.toISOString(),
+        ...(resolved ? { resolvedAt: resolutions.get(label) } : {}) };
+      return dashboard ? common : { ...common, ticketDate: source.ticketDate.toISOString(), requester, category, relatedSystem: system, requesterResolutionIndicatedAt: null };
+    }
+    const base = new URLSearchParams({ categoryId: String(categoryId) });
+    const results: unknown[] = [];
+    for (const timezone of mode === "timezone" ? ["UTC", "Asia/Bangkok"] as const : [undefined]) {
+      await withStaffDateReadProbe({ clock: new Date(asOf), timezone }, async (probe) => {
+        let params = new URLSearchParams(base), path = "/api/staff/tickets", requests = 0;
+        if (mode === "cap") {
+          const dashboard = await probe.track(fixture.read("A", "/api/dashboard/staff", base)); requests++;
+          expect(dashboard.status).toBe(200); expect(dashboard.body.asOf).toBe(asOf);
+          expect(dashboard.body.recentWindow).toEqual({ from: "2026-06-08T17:00:00.000Z", before: "2026-06-15T17:00:00.000Z" });
+          expect(dashboard.body.metrics[resolved ? "recentResolved" : "recentUpdated"]).toBe(resolved ? 15 : 14);
+          safeEqual(dashboard.body.lists[resolved ? "recentResolved" : "recentUpdated"], order.slice(0, 5).map((label) => expectedRow(label, true)), "Exact bounded Dashboard cap rows and safe projection");
+          const descriptor = dashboard.body.drillDown[resolved ? "recentResolved" : "recentUpdated"];
+          path = descriptor.path; params = fixture.descriptorParams(descriptor, "/api/staff/tickets", base);
+          expect(params.get(resolved ? "resolvedFrom" : "updatedFrom")).toBe("2026-06-08T17:00:00.000Z");
+          expect(params.get(resolved ? "resolvedBefore" : "updatedBefore")).toBe("2026-06-15T17:00:00.000Z");
+        } else {
+          // Direct approved list queries with a narrower interval than the
+          // Dashboard emits. Never rewrite a returned descriptor to claim equivalence.
+          params.set(resolved ? "resolvedFrom" : "updatedFrom", from); params.set(resolved ? "resolvedBefore" : "updatedBefore", before);
+          params.set("sortBy", resolved ? "resolvedAt" : "updatedAt"); params.set("sortOrder", "desc");
+          if (resolved) params.set("statusGroup", "resolved");
+          if (mode === "intersection") {
+            params.set("currentStatus", resolved ? "RESOLVED" : "OPEN");
+            params.set("dashboardWidget", resolved ? "recentResolved" : "status");
+            if (!resolved) { params.set("widgetStatus", "OPEN"); params.set("statusGroup", "active"); }
+          }
+        }
+        const seen: number[] = [], actualRows: unknown[] = [];
+        for (const page of [1, 2]) {
+          params.set("page", String(page)); params.set("pageSize", "10");
+          const response = await probe.track(fixture.read("A", path, params)); requests++;
+          expect(response.status).toBe(200);
+          expect(response.body.pagination).toEqual({ page, pageSize: 10, totalItems: order.length, totalPages: 2, hasPreviousPage: page > 1, hasNextPage: page < 2 });
+          const names = order.slice((page - 1) * 10, page * 10);
+          expect(response.body.items.map((row: { id: number }) => row.id)).toEqual(names.map((label) => parents.get(label)!.id));
+          safeEqual(response.body.items, names.map((label) => expectedRow(label, false)), "Exact date list IDs, safe inherited Staff projection, literal text and correct time source");
+          expect(/passwordHash|tokenHash|csrfTokenHash|inputFingerprint|safeResponse|internalNotes|storageKey|"description"/u.test(JSON.stringify(response.body))).toBe(false);
+          seen.push(...response.body.items.map((row: { id: number }) => row.id)); actualRows.push(...response.body.items);
+        }
+        expect(seen).toEqual(order.map((label) => parents.get(label)!.id)); expect(new Set(seen).size).toBe(order.length);
+        results.push(actualRows);
+        if (mode === "intersection") {
+          const conflict = new URLSearchParams(params); conflict.set("page", "1");
+          conflict.set("dashboardWidget", "status"); conflict.set("widgetStatus", resolved ? "RESOLVED" : "IN_PROGRESS");
+          if (resolved) conflict.set("currentStatus", "CLOSED");
+          const response = await probe.track(fixture.read("A", path, conflict)); requests++;
+          expect(response.status).toBe(200); expect(response.body.items).toEqual([]);
+          expect(response.body.pagination).toEqual({ page: 1, pageSize: 10, totalItems: 0, totalPages: 0, hasPreviousPage: false, hasNextPage: false });
+        }
+        expect(probe.evidence.transactions).toBe(requests); expect(probe.evidence.clockReads).toBe(requests); expect(probe.evidence.clockOverrides).toBe(requests);
+        expect(probe.evidence.settings).toHaveLength(requests);
+        for (const setting of probe.evidence.settings) expect(setting.restored, "Actual transaction timezone restored before completion").toBe(true);
+        const business = probe.evidence.reads.filter((read) => read.operation === "raw business read" || read.operation.includes("."));
+        expect(business.length).toBeGreaterThan(requests);
+        for (const read of business) {
+          const setting = probe.evidence.settings.find((value) => value.pid === read.pid)!;
+          expect(setting).toBeDefined(); expect(read.timezone).toBe(timezone ?? setting.original);
+          expect(read.isolation).toBe("repeatable read"); expect(read.readOnly).toBe("on");
+        }
+        if (timezone !== undefined) console.info(`Staff ${surface} date invariance: actual business backend timezone=${timezone}; transactions=${requests}; PID/zone/read-only observations and restoration verified.`);
+      });
+    }
+    if (mode === "timezone") safeEqual(results[0], results[1], `${name}: complete two-page results invariant across actual UTC/Bangkok transactions`);
+  });
 });

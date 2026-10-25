@@ -3,6 +3,7 @@ import { isDeepStrictEqual } from "node:util";
 import { Prisma, type Action, type ActionStatus, type Ticket, type TicketStatus, type User } from "@prisma/client";
 import request from "supertest";
 import { expect } from "vitest";
+import { vi } from "vitest";
 import { app } from "../../src/app.js";
 import { getPrisma } from "../../src/prisma.js";
 import { configureTestDatabaseEnvironment } from "../../src/testing/test-database.js";
@@ -236,4 +237,93 @@ export function staffVerificationFixture(label: "actions" | "history") {
   return { setup, cleanup, category, addTicket, actionCohort, read, descriptorParams, assertActionRows, assertResolutionRows,
     ticketId: (name: string) => ticket(name).id, actionId: (name: string) => actions.get(name)!.id,
     actorId: (actor: VerificationActor) => worker(actor).id };
+}
+
+type StaffDateRead = { pid: number; timezone: string; isolation: string; readOnly: string; operation: string };
+type StaffDateEvidence = {
+  transactions: number; clockReads: number; clockOverrides: number; reads: StaffDateRead[];
+  settings: Array<{ pid: number; original: string; applied: string; restored: boolean }>;
+};
+
+// Extends the existing service-clock probe convention without changing that
+// shared helper: execute real transactions/business SQL, substitute only the
+// exact clock SELECT result, and optionally control the SAME transaction's zone.
+// No writer coordination, global clock, connection/role default or timeout change.
+export async function withStaffDateReadProbe<T>(
+  input: { clock: Date; timezone?: "UTC" | "Asia/Bangkok" },
+  work: (probe: { evidence: StaffDateEvidence; track<R>(request: Promise<R>): Promise<R> }) => Promise<T>,
+): Promise<T> {
+  const application = getPrisma();
+  type Operation = (transaction: Prisma.TransactionClient) => Promise<unknown>;
+  type Options = { isolationLevel?: Prisma.TransactionIsolationLevel };
+  const original = application.$transaction.bind(application) as (operation: Operation, options?: Options) => Promise<unknown>;
+  const evidence: StaffDateEvidence = { transactions: 0, clockReads: 0, clockOverrides: 0, reads: [], settings: [] };
+  const pending: Promise<unknown>[] = [];
+  const spy = vi.spyOn(application, "$transaction").mockImplementation((async (operation: unknown, options?: Options) => {
+    if (typeof operation !== "function") return original(operation as Operation, options);
+    evidence.transactions += 1;
+    return original(async (tx) => {
+      let setting: StaffDateEvidence["settings"][number] | undefined, failed = false;
+      const observe = async (operationName: string) => {
+        const [actual] = await tx.$queryRaw<Array<Omit<StaffDateRead, "operation">>>`
+          SELECT pg_backend_pid() AS pid,current_setting('TimeZone') AS timezone,
+            current_setting('transaction_isolation') AS isolation,current_setting('transaction_read_only') AS "readOnly"`;
+        evidence.reads.push({ ...actual, operation: operationName });
+        return actual;
+      };
+      const observed = new Proxy(tx, { get(target, property) {
+        const value = Reflect.get(target, property);
+        if (property === "$executeRaw") return async (...args: unknown[]) => {
+          const result = await Reflect.apply(value, target, args);
+          const fragments = Array.isArray(args[0]) ? args[0] : [];
+          if (args.length === 1 && fragments.length === 1 && String(fragments[0]).trim() === "SET TRANSACTION READ ONLY") {
+            const initial = await observe("read-only established");
+            expect(setting).toBeUndefined();
+            setting = { pid: initial.pid, original: initial.timezone, applied: input.timezone ?? initial.timezone, restored: false };
+            evidence.settings.push(setting);
+            if (input.timezone !== undefined) {
+              // Static allowlisted SQL; SET LOCAL affects this business backend
+              // only and PostgreSQL also unwinds it on transaction completion.
+              await tx.$executeRaw(input.timezone === "UTC" ? Prisma.sql`SET LOCAL TIME ZONE 'UTC'` : Prisma.sql`SET LOCAL TIME ZONE 'Asia/Bangkok'`);
+            }
+          }
+          return result;
+        };
+        if (property === "$queryRaw") return async (...args: unknown[]) => {
+          await observe("raw business read");
+          const result: unknown = await Reflect.apply(value, target, args);
+          const fragments = Array.isArray(args[0]) ? args[0] : [];
+          const clock = args.length === 1 && fragments.length === 1 &&
+            String(fragments[0]).trim().replace(/\s+/gu, " ") === 'SELECT CURRENT_TIMESTAMP AS "asOf"';
+          if (!clock) return result;
+          evidence.clockReads += 1;
+          if (!Array.isArray(result) || result.length !== 1 || !(result[0].asOf instanceof Date)) throw new Error("Actual service clock result was not observed.");
+          evidence.clockOverrides += 1;
+          return [{ ...result[0], asOf: new Date(input.clock.getTime()) }];
+        };
+        if (property === "ticket" || property === "ticketStatusHistory" || property === "action") return new Proxy(value, { get(delegate, method) {
+          const call = Reflect.get(delegate, method);
+          if (typeof call !== "function") return call;
+          return async (...args: unknown[]) => { await observe(`${String(property)}.${String(method)}`); return Reflect.apply(call, delegate, args); };
+        } });
+        return typeof value === "function" ? value.bind(target) : value;
+      } });
+      try { return await (operation as Operation)(observed); }
+      catch (error) { failed = true; throw error; }
+      finally {
+        if (setting !== undefined) {
+          try {
+            await tx.$queryRaw`SELECT set_config('TimeZone', ${setting.original}, true)`;
+            const restored = await observe("timezone restored");
+            expect(restored.pid).toBe(setting.pid); expect(restored.timezone).toBe(setting.original);
+            setting.restored = true;
+          } catch (error) { if (!failed) throw error; } // Preserve original failure; rollback also unwinds SET LOCAL.
+        }
+      }
+    }, options);
+  }) as typeof application.$transaction);
+  try { return await work({ evidence, track<R>(request: Promise<R>) {
+    pending.push(request.then(() => undefined, () => undefined)); return request;
+  } }); }
+  finally { await Promise.all(pending); spy.mockRestore(); }
 }
