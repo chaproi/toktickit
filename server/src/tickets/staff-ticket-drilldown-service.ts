@@ -19,6 +19,13 @@ function ownerPredicate(owner: StaffQueueOwner, actorId: number): Prisma.Sql {
     AND worker."role"::text IN ('IT_STAFF', 'ADMINISTRATOR'))`;
 }
 
+function utcTimestamp(instant: Date): Prisma.Sql {
+  // Prisma binds a raw Date as timestamptz; stored TIMESTAMP(3) values encode
+  // UTC without a zone. Convert the parameter once to that same representation,
+  // avoiding implicit conversion of the column through the session timezone.
+  return Prisma.sql`(${instant}::timestamptz AT TIME ZONE 'UTC')`;
+}
+
 function predicates(actorId: number, query: StaffTicketDrilldownQuery, asOf: Date) {
   const filters: Prisma.Sql[] = [Prisma.sql`TRUE`];
   if (query.categoryId !== null) filters.push(Prisma.sql`t."categoryId" = ${query.categoryId}`);
@@ -38,8 +45,8 @@ function predicates(actorId: number, query: StaffTicketDrilldownQuery, asOf: Dat
   }
   if (query.dashboardWidget === "status") filters.push(Prisma.sql`t."currentStatus"::text = ${query.widgetStatus}`);
   if (query.dashboardWidget === "itPriority") filters.push(group("active"), Prisma.sql`t."itPriority"::text = ${query.widgetItPriority}`);
-  if (query.updatedWindow !== undefined) filters.push(Prisma.sql`t."updatedAt" >= ${query.updatedWindow.from}
-    AND t."updatedAt" < ${query.updatedWindow.before} AND t."updatedAt" <= ${asOf}`);
+  if (query.updatedWindow !== undefined) filters.push(Prisma.sql`t."updatedAt" >= ${utcTimestamp(query.updatedWindow.from)}
+    AND t."updatedAt" < ${utcTimestamp(query.updatedWindow.before)} AND t."updatedAt" <= ${utcTimestamp(asOf)}`);
 
   let resolution = Prisma.empty;
   if (query.resolvedWindow !== undefined) {
@@ -48,8 +55,8 @@ function predicates(actorId: number, query: StaffTicketDrilldownQuery, asOf: Dat
     resolution = Prisma.sql`CROSS JOIN LATERAL (
       SELECT MAX(history."createdAt") AS "resolvedAt" FROM "TicketStatusHistory" history
       WHERE history."ticketId" = t."id" AND history."toStatus" = 'RESOLVED'
-      AND history."createdAt" >= ${query.resolvedWindow.from}
-      AND history."createdAt" < ${query.resolvedWindow.before} AND history."createdAt" <= ${asOf}
+      AND history."createdAt" >= ${utcTimestamp(query.resolvedWindow.from)}
+      AND history."createdAt" < ${utcTimestamp(query.resolvedWindow.before)} AND history."createdAt" <= ${utcTimestamp(asOf)}
     ) resolution`;
     filters.push(group("resolved"), Prisma.sql`resolution."resolvedAt" IS NOT NULL`);
   }
