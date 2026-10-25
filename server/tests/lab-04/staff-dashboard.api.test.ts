@@ -421,3 +421,35 @@ afterAll(async () => {
   } catch (error) { throw fixtureError("cleanup", error); }
   finally { await prisma.$disconnect(); }
 });
+
+// API-09 whitelist verification: partial AC-25/T-25, AC-28/T-28,
+// AC-01/T-01 and safe-error AC-34/T-34. Reuses the original owned fixture
+// unchanged; repeated keys are sent over HTTP, not collapsed into an object.
+describe("Staff Dashboard rejects client-selected identity/clock and invalid base queries", () => {
+  it.each([
+    { label: "client actorId", field: "actorId", entries: [["actorId", "1"]] },
+    { label: "client requesterId", field: "requesterId", entries: [["requesterId", "1"]] },
+    { label: "client asOf", field: "asOf", entries: [["asOf", "2026-01-01T00:00:00.000Z"]] },
+    { label: "client timezone", field: "timezone", entries: [["timezone", "Asia/Bangkok"]] },
+    { label: "unsupported sortBy", field: "sortBy", entries: [["sortBy", "updatedAt"]] },
+    { label: "unsupported page", field: "page", entries: [["page", "1"]] },
+    { label: "repeated categoryId", field: "categoryId", entries: [["categoryId", "1"], ["categoryId", "2"]] },
+    { label: "repeated search", field: "search", entries: [["search", "first"], ["search", "second"]] },
+    { label: "invalid owner selector", field: "owner", entries: [["owner", "someone-else"]] },
+    { label: "oversized categoryId", field: "categoryId", entries: [["categoryId", "2147483648"]] },
+    { label: "invalid itPriority", field: "itPriority", entries: [["itPriority", "CRITICAL"]] },
+    { label: "overlong search", field: "search", entries: [["search", "a".repeat(101)]] },
+  ])("$label", async ({ field, entries }) => {
+    const params = new URLSearchParams(entries);
+    if (!params.has("categoryId")) params.set("categoryId", String(categoryIds[0]!));
+    const before = await domainDigest();
+    try {
+      const response = await request(app).get(`/api/dashboard/staff?${params.toString()}`).set("Cookie", who("A").cookie);
+      assertDenial(response, 400, "INVALID_QUERY");
+      expect(typeof response.body.error.fields?.[field]).toBe("string");
+      expect(response.body.error.fields[field].trim().length).toBeGreaterThan(0);
+    } finally {
+      expect(await domainDigest() === before, "Rejected query preserves all owned domain state; digests withheld").toBe(true);
+    }
+  });
+});
