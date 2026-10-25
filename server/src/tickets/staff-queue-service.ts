@@ -6,7 +6,7 @@ import {
   type StaffQueueQuery,
 } from "./ticket-query.js";
 
-const queueTicketSelect = {
+export const queueTicketSelect = {
   id: true,
   ticketNumber: true,
   ticketDate: true,
@@ -54,7 +54,7 @@ function matchesOwner(item: StaffQueueItem, owner: StaffQueueQuery["owner"], act
     (item.owner.role === "IT_STAFF" || item.owner.role === "ADMINISTRATOR");
 }
 
-function publicItem(item: StaffQueueItem) {
+export function publicItem(item: StaffQueueItem) {
   return {
     ...item,
     owner: item.owner === null ? null : {
