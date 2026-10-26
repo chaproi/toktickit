@@ -427,6 +427,7 @@ app.post("/api/admin/users/:userId/initial-password", async (req, res) => {
 });
 
 app.get("/api/staff/tickets", async (req, res) => {
+  res.setHeader("Cache-Control", "private, no-store");
   const live = await authenticated(req, res, ["IT_STAFF", "ADMINISTRATOR"]);
   if (!live) return;
   const validation = parseStaffTicketQuery(req.query as Record<string, unknown>);
