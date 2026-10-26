@@ -327,3 +327,117 @@ export async function withStaffDateReadProbe<T>(
   } }); }
   finally { await Promise.all(pending); spy.mockRestore(); }
 }
+// Coordinated cases need a read that permits ONLY the explicitly acknowledged
+// concurrent writer, rather than weakening the existing read()/digest helper.
+// This independent, small fixture owns both live actors and all parent rows.
+export function staffSnapshotFixture() {
+  const db = getPrisma(), marker = `issue48-snapshot-${randomUUID()}`;
+  const users: User[] = [], parents: number[] = [], categories: number[] = [];
+  let system!: { id: number; name: string }, guarded = false;
+  let readerCookie = "", writerCookie = "", writerCsrf = "";
+  async function setup() {
+    const identity = configureTestDatabaseEnvironment(), operational = process.env.TOKTICKIT_DEVELOPMENT_DATABASE_URL;
+    expect(Boolean(operational) && decodeURIComponent(new URL(operational!).pathname.slice(1)) !== identity.databaseName,
+      "Snapshot fixture target differs from operational; identities withheld").toBe(true);
+    const [live] = await db.$queryRaw<Array<{ database: string; schema: string }>>`
+      SELECT current_database() AS database,current_schema() AS schema`;
+    expect(live.database === identity.databaseName && live.schema === identity.schema,
+      "Actual isolation guard matches live snapshot database/schema; values withheld").toBe(true);
+    guarded = true;
+    for (const [label, role] of [["reader", "IT_STAFF"], ["writer", "ADMINISTRATOR"], ["requester", "REQUESTER"]] as const) {
+      const value = await createAuthUser({ email: `${marker}-${label}@example.test`, role });
+      users.push(value.user); // Immediately own it, including partial setup.
+      if (label === "requester") continue;
+      const login = await loginRequest(value.user.email, value.password);
+      expect(login.status, "Real snapshot actor login; response withheld").toBe(200);
+      if (label === "reader") readerCookie = cookieHeader(login.headers["set-cookie"]);
+      else {
+        writerCookie = cookieHeader(login.headers["set-cookie"]);
+        writerCsrf = cookieValue(login.headers["set-cookie"], "toktickit_csrf");
+      }
+    }
+    system = await db.relatedSystem.create({ data: { name: marker }, select: { id: true, name: true } });
+  }
+  async function cohort(status: "OPEN" | "RESOLVED", unassigned = false) {
+    const category = await db.category.create({ data: { name: `${marker}-${categories.length}` }, select: { id: true, name: true } });
+    categories.push(category.id);
+    const [clock] = await db.$queryRaw<Array<{ now: Date }>>`SELECT CURRENT_TIMESTAMP AS now`;
+    const old = new Date(clock.now.getTime() - 3_600_000), created = new Date(old.getTime() - 86_400_000);
+    const rows: Ticket[] = [];
+    for (const label of ["subject", "sibling"]) {
+      const parent = await db.ticket.create({ data: {
+        ticketNumber: `D48S-${randomUUID().replaceAll("-", "").slice(0, 12)}`, clientSubmissionId: randomUUID(),
+        requesterId: users[2]!.id, ownerId: unassigned && label === "subject" ? null : users[0]!.id,
+        categoryId: category.id, relatedSystemId: system.id, requestedPriority: "HIGH", itPriority: "MEDIUM",
+        summary: `${label} <script>literal snapshot</script>`, description: `${marker} private body`,
+        currentStatus: status, createdAt: created, ticketDate: created, updatedAt: old,
+      } });
+      parents.push(parent.id); rows.push(parent);
+      await db.ticketStatusHistory.create({ data: { ticketId: parent.id, actorId: users[1]!.id,
+        fromStatus: "NEW", toStatus: "OPEN", reason: null, createdAt: created } });
+      if (status === "RESOLVED") {
+        await db.ticketStatusHistory.createMany({ data: [
+          { ticketId: parent.id, actorId: users[1]!.id, fromStatus: "OPEN", toStatus: "RESOLVED", reason: "First resolution", createdAt: new Date(old.getTime() - 3_000) },
+          { ticketId: parent.id, actorId: users[1]!.id, fromStatus: "RESOLVED", toStatus: "REOPENED", reason: "Reviewed again", createdAt: new Date(old.getTime() - 2_000) },
+          { ticketId: parent.id, actorId: users[1]!.id, fromStatus: "REOPENED", toStatus: "RESOLVED", reason: "Latest literal <script>reason</script>", createdAt: old },
+        ] });
+      }
+    }
+    return { subject: rows[0]!, sibling: rows[1]!, params: new URLSearchParams({ categoryId: String(category.id) }),
+      expectedRow(value: Ticket, resolved = false) {
+        const owner = value.ownerId === null ? null : users.find(({ id }) => id === value.ownerId)!;
+        return { id: value.id, ticketNumber: value.ticketNumber, summary: value.summary, currentStatus: value.currentStatus,
+          requestedPriority: "HIGH", itPriority: "MEDIUM", updatedAt: value.updatedAt.toISOString(),
+          owner: owner === null ? null : { id: owner.id, name: owner.name, role: owner.role },
+          ticketDate: value.ticketDate.toISOString(), requester: { id: users[2]!.id, name: users[2]!.name, email: users[2]!.email },
+          category, relatedSystem: system, requesterResolutionIndicatedAt: null,
+          ...(resolved ? { resolvedAt: old.toISOString() } : {}) };
+      } };
+  }
+  async function state() {
+    const owned = { ticketId: { in: parents } };
+    return {
+      users: await db.user.findMany({ where: { id: { in: users.map(({ id }) => id) } }, orderBy: { id: "asc" } }),
+      tickets: await db.ticket.findMany({ where: { id: { in: parents } }, orderBy: { id: "asc" } }),
+      history: await db.ticketStatusHistory.findMany({ where: owned, orderBy: { id: "asc" } }),
+      actions: await db.action.findMany({ where: owned, orderBy: { id: "asc" } }),
+      actionHistory: await db.actionHistory.findMany({ where: { action: owned }, orderBy: { id: "asc" } }),
+      receipts: await db.mutationReceipt.findMany({ where: owned, orderBy: { id: "asc" } }),
+      notes: await db.internalNote.findMany({ where: owned, orderBy: { id: "asc" } }),
+      comments: await db.publicComment.findMany({ where: owned, orderBy: { id: "asc" } }),
+      attachments: await db.attachment.findMany({ where: owned, orderBy: { id: "asc" } }),
+      categories: await db.category.findMany({ where: { id: { in: categories } }, orderBy: { id: "asc" } }),
+      system: await db.relatedSystem.findUnique({ where: { id: system.id } }),
+    };
+  }
+  async function cleanup() {
+    try {
+      if (!guarded) return;
+      const owned = { ticketId: { in: parents } }, userIds = users.map(({ id }) => id);
+      await db.$transaction([
+        db.mutationReceipt.deleteMany({ where: owned }), db.actionHistory.deleteMany({ where: { action: owned } }),
+        db.action.deleteMany({ where: owned }), db.ticketStatusHistory.deleteMany({ where: owned }),
+        db.internalNote.deleteMany({ where: owned }), db.publicComment.deleteMany({ where: owned }), db.attachment.deleteMany({ where: owned }),
+        db.ticket.deleteMany({ where: { id: { in: parents } } }), db.authSession.deleteMany({ where: { userId: { in: userIds } } }),
+        db.user.deleteMany({ where: { id: { in: userIds } } }), db.category.deleteMany({ where: { id: { in: categories } } }),
+        db.relatedSystem.deleteMany({ where: { id: system?.id ?? -1 } }),
+      ]);
+      const remaining = await Promise.all([
+        db.user.count({ where: { id: { in: userIds } } }), db.authSession.count({ where: { userId: { in: userIds } } }),
+        db.ticket.count({ where: { id: { in: parents } } }), db.ticketStatusHistory.count({ where: owned }),
+        db.action.count({ where: owned }), db.actionHistory.count({ where: { action: owned } }), db.mutationReceipt.count({ where: owned }),
+        db.category.count({ where: { id: { in: categories } } }), db.relatedSystem.count({ where: { id: system?.id ?? -1 } }),
+      ]);
+      safeEqual(remaining, Array(9).fill(0), "Zero owned snapshot records/sessions/references after cleanup");
+      console.info("Staff snapshot cleanup: zero owned records; no fault/schema resources or credential environment changes; client disconnects.");
+    } finally { await db.$disconnect(); }
+  }
+  return { setup, cleanup, cohort, state,
+    readerId: () => users[0]!.id, writerId: () => users[1]!.id,
+    read: (path: string, params: URLSearchParams) => request(app).get(`${path}?${params.toString()}`).set("Cookie", readerCookie),
+    write: (method: "post" | "patch", path: string, body: Record<string, unknown>) => request(app)[method](path)
+      .set("Cookie", writerCookie).set("Origin", APPROVED_ORIGIN).set("X-CSRF-Token", writerCsrf).send(body),
+  };
+}
+
+import { APPROVED_ORIGIN, cookieValue } from "../lab-03/auth-test-helpers.js";

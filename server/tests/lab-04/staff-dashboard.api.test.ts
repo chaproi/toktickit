@@ -535,3 +535,102 @@ describe("Staff resolution histories: controlled calendar edges and real descrip
     });
   });
 });
+import { staffSnapshotFixture } from "./staff-dashboard-verification-fixtures.js";
+import { assertStaffSnapshotEvidence, withStaffSnapshot } from "./staff-snapshot-coordination-test-helper.js";
+
+// Partial AC-25/26/28, T-25/26/28/46: coordinated per-response snapshots.
+// Every later HTTP request establishes its own snapshot; no historical cursor
+// or naturally occurring workflow race is claimed by these controlled barriers.
+describe("Staff Dashboard coordinated snapshots", () => {
+  const fixture = staffSnapshotFixture();
+  beforeAll(() => fixture.setup());
+  afterAll(() => fixture.cleanup());
+
+  it("keeps ownership aggregates and preview coherent after a committed independent owner change", async () => {
+    const cohort = await fixture.cohort("OPEN", true), before = await fixture.state();
+    await withStaffSnapshot("ticket-count", async (probe) => {
+      const pending = probe.track(fixture.read("/api/dashboard/staff", cohort.params));
+      const point = await probe.waitForRead();
+      expect(point.operation).toBe("ticket.count");
+      const write = await probe.track(fixture.write("patch", `/api/staff/tickets/${cohort.subject.id}/owner`, {
+        ownerId: fixture.readerId(), expectedUpdatedAt: cohort.subject.updatedAt.toISOString(),
+      }));
+      expect(write.status, "Real owner mutation commits while reader remains paused").toBe(200);
+      expect(probe.commits).toHaveLength(1); expect(probe.commits[0]!.pid).not.toBe(point.pid);
+      const committed = await fixture.state(); // Independent fresh pool read before releasing reader.
+      const changed = committed.tickets.find(({ id }) => id === cohort.subject.id)!;
+      expect(changed.ownerId).toBe(fixture.readerId()); expect(changed.updatedAt.getTime()).toBeGreaterThan(cohort.subject.updatedAt.getTime());
+      safeEqual(committed, { ...before, tickets: before.tickets.map((row) => row.id === changed.id ? changed : row) }, "Only acknowledged owner mutation changed domain state");
+      probe.release();
+      const response = await pending;
+      expect(response.status).toBe(200);
+      expect(response.body.metrics).toEqual({ unassigned: 1, mine: 1,
+        byStatus: { NEW: 0, OPEN: 2, IN_PROGRESS: 0, WAITING_FOR_REQUESTER: 0, RESOLVED: 0, CLOSED: 0, REOPENED: 0, CANCELLED: 0 },
+        byItPriority: { LOW: 0, MEDIUM: 2, HIGH: 0, URGENT: 0 }, recentUpdated: 2, recentResolved: 0,
+        myActionsByStatus: { PLANNED: 0, IN_PROGRESS: 0, COMPLETED: 0, CANCELLED: 0 }, myUnfinishedActions: 0 });
+      expect(response.body.lists.recentUpdated.map((row: TicketRow) => row.id)).toEqual([cohort.sibling.id, cohort.subject.id]);
+      const original = response.body.lists.recentUpdated.find((row: TicketRow) => row.id === cohort.subject.id);
+      expect(original.owner).toBeNull(); expect(original.updatedAt).toBe(cohort.subject.updatedAt.toISOString());
+      const fresh = await probe.track(fixture.read("/api/dashboard/staff", cohort.params));
+      expect(fresh.status).toBe(200); expect(fresh.body.metrics).toEqual({ ...response.body.metrics, unassigned: 0, mine: 2 });
+      expect(fresh.body.lists.recentUpdated.map((row: TicketRow) => row.id)).toEqual([cohort.subject.id, cohort.sibling.id]);
+      expect(fresh.body.lists.recentUpdated[0].owner.id).toBe(fixture.readerId());
+      expect(fresh.body.lists.recentUpdated[0].updatedAt).toBe(changed.updatedAt.toISOString());
+      safeEqual(await fixture.state(), committed, "Paused and fresh reads add no domain writes");
+      assertStaffSnapshotEvidence(probe.reads, probe.commits, point);
+    });
+  });
+
+  it("keeps actor Action bins/count and unfinished preview coherent across real non-assignee completion", async () => {
+    const cohort = await fixture.cohort("OPEN");
+    async function create(description: string) {
+      const parent = await prisma.ticket.findUniqueOrThrow({ where: { id: cohort.subject.id } });
+      const response = await fixture.write("post", `/api/tickets/${parent.id}/actions`, {
+        description, result: null, attachmentNotes: "<script>literal snapshot notes</script>", followUpRequired: false,
+        followUpNote: null, assigneeId: fixture.readerId(), expectedTicketUpdatedAt: parent.updatedAt.toISOString(), clientMutationId: randomUUID(),
+      });
+      expect(response.status).toBe(201); return response.body.action as ActionDTO;
+    }
+    const planned = await create("Remains planned literal Action"), initial = await create("Independent actor completes this Action");
+    const token = await prisma.ticket.findUniqueOrThrow({ where: { id: cohort.subject.id } });
+    const started = await fixture.write("patch", `/api/tickets/${token.id}/actions/${initial.id}/status`, {
+      targetStatus: "IN_PROGRESS", expectedVersion: initial.version, expectedTicketUpdatedAt: token.updatedAt.toISOString(), clientMutationId: randomUUID(),
+    });
+    expect(started.status).toBe(200);
+    const before = await fixture.state(), action = before.actions.find(({ id }) => id === initial.id)!;
+    const parent = before.tickets.find(({ id }) => id === cohort.subject.id)!;
+    expect(action.assigneeId).not.toBe(fixture.writerId());
+    await withStaffSnapshot("action-bins", async (probe) => {
+      const pending = probe.track(fixture.read("/api/dashboard/staff", cohort.params));
+      const point = await probe.waitForRead(); expect(point.operation).toBe("action.groupBy");
+      const write = await probe.track(fixture.write("patch", `/api/tickets/${parent.id}/actions/${action.id}/status`, {
+        targetStatus: "COMPLETED", confirm: true, result: "Authoritative <script>completion</script>",
+        expectedVersion: action.version, expectedTicketUpdatedAt: parent.updatedAt.toISOString(), clientMutationId: randomUUID(),
+      }));
+      expect(write.status).toBe(200); expect(Object.keys(write.body).sort()).toEqual(["action", "ticketUpdatedAt"]);
+      expect(probe.commits).toHaveLength(1); expect(probe.commits[0]!.pid).not.toBe(point.pid);
+      const committed = await fixture.state(), completed = committed.actions.find(({ id }) => id === action.id)!;
+      expect(completed.status).toBe("COMPLETED"); expect(completed.version).toBe(action.version + 1);
+      expect(completed.performedById).toBe(fixture.writerId()); expect(completed.updatedAt.getTime()).toBeGreaterThan(action.updatedAt.getTime());
+      expect(committed.actionHistory).toHaveLength(before.actionHistory.length + 1); expect(committed.receipts).toHaveLength(before.receipts.length + 1);
+      safeEqual(committed.actionHistory.slice(0, -1), before.actionHistory, "Earlier history preserved by real completion");
+      safeEqual(committed.receipts.slice(0, -1), before.receipts, "Earlier operation receipts preserved");
+      probe.release();
+      const response = await pending;
+      expect(response.status).toBe(200);
+      expect(response.body.metrics.myActionsByStatus).toEqual({ PLANNED: 1, IN_PROGRESS: 1, COMPLETED: 0, CANCELLED: 0 });
+      expect(response.body.metrics.myUnfinishedActions).toBe(2);
+      safeEqual(response.body.lists.myUnfinishedActions, [planned, started.body.action].map((value) => ({
+        ticket: { id: parent.id, ticketNumber: parent.ticketNumber, summary: parent.summary, currentStatus: "OPEN" }, action: value,
+      })), "Original operation-time safe Action DTOs in authoritative oldest-first preview");
+      expect(response.body.lists.myUnfinishedActions[1].action.performedBy).toBeNull();
+      const fresh = await probe.track(fixture.read("/api/dashboard/staff", cohort.params));
+      expect(fresh.status).toBe(200);
+      expect(fresh.body.metrics.myActionsByStatus).toEqual({ PLANNED: 1, IN_PROGRESS: 0, COMPLETED: 1, CANCELLED: 0 });
+      expect(fresh.body.metrics.myUnfinishedActions).toBe(1);
+      safeEqual(fresh.body.lists.myUnfinishedActions, [response.body.lists.myUnfinishedActions[0]], "Fresh preview excludes committed completion, no fabricated replacement");
+      safeEqual(await fixture.state(), committed, "Both reads preserve exact committed parent/Action/history/receipt state");
+      assertStaffSnapshotEvidence(probe.reads, probe.commits, point);
+    });
+  });
+});

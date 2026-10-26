@@ -748,3 +748,76 @@ describe("Staff list date predicates: independent upper bounds, caps and actual-
     if (mode === "timezone") safeEqual(results[0], results[1], `${name}: complete two-page results invariant across actual UTC/Bangkok transactions`);
   });
 });
+import { staffSnapshotFixture } from "./staff-dashboard-verification-fixtures.js";
+import { assertStaffSnapshotEvidence, withStaffSnapshot } from "./staff-snapshot-coordination-test-helper.js";
+
+// Partial AC-27/28, T-27/28/46. The actual returned descriptors are used.
+// Deliberately constructed valid source histories are read fixtures; subsequent
+// writer changes use the real guarded workflow endpoint. Each page/request has
+// its OWN snapshot, not the snapshot of the earlier Dashboard request.
+describe("Staff descriptor coordinated count/page snapshots", () => {
+  const fixture = staffSnapshotFixture();
+  beforeAll(() => fixture.setup());
+  afterAll(() => fixture.cleanup());
+
+  it.each([
+    { name: "updated widget/status/date membership", resolved: false },
+    { name: "distinct resolution-history eligibility and latest-time ordering", resolved: true },
+  ])("keeps $name coherent across an acknowledged independent workflow commit", async ({ resolved }) => {
+    const cohort = await fixture.cohort(resolved ? "RESOLVED" : "OPEN");
+    const base = new URLSearchParams(cohort.params); base.set("owner", "me");
+    if (!resolved) base.set("currentStatus", "OPEN");
+    const beforeDashboard = await fixture.state();
+    const dashboard = await fixture.read("/api/dashboard/staff", base);
+    expect(dashboard.status).toBe(200);
+    safeEqual(await fixture.state(), beforeDashboard, "Descriptor read has no domain writes");
+    const descriptor = dashboard.body.drillDown[resolved ? "recentResolved" : "recentUpdated"];
+    expect(descriptor.path).toBe("/api/staff/tickets");
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(descriptor.query)) params.set(key, String(value));
+    for (const [key, value] of base) expect(params.get(key)).toBe(value);
+    expect(params.get("dashboardWidget")).toBe(resolved ? "recentResolved" : "recentUpdated");
+    expect(params.has(resolved ? "resolvedFrom" : "updatedFrom")).toBe(true);
+    expect(params.has(resolved ? "resolvedBefore" : "updatedBefore")).toBe(true);
+    params.set("page", "1"); params.set("pageSize", "10");
+    const before = await fixture.state();
+    if (resolved) expect(before.history.filter(({ ticketId, toStatus }) => ticketId === cohort.subject.id && toStatus === "RESOLVED")).toHaveLength(2);
+    await withStaffSnapshot("list-count", async (probe) => {
+      const pending = probe.track(fixture.read(descriptor.path, params));
+      const point = await probe.waitForRead(); expect(point.operation).toBe("raw list count");
+      const write = await probe.track(fixture.write("patch", `/api/staff/tickets/${cohort.subject.id}/status`, {
+        targetStatus: resolved ? "REOPENED" : "IN_PROGRESS", expectedUpdatedAt: cohort.subject.updatedAt.toISOString(),
+        confirm: false, reason: "Coordinated literal <script>workflow</script>",
+      }));
+      expect(write.status, "Real workflow transaction commits before paused reader resumes").toBe(200);
+      expect(probe.commits).toHaveLength(1); expect(probe.commits[0]!.pid).not.toBe(point.pid);
+      const committed = await fixture.state(); // Independent fresh connection observes completed commit.
+      const changed = committed.tickets.find(({ id }) => id === cohort.subject.id)!;
+      expect(changed.currentStatus).toBe(resolved ? "REOPENED" : "IN_PROGRESS");
+      expect(changed.updatedAt.getTime()).toBeGreaterThan(cohort.subject.updatedAt.getTime());
+      safeEqual(changed, { ...cohort.subject, currentStatus: resolved ? "REOPENED" : "IN_PROGRESS", updatedAt: changed.updatedAt }, "Writer changes only inherited status/timestamp fields");
+      expect(committed.history).toHaveLength(before.history.length + 1);
+      expect(committed.history.at(-1)).toMatchObject({ ticketId: changed.id, actorId: fixture.writerId(),
+        fromStatus: cohort.subject.currentStatus, toStatus: changed.currentStatus, reason: "Coordinated literal <script>workflow</script>" });
+      safeEqual(committed, { ...before, tickets: before.tickets.map((row) => row.id === changed.id ? changed : row),
+        history: [...before.history, committed.history.at(-1)] }, "Only acknowledged workflow transition/history changes; prior histories/Actions/receipts untouched");
+      probe.release();
+      const response = await pending;
+      expect(response.status).toBe(200);
+      expect(response.body.pagination).toEqual({ page: 1, pageSize: 10, totalItems: 2, totalPages: 1, hasPreviousPage: false, hasNextPage: false });
+      expect(response.body.counts).toEqual({ matching: 2, mine: 2, unassigned: 0 });
+      expect(response.body.items.map((row: { id: number }) => row.id)).toEqual([cohort.sibling.id, cohort.subject.id]);
+      safeEqual(response.body.items, [cohort.sibling, cohort.subject].map((row) => cohort.expectedRow(row, resolved)),
+        "Original count and exact safe inherited Staff rows share old snapshot, latest resolution time with id DESC ties");
+      expect(new Set(response.body.items.map((row: { id: number }) => row.id)).size).toBe(2);
+      expect(/passwordHash|tokenHash|csrfTokenHash|inputFingerprint|safeResponse|internalNotes|storageKey|"description"/u.test(JSON.stringify(response.body))).toBe(false);
+      const fresh = await probe.track(fixture.read(descriptor.path, params));
+      expect(fresh.status).toBe(200);
+      expect(fresh.body.pagination).toEqual({ page: 1, pageSize: 10, totalItems: 1, totalPages: 1, hasPreviousPage: false, hasNextPage: false });
+      expect(fresh.body.counts).toEqual({ matching: 1, mine: 1, unassigned: 0 });
+      safeEqual(fresh.body.items, [cohort.expectedRow(cohort.sibling, resolved)], "Fresh descriptor snapshot excludes committed nonmatching parent, retaining correct projection/resolvedAt");
+      safeEqual(await fixture.state(), committed, "Both list reads preserve exact committed domain state");
+      assertStaffSnapshotEvidence(probe.reads, probe.commits, point);
+    });
+  });
+});
