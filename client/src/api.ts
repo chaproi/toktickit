@@ -1,4 +1,5 @@
 import { canonicalUtc, parseRequesterQuery, requesterDrillDown, requesterFilterNames, requesterPriorities, requesterStatuses } from "./requester-query.js";
+import { parseStaffQuery, staffDrillDown, staffFilterNames, staffListExtensions, staffTicketStates, type StaffDescriptor } from "./staff-dashboard-query.js";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
 
@@ -396,7 +397,7 @@ export async function getRequesterDashboard(query: Record<string, string>, signa
 
 export type StaffQueueSortField =
   | "ticketNumber" | "ticketDate" | "updatedAt"
-  | "requestedPriority" | "itPriority" | "currentStatus";
+  | "requestedPriority" | "itPriority" | "currentStatus" | "resolvedAt";
 export interface StaffQueueQuery {
   search?: string;
   categoryId?: number;
@@ -409,6 +410,12 @@ export interface StaffQueueQuery {
   sortOrder: TicketSortOrder;
   page: number;
   pageSize: TicketPageSize;
+  statusGroup?: "active" | "outstanding" | "resolved";
+  dashboardWidget?: "unassigned" | "mine" | "status" | "itPriority" | "recentUpdated" | "recentResolved";
+  widgetStatus?: TicketStatus;
+  widgetItPriority?: RequestedPriority;
+  updatedFrom?: string; updatedBefore?: string;
+  resolvedFrom?: string; resolvedBefore?: string;
 }
 export interface StaffQueueItem {
   id: number;
@@ -424,6 +431,7 @@ export interface StaffQueueItem {
   owner: OwnerSummary | null;
   requesterResolutionIndicatedAt: string | null;
   updatedAt: string;
+  resolvedAt?: string;
 }
 export interface StaffQueueResponse {
   items: StaffQueueItem[];
@@ -463,11 +471,90 @@ export async function getStaffTickets(
   if (query.itPriority !== undefined) parameters.set("itPriority", query.itPriority);
   if (query.currentStatus !== undefined) parameters.set("currentStatus", query.currentStatus);
   if (query.owner !== undefined) parameters.set("owner", String(query.owner));
+  for (const name of staffListExtensions) if (query[name] !== undefined) parameters.set(name, String(query[name]));
   parameters.set("sortBy", query.sortBy);
   parameters.set("sortOrder", query.sortOrder);
   parameters.set("page", String(query.page));
   parameters.set("pageSize", String(query.pageSize));
   return jsonRequest<StaffQueueResponse>(`/api/staff/tickets?${parameters}`, { signal });
+}
+
+export interface StaffDashboardResponse {
+  asOf: string;
+  timezone: "Asia/Bangkok";
+  recentWindow: { from: string; before: string };
+  filters: Partial<Record<(typeof staffFilterNames)[number], string | number | null>>;
+  metrics: { unassigned: number; mine: number; byStatus: Record<TicketStatus, number>; byItPriority: Record<RequestedPriority, number>;
+    recentUpdated: number; recentResolved: number; myActionsByStatus: Record<ActionStatus, number>; myUnfinishedActions: number };
+  lists: { recentUpdated: RequesterDashboardRow[]; recentResolved: RequesterDashboardRow[]; myUnfinishedActions: StaffActionResponse["items"] };
+  drillDown: { unassigned: StaffDescriptor; mine: StaffDescriptor; byStatus: Record<TicketStatus, StaffDescriptor>;
+    byItPriority: Record<RequestedPriority, StaffDescriptor>; recentUpdated: StaffDescriptor; recentResolved: StaffDescriptor;
+    myActionsByStatus: Record<ActionStatus, StaffDescriptor>; myUnfinishedActions: StaffDescriptor };
+}
+function isStaffDashboard(value: unknown): value is StaffDashboardResponse {
+  if (!isRecord(value) || !hasKeys(value, ["asOf", "timezone", "recentWindow", "filters", "metrics", "lists", "drillDown"]) ||
+      !canonicalUtc(value.asOf) || value.timezone !== "Asia/Bangkok" || !isRecord(value.recentWindow) ||
+      !hasKeys(value.recentWindow, ["from", "before"]) || !canonicalUtc(value.recentWindow.from) ||
+      !canonicalUtc(value.recentWindow.before) || value.recentWindow.from >= value.recentWindow.before || !isRecord(value.filters)) return false;
+  const filters = new URLSearchParams();
+  for (const [name, item] of Object.entries(value.filters)) {
+    if (!staffFilterNames.some((key) => key === name) || (item !== null && typeof item !== "string" && typeof item !== "number")) return false;
+    if (item !== null) filters.set(name, String(item));
+  }
+  if (!parseStaffQuery(filters, "dashboard").success) return false;
+  const metricKeys = ["unassigned", "mine", "byStatus", "byItPriority", "recentUpdated", "recentResolved", "myActionsByStatus", "myUnfinishedActions"];
+  const count = (item: unknown) => typeof item === "number" && Number.isSafeInteger(item) && item >= 0;
+  const id = (item: unknown) => typeof item === "number" && Number.isSafeInteger(item) && item > 0 && item <= 2_147_483_647;
+  const ticketStatus = (item: unknown) => staffTicketStates.some((status) => status === item);
+  const statuses = ["PLANNED", "IN_PROGRESS", "COMPLETED", "CANCELLED"];
+  const bins = (item: unknown, keys: readonly string[]) => isRecord(item) && hasKeys(item, keys) && Object.values(item).every(count);
+  if (!isRecord(value.metrics) || !hasKeys(value.metrics, metricKeys) || !bins(value.metrics.byStatus, staffTicketStates) ||
+      !bins(value.metrics.byItPriority, requesterPriorities) || !bins(value.metrics.myActionsByStatus, statuses) ||
+      ![value.metrics.unassigned, value.metrics.mine, value.metrics.recentUpdated, value.metrics.recentResolved, value.metrics.myUnfinishedActions].every(count)) return false;
+  if (!isRecord(value.lists) || !hasKeys(value.lists, ["recentUpdated", "recentResolved", "myUnfinishedActions"])) return false;
+  for (const name of ["recentUpdated", "recentResolved"]) {
+    const rows = value.lists[name];
+    if (!Array.isArray(rows) || rows.length > 5) return false;
+    for (const row of rows) {
+      if (!isRecord(row) || !id(row.id) || typeof row.ticketNumber !== "string" || typeof row.summary !== "string" || !canonicalUtc(row.updatedAt) ||
+          !staffTicketStates.some((status) => status === row.currentStatus) || !requesterPriorities.some((priority) => priority === row.requestedPriority) ||
+          !requesterPriorities.some((priority) => priority === row.itPriority) ||
+          Object.keys(row).some((key) => !["id", "ticketNumber", "summary", "currentStatus", "requestedPriority", "itPriority", "owner", "updatedAt", "resolvedAt"].includes(key))) return false;
+      if (name === "recentResolved" && !canonicalUtc(row.resolvedAt)) return false;
+      if (row.resolvedAt !== undefined && !canonicalUtc(row.resolvedAt)) return false;
+      if (row.owner !== null && (!isRecord(row.owner) || !hasKeys(row.owner, ["id", "name", "role"]) || !id(row.owner.id) ||
+          typeof row.owner.name !== "string" || !["REQUESTER", "IT_STAFF", "ADMINISTRATOR"].includes(String(row.owner.role)))) return false;
+    }
+  }
+  const identity = (item: unknown) => isRecord(item) && hasKeys(item, ["id", "name"]) && id(item.id) && typeof item.name === "string";
+  const actionKeys = ["id", "ticketId", "actionAt", "description", "result", "createdBy", "assignee", "performedBy", "status", "followUpRequired", "followUpNote", "attachmentNotes", "cancellationReason", "createdAt", "updatedAt", "completedAt", "cancelledAt", "version"];
+  if (!Array.isArray(value.lists.myUnfinishedActions) || value.lists.myUnfinishedActions.length > 5) return false;
+  for (const row of value.lists.myUnfinishedActions) {
+    if (!isRecord(row) || !hasKeys(row, ["ticket", "action"]) || !isRecord(row.ticket) || !hasKeys(row.ticket, ["id", "ticketNumber", "summary", "currentStatus"]) ||
+        !id(row.ticket.id) || typeof row.ticket.ticketNumber !== "string" || typeof row.ticket.summary !== "string" || !ticketStatus(row.ticket.currentStatus) ||
+        !isRecord(row.action) || !hasKeys(row.action, actionKeys)) return false;
+    const action = row.action;
+    if (!id(action.id) || action.ticketId !== row.ticket.id || !identity(action.createdBy) || !identity(action.assignee) ||
+        action.performedBy !== null || action.completedAt !== null || action.cancelledAt !== null || action.cancellationReason !== null ||
+        !["PLANNED", "IN_PROGRESS"].includes(String(action.status)) || !canonicalUtc(action.actionAt) || !canonicalUtc(action.createdAt) || !canonicalUtc(action.updatedAt) ||
+        typeof action.description !== "string" || typeof action.followUpRequired !== "boolean" || !Number.isSafeInteger(action.version) || Number(action.version) < 1 ||
+        [action.result, action.followUpNote, action.attachmentNotes].some((item) => item !== null && typeof item !== "string")) return false;
+  }
+  const descriptor = (item: unknown) => isRecord(item) && hasKeys(item, ["path", "query"]) && typeof item.path === "string" && isRecord(item.query) &&
+    Object.values(item.query).every((entry) => typeof entry === "string") && staffDrillDown(item as StaffDescriptor) !== null;
+  if (!isRecord(value.drillDown) || !hasKeys(value.drillDown, metricKeys)) return false;
+  for (const name of ["unassigned", "mine", "recentUpdated", "recentResolved", "myUnfinishedActions"]) if (!descriptor(value.drillDown[name])) return false;
+  for (const [name, keys] of [["byStatus", staffTicketStates], ["byItPriority", requesterPriorities], ["myActionsByStatus", statuses]] as const) {
+    const mapping = value.drillDown[name];
+    if (!isRecord(mapping) || !hasKeys(mapping, keys) || !Object.values(mapping).every(descriptor)) return false;
+  }
+  return true;
+}
+export async function getStaffDashboard(query: Record<string, string>, signal?: AbortSignal): Promise<StaffDashboardResponse> {
+  const parameters = new URLSearchParams(query);
+  const result: unknown = await jsonRequest(`/api/dashboard/staff${parameters.size ? `?${parameters}` : ""}`, { signal });
+  if (!isStaffDashboard(result)) throw new ApiRequestError("Unable to load Dashboard data. Please try again.", 500, "SAFE_FAILURE");
+  return result;
 }
 
 export async function getStaffAssignees(signal?: AbortSignal): Promise<EligibleAssignee[]> {

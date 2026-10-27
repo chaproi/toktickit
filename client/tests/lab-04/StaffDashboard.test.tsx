@@ -327,7 +327,7 @@ describe("Staff Dashboard honest async and empty states", () => {
     const user = userEvent.setup();
     await user.type(within(root).getByRole("textbox", { name: /search/i }), "  VPN%_  ");
     for (const [name, value] of [[/category/i, "11"], [/related system/i, "21"], [/requested priority/i, "HIGH"], [/IT priority/i, "MEDIUM"], [/(?:current )?status/i, "OPEN"], [/owner/i, "me"]] as const) {
-      const control = within(root).getByRole("combobox", { name }); await waitFor(() => expect(within(control).getByRole("option", { name: value === "11" ? category.name : value === "21" ? system.name : value === "me" ? /mine|me/i : new RegExp(labels[value as keyof typeof labels], "i") })).toBeInTheDocument());
+      const control = within(root).getByRole("combobox", { name }); await waitFor(() => expect(within(control).getByRole("option", { name: value === "11" ? category.name : value === "21" ? system.name : value === "me" ? /mine|me/i : value === "OPEN" ? "Open" : new RegExp(labels[value as keyof typeof labels], "i") })).toBeInTheDocument());
       await user.selectOptions(control, value);
     }
     expect(harness.dashboardCalls).toHaveLength(1);
@@ -403,7 +403,7 @@ describe("Staff Dashboard structured drill-downs use real destination consumers"
     const scope = region(root, kind === "Ticket" ? /recent(?:ly)? updated.*tickets/i : /unfinished.*actions|assigned actions preview/i);
     const links = within(scope).getAllByRole("link").filter((link) => link.getAttribute("href") === (kind === "Ticket" ? "/staff/tickets/505" : "/staff/tickets/505#action-700"));
     expect(links).toHaveLength(1); await userEvent.click(links[0]!);
-    expect(await screen.findByRole("heading", { name: /Ticket Detail/i })).toBeInTheDocument(); await screen.findByText(detail.description);
+    expect(await screen.findByRole("heading", { name: detail.ticketNumber })).toBeInTheDocument(); await screen.findByText(detail.description);
     expect(window.location.pathname).toBe("/staff/tickets/505");
     if (kind === "Action") {
       expect(window.location.hash).toBe("#action-700");
