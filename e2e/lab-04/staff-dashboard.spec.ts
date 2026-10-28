@@ -4,7 +4,8 @@ import { join } from "node:path";
 import { expect, type Page, type Response } from "@playwright/test";
 import type { StaffDashboardResponse, StaffQueueResponse, StaffActionResponse } from "../../client/src/api.js";
 import { test, login, type StaffBrowserFixture } from "./staff-dashboard-browser-fixtures.js";
-import { geometry, keyboardFocus, reachable, viewports } from "./action-layout-helpers.js";
+import { geometry, genuineZoom, keyboardFocus, reachable, viewports } from "./action-layout-helpers.js";
+import { assertContrast, captureAccessibility, contrastSample, reach, recordMeasurements, type ContrastSample } from "./staff-dashboard-accessibility-helpers.js";
 
 // Partial AC-01/02/24/25/26/27/28/29/35/36/37/38/40/44;
 // T-01/02/24/25/26/27/28/29/35/36/37/38/48/54.
@@ -203,4 +204,127 @@ for (const viewport of viewports) test(`Staff Dashboard layout and keyboard: ${v
   const navigation = page.getByRole("navigation", { name: "Ticket Queue pagination" }); await reachable(navigation.getByRole("button", { name: "Next", exact: true }));
   await expect(page.getByText(/12 Tickets/, { exact: true })).toBeVisible();
   expect(f.pageErrors).toEqual([]);
+});
+
+// New bounded AC-37/38, T-37/38 domain contribution. Existing eight cases above
+// and their historical captures/assertions are preserved. No screen reader is run.
+const filterLabels = ["Search Tickets", "Category", "Related System", "Requested Priority", "IT Priority", "Current Status", "Owner"];
+async function staffAccessibleRecovery(page: Page, zoom = 1) {
+  let release!: () => void, finish!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; }), drained = new Promise<void>(resolve => { finish = resolve; });
+  let interceptions = 0;
+  const pattern = /\/api\/dashboard\/staff(?:\?|$)/;
+  const fault = async (route: import("@playwright/test").Route) => {
+    interceptions++;
+    try { await held; await route.abort("failed"); } finally { finish(); }
+  };
+  // Initial authenticated StrictMode reads have already settled. This one
+  // deliberate browser transport failure is not evidence of a database outage.
+  await page.route(pattern, fault, { times: 1 });
+  try {
+    const apply = root(page).getByRole("button", { name: "Apply Filters", exact: true });
+    await keyboardFocus(page, apply); await page.keyboard.press("Enter");
+    const loading = root(page).getByRole("status");
+    await expect(loading).toHaveAttribute("aria-busy", "true"); await expect(loading).toContainText("Loading Staff Dashboard");
+    await expect(root(page).getByRole("alert")).toHaveCount(0); await expect(root(page).getByRole("link", { name: /Unassigned active Tickets/i })).toHaveCount(0);
+    const loadingTree = await loading.ariaSnapshot();
+    release(); await drained;
+    const alert = root(page).getByRole("alert"); await expect(alert).toHaveCount(1); await expect(alert).toContainText(/unable|try again/i);
+    await expect(root(page).getByRole("status")).toHaveCount(0); await expect(root(page).getByText("0", { exact: true })).toHaveCount(0);
+    const retry = alert.getByRole("button", { name: "Retry", exact: true }); await keyboardFocus(page, retry); await reach(retry);
+    const samples = { errorText: await contrastSample(page, alert.locator("p")), retryText: await contrastSample(page, retry), retryFocus: await contrastSample(page, retry, "focus") };
+    recordMeasurements(`recovery-${zoom}`, { controlledTransportAborts: interceptions, loadingTree, alertTree: await alert.ariaSnapshot(), samples });
+    await captureAccessibility(page, `error-retry-${zoom}`, "One controlled transport abort; single alert; keyboard Retry", zoom, { samples });
+    assertContrast(samples); expect(interceptions).toBe(1);
+  } finally { release(); if (interceptions) await drained; await page.unroute(pattern, fault); }
+  await dashboard(page, () => page.keyboard.press("Enter"));
+  await expect(root(page).getByRole("alert")).toHaveCount(0);
+  // The removed Retry must not strand sequential keyboard navigation outside
+  // the delivered screen. No arbitrary mandatory programmatic target is imposed.
+  await page.keyboard.press("Tab");
+  expect(await root(page).evaluate(node => node.contains(document.activeElement)), "Keyboard proceeds into recovered Dashboard content").toBe(true);
+}
+
+test("Staff accessibility: logical keyboard order, textual statuses, honest announcements and real Retry", async ({ page, staffFixture: f }) => {
+  await login(page, f.a); await dashboard(page, () => page.goto(path(f)));
+  const form = root(page).getByRole("form", { name: "Dashboard filters" });
+  await expect(form.getByLabel("Category", { exact: true }).getByRole("option", { name: f.category.name, exact: true })).toBeAttached();
+  await form.getByLabel(filterLabels[0]!, { exact: true }).focus();
+  for (const name of filterLabels) {
+    const control = form.getByLabel(name, { exact: true }); await expect(control).toBeFocused(); await expect(control).toHaveAccessibleName(name);
+    // Dashboard filters are optional, unlike Action mutation required fields.
+    await expect(control).not.toHaveAttribute("required"); await reach(control); await page.keyboard.press("Tab");
+  }
+  const apply = form.getByRole("button", { name: "Apply Filters", exact: true }), clear = form.getByRole("button", { name: "Clear filters", exact: true });
+  await expect(apply).toBeFocused(); await page.keyboard.press("Tab"); await expect(clear).toBeFocused();
+  await page.keyboard.press("Tab"); await expect(root(page).getByRole("link", { name: /Unassigned active Tickets/i })).toBeFocused();
+  for (const [regionName, labels] of [["Ticket status", ["New 1", "Open 12", "In Progress 1", "Waiting for Requester 1", "Reopened 1", "Resolved 2", "Closed 1", "Cancelled 1"]],
+    ["My assigned Action status", ["Planned 4", "In Progress 2", "Completed 1", "Cancelled 1"]]] as const) {
+    const region = root(page).getByRole("region", { name: regionName, exact: true });
+    for (const label of labels) await expect(region.getByRole("link", { name: label, exact: true })).toBeAttached();
+  }
+  await staffAccessibleRecovery(page);
+  expect(f.pageErrors).toEqual([]);
+});
+
+test("Staff accessibility: computed text, control-boundary and keyboard-focus contrast", async ({ page, staffFixture: f }) => {
+  await login(page, f.a); await dashboard(page, () => page.goto(path(f)));
+  const form = root(page).getByRole("form", { name: "Dashboard filters" }), search = form.getByLabel("Search Tickets", { exact: true });
+  const mine = root(page).getByRole("link", { name: /My active Tickets/i });
+  const samples: Record<string, ContrastSample> = {
+    heading: await contrastSample(page, root(page).getByRole("heading", { name: "Staff Dashboard", exact: true })),
+    label: await contrastSample(page, form.locator("label").first()), inputText: await contrastSample(page, search),
+    inputBoundary: await contrastSample(page, search, "boundary"), selectText: await contrastSample(page, form.getByLabel("Owner", { exact: true })),
+    selectBoundary: await contrastSample(page, form.getByLabel("Owner", { exact: true }), "boundary"),
+    applyText: await contrastSample(page, form.getByRole("button", { name: "Apply Filters", exact: true })),
+    clearText: await contrastSample(page, form.getByRole("button", { name: "Clear filters", exact: true })),
+    metricText: await contrastSample(page, mine.locator("span")), metricNumber: await contrastSample(page, mine.locator("strong")),
+    statusText: await contrastSample(page, root(page).getByRole("region", { name: "Ticket status", exact: true }).getByRole("link", { name: "In Progress 1", exact: true }).locator("span")),
+    previewText: await contrastSample(page, root(page).getByText(t(f, "open-12").summary, { exact: true }).first()),
+  };
+  await keyboardFocus(page, search); samples.searchFocus = await contrastSample(page, search, "focus");
+  await keyboardFocus(page, mine); samples.metricFocus = await contrastSample(page, mine, "focus");
+  await keyboardFocus(page, form.getByRole("button", { name: "Apply Filters", exact: true }));
+  samples.applyFocus = await contrastSample(page, form.getByRole("button", { name: "Apply Filters", exact: true }), "focus");
+  recordMeasurements("contrast", { thresholds: "Normal text 4.5:1; large text and meaningful control/state cues 3:1; unrounded comparisons", samples });
+  await captureAccessibility(page, "keyboard-focus", "Keyboard-focused Apply; text/boundary/focus contrast measured", 1, { samples });
+  assertContrast(samples);
+  expect(f.pageErrors).toEqual([]);
+});
+
+test("Staff accessibility: genuine 200% tab zoom reflows filters, cards, Retry, pagination and selected Action", async ({ staffFixture: f }) => {
+  await genuineZoom(async (page, _worker, zoom) => {
+    const onError = () => f.pageErrors.push("Zoom page error"); page.on("pageerror", onError);
+    try {
+      await login(page, f.a); await dashboard(page, () => page.goto(path(f)));
+      const before = await page.evaluate(() => ({ width: innerWidth, height: innerHeight, pinchScale: visualViewport?.scale ?? 1 }));
+      expect(await zoom()).toBe(1); expect(await zoom(2)).toBe(2); await expect.poll(() => zoom()).toBe(2);
+      await expect.poll(() => page.evaluate(() => innerWidth)).toBeLessThan(before.width);
+      const zoomed = await page.evaluate(() => ({ width: innerWidth, height: innerHeight, pinchScale: visualViewport?.scale ?? 1 })); expect(zoomed.pinchScale).toBe(1);
+      await geometry(page);
+      for (const name of filterLabels) await reach(root(page).getByLabel(name, { exact: true }));
+      await captureAccessibility(page, "zoom200-filters", "Native tab zoom 2.0: seven filter controls", 2, { verifiedTabZoom: await zoom(), before, zoomed });
+      const mine = root(page).getByRole("link", { name: /My active Tickets/i }); await keyboardFocus(page, mine); await reach(mine);
+      await captureAccessibility(page, "zoom200-cards", "Native tab zoom 2.0: textual cards and visible keyboard focus", 2, { verifiedTabZoom: await zoom() });
+      const previews = root(page).getByRole("region", { name: "Recently updated Tickets", exact: true });
+      await previews.getByRole("link").first().scrollIntoViewIfNeeded(); await captureAccessibility(page, "zoom200-preview", "Native tab zoom 2.0: long literal summaries and historical owners", 2);
+      await staffAccessibleRecovery(page, 2);
+      const list = await queue(page, () => root(page).getByRole("link", { name: /My active Tickets/i }).click()); expect(list.body.pagination.totalItems).toBe(12);
+      await geometry(page); const navigation = page.getByRole("navigation", { name: "Ticket Queue pagination" });
+      const next = navigation.getByRole("button", { name: "Next", exact: true }); await keyboardFocus(page, next); await reach(next);
+      await captureAccessibility(page, "zoom200-pagination", "Native tab zoom 2.0: reachable Queue pagination", 2);
+      const second = await queue(page, () => page.keyboard.press("Enter")); expect(second.body.pagination.page).toBe(2); expect(second.body.items.map(row => row.id)).toEqual([t(f, "open-1").id, t(f, "reopened").id]);
+      await dashboard(page, () => page.goto(path(f)));
+      const selectedLink = root(page).getByRole("region", { name: "My unfinished Actions", exact: true }).getByRole("link", { name: t(f, "open-12").ticketNumber, exact: true }).first();
+      await keyboardFocus(page, selectedLink); await page.keyboard.press("Enter");
+      const selected = page.locator(`#action-${a(f, "A-1").id}`); await expect(selected).toBeFocused(); await reach(selected.getByRole("button", { name: "Start", exact: true }));
+      await captureAccessibility(page, "zoom200-selected-action", "Native tab zoom 2.0: selected Action revealed with real focus", 2);
+      await dashboard(page, () => page.goBack()); expect(new URL(page.url()).searchParams.get("categoryId")).toBe(String(f.category.id));
+      expect(await zoom()).toBe(2); expect(await zoom(1)).toBe(1); await expect.poll(() => page.evaluate(() => innerWidth)).toBe(before.width);
+      const restored = await page.evaluate(() => ({ width: innerWidth, height: innerHeight, pinchScale: visualViewport?.scale ?? 1 }));
+      recordMeasurements("genuine-zoom", { factors: [1, 2, 1], configuredNativeWindow: { width: 1440, height: 900 }, before, zoomed, restored, method: "chrome.tabs.setZoom/getZoom through unchanged helper/extension" });
+      console.info(`Issue48 native tab zoom verified: ${JSON.stringify({ factors: [1, 2, 1], before, zoomed, restored })}`);
+    } finally { page.off("pageerror", onError); }
+    expect(f.pageErrors).toEqual([]);
+  });
 });
