@@ -1,6 +1,6 @@
 # Sprint 4 Review Record
 
-Status: **D-01–D-20 accepted; contract peer review approved; #44 backend and PR #52 Actions UI Phase A approved/merged; #46 workflow approved/merged through PR #54; #47 Requester Dashboard/API-08/owned-list extensions implemented and verified; #47 implementation re-review Pending after PR #55 requested changes.** Contract approval remains limited to reviewed HEAD `fec388a3c2ab63cabb1bf20f3fa913fb023d9241`. [Predecessor workflow approval](reviewer.md#11-pr-54-approval-and-merge) is separate from this unreviewed increment. [Issue #47 evidence](tests.md#9-issue-47-requester-dashboard-evidence-and-current-traceability) records the sequential local comprehensive run at `c3c2e5da5cd11ec6f5b69c089e1c82542003d5b6`: server 73 files/1,867 passed, client 22 files/292 passed, E2E 14 files/45 passed, both builds passed. This documentation-only step runs no application tests/builds and claims no hosted CI. All 55 product scenarios remain **Planned**; Product DoD remains one contract-review item checked and ten unchecked. Staff Dashboard #48, navigation #53 under #45, final integration #49 and release #50 retain their obligations.
+Status: **D-01-D-20 accepted; contract peer review approved; #44 backend, PR #52 Actions UI Phase A, #46 workflow and #47 Requester Dashboard approved/merged; #48 Staff Dashboard implemented with recorded domain verification; #48 implementation peer review Pending.** Contract approval remains limited to reviewed HEAD `fec388a3c2ab63cabb1bf20f3fa913fb023d9241`. [Verified PR #55 approval/merge](reviewer.md#14-pr-55-approval-and-merge) supersedes the historical Requester Pending records below. [Staff evidence](tests.md#11-issue-48-staff-dashboard-evidence-and-pre-pr-assessment) separates server 2,002/build at `b2bdec2d93d7207e1a1d927b972a05754b55cc8f`, original combined browser 17/17, and corrected Staff browser 11/11 plus client 23 files/318/build at RED HEAD with pending production bytes later committed unchanged as `d562960dc019833669c3e59caef6919f11cd9a7c`. Evidence publication `cfdf601189bc3f700eea4417e4ed93256b7202cb` was not an exact-HEAD rerun. This Markdown-only update runs no application checks and claims no hosted CI. All 55 product scenarios remain **Planned**; Product DoD remains one contract-review item checked and ten unchecked. #53 under #45 retains shared navigation, #49 final integration and #50 release.
 
 Issue #41; publication branch `feat/41-lab4-contract`; review-record branch `feat/41-lab4-review-record`; integration `lab4-staging`. Original baseline `64ff04ea8fb1395f569c1095aea556ee6a695ebd`. Formal peer reviewer: **cottonlnwza**. Review time: **2026-10-04T11:31:01Z = 2026-10-04 18:31:01 Asia/Bangkok**. Peer result: **APPROVED** on reviewed HEAD `fec388a3c2ab63cabb1bf20f3fa913fb023d9241`; [actual review](https://github.com/chaproi/toktickit/pull/42#pullrequestreview-5405737951). Student decision approval: **Accepted by student — D-01–D-20, Recommended option**. [PR #42](https://github.com/chaproi/toktickit/pull/42) is merged into lab4-staging as `25368774a1f61ac372918bd7d9187ca8cedd74c4`. This opening record concerns historical contract approval only; actual #44 implementation approval is recorded in section6. Subsequent PR #52 Phase A approval/merge is recorded in section9; subsequent #46 implementation approval is recorded in section11; no #47 implementation approval or product acceptance is claimed.
 
@@ -103,7 +103,7 @@ Historical P-03 revision record: the user's seven findings were incorporated as 
 
 ## 5. Product acceptance
 
-**Product acceptance remains incomplete.** Only the contract-review Product DoD item is complete; the other ten are unchecked. Contract approval and the staging merge do not establish application test results, product completion or release approval. The Issue prerequisite is satisfied by actual #44–#50. #44 backend is approved/merged through PR #51; PR #52 Phase A subsequently received APPROVED and merged after the historical requested-changes response. Issue #46 subsequently received PR #54 approval/merge (section11). Issue #47 implementation review remains Pending; Staff Dashboard, navigation and final release are not accepted from domain success.
+**Product acceptance remains incomplete.** Only the contract-review Product DoD item is complete; the other ten are unchecked. Contract approval and the staging merge do not establish application test results, product completion or release approval. The Issue prerequisite is satisfied by actual #44–#50. #44 backend is approved/merged through PR #51; PR #52 Phase A subsequently received APPROVED and merged after the historical requested-changes response. Issue #46 subsequently received PR #54 approval/merge (section11). Issue #47 subsequently received PR #55 approval/merge (section 14). Staff implementation review remains Pending (section 15); shared navigation and final release are not accepted from domain success.
 
 ## 6. Issue #44 implementation review and evidence
 
@@ -238,6 +238,8 @@ Contract review remains cottonlnwza's exact fec388a3 approval; PR #51 backend an
 
 ## 12. Issue #47 implementation review package
 
+Historical pre-review package. The Pending reviewer/result/admin statements below describe its preparation; [section 14](#14-pr-55-approval-and-merge) records the subsequent actual approval and merge. They are not a current #47 blocker.
+
 **Implementation peer reviewer, reviewed SHA, result and review time: Pending.** Branch feat/47-requester-dashboard; baseline 964a3f9; tested source/test/evidence HEAD c3c2e5da5cd11ec6f5b69c089e1c82542003d5b6. No PR, review request, approval, commit, push or Issue edit is performed by this documentation preparation. The next review should assess the included Requester scope, not infer acceptance from predecessor approval or passing totals.
 
 | Ordered batch | Actual commits and interpretation |
@@ -264,6 +266,8 @@ The previous successful fetch showed alignment at tested c3c2e5d; the final live
 
 ## 13. PR #55 requested changes and correction package
 
+Historical requested-changes/correction record, retained without rewriting the submitted findings. Subsequent approval is recorded in section 14; it does not approve Staff Dashboard implementation.
+
 | Submitted review evidence | Actual value |
 | --- | --- |
 | PR / reviewer / result | [PR #55](https://github.com/chaproi/toktickit/pull/55); **cottonlnwza — CHANGES_REQUESTED** |
@@ -275,3 +279,29 @@ The previous successful fetch showed alignment at tested c3c2e5d; the final live
 [Actual attempts and source state](tests.md#actual-attempts-and-tested-source-state) distinguish 19-case RED (10 pass / 9 fail), runtime passes, the test-only TS2769 build failure/correction, final 293 client/build and 46 real-browser passes. The new old-CLOSED counterexample verifies an actual matching owned Ticket in the base-filtered list with zero Dashboard widgets; no extra aggregate or backend calculation was introduced. Earlier server evidence remains at c3c2e5d, not a new server run. Existing historical screenshot/test records remain intact; no exact-final-HEAD or hosted-CI execution is invented.
 
 The user authorized tightening only the assertions required by these findings. Unrelated expectations, approved specification, accepted decisions, backend source and Product DoD/scenario states remain unchanged. This response implements/verifies corrections; it neither substitutes AI approval nor claims the reviewer accepted them. No review submission/reply/thread resolution, Issue closure or checklist promotion. #48, #53 under #45, #49 and #50 remain their actual shared owners.
+
+## 14. PR #55 approval and merge
+
+Live authenticated GitHub records and fetched origin/lab4-staging were rechecked during this documentation preflight. The earlier requested-changes reviews and correction package in sections 12-13 remain historical evidence, not current blockers.
+
+| Verified predecessor record | Actual value |
+| --- | --- |
+| PR / reviewer / result | [PR #55](https://github.com/chaproi/toktickit/pull/55); **cottonlnwza - APPROVED** |
+| Approval URL / exact reviewed HEAD | [review 5640068478](https://github.com/chaproi/toktickit/pull/55#pullrequestreview-5640068478); **54872be323ab5d8665d6fa14bec0c01423f3e507** |
+| Approval time | **2026-10-24T21:17:51Z** = 2026-10-25 04:17:51 Asia/Bangkok |
+| Merge target / time / SHA | **lab4-staging**; **2026-10-24T21:18:15Z** = 2026-10-25 04:18:15 Asia/Bangkok; **5cb6beefbe824711e19ab4bdacd2674cbf27a2ec**, contained in fetched origin/lab4-staging and this Staff branch |
+| Earlier reviews retained | CHANGES_REQUESTED [5639721054](https://github.com/chaproi/toktickit/pull/55#pullrequestreview-5639721054), 2026-10-24T19:56:30Z, and [5639812738](https://github.com/chaproi/toktickit/pull/55#pullrequestreview-5639812738), 2026-10-24T20:23:50Z, both on ac8d9e9847edf94ac330f27967875f65da462639 |
+
+This verifies Requester implementation approval/integration only. It does not approve #48, complete shared navigation or alter any Issue/PR metadata in this task. Original contract, backend, Phase A and workflow approvals remain separate records.
+
+## 15. Issue #48 implementation review package
+
+**Peer reviewer: Pending. Reviewed SHA: Pending. Result: Pending. Review time: Pending.** These fields require an actual submitted implementation review. This AI-assisted pre-PR assessment, predecessor approvals and passing totals cannot fill them.
+
+Branch feat/48-staff-dashboard; baseline PR #55 merge **5cb6beefbe824711e19ab4bdacd2674cbf27a2ec**; source/test/evidence HEAD **cfdf601189bc3f700eea4417e4ed93256b7202cb**. Complete included scope before this documentation commit: 16 commits/54 files (12 production, 10 test/helper, 32 evidence), +6,516/-39; no schema/migration/seed/dependency/configuration changes. [Specification boundary](specification.md#17-issue-48-staff-dashboard-delivery-and-review-boundary), [actual API](api-spec.md#12-implemented-staff-dashboard-and-extended-staff-ticket-reads), [UI](ui-spec.md#13-implemented-staff-dashboard-contribution), [traceability/attempt ledger](tests.md#11-issue-48-staff-dashboard-evidence-and-pre-pr-assessment), [original browser evidence](../../artifacts/lab-04/screenshots/staff-dashboard/evidence.md) and [accessibility addendum](../../artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/evidence.md) form the package.
+
+Review focus: independently confirm active/resolved/global-versus-actor formulas and zero bins; safe bounded Ticket/API-07 projections; parent/base/widget intersections; current-assignee semantics; distinct actual history/latest qualifying resolution and UTC millisecond bounds/caps; PostgreSQL filtering/count/page/read-only REPEATABLE READ snapshots; preserved ordinary Queue ordering/search/owner-replacement counters; inherited session/error/cache policy; URL/descriptor allowlists, literal text and stale-user/read suppression; semantic empty states, reachable controls/native zoom and scoped contrast correction. Inspect the two authorized exact-name/destination test-query corrections and their preserved behavior assertions. Controlled faults/writers and component stubs must not be interpreted as natural outages/races or screen-reader evidence.
+
+The assessment found no demonstrated included Staff functional omission or unrelated/sensitive artifact, but this is not approval. There is no exact-cfdf601 whole-stack regression: server **2,002/build at b2bdec2d93d7207e1a1d927b972a05754b55cc8f** is carried; original combined **17/17 at e67436c plus pending new verification source** is separate from final Staff **11/11** and client **318/build at 725e144 plus pending production later committed unchanged as d562960**. cfdf601 is evidence publication. The Markdown publication runs no application checks. All failed attempts, original image provenance and warnings remain in the linked ledger.
+
+#48 screen/aggregate/list delivery is independently reviewable. #53 under #45 consumes reviewed #47/#48 screens for shared role landing/global active navigation and full navigation/cache-isolation integration; AC-35/T-35 and planned DashboardNavigation.test.tsx remain incomplete. #49 final integrated/shared verification and #50 release remain. Implementation peer review and reviewed staging integration are still required; no PR/review request/message, Issue closure, scenario or Product DoD promotion is performed by this task.
