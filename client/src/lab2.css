@@ -77,6 +77,11 @@ body {
     --bs-btn-active-border-color: var(--secondary-green);
 }
 
+.staff-dashboard .form-control,
+.staff-dashboard .form-select {
+    border-color: var(--text-muted);
+}
+
 .form-control:focus,
 .form-select:focus,
 .btn:focus-visible,

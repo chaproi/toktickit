@@ -102,7 +102,7 @@ export default function StaffDashboard({ user }: { user: AuthUser }) {
     if (name === "owner") return value === "me" ? "Mine" : value === "unassigned" ? "Unassigned" : references?.workers.find(({ id }) => id === Number(value))?.name ?? `Worker ${value}`;
     return name === "search" ? String(value) : label(String(value));
   }
-  return <section aria-labelledby={`${id}-heading`}>
+  return <section className="staff-dashboard" aria-labelledby={`${id}-heading`}>
     <h1 className="h2 mb-3" id={`${id}-heading`}>Staff Dashboard</h1>
     {invalid ? <div role="alert" className="alert alert-danger"><h2 className="h5">Invalid query filters</h2>
       {!parsed.success && <ul>{Object.entries(parsed.fields).map(([name, message]) => <li key={name}>{name}: {message}</li>)}</ul>}
