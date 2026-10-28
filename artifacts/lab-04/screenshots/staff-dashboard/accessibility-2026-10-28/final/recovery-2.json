@@ -1,0 +1,84 @@
+{
+  "executionHead": "725e1445697484f5e6efa7d5b6ab9634b75ff1ca",
+  "pendingSourcePaths": [
+    "client/src/components/StaffDashboard.tsx",
+    "client/src/lab2.css"
+  ],
+  "controlledTransportAborts": 1,
+  "loadingTree": "- status: Loading Staff Dashboard…",
+  "alertTree": "- alert:\n  - paragraph: Unable to load Staff Dashboard. Please try again.\n  - button \"Retry\"",
+  "samples": {
+    "errorText": {
+      "kind": "text",
+      "indicator": "text",
+      "sourceColor": "rgb(88, 21, 28)",
+      "effectiveBackgrounds": [
+        [
+          248,
+          215,
+          218
+        ]
+      ],
+      "ratios": [
+        10.217093736083909
+      ],
+      "threshold": 4.5,
+      "fontSize": 16,
+      "fontWeight": "400",
+      "enabled": true,
+      "selectArrowExcludedFromSolidTextAndBorderSample": false,
+      "outlineStyle": "none",
+      "outlineWidth": "3px",
+      "borderStyle": "none",
+      "borderWidth": "0px"
+    },
+    "retryText": {
+      "kind": "text",
+      "indicator": "text",
+      "sourceColor": "rgb(255, 255, 255)",
+      "effectiveBackgrounds": [
+        [
+          0,
+          107,
+          60
+        ]
+      ],
+      "ratios": [
+        6.628103938980884
+      ],
+      "threshold": 4.5,
+      "fontSize": 16,
+      "fontWeight": "400",
+      "enabled": true,
+      "selectArrowExcludedFromSolidTextAndBorderSample": false,
+      "outlineStyle": "none",
+      "outlineWidth": "0px",
+      "borderStyle": "solid",
+      "borderWidth": "1px"
+    },
+    "retryFocus": {
+      "kind": "focus",
+      "indicator": "focused border",
+      "sourceColor": "rgb(11, 122, 70)",
+      "effectiveBackgrounds": [
+        [
+          248,
+          215,
+          218
+        ]
+      ],
+      "ratios": [
+        4.045781621759641
+      ],
+      "threshold": 3,
+      "fontSize": 16,
+      "fontWeight": "400",
+      "enabled": true,
+      "selectArrowExcludedFromSolidTextAndBorderSample": false,
+      "outlineStyle": "none",
+      "outlineWidth": "0px",
+      "borderStyle": "solid",
+      "borderWidth": "1px"
+    }
+  }
+}
