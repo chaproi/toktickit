@@ -104,3 +104,31 @@ No PR, Issue/checklist, review, scenario or Product DoD state was changed. Passi
 Publication review: 454 other tracked files were byte-identical to the clean preflight snapshot, including all 193 historical artifacts and every application/configuration file. Both original extended-suite prefixes were byte-identical. Strict UTF-8 checks passed for 15 changed/new text files; 16 local links and three Markdown tables (20 rows) validated. Working/staged whitespace and exact scope were reviewed before publication.
 
 The browser tests and authorized compatibility corrections were committed separately as `6f74e3bbcf1321addb0e6ecae50d0175c6c6936b`. No browser or application command was rerun after that commit; captures/results retain the execution provenance above.
+
+## Comprehensive confirmation — 2026-10-29
+
+This dated addendum supersedes the outstanding comprehensive-confirmation gate above without changing its historical failed verdict, focused attempts, compatibility results or screenshot provenance. The user explicitly authorized one new full run on the committed corrected harness, followed by documentation preparation only if it passed.
+
+Repository/branch: chaproi/toktickit, `feat/53-dashboard-navigation`. Exact execution HEAD: **0516e07421e0b18681d52deedbe11719f787bd8d**; feature baseline: **559f1b0dcbf37621ff5e92de8ad8484b9ff1e0c8**. The working tree and index were clean before execution: no pending source, test, helper or evidence changes. Application production bytes remain identical to GREEN **f81da7fe0c7ee0f6f77485cc52318585eae71fd1**. The new evidence/documentation commits are not application-tested publication HEADs.
+
+```text
+npm.cmd run test:e2e
+```
+
+Executed once from the repository root on local Windows/PowerShell, Node v24.14.0, npm 11.9.0, Playwright 1.63.0, Chromium 153.0.8010.12, real React/Vite, Express, authentication and isolated PostgreSQL. The committed configuration stayed unchanged: **one worker, zero retries**, 60-second test timeout and 10-second assertion timeout. No focused-first rerun, unit/API suite or build was executed in this confirmation task.
+
+| Confirmation | Files | Collected | Executed | Passed | Failed | Skipped | Exit | Duration |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Full existing E2E on the committed corrected harness | 15 | 69 | 69 | 69 | 0 | 0 | 0 | Playwright 4.7m; command wall 285.4513081s |
+
+All 12 navigation cases and the previously failing inherited cases executed within this comprehensive run. **The new confirmation is GREEN at 0516e07.** The earlier full run remains **59 passed / 10 failed**, followed by **36/36 affected-file passes**; those were not retroactively relabelled as comprehensive success. This feature-level confirmation is distinct from #49's later final integrated/product verification and actual human implementation review.
+
+The actual isolation guard and live database/schema probe passed before fixture writes; the dedicated database differed from operational and no disposable schemas preexisted. Existing fixtures verified their exact owned migrated schema, around-read domain preservation, owned-record/session cleanup and disconnection. Held responses settled in finally, real Administrator changes affected owned identities only, and genuine browser zoom restored before context/profile cleanup. Final independent read-only probes found **zero owned schemas, zero idle transactions, zero listeners on 3100/4173 and zero owned zoom profiles**; the probe disconnected and restored all scoped environment values. No operational data or credentials were exposed.
+
+Before execution all **472 tracked files** were hashed and exact bytes of **200 tracked artifact files** were saved. Fresh generated outputs/logs/diagnostics were archived separately. **104 overwritten tracked artifacts** were restored to their saved bytes, including this record's three previously inspected PNGs/metadata; **63 new owned generated captures** outside publication scope were archived and removed by explicit path. After restoration all 472 original tracked files matched their pre-run hashes. No broad reset/clean was used. The fresh regression captures were not newly visually inspected or published: the three images above retain their original 36-case-run capture and inspection provenance.
+
+Warnings in this actual command output: one inherited NO_COLOR/FORCE_COLOR warning and 14 Git LF/CRLF notices while existing capture helpers recorded generated-file provenance. No dependency/configuration/environment-color adjustment was made to hide them. Existing fixture/page diagnostics reported no page-error failure; workflow diagnostics reported zero browser warnings/page errors. No hosted CI, screen-reader, cross-browser or certified WCAG claim is made.
+
+Live read-only predecessor verification confirmed [PR #56](https://github.com/chaproi/toktickit/pull/56): **cottonlnwza APPROVED** exact HEAD **8c3dbbef6841f9a3b1cff786f8af09263e91273f** at **2026-10-29T06:37:55Z**, [review 5693787408](https://github.com/chaproi/toktickit/pull/56#pullrequestreview-5693787408); merged into lab4-staging at **2026-10-29T06:50:18Z** as **559f1b0dcbf37621ff5e92de8ad8484b9ff1e0c8**, the fetched staging baseline/ancestor. This is approval of the #48 predecessor, not #53.
+
+The evidence now supports the authorized documentation and AI-assisted pre-PR assessment. #53 implementation peer reviewer/reviewed SHA/result/time remain **Pending**; reviewed staging integration remains required. #45 retains coordination, #49 final integration and #50 release. No Issue, PR, checklist, scenario or Product DoD status was changed.
