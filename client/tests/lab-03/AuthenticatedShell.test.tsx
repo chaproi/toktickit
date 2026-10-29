@@ -3,6 +3,46 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { authResponse, jsonResponse, renderAt, requesterUser, requestUrl } from "./test-helpers.js";
 
+// D-19 landing fixture: a genuine empty API-08 response, not an auth payload.
+const emptyRequesterDashboard = {
+  asOf: "2026-10-23T18:30:00.000Z", timezone: "Asia/Bangkok",
+  recentWindow: { from: "2026-10-17T17:00:00.000Z", before: "2026-10-24T17:00:00.000Z" },
+  filters: { search: "", categoryId: null, relatedSystemId: null, requestedPriority: null, itPriority: null, currentStatus: null },
+  metrics: { outstanding: 0, needsAttention: 0, recentUpdated: 0, recentResolved: 0 },
+  lists: { recentUpdated: [], recentResolved: [] },
+  drillDown: {
+    outstanding: { path: "/api/tickets", query: { dashboardWidget: "outstanding", statusGroup: "outstanding" } },
+    needsAttention: { path: "/api/tickets", query: { dashboardWidget: "attention" } },
+    recentUpdated: { path: "/api/tickets", query: { dashboardWidget: "recentUpdated", updatedFrom: "2026-10-17T17:00:00.000Z", updatedBefore: "2026-10-24T17:00:00.000Z", sortBy: "updatedAt", sortOrder: "desc" } },
+    recentResolved: { path: "/api/tickets", query: { dashboardWidget: "recentResolved", statusGroup: "resolved", resolvedFrom: "2026-10-17T17:00:00.000Z", resolvedBefore: "2026-10-24T17:00:00.000Z", sortBy: "resolvedAt", sortOrder: "desc" } },
+  },
+};
+
+// D-19 Staff/Admin landing uses the same safe API-09 contract for both roles.
+function emptyStaffDashboard() {
+  const byStatus = { NEW: 0, OPEN: 0, IN_PROGRESS: 0, WAITING_FOR_REQUESTER: 0, REOPENED: 0, RESOLVED: 0, CLOSED: 0, CANCELLED: 0 };
+  const byItPriority = { LOW: 0, MEDIUM: 0, HIGH: 0, URGENT: 0 };
+  const myActionsByStatus = { PLANNED: 0, IN_PROGRESS: 0, COMPLETED: 0, CANCELLED: 0 };
+  const ticket = (widget: string, query: Record<string, string> = {}) => ({ path: "/api/staff/tickets", query: { dashboardWidget: widget, ...query } });
+  const actions = (query: Record<string, string>) => ({ path: "/api/staff/actions", query: { assignee: "me", ...query } });
+  return {
+    asOf: "2026-10-23T18:30:00.000Z", timezone: "Asia/Bangkok",
+    recentWindow: { from: "2026-10-17T17:00:00.000Z", before: "2026-10-24T17:00:00.000Z" },
+    filters: { search: "", categoryId: null, relatedSystemId: null, requestedPriority: null, itPriority: null, currentStatus: null, owner: null },
+    metrics: { unassigned: 0, mine: 0, byStatus, byItPriority, recentUpdated: 0, recentResolved: 0, myActionsByStatus, myUnfinishedActions: 0 },
+    lists: { recentUpdated: [], recentResolved: [], myUnfinishedActions: [] },
+    drillDown: {
+      unassigned: ticket("unassigned", { statusGroup: "active" }), mine: ticket("mine", { statusGroup: "active" }),
+      byStatus: Object.fromEntries(Object.keys(byStatus).map((status) => [status, ticket("status", { widgetStatus: status })])),
+      byItPriority: Object.fromEntries(Object.keys(byItPriority).map((priority) => [priority, ticket("itPriority", { widgetItPriority: priority, statusGroup: "active" })])),
+      recentUpdated: ticket("recentUpdated", { updatedFrom: "2026-10-17T17:00:00.000Z", updatedBefore: "2026-10-24T17:00:00.000Z", sortBy: "updatedAt", sortOrder: "desc" }),
+      recentResolved: ticket("recentResolved", { statusGroup: "resolved", resolvedFrom: "2026-10-17T17:00:00.000Z", resolvedBefore: "2026-10-24T17:00:00.000Z", sortBy: "resolvedAt", sortOrder: "desc" }),
+      myActionsByStatus: Object.fromEntries(Object.keys(myActionsByStatus).map((status) => [status, actions({ status })])),
+      myUnfinishedActions: actions({ actionStatusGroup: "unfinished" }),
+    },
+  };
+}
+
 afterEach(() => vi.unstubAllGlobals());
 
 describe("Issue 29 authenticated shell", () => {
@@ -15,12 +55,7 @@ describe("Issue 29 authenticated shell", () => {
         expect(new Headers(init?.headers).get("X-CSRF-Token")).toBe("shell-csrf");
         return jsonResponse(null, 204);
       }
-      if (url.pathname === "/api/tickets") {
-        return jsonResponse({ items: [], pagination: {
-          page: 1, pageSize: 10, totalItems: 0, totalPages: 0,
-          hasPreviousPage: false, hasNextPage: false,
-        } });
-      }
+      if (url.pathname === "/api/dashboard/requester") return jsonResponse(emptyRequesterDashboard);
       if (url.pathname === "/api/categories" || url.pathname === "/api/related-systems") {
         return jsonResponse([]);
       }
@@ -39,14 +74,19 @@ describe("Issue 29 authenticated shell", () => {
   });
 
   it.each([
-    ["IT_STAFF", "/staff/tickets", "Ticket Queue"],
-    ["ADMINISTRATOR", "/admin/users", "User Management"],
+    ["IT_STAFF", "/staff/dashboard", "Staff Dashboard"],
+    ["ADMINISTRATOR", "/staff/dashboard", "Staff Dashboard"],
   ] as const)("routes %s to its role destination", async (role, destination, heading) => {
-    vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(authResponse({
-      ...requesterUser,
-      role,
-      name: `Issue 29 ${role}`,
-    }))));
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const url = requestUrl(input);
+      if (url.pathname === "/api/auth/me") return jsonResponse(authResponse({
+        ...requesterUser, role, name: `Issue 29 ${role}`,
+      }));
+      if (url.pathname === "/api/dashboard/staff") return jsonResponse(emptyStaffDashboard());
+      if (url.pathname === "/api/categories" || url.pathname === "/api/related-systems") return jsonResponse([]);
+      if (url.pathname === "/api/staff/assignees") return jsonResponse({ items: [{ id: requesterUser.id, name: `Issue 29 ${role}`, role }] });
+      throw new Error(`Unexpected request: ${url.pathname}`);
+    }));
     renderAt("/");
     expect(await screen.findByRole("heading", { name: heading })).toBeInTheDocument();
     expect(window.location.pathname).toBe(destination);

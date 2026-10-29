@@ -32,9 +32,7 @@ import UserManagement from "./components/UserManagement.js";
 const MOBILE_NAVIGATION_QUERY = "(max-width: 767.98px)";
 
 function roleHome(user: AuthUser): string {
-  if (user.role === "REQUESTER") return "/tickets";
-  if (user.role === "IT_STAFF") return "/staff/tickets";
-  return "/admin/users";
+  return user.role === "REQUESTER" ? "/dashboard" : "/staff/dashboard";
 }
 
 function roleLabel(user: AuthUser): string {
@@ -116,11 +114,11 @@ function AppShell({
   const [open, setOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   useEffect(() => setOpen(false), [location.pathname, mobile]);
-  const nav = user.role === "REQUESTER"
+  const nav = [[roleHome(user), "Dashboard"], ...(user.role === "REQUESTER"
     ? [["/tickets", "My Tickets"], ["/tickets/new", "Create Ticket"]]
     : user.role === "IT_STAFF"
       ? [["/staff/tickets", "Ticket Queue"], ["/staff/actions", "My assigned Actions"]]
-      : [["/admin/users", "User Management"], ["/staff/tickets", "Ticket Queue"], ["/staff/actions", "My assigned Actions"]];
+      : [["/admin/users", "User Management"], ["/staff/tickets", "Ticket Queue"], ["/staff/actions", "My assigned Actions"]])];
 
   async function handleLogout() {
     if (loggingOut) return;
