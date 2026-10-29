@@ -297,3 +297,163 @@ test("Requester Dashboard: an owned old CLOSED Ticket matches base filters while
   await expect(page.getByText(old.summary, { exact: true })).toBeVisible();
   expect(f.pageErrors).toEqual([]);
 });
+
+
+// Issue #53: partial AC-35/T-35, AC-01/02 and AC-40/T-48.
+// Observe real login/rotation destinations before any manual navigation.
+import { randomBytes } from "node:crypto";
+import { activeNavigation, captureNavigation, destination, observedLogin, observeDashboard } from "./navigation-browser-helpers.js";
+import { genuineZoom, keyboardFocus, reachable } from "./action-layout-helpers.js";
+
+for (const role of ["REQUESTER", "IT_STAFF", "ADMINISTRATOR"] as const) {
+  test(`Navigation #53: ${role} real landing, root/login/brand and preserved role routes`, async ({ page, dashboardFixture: f }) => {
+    const actor = role === "REQUESTER" ? f.a : role === "IT_STAFF" ? f.staff : f.admin;
+    await observedLogin(page, actor, role);
+    await activeNavigation(page, "Dashboard");
+    if (role === "REQUESTER") {
+      await captureNavigation(page, "requester-desktop", role, "Actual post-login Dashboard and active primary navigation");
+    }
+    for (const path of ["/", "/login"]) {
+      await observeDashboard(page, role, () => page.goto(path));
+      await expect(page).toHaveURL(new RegExp(`${destination(role)}$`));
+      await activeNavigation(page, "Dashboard");
+    }
+    const nav = page.getByRole("navigation", { name: "Primary navigation", exact: true });
+    const operational = role === "REQUESTER" ? "My Tickets" : "Ticket Queue";
+    await keyboardFocus(page, nav.getByRole("link", { name: operational, exact: true }));
+    await page.keyboard.press("Enter");
+    await expect(page.getByRole("heading", { name: operational, exact: true })).toBeVisible();
+    await activeNavigation(page, operational);
+    if (role === "REQUESTER") {
+      await nav.getByRole("link", { name: "Create Ticket", exact: true }).click();
+      await expect(page.getByRole("heading", { name: "Create Ticket", exact: true })).toBeVisible();
+      await activeNavigation(page, "Create Ticket");
+    } else {
+      await nav.getByRole("link", { name: "My assigned Actions", exact: true }).click();
+      await expect(page.getByRole("heading", { name: "My assigned Actions", exact: true })).toBeVisible();
+      await activeNavigation(page, "My assigned Actions");
+    }
+    if (role === "ADMINISTRATOR") {
+      await nav.getByRole("link", { name: "User Management", exact: true }).click();
+      await expect(page.getByRole("heading", { name: "User Management", exact: true })).toBeVisible();
+      await activeNavigation(page, "User Management");
+    } else {
+      await page.goto("/admin/users");
+      await expect(page.getByRole("heading", { name: "Forbidden", exact: true })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "User Management", exact: true })).toHaveCount(0);
+    }
+    await observeDashboard(page, role, () => page.getByRole("link", { name: "TokTickIT", exact: true }).click());
+    await expect(page).toHaveURL(new RegExp(`${destination(role)}$`));
+    await activeNavigation(page, "Dashboard");
+    expect(f.pageErrors).toEqual([]);
+  });
+
+  test(`Navigation #53: ${role} real mandatory password rotation precedes Dashboard`, async ({ page, dashboardFixture: f }) => {
+    const actor = role === "REQUESTER" ? f.a : role === "IT_STAFF" ? f.staff : f.admin;
+    // Owned initial-account condition; authentication and rotation are real.
+    await f.prisma.user.update({ where: { id: actor.id }, data: { mustChangePassword: true } });
+    const dashboardRequests: string[] = [];
+    const observe = (request: import("@playwright/test").Request) => {
+      if (new URL(request.url()).pathname.startsWith("/api/dashboard/")) dashboardRequests.push(new URL(request.url()).pathname);
+    };
+    page.on("request", observe);
+    try {
+      await loginDashboardActor(page, actor);
+      await expect(page.getByRole("heading", { name: "Create a new password", exact: true })).toBeVisible();
+      expect(dashboardRequests).toEqual([]);
+      await page.goto(destination(role));
+      await expect(page.getByRole("heading", { name: "Create a new password", exact: true })).toBeVisible();
+      expect(dashboardRequests).toEqual([]);
+      const replacement = `Aa1!${randomBytes(18).toString("base64url")}`;
+      await page.getByLabel("Current Password", { exact: true }).fill(actor.password);
+      await page.getByLabel("New Password", { exact: true }).fill(replacement);
+      await page.getByLabel("Confirm New Password", { exact: true }).fill(replacement);
+      await observeDashboard(page, role, async () => {
+        const [response] = await Promise.all([
+          page.waitForResponse(value => new URL(value.url()).pathname === "/api/auth/change-password" && value.request().method() === "POST"),
+          page.getByRole("button", { name: "Save Password", exact: true }).click(),
+        ]);
+        expect(response.status()).toBe(200);
+      });
+      await expect(page).toHaveURL(new RegExp(`${destination(role)}$`));
+      await activeNavigation(page, "Dashboard");
+      expect((await f.prisma.user.findUniqueOrThrow({ where: { id: actor.id }, select: { mustChangePassword: true } })).mustChangePassword).toBe(false);
+      await logout(page);
+      await observedLogin(page, { ...actor, password: replacement }, role);
+      expect(f.pageErrors).toEqual([]);
+    } finally { page.off("request", observe); }
+  });
+}
+
+test("Navigation #53: mobile menu and genuine 200% tab zoom retain reachable Dashboard navigation", async ({ page, dashboardFixture: f }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await observedLogin(page, f.staff, "IT_STAFF");
+  const nav = page.getByRole("navigation", { name: "Primary navigation", exact: true });
+  const toggle = page.getByRole("button", { name: "Toggle primary navigation", exact: true });
+  await expect(toggle).toHaveAttribute("aria-expanded", "false"); await expect(nav).toBeHidden();
+  await keyboardFocus(page, toggle); await page.keyboard.press("Enter");
+  await expect(toggle).toHaveAttribute("aria-expanded", "true"); await activeNavigation(page, "Dashboard");
+  await reachable(nav.getByRole("link", { name: "Dashboard", exact: true }));
+  await captureNavigation(page, "staff-mobile-menu", "IT_STAFF", "390x844 expanded Dashboard navigation");
+  await nav.getByRole("link", { name: "Ticket Queue", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Ticket Queue", exact: true })).toBeVisible();
+  await expect(nav).toBeHidden(); await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  await toggle.click(); await activeNavigation(page, "Ticket Queue");
+  await observeDashboard(page, "IT_STAFF", () => nav.getByRole("link", { name: "Dashboard", exact: true }).click());
+  await expect(nav).toBeHidden();
+  await genuineZoom(async (zoomPage, _worker, zoom) => {
+    await observedLogin(zoomPage, f.admin, "ADMINISTRATOR");
+    expect(await zoom()).toBe(1);
+    const before = await zoomPage.evaluate(() => ({ width: innerWidth, height: innerHeight, pinch: visualViewport?.scale }));
+    expect(await zoom(2)).toBe(2);
+    await expect.poll(() => zoomPage.evaluate(() => innerWidth)).toBeLessThan(before.width);
+    expect(await zoomPage.evaluate(() => visualViewport?.scale)).toBe(1);
+    const menu = zoomPage.getByRole("button", { name: "Toggle primary navigation", exact: true });
+    await keyboardFocus(zoomPage, menu); await zoomPage.keyboard.press("Enter");
+    const zoomNav = zoomPage.getByRole("navigation", { name: "Primary navigation", exact: true });
+    await activeNavigation(zoomPage, "Dashboard"); await reachable(zoomNav.getByRole("link", { name: "Dashboard", exact: true }));
+    await captureNavigation(zoomPage, "admin-zoom-200", "ADMINISTRATOR", "Actual 200% tab zoom; expanded active Dashboard navigation", 2, { before });
+    await keyboardFocus(zoomPage, zoomNav.getByRole("link", { name: "My assigned Actions", exact: true }));
+    await zoomPage.keyboard.press("Enter");
+    await expect(zoomPage.getByRole("heading", { name: "My assigned Actions", exact: true })).toBeVisible();
+    await expect(zoomNav).toBeHidden();
+    await menu.click(); await activeNavigation(zoomPage, "My assigned Actions");
+    await observeDashboard(zoomPage, "ADMINISTRATOR", () => zoomNav.getByRole("link", { name: "Dashboard", exact: true }).click());
+    expect(await zoom(1)).toBe(1);
+    console.info(`Issue53 genuine tab zoom 1 -> 2 -> 1; native initial viewport ${before.width}x${before.height}; pinch scale remains 1.`);
+  });
+  expect(f.pageErrors).toEqual([]);
+});
+
+test("Navigation #53: held real Dashboard response cannot survive logout, revoked session or another identity", async ({ page, dashboardFixture: f }) => {
+  await observedLogin(page, f.a, "REQUESTER");
+  const previousSummary = ticket(f, "A-open-12").summary;
+  let release!: () => void, arrived!: () => void, finish!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  const observed = new Promise<void>(resolve => { arrived = resolve; });
+  const settled = new Promise<void>(resolve => { finish = resolve; });
+  let heldBody: RequesterDashboardResponse | undefined;
+  const pattern = /\/api\/dashboard\/requester(?:\?|$)/;
+  const handler = async (route: import("@playwright/test").Route) => {
+    try {
+      const real = await route.fetch(); expect(real.status()).toBe(200);
+      heldBody = await real.json() as RequesterDashboardResponse;
+      arrived(); await held;
+      await route.fulfill({ response: real });
+    } finally { finish(); }
+  };
+  await page.route(pattern, handler, { times: 1 });
+  try {
+    await root(page).getByRole("button", { name: "Apply Filters", exact: true }).click(); await observed;
+    ownedRows(f, heldBody!.lists.recentUpdated, "A");
+    await logout(page);
+    const revoked = await page.request.get(`${api}${dashboardPath}`);
+    expect(revoked.status()).toBe(401); expect((await revoked.json()).error.code).toBe("AUTHENTICATION_REQUIRED");
+    await observedLogin(page, f.b, "REQUESTER");
+    release(); await settled;
+    await metrics(page, bMetrics);
+    await expect(page.getByText(previousSummary, { exact: true })).toHaveCount(0);
+    await expect(root(page).getByRole("region", { name: "Recently updated Tickets", exact: true }).getByRole("link").first()).toHaveText(ticket(f, "B-open").ticketNumber);
+    expect(f.pageErrors).toEqual([]);
+  } finally { release(); await settled; await page.unroute(pattern, handler); }
+});

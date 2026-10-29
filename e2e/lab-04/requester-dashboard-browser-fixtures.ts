@@ -173,5 +173,15 @@ export async function loginDashboardActor(page: Page, actor: DashboardActor) {
     expect(response.status()).toBe(200);
     await page.waitForURL((url) => url.pathname !== "/login");
     await expect(page.getByRole("button", { name: "Logout", exact: true })).toBeVisible();
+    const authentication = await response.json() as { user: { role: "REQUESTER" | "IT_STAFF" | "ADMINISTRATOR"; mustChangePassword: boolean } };
+    if (!authentication.user.mustChangePassword) {
+      // The new role landing itself reads a Dashboard. Finish rendering that
+      // document before callers register a response wait and navigate again;
+      // otherwise they can capture its now-unavailable response body.
+      const requester = authentication.user.role === "REQUESTER";
+      await expect(page).toHaveURL(new RegExp(`${requester ? "/dashboard" : "/staff/dashboard"}$`));
+      await expect(page.getByRole("heading", { name: requester ? "Requester Dashboard" : "Staff Dashboard", exact: true })).toBeVisible();
+      await expect(page.getByText(/As of/)).toBeVisible();
+    }
   } catch { throw new Error("Real Dashboard browser login failed; credentials and diagnostics withheld."); }
 }

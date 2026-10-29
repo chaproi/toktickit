@@ -28,6 +28,8 @@ test("E2E-04 manages Users, safety conflicts, and historical ownership", async (
   await page.getByLabel("Confirm New Password").fill(replacement);
   await page.getByRole("button", { name: "Save Password" }).click();
 
+  await expect(page.getByRole("heading", { name: "Staff Dashboard", exact: true })).toBeVisible();
+  await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("link", { name: "User Management", exact: true }).click();
   await expect(page.getByRole("heading", { name: "User Management" })).toBeVisible();
   await page.getByRole("button", { name: "Create User" }).click();
   const create = page.getByRole("dialog", { name: "Create User" });
@@ -145,6 +147,8 @@ test("E2E-04 resets another User and enforces mandatory password change", async 
   await page.getByLabel("Email").fill(actorEmail);
   await page.getByLabel("Password", { exact: true }).fill(actorPassword);
   await page.getByRole("button", { name: "Sign in" }).click();
+  await expect(page.getByRole("heading", { name: "Staff Dashboard", exact: true })).toBeVisible();
+  await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("link", { name: "User Management", exact: true }).click();
   await expect(page.getByRole("heading", { name: "User Management" })).toBeVisible();
 
   await page.getByLabel("Search users").fill(targetEmail);
@@ -169,5 +173,5 @@ test("E2E-04 resets another User and enforces mandatory password change", async 
   await page.getByLabel("New Password", { exact: true }).fill(finalPassword);
   await page.getByLabel("Confirm New Password").fill(finalPassword);
   await page.getByRole("button", { name: "Save Password" }).click();
-  await expect(page.getByRole("heading", { name: "Ticket Queue" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Staff Dashboard" })).toBeVisible();
 });
