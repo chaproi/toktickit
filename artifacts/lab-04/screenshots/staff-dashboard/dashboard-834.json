@@ -1,0 +1,17 @@
+{
+  "screenshot": "dashboard-834.png",
+  "executionHead": "e67436ca1ffebe02c290f82a2417c2bad79ba262",
+  "date": "2026-10-27 23:05:13",
+  "timezone": "Asia/Bangkok",
+  "browser": "153.0.8010.12",
+  "viewport": {
+    "width": 834,
+    "height": 1112
+  },
+  "state": "Populated seven-filter Dashboard; long literal summaries and worker name",
+  "role": "IT_STAFF",
+  "successfulReads": "Real React/Express/PostgreSQL",
+  "zoom": "Unmodified browser zoom; no genuine 200% zoom claim",
+  "visualInspection": "Inspected full-page image and native-resolution sections on 2026-10-27 Asia/Bangkok: readable wrapping, visible focus, no clipped essential content.",
+  "sourceState": "Execution HEAD with new uncommitted browser verification files; production unchanged."
+}

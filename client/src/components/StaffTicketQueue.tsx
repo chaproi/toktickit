@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { parseStaffQuery, readStaffFilters, staffFilterNames, staffListExtensions, staffTicketQuery } from "../staff-dashboard-query.js";
 import {
   ApiRequestError,
   getCategories,
@@ -108,7 +109,7 @@ function QueueTable({ items }: { items: StaffQueueItem[] }) {
             <td><span className={`badge ${badgeClass(ticket.requestedPriority)}`}>Requested {enumLabel(ticket.requestedPriority)}</span>{" "}<span className={`badge ${badgeClass(ticket.itPriority)}`}>IT {enumLabel(ticket.itPriority)}</span></td>
             <td><span className={`badge ${badgeClass(ticket.currentStatus)}`}>{enumLabel(ticket.currentStatus)}</span>{ticket.requesterResolutionIndicatedAt && <small>Requester reports problem appears resolved</small>}</td>
             <td>{ownerLabel(ticket)}</td>
-            <td><time dateTime={ticket.updatedAt}>{formatDate(ticket.updatedAt)}</time><Link className="btn btn-sm btn-outline-success" to={`/staff/tickets/${ticket.id}`}>Open Ticket</Link></td>
+            <td><time dateTime={ticket.updatedAt}>{formatDate(ticket.updatedAt)}</time>{ticket.resolvedAt && <small>Resolved: <time dateTime={ticket.resolvedAt}>{formatDate(ticket.resolvedAt)}</time></small>}<Link className="btn btn-sm btn-outline-success" to={`/staff/tickets/${ticket.id}`}>Open Ticket</Link></td>
           </tr>
         ))}</tbody>
       </table>
@@ -133,6 +134,7 @@ function QueueCards({ items }: { items: StaffQueueItem[] }) {
               <div><dt>Status</dt><dd><span className={`badge ${badgeClass(ticket.currentStatus)}`}>{enumLabel(ticket.currentStatus)}</span>{ticket.requesterResolutionIndicatedAt && <small>Requester reports problem appears resolved</small>}</dd></div>
               <div><dt>Owner</dt><dd>{ownerLabel(ticket)}</dd></div>
               <div><dt>Updated</dt><dd>{formatDate(ticket.updatedAt)}</dd></div>
+              {ticket.resolvedAt && <div><dt>Resolved</dt><dd><time dateTime={ticket.resolvedAt}>{formatDate(ticket.resolvedAt)}</time></dd></div>}
             </dl>
             <Link className="btn btn-outline-success" to={`/staff/tickets/${ticket.id}`}>Open Ticket</Link>
           </article>
@@ -143,12 +145,13 @@ function QueueCards({ items }: { items: StaffQueueItem[] }) {
 }
 
 export default function StaffTicketQueue() {
-  const [draft, setDraft] = useState<Filters>(EMPTY_FILTERS);
-  const [applied, setApplied] = useState<Filters>(EMPTY_FILTERS);
-  const [sortBy, setSortBy] = useState<StaffQueueSortField>("updatedAt");
-  const [sortOrder, setSortOrder] = useState<TicketSortOrder>("desc");
-  const [pageSize, setPageSize] = useState<TicketPageSize>(10);
-  const [page, setPage] = useState(1);
+  const [parameters, setParameters] = useSearchParams(), search = parameters.toString();
+  const parsed = useMemo(() => parseStaffQuery(new URLSearchParams(search), "tickets"), [search]);
+  const query = parsed.success ? staffTicketQuery(parsed.data) : null;
+  const applied = useMemo(() => readStaffFilters(new URLSearchParams(search)), [search]);
+  const baseKey = JSON.stringify(applied);
+  const [draft, setDraft] = useState<Filters>(() => readStaffFilters(parameters));
+  const sortBy = query?.sortBy ?? "updatedAt", sortOrder = query?.sortOrder ?? "desc", pageSize = query?.pageSize ?? 10, page = query?.page ?? 1;
   const [result, setResult] = useState<StaffQueueResponse | null>(null);
   const [loadState, setLoadState] = useState<LoadState>("loading");
   const [errorMessage, setErrorMessage] = useState("");
@@ -159,6 +162,18 @@ export default function StaffTicketQueue() {
   const [assignees, setAssignees] = useState<EligibleAssignee[]>([]);
   const [referenceState, setReferenceState] = useState<ReferenceState>("loading");
   const [referenceRetry, setReferenceRetry] = useState(0);
+
+  useEffect(() => { setDraft(JSON.parse(baseKey) as Filters); }, [baseKey]);
+
+  function changeQuery(changes: Record<string, string | number>) {
+    const next = new URLSearchParams(search);
+    for (const [name, value] of Object.entries(changes)) next.set(name, String(value));
+    if (next.toString() === search) setRetry((value) => value + 1); else setParameters(next);
+  }
+  const setPage = (value: number | ((previous: number) => number)) => changeQuery({ page: typeof value === "function" ? value(page) : value });
+  const setSortBy = (value: StaffQueueSortField) => changeQuery({ sortBy: value, page: 1 });
+  const setSortOrder = (value: TicketSortOrder) => changeQuery({ sortOrder: value, page: 1 });
+  const setPageSize = (value: TicketPageSize) => changeQuery({ pageSize: value, page: 1 });
 
   useEffect(() => {
     let active = true;
@@ -181,48 +196,50 @@ export default function StaffTicketQueue() {
     const version = ++requestVersion.current;
     const controller = new AbortController();
     setLoadState("loading"); setErrorMessage(""); setResult(null);
-    const owner = applied.owner === "" ? undefined
-      : applied.owner === "me" || applied.owner === "unassigned" ? applied.owner
-        : Number(applied.owner);
-    void getStaffTickets({
-      ...(applied.search ? { search: applied.search } : {}),
-      ...(applied.categoryId ? { categoryId: Number(applied.categoryId) } : {}),
-      ...(applied.relatedSystemId ? { relatedSystemId: Number(applied.relatedSystemId) } : {}),
-      ...(applied.requestedPriority ? { requestedPriority: applied.requestedPriority as RequestedPriority } : {}),
-      ...(applied.itPriority ? { itPriority: applied.itPriority as RequestedPriority } : {}),
-      ...(applied.currentStatus ? { currentStatus: applied.currentStatus as TicketStatus } : {}),
-      ...(owner === undefined ? {} : { owner }),
-      sortBy, sortOrder, page, pageSize,
-    }, controller.signal).then((response) => {
-      if (version !== requestVersion.current) return;
+    const checked = parseStaffQuery(new URLSearchParams(search), "tickets");
+    if (!checked.success) return () => controller.abort();
+    const requested = staffTicketQuery(checked.data);
+    void getStaffTickets(requested, controller.signal).then((response) => {
+      if (version !== requestVersion.current || controller.signal.aborted) return;
       if (response.items.length === 0 && response.pagination.totalPages > 0 && page > response.pagination.totalPages) {
-        setPage(response.pagination.totalPages);
+        const next = new URLSearchParams(search); next.set("page", String(response.pagination.totalPages)); setParameters(next, { replace: true });
         return;
       }
       setResult(response); setLoadState("success");
     }).catch((error: unknown) => {
-      if (version !== requestVersion.current || (error instanceof DOMException && error.name === "AbortError")) return;
+      if (version !== requestVersion.current || controller.signal.aborted || (error instanceof DOMException && error.name === "AbortError")) return;
+      if (error instanceof ApiRequestError && ["ROLE_FORBIDDEN", "PASSWORD_CHANGE_REQUIRED"].includes(error.code ?? "")) window.dispatchEvent(new Event("toktickit:auth-refresh"));
       setResult(null);
       setErrorMessage(error instanceof ApiRequestError ? error.message : "Something went wrong. Please try again.");
       setLoadState("error");
     });
     return () => controller.abort();
-  }, [applied, sortBy, sortOrder, page, pageSize, retry]);
+  }, [search, retry, setParameters]);
 
   function update(field: keyof Filters, value: string) {
     setDraft((current) => ({ ...current, [field]: value }));
   }
   function apply(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setApplied({ ...draft, search: draft.search.trim() }); setPage(1);
+    const next = new URLSearchParams(search);
+    for (const name of staffFilterNames) { const value = name === "search" ? draft[name].trim() : draft[name]; if (value) next.set(name, value); else next.delete(name); }
+    next.set("page", "1");
+    if (next.toString() === search) setRetry((value) => value + 1); else setParameters(next);
   }
   function clear() {
-    setDraft({ ...EMPTY_FILTERS }); setApplied({ ...EMPTY_FILTERS }); setPage(1);
+    setDraft({ ...EMPTY_FILTERS });
+    const next = new URLSearchParams({ sortBy: "updatedAt", sortOrder: "desc", page: "1", pageSize: String(pageSize) });
+    if (next.toString() === search) setRetry((value) => value + 1); else setParameters(next);
   }
 
   const items = result?.items ?? [];
-  const empty = loadState === "success" && items.length === 0 && !hasFilters(applied);
-  const noResults = loadState === "success" && items.length === 0 && hasFilters(applied);
+  const extended = staffListExtensions.some((name) => parameters.has(name));
+  const empty = loadState === "success" && items.length === 0 && !hasFilters(applied) && !extended;
+  const noResults = loadState === "success" && items.length === 0 && (hasFilters(applied) || extended);
+
+  if (!parsed.success) return <section aria-labelledby="staff-queue-heading"><h1 id="staff-queue-heading" className="h2">Ticket Queue</h1>
+    <div role="alert" className="alert alert-danger"><h2 className="h5">Invalid query filters</h2><ul>{Object.entries(parsed.fields).map(([name, message]) => <li key={name}>{name}: {message}</li>)}</ul>
+      <button type="button" className="btn btn-outline-success" onClick={clear}>Clear Filters</button></div></section>;
 
   return (
     <section aria-labelledby="staff-queue-heading">
@@ -249,9 +266,9 @@ export default function StaffTicketQueue() {
           <span>{result?.counts.matching ?? 0} matching</span><span>{result?.counts.unassigned ?? 0} unassigned</span><span>{result?.counts.mine ?? 0} mine</span>
         </div>}
         <div className="staff-queue-sort-grid mb-4">
-          <div><label className="form-label" htmlFor="queue-sort">Sort Field</label><select id="queue-sort" className="form-select" value={sortBy} disabled={loadState === "loading"} onChange={(event) => { setSortBy(event.target.value as StaffQueueSortField); setPage(1); }}>{SORT_FIELDS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></div>
-          <div><label className="form-label" htmlFor="queue-direction">Sort Direction</label><select id="queue-direction" className="form-select" value={sortOrder} disabled={loadState === "loading"} onChange={(event) => { setSortOrder(event.target.value as TicketSortOrder); setPage(1); }}><option value="asc">Ascending</option><option value="desc">Descending</option></select></div>
-          <div><label className="form-label" htmlFor="queue-page-size">Page Size</label><select id="queue-page-size" className="form-select" value={pageSize} disabled={loadState === "loading"} onChange={(event) => { setPageSize(Number(event.target.value) as TicketPageSize); setPage(1); }}><option value="10">10</option><option value="25">25</option><option value="50">50</option></select></div>
+          <div><label className="form-label" htmlFor="queue-sort">Sort Field</label><select id="queue-sort" className="form-select" value={sortBy} disabled={loadState === "loading"} onChange={(event) => setSortBy(event.target.value as StaffQueueSortField)}>{SORT_FIELDS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}{query?.resolvedFrom && query.resolvedBefore && <option value="resolvedAt">Resolved At</option>}</select></div>
+          <div><label className="form-label" htmlFor="queue-direction">Sort Direction</label><select id="queue-direction" className="form-select" value={sortOrder} disabled={loadState === "loading"} onChange={(event) => setSortOrder(event.target.value as TicketSortOrder)}><option value="asc">Ascending</option><option value="desc">Descending</option></select></div>
+          <div><label className="form-label" htmlFor="queue-page-size">Page Size</label><select id="queue-page-size" className="form-select" value={pageSize} disabled={loadState === "loading"} onChange={(event) => setPageSize(Number(event.target.value) as TicketPageSize)}><option value="10">10</option><option value="25">25</option><option value="50">50</option></select></div>
         </div>
         {loadState === "loading" && <div className="my-tickets-state"><span role="status">Loading Ticket Queue…</span><div className="staff-queue-skeleton" data-testid="staff-queue-skeleton" aria-hidden="true"><span /><span /><span /></div></div>}
         {loadState === "error" && <div className="alert alert-danger mb-0" role="alert"><p>{errorMessage}</p><button type="button" className="btn btn-outline-danger" onClick={() => setRetry((value) => value + 1)}>Try Again</button></div>}

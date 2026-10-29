@@ -1,0 +1,32 @@
+{
+  "executionHead": "725e1445697484f5e6efa7d5b6ab9634b75ff1ca",
+  "pendingSourcePaths": [
+    "client/src/components/StaffDashboard.tsx",
+    "client/src/lab2.css"
+  ],
+  "factors": [
+    1,
+    2,
+    1
+  ],
+  "configuredNativeWindow": {
+    "width": 1440,
+    "height": 900
+  },
+  "before": {
+    "width": 1424,
+    "height": 805,
+    "pinchScale": 1
+  },
+  "zoomed": {
+    "width": 712,
+    "height": 402,
+    "pinchScale": 1
+  },
+  "restored": {
+    "width": 1424,
+    "height": 805,
+    "pinchScale": 1
+  },
+  "method": "chrome.tabs.setZoom/getZoom through unchanged helper/extension"
+}
