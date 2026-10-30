@@ -379,9 +379,9 @@ describe("Navigation identity/session isolation - partial AC-01/02/35, T-01/02/3
 // PR #57 review regression: the reserved create route is not a Ticket detail.
 it("/tickets/new activates Create Ticket only - AC-35/T-35", async () => {
   const h = install(requester); renderAt("/tickets/new");
-  await screen.findByRole("heading", { name: "Create Ticket", exact: true });
+  await screen.findByRole("heading", { name: /^Create Ticket$/ });
   expectActive("Create Ticket");
-  expect(within(primary()).getByRole("link", { name: "My Tickets", exact: true })).not.toHaveAttribute("aria-current");
-  expect(within(primary()).getByRole("link", { name: "My Tickets", exact: true })).not.toHaveClass("active");
+  expect(within(primary()).getByRole("link", { name: /^My Tickets$/ })).not.toHaveAttribute("aria-current");
+  expect(within(primary()).getByRole("link", { name: /^My Tickets$/ })).not.toHaveClass("active");
   expect(h.calls.filter(({ url }) => /^\/api\/(staff|admin)\//.test(url.pathname))).toEqual([]);
 });
