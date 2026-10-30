@@ -42,6 +42,8 @@ export async function activeNavigation(page: Page, name: string) {
   await expect(nav.locator('[aria-current="page"]')).toHaveCount(1);
   await expect(nav.getByRole("link", { name, exact: true })).toHaveAttribute("aria-current", "page");
   await expect(nav.getByRole("link", { name, exact: true })).toHaveClass(/active/);
+  await expect(nav.getByRole("link", { name, exact: true })).toHaveClass(/fw-semibold/);
+  await expect(nav.locator("a.active")).toHaveCount(1);
 }
 
 export async function captureNavigation(page: Page, name: string, role: NavigationRole, state: string, zoom = 1, extra: Record<string, unknown> = {}) {

@@ -187,6 +187,8 @@ function expectActive(name: string) {
   const navigation = primary(), target = within(navigation).getByRole("link", { name });
   expect(target).toHaveAttribute("aria-current", "page");
   expect(navigation.querySelectorAll('a[aria-current="page"]')).toHaveLength(1);
+  expect(target).toHaveClass("active", "fw-semibold");
+  expect(navigation.querySelectorAll("a.active")).toHaveLength(1);
 }
 afterEach(async () => {
   cleanup();
@@ -256,6 +258,7 @@ describe("Dashboard navigation and preserved earlier routes - AC-35/T-35", () =>
     await userEvent.click(screen.getByRole("link", { name: "TKT-2026-00505" }));
     await screen.findByRole("heading", { name: "Ticket Detail" }); await screen.findByText(ticket(requester).description);
     expect(window.location.pathname).toBe("/tickets/505");
+    expectActive("My Tickets");
     await userEvent.click(within(primary()).getByRole("link", { name: "Create Ticket" }));
     await screen.findByRole("heading", { name: "Create Ticket" }); expect(window.location.pathname).toBe("/tickets/new");
     expect(h.calls.filter(({ url }) => /^\/api\/(staff|admin)\//.test(url.pathname))).toEqual([]);
@@ -266,6 +269,7 @@ describe("Dashboard navigation and preserved earlier routes - AC-35/T-35", () =>
     await userEvent.click(within(queue).getByRole("link", { name: "TKT-2026-00505" }));
     await screen.findByRole("heading", { name: "TKT-2026-00505" }); await screen.findByText(ticket(actor).description);
     expect(window.location.pathname).toBe("/staff/tickets/505");
+    expectActive("Ticket Queue");
     await userEvent.click(within(primary()).getByRole("link", { name: actor.role === "ADMINISTRATOR" ? "User Management" : "My assigned Actions" }));
     await screen.findByRole("heading", { name: actor.role === "ADMINISTRATOR" ? "User Management" : "My assigned Actions" });
     expect(h.calls.filter(({ method }) => method !== "GET")).toEqual([]);
@@ -294,6 +298,7 @@ describe("Actual Actions return consumer - AC-44/T-54 and partial AC-35/T-35", (
     await screen.findByRole("heading", { name: "TKT-2026-00505" });
     const actions = await screen.findByRole("region", { name: "Actions Taken" }); await within(actions).findByText(action(actor, 25).description);
     expect(window.location.hash).toBe("#action-725");
+    expectActive("Ticket Queue");
     const selected = document.getElementById("action-725")!;
     await waitFor(() => expect(selected === document.activeElement || selected.contains(document.activeElement)).toBe(true));
     expect(h.calls.filter(({ url }) => url.pathname === "/api/tickets/505/actions/725")).toHaveLength(1);
@@ -368,4 +373,15 @@ describe("Navigation identity/session isolation - partial AC-01/02/35, T-01/02/3
     expect(screen.queryByText(/owned navigation record/)).not.toBeInTheDocument();
     expect(h.calls.filter(({ url }) => url.pathname === api)).toHaveLength(1);
   });
+});
+
+
+// PR #57 review regression: the reserved create route is not a Ticket detail.
+it("/tickets/new activates Create Ticket only - AC-35/T-35", async () => {
+  const h = install(requester); renderAt("/tickets/new");
+  await screen.findByRole("heading", { name: "Create Ticket", exact: true });
+  expectActive("Create Ticket");
+  expect(within(primary()).getByRole("link", { name: "My Tickets", exact: true })).not.toHaveAttribute("aria-current");
+  expect(within(primary()).getByRole("link", { name: "My Tickets", exact: true })).not.toHaveClass("active");
+  expect(h.calls.filter(({ url }) => /^\/api\/(staff|admin)\//.test(url.pathname))).toEqual([]);
 });

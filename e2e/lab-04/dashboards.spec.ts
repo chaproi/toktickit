@@ -324,6 +324,11 @@ for (const role of ["REQUESTER", "IT_STAFF", "ADMINISTRATOR"] as const) {
     await page.keyboard.press("Enter");
     await expect(page.getByRole("heading", { name: operational, exact: true })).toBeVisible();
     await activeNavigation(page, operational);
+    const detail = ticket(f, "A-open-1");
+    await page.goto(`/${role === "REQUESTER" ? "tickets" : "staff/tickets"}/${detail.id}`);
+    await expect(page.getByRole("heading", { name: role === "REQUESTER" ? "Ticket Detail" : detail.ticketNumber, exact: true })).toBeVisible();
+    await expect(page.getByText(detail.description, { exact: true })).toBeVisible();
+    await activeNavigation(page, operational);
     if (role === "REQUESTER") {
       await nav.getByRole("link", { name: "Create Ticket", exact: true }).click();
       await expect(page.getByRole("heading", { name: "Create Ticket", exact: true })).toBeVisible();
@@ -456,4 +461,17 @@ test("Navigation #53: held real Dashboard response cannot survive logout, revoke
     await expect(root(page).getByRole("region", { name: "Recently updated Tickets", exact: true }).getByRole("link").first()).toHaveText(ticket(f, "B-open").ticketNumber);
     expect(f.pageErrors).toEqual([]);
   } finally { release(); await settled; await page.unroute(pattern, handler); }
+});
+
+
+test("Navigation #53: Create Ticket alone is active on /tickets/new", async ({ page, dashboardFixture: f }) => {
+  await observedLogin(page, f.a, "REQUESTER");
+  const nav = page.getByRole("navigation", { name: "Primary navigation", exact: true });
+  await nav.getByRole("link", { name: "Create Ticket", exact: true }).click();
+  await expect(page).toHaveURL(/\/tickets\/new$/);
+  await expect(page.getByRole("heading", { name: "Create Ticket", exact: true })).toBeVisible();
+  await activeNavigation(page, "Create Ticket");
+  await expect(nav.getByRole("link", { name: "My Tickets", exact: true })).not.toHaveAttribute("aria-current");
+  await expect(nav.getByRole("link", { name: "My Tickets", exact: true })).not.toHaveClass(/active/);
+  expect(f.pageErrors).toEqual([]);
 });

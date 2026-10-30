@@ -327,6 +327,7 @@ for (const role of ["IT_STAFF", "ADMINISTRATOR"] as const) test(`Navigation #53:
   expect((await selectedRead).status()).toBe(200);
   await expect(page).toHaveURL(new RegExp(`/staff/tickets/${f.ticket.id}#action-${mine[25]!.id}$`));
   await expect(actionRecord(page, mine[25]!.id)).toBeFocused(); await expect(actionRecord(page, mine[25]!.id)).toHaveCount(1);
+  await activeNavigation(page, "Ticket Queue");
   await expect(page.getByRole("heading", { name: "Selected Action (outside this page)", exact: true })).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Actions pagination" })).toContainText("27 Actions");
   const backRead = page.waitForResponse(value => new URL(value.url()).pathname === "/api/staff/actions" && new URL(value.url()).searchParams.get("page") === "2");
