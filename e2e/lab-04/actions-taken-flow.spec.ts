@@ -400,3 +400,218 @@ for (const change of ["demotion", "deactivation"] as const) test(`Navigation #53
   } finally { await context.close(); }
   expect(f.pageErrors).toEqual([]);
 });
+
+import { isDeepStrictEqual } from "node:util";
+import type { Route } from "@playwright/test";
+import type { Fixture } from "./action-browser-fixtures.js";
+
+// Issue49: bounded T-48/AC-07/40 and T-36/AC-14/36 contributions.
+// Observe owned rows independently; never print receipt material on inequality.
+async function recoveryDomain(f: Fixture) {
+  const scope = { ticketId: f.ticket.id };
+  return {
+    ticket: await f.prisma.ticket.findUniqueOrThrow({ where: { id: f.ticket.id } }),
+    actions: await f.prisma.action.findMany({ where: scope, orderBy: { id: "asc" } }),
+    history: await f.prisma.actionHistory.findMany({ where: { action: scope }, orderBy: { id: "asc" } }),
+    receipts: await f.prisma.mutationReceipt.findMany({ where: scope, orderBy: { id: "asc" } }),
+    statusHistory: await f.prisma.ticketStatusHistory.findMany({ where: scope, orderBy: { id: "asc" } }),
+    notes: await f.prisma.internalNote.findMany({ where: scope, orderBy: { id: "asc" } }),
+    comments: await f.prisma.publicComment.findMany({ where: scope, orderBy: { id: "asc" } }),
+    attachments: await f.prisma.attachment.findMany({ where: scope, orderBy: { id: "asc" } }),
+  }; // Session bookkeeping excluded, all owned domain columns retained.
+}
+function sameRecoveryDomain(actual: unknown, expected: unknown, label: string) {
+  expect(isDeepStrictEqual(actual, expected), `${label}; sensitive comparisons withheld`).toBe(true);
+}
+
+test("Issue49 T-48: late picker ineligibility is real initial-read 400, retained draft and deliberate recovery", async ({ page, fixture: f, browser }) => {
+  expect(await f.prisma.ticket.count({ where: { ownerId: f.assignee.id } })).toBe(0);
+  expect(await f.prisma.action.count({ where: { assigneeId: f.assignee.id, status: { in: ["PLANNED", "IN_PROGRESS"] } } })).toBe(0);
+  await login(page, f.operator);
+  const region = await ticketRegion(page, f.ticket.id);
+  await region.getByRole("button", { name: "Create Action", exact: true }).click();
+  const create = page.getByRole("dialog", { name: "Create Action", exact: true });
+  const picker = create.getByLabel("Assigned to", { exact: true });
+  await expect(picker.getByRole("option", { name: f.assignee.name, exact: true })).toHaveCount(1);
+  const description = `${f.marker} retain late eligibility draft <script>literal</script>`;
+  const notes = "Retained literal attachment notes <b>not markup</b>";
+  await create.getByLabel("Description", { exact: true }).fill(description);
+  await create.getByLabel("Attachment Notes", { exact: true }).fill(notes);
+  await picker.selectOption(String(f.assignee.id));
+  const before = await recoveryDomain(f);
+  expect(before.actions).toEqual([]); expect(before.history).toEqual([]); expect(before.receipts).toEqual([]);
+  const adminContext = await browser.newContext({ baseURL: new URL(page.url()).origin });
+  const writes: Array<Record<string, unknown>> = [];
+  const path = `/api/tickets/${f.ticket.id}/actions`;
+  const observe = (value: import("@playwright/test").Request) => {
+    if (value.method() === "POST" && new URL(value.url()).pathname === path) writes.push(value.postDataJSON());
+  };
+  page.on("request", observe);
+  try {
+    const adminPage = await adminContext.newPage();
+    await login(adminPage, f.owner);
+    await adminPage.getByRole("navigation", { name: "Primary navigation" }).getByRole("link", { name: "User Management", exact: true }).click();
+    await adminPage.getByLabel("Search users", { exact: true }).fill(f.assignee.email);
+    await adminPage.getByRole("button", { name: "Search", exact: true }).click();
+    await adminPage.getByRole("button", { name: `Edit ${f.assignee.name}`, exact: true }).click();
+    const edit = adminPage.getByRole("dialog", { name: `Edit ${f.assignee.name}`, exact: true });
+    await edit.getByLabel("Status", { exact: true }).selectOption("inactive");
+    const changed = adminPage.waitForResponse(value => value.request().method() === "PATCH" && new URL(value.url()).pathname === `/api/admin/users/${f.assignee.id}`);
+    await edit.getByRole("button", { name: "Save User", exact: true }).click();
+    expect((await changed).status()).toBe(200);
+    expect((await f.prisma.user.findUniqueOrThrow({ where: { id: f.assignee.id } })).isActive).toBe(false);
+    sameRecoveryDomain(await recoveryDomain(f), before, "Real Admin deactivation changes no Ticket/Action domain data");
+
+    const rejected = page.waitForResponse(value => value.request().method() === "POST" && new URL(value.url()).pathname === path);
+    await create.getByRole("button", { name: "Create action", exact: true }).click();
+    const rejection = await rejected;
+    expect(rejection.status()).toBe(400);
+    const error = (await rejection.json()).error;
+    expect(error.code).toBe("INVALID_ASSIGNEE");
+    expect(typeof error.fields.assigneeId).toBe("string");
+    await expect(create.getByRole("alert")).toContainText(/eligib/i);
+    await expect(picker).toHaveAttribute("aria-invalid", "true");
+    await expect(picker).toHaveAccessibleDescription(/worker|eligible/i);
+    await expect(picker).toHaveValue(String(f.assignee.id));
+    await expect(create.getByLabel("Description", { exact: true })).toHaveValue(description);
+    await expect(create.getByLabel("Attachment Notes", { exact: true })).toHaveValue(notes);
+    await expect(region.getByText("Action created successfully.", { exact: true })).toHaveCount(0);
+    expect(writes).toHaveLength(1);
+    sameRecoveryDomain(await recoveryDomain(f), before, "Initial-read INVALID_ASSIGNEE adds no Action/history/receipt or parent timestamp");
+
+    const reloaded = page.waitForResponse(value => value.request().method() === "GET" && new URL(value.url()).pathname === "/api/staff/assignees");
+    await create.getByRole("button", { name: "Reload assignees", exact: true }).click();
+    expect((await reloaded).status()).toBe(200);
+    await expect(picker.getByRole("option", { name: `Unavailable — ${f.assignee.name}`, exact: true })).toBeDisabled();
+    await expect(picker).toHaveValue(String(f.assignee.id));
+    await expect(create.getByLabel("Description", { exact: true })).toHaveValue(description);
+    expect(writes).toHaveLength(1);
+    sameRecoveryDomain(await recoveryDomain(f), before, "Explicit eligibility reload does not replace a worker or submit");
+    await picker.selectOption(String(f.operator.id));
+    const saved = await mutation(page, create.getByRole("button", { name: "Create action", exact: true }), "POST", path, 201);
+    expect(writes).toHaveLength(2);
+    expect(writes[0]!.assigneeId).toBe(f.assignee.id); expect(writes[1]!.assigneeId).toBe(f.operator.id);
+    expect(writes[0]!.expectedTicketUpdatedAt).toBe(before.ticket.updatedAt.toISOString());
+    expect(writes[1]!.expectedTicketUpdatedAt).toBe(before.ticket.updatedAt.toISOString());
+    expect(writes[1]!.clientMutationId).not.toBe(writes[0]!.clientMutationId);
+    expect(saved.action.description).toBe(description); expect(saved.action.attachmentNotes).toBe(notes);
+    expect(saved.action.assignee.id).toBe(f.operator.id);
+    await expect(actionRecord(page, saved.action.id)).toHaveCount(1);
+    await expect(region.getByText("Action created successfully.", { exact: true })).toBeVisible();
+    const after = await recoveryDomain(f);
+    expect(after.actions).toHaveLength(1); expect(after.history).toHaveLength(1); expect(after.receipts).toHaveLength(1);
+    expect(historySnapshot(after.actions[0]!)).toEqual({ ...Object.fromEntries(Object.entries(saved.action).filter(([key]) => !["createdBy", "assignee", "performedBy"].includes(key))),
+      createdById: f.operator.id, assigneeId: f.operator.id, performedById: null });
+    expect(after.history[0]!.event).toBe("ACTION_CREATED"); expect(after.history[0]!.before).toBeNull();
+    expect(after.history[0]!.after).toEqual(historySnapshot(after.actions[0]!));
+    expect(after.receipts[0]!.clientMutationId).toBe(writes[1]!.clientMutationId);
+    expect(after.ticket.updatedAt.toISOString()).toBe(saved.ticketUpdatedAt);
+    expect(after.ticket.updatedAt.getTime()).toBeGreaterThan(before.ticket.updatedAt.getTime());
+    sameRecoveryDomain(after, { ...before, ticket: { ...before.ticket, updatedAt: after.ticket.updatedAt },
+      actions: after.actions, history: after.history, receipts: after.receipts }, "Only one deliberate successful creation; existing Notes/status history preserved");
+    expect(f.pageErrors).toEqual([]);
+  } finally { page.off("request", observe); await adminContext.close(); }
+});
+
+test("Issue49 T-36: committed EDIT response loss explicitly replays original payload and both optimistic tokens", async ({ page, fixture: f, browser }) => {
+  const action = await syntheticAction(f, { description: `${f.marker} original replay baseline` });
+  await login(page, f.operator); await ticketRegion(page, f.ticket.id);
+  const edit = await openOperation(page, action.id, "Edit", "Edit Action");
+  const description = `${f.marker} committed edit with lost response <b>literal</b>`;
+  await edit.getByLabel("Description", { exact: true }).fill(description);
+  const before = await recoveryDomain(f);
+  const path = `/api/tickets/${f.ticket.id}/actions/${action.id}`;
+  const pattern = `**${path}`;
+  const payloads: string[] = [];
+  const pending = new Set<Promise<void>>();
+  const harnessErrors: unknown[] = [];
+  type Commit = { state: Awaited<ReturnType<typeof recoveryDomain>>; body: { action: ActionDTO; ticketUpdatedAt: string; replayed?: boolean } };
+  let acknowledge!: (value: Commit | null) => void;
+  const committed = new Promise<Commit | null>(resolve => { acknowledge = resolve; });
+  const intercept = (route: Route) => {
+    const work = (async () => {
+      if (route.request().method() !== "PATCH") { await route.continue(); return; }
+      payloads.push(route.request().postData()!);
+      expect(payloads.length, "No automatic mutation or third forwarding attempt").toBeLessThanOrEqual(2);
+      // Every success is the actual authenticated server response; no fabricated JSON.
+      const response = await route.fetch({ maxRedirects: 0, maxRetries: 0 });
+      try {
+        expect(response.status()).toBe(200);
+        const body = await response.json() as Commit["body"];
+        if (payloads.length === 1) {
+          expect(body.replayed).not.toBe(true);
+          const state = await recoveryDomain(f); // Independent completed read BEFORE withholding browser delivery.
+          expect(state.actions[0]!.version).toBe(action.version + 1);
+          expect(state.actions[0]!.description).toBe(description);
+          expect(state.history).toHaveLength(before.history.length + 1);
+          expect(state.receipts).toHaveLength(1);
+          expect(state.ticket.updatedAt.toISOString()).toBe(body.ticketUpdatedAt);
+          acknowledge({ state, body });
+          await route.abort("failed"); // Controlled response loss AFTER observed commit, not a backend outage.
+        } else {
+          expect(body.replayed).toBe(true);
+          await route.fulfill({ response }); // Deliver the real replay, preserving its status/body/headers.
+        }
+      } finally { await response.dispose(); }
+    })().catch(async error => {
+      harnessErrors.push(error); acknowledge(null);
+      await route.abort("failed").catch(() => undefined);
+    }).finally(() => { pending.delete(work); });
+    pending.add(work);
+    return work;
+  };
+  await page.route(pattern, intercept);
+  try {
+    const lost = page.waitForEvent("requestfailed", { predicate: value => value.method() === "PATCH" && new URL(value.url()).pathname === path });
+    await edit.getByRole("button", { name: "Save changes", exact: true }).click();
+    const first = await committed;
+    expect(harnessErrors.length, "Real forwarding and commit observation completed without harness errors").toBe(0);
+    expect(first).not.toBeNull();
+    if (!first) throw new Error("Controlled response loss did not observe a committed operation.");
+    await lost;
+    await expect(edit.getByRole("alert")).toContainText(/try again/i);
+    await expect(edit.getByLabel("Description", { exact: true })).toHaveValue(description);
+    await expect(edit.getByRole("button", { name: "Save changes", exact: true })).toBeEnabled();
+    await expect(page.getByText("Action updated successfully.", { exact: true })).toHaveCount(0);
+    await expect(actionRecord(page, action.id).getByRole("heading", { name: action.description, exact: true })).toBeVisible();
+    expect(payloads).toHaveLength(1);
+    const original = JSON.parse(payloads[0]!) as Record<string, unknown>;
+    expect(Object.keys(original).sort()).toEqual(["description", "expectedVersion", "expectedTicketUpdatedAt", "clientMutationId"].sort());
+    expect(original.description).toBe(description);
+    expect(original.expectedVersion).toBe(action.version);
+    expect(original.expectedTicketUpdatedAt).toBe(before.ticket.updatedAt.toISOString());
+    expect(original.clientMutationId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+    expect(first.state.ticket.updatedAt.getTime()).toBeGreaterThan(before.ticket.updatedAt.getTime());
+    const material = first.state.actions[0]!;
+    sameRecoveryDomain(material, { ...action, description, version: action.version + 1, updatedAt: material.updatedAt }, "Exactly one material edit preserves every other Action field");
+    const event = first.state.history.at(-1)!;
+    sameRecoveryDomain(first.state.history, [...before.history, { ...event, actionId: action.id, actorId: f.operator.id,
+      event: "ACTION_EDITED", actionVersion: action.version + 1, before: historySnapshot(action), after: historySnapshot(material),
+      createdAt: material.updatedAt, sourceTicketStatusHistoryId: null }], "Only one exact appended EDIT snapshot; earlier history untouched");
+    const receipt = first.state.receipts[0]!;
+    expect(receipt.clientMutationId).toBe(original.clientMutationId); expect(receipt.operation).toBe("EDIT_ACTION");
+    expect(receipt.actorId).toBe(f.operator.id); expect(receipt.actionId).toBe(action.id); expect(receipt.ticketId).toBe(f.ticket.id);
+    sameRecoveryDomain(receipt.safeResponse, { action: first.body.action, ticketUpdatedAt: first.body.ticketUpdatedAt }, "One real operation-time receipt");
+    sameRecoveryDomain(first.state, { ...before, ticket: { ...before.ticket, updatedAt: material.updatedAt },
+      actions: [material], history: first.state.history, receipts: [receipt] }, "Only Action/version, one event/receipt and parent time change; Notes/status history preserved");
+    sameRecoveryDomain(await recoveryDomain(f), first.state, "Observed committed state remains unchanged before deliberate retry");
+
+    const replayed = page.waitForResponse(value => value.request().method() === "PATCH" && new URL(value.url()).pathname === path);
+    await edit.getByRole("button", { name: "Save changes", exact: true }).click();
+    const replay = await replayed;
+    expect(replay.status()).toBe(200);
+    expect(await replay.json()).toEqual({ ...first.body, replayed: true });
+    expect(payloads).toHaveLength(2); expect(payloads[1]).toBe(payloads[0]); // Byte-identical payload includes original UUID AND both tokens.
+    await expect(edit).toHaveCount(0);
+    await expect(actionRecord(page, action.id)).toHaveCount(1);
+    await expect(actionRecord(page, action.id).getByRole("heading", { name: description, exact: true })).toBeVisible();
+    await expect(page.getByRole("status").filter({ hasText: "Action updated successfully." })).toBeVisible();
+    await expect(page.getByText("Refreshing Actions and Ticket…", { exact: true })).toHaveCount(0);
+    sameRecoveryDomain(await recoveryDomain(f), first.state, "Replay and authoritative refresh add no write, history, receipt or second timestamp advancement");
+    expect(harnessErrors.length).toBe(0); expect(f.pageErrors).toEqual([]);
+    console.info(`Issue49 controlled committed-response loss/replay verified; browser=${browser.browserType().name()} ${browser.version()}; original payload/key/version/parent token retained; one committed edit.`);
+  } finally {
+    await page.unroute(pattern, intercept);
+    await Promise.allSettled([...pending]); // Drain actual forwarded requests before owned fixture cleanup.
+  }
+});
