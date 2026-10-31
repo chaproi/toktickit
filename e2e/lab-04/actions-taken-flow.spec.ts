@@ -277,3 +277,126 @@ test("T-48/T-54 AC-03/44: My assigned Actions uses real actor filtering/paginati
   await page.goto("/staff/actions"); await expect(page.getByRole("heading", { name: "Forbidden", exact: true })).toBeVisible();
   expect(privileged).toEqual([]); await expect(page.getByText(selected.description, { exact: true })).toHaveCount(0); expect(f.pageErrors).toEqual([]);
 });
+
+
+// Issue #53 complete screen handoff: partial AC-35/T-35 and AC-44/T-54.
+import { activeNavigation, observedLogin, observeDashboard } from "./navigation-browser-helpers.js";
+
+for (const role of ["IT_STAFF", "ADMINISTRATOR"] as const) test(`Navigation #53: ${role} filtered Dashboard -> paged My Actions -> off-page detail -> real Dashboard return`, async ({ page, fixture: f }) => {
+  const actor = role === "IT_STAFF" ? f.operator : f.owner;
+  const at = new Date(Date.now() - 60_000);
+  const mine: Awaited<ReturnType<typeof syntheticAction>>[] = [];
+  for (let index = 0; index < 26; index++) mine.push(await syntheticAction(f, {
+    description: `${f.marker} navigation assignment ${String(index).padStart(2, "0")}`,
+    assigneeId: actor.id, createdAt: at,
+  }));
+  await syntheticAction(f, { description: `${f.marker} another worker decoy`, assigneeId: f.assignee.id, createdAt: at });
+  await observedLogin(page, actor, role);
+  const base = new URLSearchParams({ search: f.marker, categoryId: String(f.categoryId), relatedSystemId: String(f.relatedSystemId),
+    requestedPriority: "HIGH", itPriority: "MEDIUM", currentStatus: "OPEN", owner: String(f.owner.id) });
+  const dashboardBody = await observeDashboard(page, role, () => page.goto(`/staff/dashboard?${base}`));
+  expect(dashboardBody.metrics.myUnfinishedActions).toBe(26);
+  expect(dashboardBody.lists.myUnfinishedActions.map((row: { action: ActionDTO }) => row.action.id)).toEqual(mine.slice(0, 5).map(action => action.id));
+  const dashboard = page.getByRole("region", { name: "Staff Dashboard", exact: true });
+  const firstRead = page.waitForResponse(value => new URL(value.url()).pathname === "/api/staff/actions");
+  await dashboard.getByRole("link", { name: "View my actions", exact: true }).click();
+  const first = await firstRead; expect(first.status()).toBe(200);
+  const firstQuery = new URL(first.url()).searchParams;
+  for (const [name, value] of base) expect(firstQuery.get(name)).toBe(value);
+  expect(firstQuery.get("assignee")).toBe("me"); expect(firstQuery.get("actionStatusGroup")).toBe("unfinished");
+  await activeNavigation(page, "My assigned Actions");
+  const form = page.getByRole("form", { name: "Assigned Actions filters" });
+  await form.getByLabel("Action status", { exact: true }).selectOption("PLANNED");
+  await form.getByLabel("updated From (UTC)", { exact: true }).fill(dashboardBody.recentWindow.from);
+  await form.getByLabel("updated Before (UTC)", { exact: true }).fill(dashboardBody.recentWindow.before);
+  const filteredRead = page.waitForResponse(value => new URL(value.url()).pathname === "/api/staff/actions" && new URL(value.url()).searchParams.get("status") === "PLANNED");
+  await form.getByRole("button", { name: "Apply filters", exact: true }).click(); expect((await filteredRead).status()).toBe(200);
+  const paging = page.getByRole("navigation", { name: "My Actions pagination" });
+  const sizeRead = page.waitForResponse(value => new URL(value.url()).pathname === "/api/staff/actions" && new URL(value.url()).searchParams.get("pageSize") === "25");
+  await paging.getByLabel("Actions per page").selectOption("25"); expect((await sizeRead).status()).toBe(200);
+  await expect(paging).toContainText("Page 1 of 2; 26 Actions");
+  const nextRead = page.waitForResponse(value => new URL(value.url()).pathname === "/api/staff/actions" && new URL(value.url()).searchParams.get("page") === "2");
+  await paging.getByRole("button", { name: "Next", exact: true }).click();
+  const next = await nextRead; expect(next.status()).toBe(200);
+  expect((await next.json()).items.map((row: { action: ActionDTO }) => row.action.id)).toEqual([mine[25]!.id]);
+  const listUrl = page.url();
+  const record = page.getByRole("list", { name: "My assigned Actions records" }).getByRole("listitem");
+  await expect(record).toHaveCount(1); await expect(record).toContainText(mine[25]!.description);
+  const selectedRead = page.waitForResponse(value => new URL(value.url()).pathname === `/api/tickets/${f.ticket.id}/actions/${mine[25]!.id}`);
+  await record.getByRole("link", { name: f.ticket.ticketNumber, exact: true }).click();
+  expect((await selectedRead).status()).toBe(200);
+  await expect(page).toHaveURL(new RegExp(`/staff/tickets/${f.ticket.id}#action-${mine[25]!.id}$`));
+  await expect(actionRecord(page, mine[25]!.id)).toBeFocused(); await expect(actionRecord(page, mine[25]!.id)).toHaveCount(1);
+  await activeNavigation(page, "Ticket Queue");
+  await expect(page.getByRole("heading", { name: "Selected Action (outside this page)", exact: true })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Actions pagination" })).toContainText("27 Actions");
+  const backRead = page.waitForResponse(value => new URL(value.url()).pathname === "/api/staff/actions" && new URL(value.url()).searchParams.get("page") === "2");
+  await page.goBack(); expect((await backRead).status()).toBe(200); await expect(page).toHaveURL(listUrl);
+  await expect(page.getByRole("navigation", { name: "My Actions pagination" })).toContainText("Page 2 of 2; 26 Actions");
+  const returned = await observeDashboard(page, role, () => page.getByRole("link", { name: "Back to Dashboard", exact: true }).click());
+  expect(new URL(page.url()).pathname).toBe("/staff/dashboard");
+  expect(Object.fromEntries(new URL(page.url()).searchParams)).toEqual(Object.fromEntries(base));
+  expect(returned.metrics.myUnfinishedActions).toBe(26); await activeNavigation(page, "Dashboard");
+  // No arbitrary destination is accepted; invalid fields cannot invoke API-07.
+  let unexpectedReads = 0;
+  const observe = (request: import("@playwright/test").Request) => { if (new URL(request.url()).pathname === "/api/staff/actions") unexpectedReads++; };
+  page.on("request", observe);
+  try {
+    await page.goto(`/staff/actions?${base}&returnTo=https%3A%2F%2Fexample.invalid%2Fprivate`);
+    await expect(page.getByRole("heading", { name: "Invalid query filters", exact: true })).toBeVisible();
+    expect(unexpectedReads).toBe(0);
+    await expect(page.locator('a[href^="https://example.invalid/"]')).toHaveCount(0);
+    // Invalid queries have no accepted filter state. Deliberately clear them,
+    // then return to the known Dashboard, as the approved component flow does.
+    const clearedRead = page.waitForResponse(value => new URL(value.url()).pathname === "/api/staff/actions");
+    await page.getByRole("button", { name: "Clear filters", exact: true }).click();
+    expect((await clearedRead).status()).toBe(200);
+    await expect(page.getByRole("list", { name: "My assigned Actions records" }).getByRole("listitem")).toHaveCount(10);
+    await observeDashboard(page, role, () => page.getByRole("link", { name: "Back to Dashboard", exact: true }).click());
+    expect(new URL(page.url()).origin).toBe("http://127.0.0.1:4173");
+    expect(new URL(page.url()).pathname).toBe("/staff/dashboard");
+    expect(new URL(page.url()).search).toBe("");
+  } finally { page.off("request", observe); }
+  expect(f.pageErrors).toEqual([]);
+});
+
+for (const change of ["demotion", "deactivation"] as const) test(`Navigation #53: real Administrator ${change} revokes the open worker session and clears Action/Dashboard views`, async ({ page, fixture: f, browser }) => {
+  const action = await syntheticAction(f, { description: `${f.marker} previous worker private assignment`, assigneeId: f.operator.id, status: "COMPLETED" });
+  await observedLogin(page, f.operator, "IT_STAFF");
+  await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("link", { name: "My assigned Actions", exact: true }).click();
+  await expect(page.getByText(action.description, { exact: true })).toBeVisible();
+  const context = await browser.newContext();
+  try {
+    const adminPage = await context.newPage();
+    await observedLogin(adminPage, f.owner, "ADMINISTRATOR");
+    await adminPage.getByRole("navigation", { name: "Primary navigation" }).getByRole("link", { name: "User Management", exact: true }).click();
+    await adminPage.getByLabel("Search users", { exact: true }).fill(f.operator.email);
+    await adminPage.getByRole("button", { name: "Search", exact: true }).click();
+    await adminPage.getByRole("button", { name: `Edit ${f.operator.name}`, exact: true }).click();
+    const dialog = adminPage.getByRole("dialog", { name: `Edit ${f.operator.name}`, exact: true });
+    if (change === "demotion") await dialog.getByLabel("Role", { exact: true }).selectOption("REQUESTER");
+    else await dialog.getByLabel("Status", { exact: true }).selectOption("inactive");
+    const [response] = await Promise.all([
+      adminPage.waitForResponse(value => new URL(value.url()).pathname === `/api/admin/users/${f.operator.id}` && value.request().method() === "PATCH"),
+      dialog.getByRole("button", { name: "Save User", exact: true }).click(),
+    ]);
+    expect(response.status()).toBe(200);
+    // Existing live session is revoked by the real Administrator service.
+    const denied = page.waitForResponse(value => new URL(value.url()).pathname === "/api/dashboard/staff" && value.status() === 401);
+    await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("link", { name: "Dashboard", exact: true }).click();
+    expect((await denied).status()).toBe(401);
+    await expect(page.getByRole("heading", { name: "Sign in", exact: true })).toBeVisible();
+    await expect(page.getByText(action.description, { exact: true })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "Staff Dashboard", exact: true })).toHaveCount(0);
+    if (change === "demotion") {
+      await observedLogin(page, f.operator, "REQUESTER");
+      await page.goto("/staff/actions");
+      await expect(page.getByRole("heading", { name: "Forbidden", exact: true })).toBeVisible();
+      await expect(page.getByText(action.description, { exact: true })).toHaveCount(0);
+      const result = await page.request.get("http://127.0.0.1:3100/api/staff/actions");
+      expect(result.status()).toBe(403); expect((await result.json()).error.code).toBe("ROLE_FORBIDDEN");
+    }
+    expect(historySnapshot(await f.prisma.action.findUniqueOrThrow({ where: { id: action.id } }))).toEqual(historySnapshot(action));
+  } finally { await context.close(); }
+  expect(f.pageErrors).toEqual([]);
+});

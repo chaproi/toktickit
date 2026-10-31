@@ -3,6 +3,21 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { authResponse, jsonResponse, renderAt, requesterUser, requestUrl } from "./test-helpers.js";
 
+// D-19 landing fixture: a genuine empty API-08 response, not an auth payload.
+const emptyRequesterDashboard = {
+  asOf: "2026-10-23T18:30:00.000Z", timezone: "Asia/Bangkok",
+  recentWindow: { from: "2026-10-17T17:00:00.000Z", before: "2026-10-24T17:00:00.000Z" },
+  filters: { search: "", categoryId: null, relatedSystemId: null, requestedPriority: null, itPriority: null, currentStatus: null },
+  metrics: { outstanding: 0, needsAttention: 0, recentUpdated: 0, recentResolved: 0 },
+  lists: { recentUpdated: [], recentResolved: [] },
+  drillDown: {
+    outstanding: { path: "/api/tickets", query: { dashboardWidget: "outstanding", statusGroup: "outstanding" } },
+    needsAttention: { path: "/api/tickets", query: { dashboardWidget: "attention" } },
+    recentUpdated: { path: "/api/tickets", query: { dashboardWidget: "recentUpdated", updatedFrom: "2026-10-17T17:00:00.000Z", updatedBefore: "2026-10-24T17:00:00.000Z", sortBy: "updatedAt", sortOrder: "desc" } },
+    recentResolved: { path: "/api/tickets", query: { dashboardWidget: "recentResolved", statusGroup: "resolved", resolvedFrom: "2026-10-17T17:00:00.000Z", resolvedBefore: "2026-10-24T17:00:00.000Z", sortBy: "resolvedAt", sortOrder: "desc" } },
+  },
+};
+
 afterEach(() => vi.unstubAllGlobals());
 
 describe("Issue 29 Change Password", () => {
@@ -93,12 +108,7 @@ describe("Issue 29 Change Password", () => {
         expect(new Headers(init?.headers).get("X-CSRF-Token")).toBe("issue29-csrf");
         return jsonResponse(authResponse(requesterUser));
       }
-      if (url.pathname === "/api/tickets") {
-        return jsonResponse({ items: [], pagination: {
-          page: 1, pageSize: 10, totalItems: 0, totalPages: 0,
-          hasPreviousPage: false, hasNextPage: false,
-        } });
-      }
+      if (url.pathname === "/api/dashboard/requester") return jsonResponse(emptyRequesterDashboard);
       if (url.pathname === "/api/categories" || url.pathname === "/api/related-systems") {
         return jsonResponse([]);
       }
@@ -118,7 +128,7 @@ describe("Issue 29 Change Password", () => {
     await user.type(screen.getByLabelText("Confirm New Password"), "NewSecure1!Password");
     await user.click(screen.getByRole("button", { name: "Save Password" }));
     expect(await screen.findByText("Password changed successfully.")).toBeInTheDocument();
-    expect(await screen.findByRole("heading", { name: "My Tickets" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Requester Dashboard" })).toBeInTheDocument();
   });
 
   it("shows the safe wrong-current failure and clears every password field", async () => {

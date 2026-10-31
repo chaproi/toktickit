@@ -141,6 +141,9 @@ async function signInRequester(
   await page.getByLabel("Email").fill(selected.requester.email!);
   await page.getByLabel("Password", { exact: true }).fill(selected.password);
   await page.getByRole("button", { name: "Sign in" }).click();
+  await expect(page).toHaveURL(/\/dashboard$/u);
+  await expect(page.getByRole("heading", { name: "Requester Dashboard", exact: true })).toBeVisible();
+  await page.goto("/tickets");
   await expect(page).toHaveURL(/\/tickets$/u);
   await expect(page.getByText(requesterName)).toBeVisible();
 }
@@ -717,7 +720,7 @@ test("E2E-04 keeps every Lab 2 screen usable at desktop, tablet, and mobile size
       if (route.name === "obsolete-selector-redirect") {
         await expect(
           page.getByRole("heading", {
-            name: "My Tickets",
+            name: "Requester Dashboard",
           }),
         ).toBeVisible();
       } else if (route.name === "create-ticket") {

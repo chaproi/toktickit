@@ -464,6 +464,8 @@ for (const viewport of VIEWPORTS) {
     });
     await withPage(browser, viewport, async (page) => {
       await login(page, fixture.staff.user.email, fixture.staff.password);
+      await expect(page.getByRole("heading", { name: "Staff Dashboard", exact: true })).toBeVisible();
+      await page.goto("/staff/tickets");
       await expect(page.getByRole("heading", { name: "Ticket Queue" })).toBeVisible();
       await page.getByLabel("Search Queue").fill(`Issue 37 responsive ${viewport.label}`);
       await page.getByRole("button", { name: "Apply Filters" }).click();
@@ -489,6 +491,8 @@ for (const viewport of VIEWPORTS) {
     });
     await withPage(browser, viewport, async (page) => {
       await login(page, fixture.administrator.user.email, fixture.administrator.password);
+      await expect(page.getByRole("heading", { name: "Staff Dashboard", exact: true })).toBeVisible();
+      await page.goto("/admin/users");
       await expect(page.getByRole("heading", { name: "User Management" })).toBeVisible();
       await expect(page.getByRole("button", { name: "Create User" })).toBeVisible();
       if (viewport.width < 768) {
@@ -594,6 +598,8 @@ test("RESP-02 keeps all six screens operable with keyboard and accessibility sem
 
   await withTabZoomPage(context, worker, async (page) => {
     await login(page, fixture.staff.user.email, fixture.staff.password);
+    await expect(page.getByRole("heading", { name: "Staff Dashboard", exact: true })).toBeVisible();
+    await page.goto("/staff/tickets");
     await withBrowserZoom(page, worker, async () => {
       const search = page.getByLabel("Search Queue");
       await reachByKeyboard(page, search);
@@ -667,6 +673,8 @@ test("RESP-02 keeps all six screens operable with keyboard and accessibility sem
 
   await withTabZoomPage(context, worker, async (page) => {
     await login(page, fixture.administrator.user.email, fixture.administrator.password);
+    await expect(page.getByRole("heading", { name: "Staff Dashboard", exact: true })).toBeVisible();
+    await page.goto("/admin/users");
     await withBrowserZoom(page, worker, async () => {
       const create = page.getByRole("button", { name: "Create User" }).first();
       await reachByKeyboard(page, create);

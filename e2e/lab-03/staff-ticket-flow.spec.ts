@@ -52,7 +52,7 @@ test("E2E-03 completes the Staff operational Ticket workflow", async ({ page }) 
   await page.getByLabel("New Password", { exact: true }).fill(requesterReplacement);
   await page.getByLabel("Confirm New Password").fill(requesterReplacement);
   await page.getByRole("button", { name: "Save Password" }).click();
-  await expect(page.getByRole("heading", { name: "My Tickets" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Requester Dashboard" })).toBeVisible();
   await page.goto(`/tickets/${ticket.id}`);
   const activeName = `${marker}-active.png`;
   await page.getByLabel("Add Attachment").setInputFiles({ name: activeName, mimeType: "image/png", buffer: PNG_BUFFER });
@@ -87,6 +87,8 @@ test("E2E-03 completes the Staff operational Ticket workflow", async ({ page }) 
   await page.getByLabel("Confirm New Password").fill(replacement);
   await page.getByRole("button", { name: "Save Password" }).click();
 
+  await expect(page.getByRole("heading", { name: "Staff Dashboard", exact: true })).toBeVisible();
+  await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("link", { name: "Ticket Queue", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Ticket Queue" })).toBeVisible();
   await page.getByLabel("Search Queue").fill(marker);
   await page.getByRole("button", { name: "Apply Filters" }).click();

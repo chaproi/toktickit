@@ -63,7 +63,7 @@ test("E2E-05 enforces direct navigation, API role, ownership, and Internal Note 
   const requesterContext = await browser.newContext();
   const requesterPage = await requesterContext.newPage();
   await login(requesterPage, requester.record.email, requester.password);
-  await expect(requesterPage.getByRole("heading", { name: "My Tickets" })).toBeVisible();
+  await expect(requesterPage.getByRole("heading", { name: "Requester Dashboard" })).toBeVisible();
   for (const forbiddenPath of ["/staff/tickets", `/staff/tickets/${ticket.id}`, "/admin/users"]) {
     await requesterPage.goto(forbiddenPath);
     await expect(requesterPage.getByRole("heading", { name: "Forbidden" })).toBeVisible();
@@ -95,7 +95,7 @@ test("E2E-05 enforces direct navigation, API role, ownership, and Internal Note 
   const staffContext = await browser.newContext();
   const staffPage = await staffContext.newPage();
   await login(staffPage, staff.record.email, staff.password);
-  await expect(staffPage.getByRole("heading", { name: "Ticket Queue" })).toBeVisible();
+  await expect(staffPage.getByRole("heading", { name: "Staff Dashboard" })).toBeVisible();
   await staffPage.goto(`/staff/tickets/${ticket.id}`);
   await expect(staffPage.getByRole("heading", { name: ticket.ticketNumber })).toBeVisible();
   await expect(staffPage.getByText(privateContent)).toBeVisible();
@@ -109,7 +109,7 @@ test("E2E-05 enforces direct navigation, API role, ownership, and Internal Note 
   const adminContext = await browser.newContext();
   const adminPage = await adminContext.newPage();
   await login(adminPage, administrator.record.email, administrator.password);
-  await expect(adminPage.getByRole("heading", { name: "User Management" })).toBeVisible();
+  await expect(adminPage.getByRole("heading", { name: "Staff Dashboard" })).toBeVisible();
   await adminPage.goto(`/staff/tickets/${ticket.id}`);
   await expect(adminPage.getByText(privateContent)).toBeVisible();
   await adminPage.goto(`/tickets/${ticket.id}`);

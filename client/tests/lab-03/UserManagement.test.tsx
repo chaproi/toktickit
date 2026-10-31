@@ -79,7 +79,7 @@ describe("UI-10 and UI-11 Administrator User Management", () => {
     renderAt("/admin/users");
     expect(await screen.findByRole("heading", { name: "Forbidden" })).toBeInTheDocument();
     expect(screen.getByRole("alert")).toHaveTextContent("This page is not available for your role.");
-    expect(screen.getByRole("link", { name: "Go to role home" })).toHaveAttribute("href", "/staff/tickets");
+    expect(screen.getByRole("link", { name: "Go to role home" })).toHaveAttribute("href", "/staff/dashboard");
     expect(calls.some(({ url }) => url.pathname === "/api/admin/users")).toBe(false);
   });
 
