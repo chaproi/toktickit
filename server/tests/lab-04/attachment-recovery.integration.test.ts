@@ -10,7 +10,7 @@ import { getPrisma } from "../../src/prisma.js";
 import { applyLab3Baseline, applyLaterMigrations, identifier, oldTables, query, snapshot,
   verifiedTestTarget, withDisposableSchema } from "./migration-test-fixtures.js";
 import { native, nativeTools } from "./native-recovery-test-helpers.js";
-import { ownedSeaweed, productionStorage } from "./persistent-recovery-test-helpers.js";
+import { ownedSeaweed, productionStorage, RecoveryPrerequisiteError } from "./persistent-recovery-test-helpers.js";
 
 const tables = { ...oldTables, Action: "id", ActionHistory: "id", MutationReceipt: "id", SeedFixture: "id" };
 const domainTables = Object.fromEntries(Object.entries(tables).filter(([name]) => !["AuthSession", "LoginThrottle"].includes(name)));
@@ -189,6 +189,7 @@ it("restores a quiesced PostgreSQL/S3 recovery pair and enforces active/removed 
       });
     });
   } catch (error) {
+    if (error instanceof RecoveryPrerequisiteError) throw error;
     const code = (error as { code?: unknown })?.code;
     throw new Error(`T31 ${stage} failed; class=${error instanceof Error ? error.name : "unknown"}; code=${typeof code === "string" && /^(P\d{4}|[A-Z0-9]{5})$/.test(code) ? code : "unclassified"}; details withheld.`);
   } finally {

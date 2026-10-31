@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { once } from "node:events";
 import { expect } from "vitest";
 import { CreateBucketCommand, DeleteBucketCommand, DeleteObjectCommand, HeadBucketCommand,
-  ListBucketsCommand, ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
+  ListBucketsCommand, ListObjectsV2Command, PutObjectCommand, HeadObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getAttachmentStorage, setAttachmentStorageForTests } from "../../src/attachments/attachment-storage.js";
 
 async function freePort(): Promise<number> {
@@ -17,9 +17,13 @@ async function freePort(): Promise<number> {
   return address.port;
 }
 
+export class RecoveryPrerequisiteError extends Error {
+  constructor() { super("BLOCKED: explicit standalone SeaweedFS executable unavailable; persistent recovery unverified."); this.name = "RecoveryPrerequisiteError"; }
+}
+
 export async function ownedSeaweed(directory: string, buckets: string[]) {
   const executable = process.env.TOKTICKIT_RECOVERY_WEED_EXE;
-  if (!executable || !existsSync(executable)) throw new Error("BLOCKED: explicit standalone SeaweedFS executable unavailable; persistent recovery unverified.");
+  if (!executable || !existsSync(executable)) throw new RecoveryPrerequisiteError();
   expect(buckets.every(bucket => /^toktickit-t31-(source|restored)-[a-f0-9]{32}$/.test(bucket))).toBe(true);
   mkdirSync(directory);
   const [master, masterGrpc, volume, volumeGrpc, filer, filerGrpc, s3, s3Grpc] = await Promise.all(Array.from({ length: 8 }, freePort));
@@ -31,7 +35,9 @@ export async function ownedSeaweed(directory: string, buckets: string[]) {
   for (const key of Object.keys(childEnvironment)) if (key.toLowerCase() === "debug") delete childEnvironment[key];
   const child = spawn(executable, ["server", `-dir=${directory}`, "-ip=127.0.0.1", "-ip.bind=127.0.0.1",
     `-master.port=${master}`, `-master.port.grpc=${masterGrpc}`, `-volume.port=${volume}`, `-volume.port.grpc=${volumeGrpc}`,
-    "-volume.max=1", "-master.volumeSizeLimitMB=10", "-filer", `-filer.port=${filer}`, `-filer.port.grpc=${filerGrpc}`,
+    // S3 buckets have separate collections; allow both small owned collections
+    // their default growth allocation instead of exhausting a one-volume cap.
+    "-volume.max=16", "-master.volumeSizeLimitMB=10", "-filer", `-filer.port=${filer}`, `-filer.port.grpc=${filerGrpc}`,
     "-s3", `-s3.port=${s3}`, `-s3.port.grpc=${s3Grpc}`, "-s3.port.iceberg=0", "-s3.port.lance=0", "-s3.iam=false"],
   { cwd: directory, env: childEnvironment, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
   // Drain service output without publishing paths, credentials or arbitrary errors.
@@ -68,6 +74,19 @@ export async function ownedSeaweed(directory: string, buckets: string[]) {
     const initial = await client.send(new ListBucketsCommand({}));
     expect(initial.Buckets ?? [], "Fresh service identity has no pre-existing buckets before writes").toEqual([]);
     for (const bucket of buckets) { await client.send(new CreateBucketCommand({ Bucket: bucket })); created.add(bucket); }
+    // A listening S3 gateway is not yet evidence of an allocated, write-ready
+    // volume. Complete one owned PUT/HEAD/DELETE before opening app mutations.
+    // This isolates recovery from cold bootstrap; it does NOT fix slow S3 I/O
+    // inside the application's five-second interactive transaction.
+    const readyKey = "owned-write-readiness";
+    const readyBytes = Buffer.from("T31 persistent storage readiness");
+    const started = Date.now();
+    await client.send(new PutObjectCommand({ Bucket: buckets[0]!, Key: readyKey, Body: readyBytes }));
+    const ready = await client.send(new HeadObjectCommand({ Bucket: buckets[0]!, Key: readyKey }));
+    expect(ready.ContentLength).toBe(readyBytes.length);
+    await client.send(new DeleteObjectCommand({ Bucket: buckets[0]!, Key: readyKey }));
+    expect((await client.send(new ListObjectsV2Command({ Bucket: buckets[0]! }))).Contents ?? []).toEqual([]);
+    console.info("T31 owned persistent write-readiness completed before application transaction", { elapsedMs: Date.now() - started });
     return { client, endpoint, credentials, close, persistentFiles() {
       const visit = (path: string): number => readdirSync(path, { withFileTypes: true }).reduce((n, entry) => {
         const name = join(path, entry.name);
