@@ -821,3 +821,173 @@ describe("Staff descriptor coordinated count/page snapshots", () => {
     });
   });
 });
+
+import { APPROVED_ORIGIN, cookieValue } from "../lab-03/auth-test-helpers.js";
+
+// Issue49: partial AC-24/T-24. Real Note and Action endpoints establish activity
+// membership on both Dashboard/list surfaces. These sequential operations do
+// not establish a concurrent snapshot or whole-scenario acceptance.
+describe("Dashboard recent activity distinguishes private Notes from Action mutations", () => {
+  it.each(["Requester", "Staff"] as const)("%s Dashboard and returned Ticket drill-down follow real activity", async (surface) => {
+    expect(guarded, "Actual guard and live dedicated target checked before fixture writes").toBe(true);
+    // Reuse immediate ID tracking and the file's FK-safe, partial-setup cleanup.
+    const owner = await addUser(`activity-${surface}-requester`, "REQUESTER");
+    const actor = await addUser(`activity-${surface}-actor`, "IT_STAFF");
+    const worker = await addUser(`activity-${surface}-assignee`, "IT_STAFF");
+    expect(new Set([owner.user.id, actor.user.id, worker.user.id]).size).toBe(3);
+    const actorLogin = await loginRequest(actor.user.email, actor.password);
+    expect(actorLogin.status, "Real operational session; response redacted").toBe(200);
+    const actorCookie = cookieHeader(actorLogin.headers["set-cookie"]);
+    const csrf = cookieValue(actorLogin.headers["set-cookie"], "toktickit_csrf");
+    let readCookie = actorCookie;
+    if (surface === "Requester") {
+      const login = await loginRequest(owner.user.email, owner.password);
+      expect(login.status, "Real owned Requester session; response redacted").toBe(200);
+      readCookie = cookieHeader(login.headers["set-cookie"]);
+    }
+    const category = await prisma.category.create({ data: { name: `${marker}-activity-${surface}` } });
+    categoryIds.push(category.id);
+    const [observed] = await prisma.$queryRaw<Array<{ now: Date }>>`SELECT CURRENT_TIMESTAMP AS now`;
+    const old = new Date(observed.now.getTime() - 21 * 86_400_000);
+    const ticket = await prisma.ticket.create({ data: {
+      ticketNumber: `H49-${randomUUID().replaceAll("-", "").slice(0, 12)}`,
+      clientSubmissionId: randomUUID(), requesterId: owner.user.id, ownerId: worker.user.id,
+      categoryId: category.id, relatedSystemId: systemIds[0]!, currentStatus: "OPEN",
+      requestedPriority: "HIGH", itPriority: "MEDIUM",
+      summary: `Activity ${surface} <script>literal summary</script>`,
+      description: `${marker} private Ticket body`, createdAt: old, ticketDate: old, updatedAt: old,
+    } });
+    ticketIds.push(ticket.id);
+    await prisma.ticketStatusHistory.create({ data: {
+      ticketId: ticket.id, actorId: actor.user.id, fromStatus: "NEW", toStatus: "OPEN",
+      reason: null, createdAt: old,
+    } }); // Directly constructed editable predecessor, not transition-path evidence.
+    const privateText = `${marker}-${surface} private <script>Internal Note</script>`;
+    const scope = { ticketId: ticket.id };
+    async function state() {
+      return {
+        ticket: await prisma.ticket.findUniqueOrThrow({ where: { id: ticket.id } }),
+        statusHistory: await prisma.ticketStatusHistory.findMany({ where: scope, orderBy: { id: "asc" } }),
+        actions: await prisma.action.findMany({ where: scope, orderBy: { id: "asc" } }),
+        actionHistory: await prisma.actionHistory.findMany({ where: { action: scope }, orderBy: { id: "asc" } }),
+        receipts: await prisma.mutationReceipt.findMany({ where: scope, orderBy: { id: "asc" } }),
+        notes: await prisma.internalNote.findMany({ where: scope, orderBy: { id: "asc" } }),
+        comments: await prisma.publicComment.findMany({ where: scope, orderBy: { id: "asc" } }),
+        attachments: await prisma.attachment.findMany({ where: scope, orderBy: { id: "asc" } }),
+      }; // Authentication bookkeeping excluded; all domain columns retained.
+    }
+    async function read(path: string, query: URLSearchParams) {
+      const before = await state();
+      const response = await request(app).get(`${path}?${query}`).set("Cookie", readCookie);
+      expect(response.status).toBe(200);
+      expect(response.headers["cache-control"]).toBe("private, no-store");
+      safeEqual(await state(), before, "Each Dashboard/descriptor read preserves exact owned domain state");
+      const body = JSON.stringify(response.body);
+      expect(body.includes(privateText), "Private Note text never enters either public read").toBe(false);
+      expect(/passwordHash|tokenHash|csrfTokenHash|inputFingerprint|safeResponse|internalNotes|storageKey|"description"/u.test(body)).toBe(false);
+      return response;
+    }
+    async function activity(expectedCount: 0 | 1, authoritative: Ticket) {
+      const dashboard = await read(surface === "Requester" ? "/api/dashboard/requester" : "/api/dashboard/staff",
+        new URLSearchParams({ categoryId: String(category.id) }));
+      expect(dashboard.body.metrics.recentUpdated).toBe(expectedCount);
+      expect(dashboard.body.metrics.recentResolved).toBe(0);
+      expect(dashboard.body.lists.recentResolved).toEqual([]);
+      const expectedDashboardRow = {
+        id: ticket.id, ticketNumber: ticket.ticketNumber, summary: ticket.summary, currentStatus: "OPEN",
+        requestedPriority: "HIGH", itPriority: "MEDIUM", updatedAt: authoritative.updatedAt.toISOString(),
+        owner: { id: worker.user.id, name: worker.user.name, role: "IT_STAFF" },
+      };
+      expect(dashboard.body.lists.recentUpdated).toEqual(expectedCount ? [expectedDashboardRow] : []);
+      const descriptor = dashboard.body.drillDown.recentUpdated as { path: string; query: Record<string, string | number> };
+      expect(descriptor.path).toBe(surface === "Requester" ? "/api/tickets" : "/api/staff/tickets");
+      expect(String(descriptor.query.categoryId)).toBe(String(category.id));
+      expect(descriptor.query.dashboardWidget).toBe("recentUpdated");
+      const query = new URLSearchParams(Object.entries(descriptor.query).map(([key, value]) => [key, String(value)]));
+      const list = await read(descriptor.path, query); // Execute the actual fresh descriptor, without rewriting predicates.
+      expect(list.body.pagination.totalItems).toBe(expectedCount);
+      expect(list.body.items.map((row: { id: number }) => row.id)).toEqual(expectedCount ? [ticket.id] : []);
+      if (expectedCount) {
+        const expectedListRow = {
+          ...expectedDashboardRow, ticketDate: ticket.ticketDate.toISOString(),
+          requester: { id: owner.user.id, name: owner.user.name,
+            ...(surface === "Staff" ? { email: owner.user.email } : {}) },
+          category: { id: category.id, name: category.name },
+          relatedSystem: { id: systemIds[0]!, name: `${marker}-matching` },
+          ...(surface === "Requester" ? { createdAt: ticket.createdAt.toISOString() } : { requesterResolutionIndicatedAt: null }),
+        };
+        expect(list.body.items).toEqual([expectedListRow]); // Inherited role-specific list projection, not the narrower Dashboard DTO.
+      }
+    }
+    const initial = await state();
+    expect(initial.actions).toEqual([]);
+    expect(initial.actionHistory).toEqual([]);
+    expect(initial.receipts).toEqual([]);
+    expect(initial.notes).toEqual([]);
+    await activity(0, ticket);
+
+    const noteStarted = Date.now();
+    const noteResponse = await request(app).post(`/api/staff/tickets/${ticket.id}/notes`)
+      .set("Cookie", actorCookie).set("Origin", APPROVED_ORIGIN).set("X-CSRF-Token", csrf)
+      .send({ content: privateText });
+    expect(noteResponse.status).toBe(201);
+    const afterNote = await state();
+    expect(afterNote.notes).toHaveLength(1);
+    const note = afterNote.notes[0]!;
+    safeEqual(note, { id: noteResponse.body.id, ticketId: ticket.id, authorId: actor.user.id,
+      content: privateText, createdAt: new Date(noteResponse.body.createdAt) }, "Only intended Note with server author/time is added");
+    expect(note.createdAt.getTime()).toBeGreaterThanOrEqual(noteStarted);
+    expect(note.createdAt.getTime()).toBeLessThanOrEqual(Date.now());
+    safeEqual(afterNote, { ...initial, notes: [note] }, "Note changes no parent timestamp, Action, version, history, receipt or other domain data");
+    await activity(0, afterNote.ticket);
+
+    const mutationId = randomUUID();
+    const description = `Real ${surface} Action <script>literal</script>`;
+    const started = Date.now();
+    const created = await request(app).post(`/api/tickets/${ticket.id}/actions`)
+      .set("Cookie", actorCookie).set("Origin", APPROVED_ORIGIN).set("X-CSRF-Token", csrf)
+      .send({ description, result: null, attachmentNotes: null, followUpRequired: false, followUpNote: null,
+        assigneeId: worker.user.id, expectedTicketUpdatedAt: afterNote.ticket.updatedAt.toISOString(), clientMutationId: mutationId });
+    expect(created.status).toBe(201);
+    const saved = await state();
+    expect(saved.actions).toHaveLength(1);
+    expect(saved.actionHistory).toHaveLength(1);
+    expect(saved.receipts).toHaveLength(1);
+    const instant = new Date(created.body.ticketUpdatedAt);
+    expect(instant.getTime()).toBeGreaterThan(old.getTime());
+    expect(instant.getTime()).toBeGreaterThanOrEqual(started);
+    expect(instant.getTime()).toBeLessThanOrEqual(Date.now());
+    const action = saved.actions[0]!;
+    const expectedAction = {
+      id: created.body.action.id, ticketId: ticket.id, createdById: actor.user.id, assigneeId: worker.user.id,
+      performedById: null, status: "PLANNED", description, result: null, followUpRequired: false,
+      followUpNote: null, attachmentNotes: null, actionAt: instant, createdAt: instant, updatedAt: instant,
+      completedAt: null, cancelledAt: null, cancellationReason: null, version: 1,
+    };
+    safeEqual(action, expectedAction, "Exactly the new PLANNED Action, immutable attribution, version and server timestamps");
+    const expectedDTO = {
+      id: action.id, ticketId: ticket.id, createdBy: { id: actor.user.id, name: actor.user.name },
+      assignee: { id: worker.user.id, name: worker.user.name }, performedBy: null,
+      status: "PLANNED", description, result: null, followUpRequired: false, followUpNote: null, attachmentNotes: null,
+      actionAt: instant.toISOString(), createdAt: instant.toISOString(), updatedAt: instant.toISOString(),
+      completedAt: null, cancelledAt: null, cancellationReason: null, version: 1,
+    };
+    expect(created.body).toEqual({ action: expectedDTO, ticketUpdatedAt: instant.toISOString() });
+    const event = saved.actionHistory[0]!;
+    safeEqual(event, {
+      id: event.id, actionId: action.id, actorId: actor.user.id, event: "ACTION_CREATED", actionVersion: 1,
+      createdAt: instant, sourceTicketStatusHistoryId: null, before: null,
+      after: { ...expectedAction, actionAt: instant.toISOString(), createdAt: instant.toISOString(), updatedAt: instant.toISOString() },
+    }, "One full independently specified creation snapshot; no Ticket status source");
+    const receipt = saved.receipts[0]!;
+    expect(/^[a-f0-9]{64}$/u.test(receipt.inputFingerprint), "Canonical digest present; value withheld").toBe(true);
+    safeEqual(receipt, { id: receipt.id, actorId: actor.user.id, clientMutationId: mutationId, operation: "CREATE_ACTION",
+      ticketId: ticket.id, actionId: action.id, inputFingerprint: receipt.inputFingerprint,
+      safeResponse: { action: expectedDTO, ticketUpdatedAt: instant.toISOString() }, createdAt: instant },
+    "Exactly one operation receipt with original UUID, actor and safe operation-time response");
+    safeEqual(saved, { ...afterNote, ticket: { ...afterNote.ticket, updatedAt: instant },
+      actions: [expectedAction], actionHistory: [event], receipts: [receipt] },
+    "Action create changes only Action/history/receipt and parent updatedAt; Note and status history preserved");
+    await activity(1, saved.ticket);
+  });
+});
