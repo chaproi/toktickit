@@ -1,9 +1,7 @@
 import { createHash, randomBytes, randomUUID } from "node:crypto";
-import { execFile, execFileSync } from "node:child_process";
 import { existsSync, mkdtempSync, readdirSync, readFileSync, rmdirSync, statSync, unlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { promisify } from "node:util";
 import type { Client } from "pg";
 import { describe, expect, it } from "vitest";
 import { hashPassword } from "../../src/auth/password.js";
@@ -15,7 +13,8 @@ import {
 // AC-31 / T-31 verification, not a manufactured RED phase. Native-tool absence
 // is an explicit blocked failure, never a skipped/passing backup claim.
 const allTables = { ...oldTables, Action: "id", ActionHistory: "id", MutationReceipt: "id", SeedFixture: "id" };
-const runFile = promisify(execFile);
+import { native, nativeTools } from "./native-recovery-test-helpers.js";
+
 type Statement = { sql: string; values: unknown[] };
 
 function insert(table: string, fields: Record<string, unknown>): Statement {
@@ -387,30 +386,6 @@ describe("AC-31 / T-31 failure recovery and native backup", () => {
   }, 30_000);
 });
 
-function nativeTools() {
-  const candidates = ["", ...(() => {
-    const root = join(process.env.ProgramFiles || "C:/Program Files", "PostgreSQL");
-    if (!existsSync(root)) return [];
-    return readdirSync(root).filter((name) => /^\d+$/u.test(name)).sort((a, b) => Number(b) - Number(a))
-      .map((name) => join(root, name, "bin"));
-  })()];
-  for (const directory of candidates) {
-    const extension = process.platform === "win32" ? ".exe" : "";
-    const dump = directory ? join(directory, `pg_dump${extension}`) : "pg_dump";
-    const restore = directory ? join(directory, `pg_restore${extension}`) : "pg_restore";
-    try {
-      const dumpVersion = execFileSync(dump, ["--version"], { encoding: "utf8", windowsHide: true });
-      const restoreVersion = execFileSync(restore, ["--version"], { encoding: "utf8", windowsHide: true });
-      console.info(`Native tools available: pg_dump ${dumpVersion.match(/\d+(?:\.\d+)*/u)?.[0]}; pg_restore ${restoreVersion.match(/\d+(?:\.\d+)*/u)?.[0]}.`);
-      return { dump, restore };
-    } catch { /* Try installed locations without logging arguments or stderr. */ }
-  }
-  throw new Error("BLOCKED: native pg_dump/pg_restore unavailable; backup evidence remains incomplete.");
-}
-async function native(program: string, args: string[], environment: NodeJS.ProcessEnv) {
-  try { await runFile(program, args, { env: environment, windowsHide: true }); }
-  catch { throw new Error("Native PostgreSQL backup/restore failed; connection arguments and stderr redacted."); }
-}
 async function relationships(client: Client, schema: string) {
   return (await query(client,
     `SELECT s.relname AS source_table,a.attname AS source_column,t.relname AS target_table,
