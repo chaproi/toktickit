@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import {
   BrowserRouter,
   Link,
+  matchPath,
   Navigate,
   Route,
   Routes,
@@ -33,6 +34,16 @@ const MOBILE_NAVIGATION_QUERY = "(max-width: 767.98px)";
 
 function roleHome(user: AuthUser): string {
   return user.role === "REQUESTER" ? "/dashboard" : "/staff/dashboard";
+}
+
+function navigationDestination(pathname: string): string {
+  for (const parent of ["/tickets", "/staff/tickets"]) {
+    const ticketId = matchPath(`${parent}/:ticketId`, pathname)?.params.ticketId;
+    if (ticketId && /^[1-9]\d*$/.test(ticketId) && Number(ticketId) <= 2_147_483_647) {
+      return parent;
+    }
+  }
+  return pathname;
 }
 
 function roleLabel(user: AuthUser): string {
@@ -110,6 +121,7 @@ function AppShell({
   children: ReactNode;
 }) {
   const location = useLocation();
+  const activeDestination = navigationDestination(location.pathname);
   const mobile = useMediaQuery(MOBILE_NAVIGATION_QUERY);
   const [open, setOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
@@ -148,16 +160,19 @@ function AppShell({
             hidden={mobile && !open}
             aria-label="Primary navigation"
           >
-            {nav.map(([to, label]) => (
-              <Link
-                key={to}
-                className={`link-light ${location.pathname === to ? "active fw-semibold" : ""}`}
-                aria-current={location.pathname === to ? "page" : undefined}
-                to={to}
-              >
-                {label}
-              </Link>
-            ))}
+            {nav.map(([to, label]) => {
+              const active = activeDestination === to;
+              return (
+                <Link
+                  key={to}
+                  className={`link-light ${active ? "active fw-semibold" : ""}`}
+                  aria-current={active ? "page" : undefined}
+                  to={to}
+                >
+                  {label}
+                </Link>
+              );
+            })}
             <Link className="link-light" to="/change-password">Change Password</Link>
           </nav>
         </div>
