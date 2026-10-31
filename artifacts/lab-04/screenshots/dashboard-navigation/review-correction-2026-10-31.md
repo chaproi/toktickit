@@ -77,3 +77,63 @@ Actual implementation re-review and reviewed staging integration remain Pending.
 ## Documentation and scope checks
 
 Strict UTF-8, original CRLF/final newlines, whitespace and full diff checks passed. All four original document bodies and historical opening status records remain preserved; original checkboxes are identical. Inventory remains 31 FR / 46 BR / 45 AC / 55 unchanged Planned scenario rows / 20 accepted decisions. All 388 local links/anchors, 65 Markdown tables/806 rows and four newly referenced commit SHAs were checked. The table totals include retained historical records. All 463 original tracked files outside the nine authorized existing paths remain byte-identical, including both protected specification/API contracts and all 200 historical artifact files. One new dated evidence addendum is the tenth changed path. No application execution is attributed to documentation publication.
+
+## Isolated diagnostic confirmation - 2026-10-31
+
+### Current verdict and execution source
+
+**Current full-client confirmation: GREEN, 24 files/352 collected, executed and passed, zero failed/skipped. Current full-E2E confirmation: GREEN, 15 files/70 collected, executed and passed, zero failed/skipped/unexecuted.** Both ran at committed **ee730c0968b4b6428706973669ecbc5c77e608cd**, with no pending production/test/configuration changes. Full browser started with a clean tree after focused generated artifacts were restored. App blob is 2c6fae6fbf2889ef55401af44447940071ee722b. Later evidence/documentation publication is not an application-tested HEAD and is not hosted CI.
+
+These new confirmations supersede the *current failed regression verdict* above, not its historical results. The earlier 304/352 client and 45 passed / 5 failed / 20 did not run browser attempts remain genuine failed runs. Their original root causes are still unestablished. The later build/diagnostic overlap happened after the old full-client failure and is not asserted to have caused it. Passing today does not prove yesterday's cause was fixed.
+
+No application, test, helper, configuration, timeout, worker, dependency or runtime correction was made. No correction or empty implementation commit is manufactured. The user explicitly authorized bounded diagnosis followed by one isolated full confirmation after satisfactory focused results; there were no additional full reruns seeking a lucky pass. The previously passed build was not repeated because source/test/configuration bytes are unchanged; no server suite was needed.
+
+### What the retained failures actually establish
+
+| Inspected evidence | Proven finding / limit |
+| --- | --- |
+| Old full-client raw output | 33 cases grouped under the five-second Vitest timeout; 13 missing-render query failures; 2 value assertions. 24 files collected, 16 failed / 8 passed; no collection failure. The first reported failed file was ResolutionIndication.test.tsx, 10 cases with 2 failures. This is report order, not a measured causal ordering across parallel workers |
+| Passing-to-failing source difference | 96e00aa changes only three newly authored role queries from unsupported exact options to anchored accessible-name regexes. App correction bytes are unchanged. No identified production behavior change explains the broad failure |
+| Setup/collection costs | Old failed runner: transform 17.99s, setup 39.40s, collect 94.30s, environment 204.01s, prepare 53.85s. Current passing runner: 1.35s, 5.69s, 16.83s, 30.98s, 3.37s respectively. These are parallel runner phase totals, not additive wall time or proof of resource-pressure causality |
+| EPERM call site | Existing genuineZoom finally awaits context.close(), validates owned profile path, then rmSync recursively removes exactly that profile. The old stack points to that final removal. No retained historical handle-owner evidence identifies what denied removal; old profile was already safely removed in the prior task. No failure reproduced in the bounded zoom case or full confirmation, so adding retries or changing lifecycle is unsupported |
+| Native worker exits | Installed Playwright 1.63.0 runner ProcessHost uses child_process.fork for workerProcessEntry and reports that child's exit code. Thus four old 3221226091/signal=null events are **Node test-worker exits**, not direct proof of Chromium, Express or application failure. No exception meaning is guessed from the number |
+| Crash-event availability | Windows Application log was readable; no matching node.exe/chrome.exe Application Error/Windows Error Reporting record was found for 2026-10-30 22:20-23:10 Asia/Bangkok. No dump or module/exception evidence establishes the native-exit cause; absence of a matching report does not exclude a crash |
+| Shared lifecycle inspection | Existing React test teardown/fetch restoration, Playwright worker dispatch, guarded profile cleanup and global database/listener teardown were inspected. Current focused/full runs leave no owned work behind. No reproducible lifecycle/readiness defect justifies changing them |
+
+### Controlled execution conditions
+
+Local Windows/PowerShell, 2026-10-31 Asia/Bangkok. Exact installed executable/package versions: Node v24.14.0, npm 11.9.0, Vitest 2.1.9, TypeScript 5.9.3, Playwright 1.63.0, Chromium 153.0.8010.12. No version/dependency/configuration change. One browser worker, zero retries, original timeouts; client uses committed default settings unchanged.
+
+Safe read-only pre-run process inspection found no active Vitest/build/Playwright workspace task. Relevant Node test-worker ownership was the current user. Existing unrelated browsers/tooling were left running; no process was killed, security software disabled, profile broadly deleted or cache cleared. Commands were strictly sequential: focused client -> full client -> focused browser -> full browser. Resource probes were observations, not concurrent tests/builds.
+
+Resource samples: 31.71 GiB physical memory / 12 logical processors; before client 17.50 GiB physical and 20.16 GiB virtual free, CPU 25%; before full browser 17.64 GiB physical and 20.32 GiB virtual free, CPU 51%. During-browser samples: 15.96 / 16.04 GiB physical free, CPU 59% / 48%. Free disk: C 161.00 GiB, D 620.97 GiB. No historical measurements establish conditions during the old failure, and these bounded samples are not peak-usage profiling. Resource pressure remains a hypothesis for the old attempt.
+
+### All newly executed commands and justification
+
+All four commands below ran once, with no overlap, at clean source/test HEAD ee730c0. Durations are measured command wall seconds; runner values are separately labelled. Results overlap and are not additive.
+
+| Command and working directory | Why this execution was justified | Actual result |
+| --- | --- | --- |
+| client/: npm.cmd test -- tests/lab-03/ResolutionIndication.test.tsx | Small representative file selected from earliest reported old failures; preserve every assertion and real-App fixture | 1 file; 10/10 passed, 0 failed/skipped; exit 0; 10.9839449s wall, 7.53s Vitest |
+| client/: npm.cmd test | Authorized isolated full confirmation after bounded client success and safe process check | 24 files; 352/352 passed, 0 failed/skipped; exit 0; 37.6176144s wall, 36.57s Vitest |
+| root/: npm.cmd run test:e2e -- e2e/lab-04/requester-dashboard-layout.spec.ts e2e/lab-04/responsive.spec.ts --grep 'Requester Dashboard genuine 200% tab zoom preserves filters\|Actions screens and all dialogs reflow at 390x844' | Bounded reproduction of actual EPERM cleanup case plus representative native-worker-exit case, unchanged fixtures and settings | 2 files; 2/2 passed, 0 failed/skipped; exit 0; 34.0972582s wall, 32.8s Playwright |
+| root/: npm.cmd run test:e2e | Authorized single full confirmation after bounded browser success, fixture cleanup, restored artifacts and zero active test/build tasks | 15 files; 70/70 passed, 0 failed/skipped/unexecuted; exit 0; 276.0424183s wall, 4.6m Playwright |
+
+The genuine-zoom reproduction verifies 1.0 -> 2.0 -> 1.0; native CSS viewport 1424x805 -> 712x402 -> 1424x805, pinch scale 1. Profile cleanup completes normally. Full E2E executes all 20 previously unexecuted cases as well as the active-state/selected-Action assertions. Successful browser data comes from real React/Express/PostgreSQL. The existing one-time browser transport abort remains deliberately injected recovery evidence, not an actual database outage. New captures were archived, not visually inspected or relabelled as historical screenshots.
+
+Full client retains 10 act, 2 Router future and 1 jsdom navigation warning notices. Focused browser/full browser each emit one NO_COLOR/FORCE_COLOR notice; full browser emits 14 Git line-ending notices while existing capture helpers inspect regenerated metadata. These warnings remain reported; none is proven to explain the old failures.
+
+### Isolation, preservation and final cleanup
+
+The actual repository guard and independent live identity probe verify a dedicated test database distinct from operational before fixtures. Scoped credential environment is restored and probe clients disconnect. Existing per-case fixtures verify zero owned rows/sessions in FK-safe cleanup; global owned migrated schemas are removed. Real endpoints and business assertions were never mocked away or weakened.
+
+All 473 tracked files matched saved pre-run hashes after generated output restoration and before documentation editing. All 201 existing artifact files were restored exactly at that point. Focused browser: 11 overwritten tracked artifacts restored, 8 new owned captures archived/removed. Full browser: 104 overwrites restored, 63 new captures archived/removed. Fresh logs/results/images remain archived separately; only explicit generated paths were restored/removed, no broad reset/clean. This intentional append then changes one existing ledger; the other 200 historical artifact files remain byte-identical, including images and metadata.
+
+Final independent probes: zero owned schemas, zero idle transactions, zero test/build tasks, zero test-profile browser processes, zero application listeners on 3100/4173, zero owned zoom profiles. No manual profile removal was needed in this confirmation. Fixture/session cleanup and held/injected browser request restoration completed; client disconnection and scoped environment restoration verified. No operational database operation or unrelated process/profile change.
+
+### Remaining review gate
+
+Current comprehensive regression is supported as GREEN at ee730c0. Original failure mechanisms/root causes are not claimed resolved, and every failed attempt remains above. Actual implementation re-review and reviewed staging integration remain Pending; the submitted CHANGES_REQUESTED review is not dismissed or resolved by these checks. #45 coordination, #49 final product integration and #50 release remain separate. No Issue/project/scenario/Product DoD change, reviewer message, review submission, thread resolution or merge occurred.
+### Documentation validation
+
+Only this append and tests.md/reviewer.md changed. All 470 other tracked files remain byte-identical, including application source, tests/helpers, configuration and 200 historical artifacts. The ledger retains its original byte prefix; both documents preserve their original bodies, prior status records, checkboxes and accepted identifiers. Counts remain 31 FR / 46 BR / 45 AC / 55 unchanged Planned scenarios / 20 decisions. Checks passed for 392 local links/anchors, 68 Markdown tables / 827 rows, 21 new table rows, strict UTF-8/original CRLF/final newlines and whitespace. No additional application run or causal fix is attributed to evidence publication.
