@@ -21,7 +21,7 @@ export class RecoveryPrerequisiteError extends Error {
   constructor() { super("BLOCKED: explicit standalone SeaweedFS executable unavailable; persistent recovery unverified."); this.name = "RecoveryPrerequisiteError"; }
 }
 
-export async function ownedSeaweed(directory: string, buckets: string[]) {
+export async function ownedSeaweed(directory: string, buckets: string[], options: { writeReady?: boolean } = {}) {
   const executable = process.env.TOKTICKIT_RECOVERY_WEED_EXE;
   if (!executable || !existsSync(executable)) throw new RecoveryPrerequisiteError();
   expect(buckets.every(bucket => /^toktickit-t31-(source|restored)-[a-f0-9]{32}$/.test(bucket))).toBe(true);
@@ -74,6 +74,8 @@ export async function ownedSeaweed(directory: string, buckets: string[]) {
     const initial = await client.send(new ListBucketsCommand({}));
     expect(initial.Buckets ?? [], "Fresh service identity has no pre-existing buckets before writes").toEqual([]);
     for (const bucket of buckets) { await client.send(new CreateBucketCommand({ Bucket: bucket })); created.add(bucket); }
+    // Cold classification opts out explicitly; existing recovery remains write-ready by default.
+    if (options.writeReady !== false) {
     // A listening S3 gateway is not yet evidence of an allocated, write-ready
     // volume. Complete one owned PUT/HEAD/DELETE before opening app mutations.
     // This isolates recovery from cold bootstrap; it does NOT fix slow S3 I/O
@@ -87,6 +89,7 @@ export async function ownedSeaweed(directory: string, buckets: string[]) {
     await client.send(new DeleteObjectCommand({ Bucket: buckets[0]!, Key: readyKey }));
     expect((await client.send(new ListObjectsV2Command({ Bucket: buckets[0]! }))).Contents ?? []).toEqual([]);
     console.info("T31 owned persistent write-readiness completed before application transaction", { elapsedMs: Date.now() - started });
+    }
     return { client, endpoint, credentials, close, persistentFiles() {
       const visit = (path: string): number => readdirSync(path, { withFileTypes: true }).reduce((n, entry) => {
         const name = join(path, entry.name);
