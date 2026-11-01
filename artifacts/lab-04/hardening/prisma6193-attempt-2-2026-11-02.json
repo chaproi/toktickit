@@ -1,0 +1,187 @@
+{
+  "baselineHead": "ed5cecaf2f8a6a2fa9ca2383dda1eb15e3b3471a",
+  "executionHead": "ed5cecaf2f8a6a2fa9ca2383dda1eb15e3b3471a",
+  "startedAt": "2026-11-01T19:32:55.474Z",
+  "sourceDigests": {
+    "observe.ts": "11ed5e0e42e6411fa8e8a1f5eb48ae1621a0e31e30d324ff6beb137a7d7b87a3",
+    "evaluate.ts": "7fec49c6efa2edcc0097aff291618dbbf181463830d20c2d1b98ead86dcb2d78",
+    "run.mjs": "4d6a9205ae5fa1c6e053cf5d4147365435e257ff30abbe2fc1d0236c572c733b",
+    "plan.md": "55f809b0a36425eb848af998b2f7cc3c8d1ee67d24d17795bcdf6cbcfa70e87e"
+  },
+  "executedSourceState": "recorded execution HEAD plus any source bytes identified by sourceDigests; application unchanged",
+  "node": "v24.14.0",
+  "platform": "win32",
+  "stages": [
+    {
+      "phase": "live-target-verification",
+      "elapsedMs": 69.45129999999997,
+      "passed": true
+    },
+    {
+      "phase": "prepare-owned-directory-and-client-schema",
+      "elapsedMs": 10.863100000000031,
+      "passed": true
+    },
+    {
+      "phase": "install-exact-temporary-dependencies",
+      "elapsedMs": 7470.3286,
+      "passed": true
+    },
+    {
+      "phase": "generate-temporary-client",
+      "elapsedMs": 2037.1920999999993,
+      "passed": true
+    },
+    {
+      "phase": "typecheck-public-adapter-and-application-callback",
+      "elapsedMs": 1640.9777999999988,
+      "passed": true
+    },
+    {
+      "phase": "owned-schema-and-committed-migrations",
+      "elapsedMs": 607.2835000000014,
+      "passed": true
+    },
+    {
+      "phase": "bounded-client-engine-gates",
+      "elapsedMs": 5046.467200000001,
+      "passed": false
+    }
+  ],
+  "evaluatedPrismaVersion": "6.19.3",
+  "proof": {
+    "pairs": [],
+    "lifecycle": {
+      "lazy": true,
+      "configurationOwnedPoolDisposed": true,
+      "reconnectFreshPool": true,
+      "settings": {
+        "timezone": "Asia/Bangkok",
+        "readOnly": "on",
+        "ssl": false
+      }
+    },
+    "retention": {
+      "syntheticComponentOnly": true,
+      "strongErrorOrScopeArrays": 0,
+      "diagnosticGcAvailable": true,
+      "batches": [
+        {
+          "generated": 1000,
+          "weaklyObservedAliveAfterDiagnosticGc": 34,
+          "reclaimedObserved": 966
+        },
+        {
+          "generated": 2000,
+          "weaklyObservedAliveAfterDiagnosticGc": 34,
+          "reclaimedObserved": 1966
+        }
+      ],
+      "heapBytesOrProductionLeakRateMeasured": false
+    },
+    "failure": {
+      "phase": "client-engine-component-retention",
+      "classification": {
+        "code": null,
+        "state": null,
+        "kind": null
+      },
+      "assertion": "Expected values to be strictly equal:\n\n1966 !== 2000\n"
+    },
+    "cleanup": {
+      "checkedOutBeforeForcedCleanup": 0,
+      "destroyReleasedOnlyOwnedClients": 0,
+      "poolEnded": false
+    }
+  },
+  "cleanup": {
+    "schemasRemaining": 0,
+    "proofConnectionsRemaining": 0,
+    "nativeClientEnded": true,
+    "temporaryDirectoryRemoved": true
+  },
+  "database": {
+    "guard": true,
+    "liveIdentityMatches": true,
+    "distinctOperationalDatabase": true,
+    "postgresVersion": "PostgreSQL 18.6",
+    "otherNonIdleConnections": 0
+  },
+  "applicationSourceCopies": [
+    {
+      "path": "server/src/auth/eligibility-transaction.ts",
+      "sha256": "8142bee26facc105fd1749de8ff771fb5863484e87e08fd1c09d9346a0b1ba3c"
+    },
+    {
+      "path": "server/src/prisma.ts",
+      "sha256": "1f01de52f7cc1ccb09fbe84cc2b61167452b79afc3060aa6adcd9de6117d81d8"
+    },
+    {
+      "path": "server/src/testing/test-database.ts",
+      "sha256": "b6d0d470aace9b62f9e30e3f09b7288c7f82dae6184c8366c8528113e7deefe9"
+    }
+  ],
+  "commands": [
+    {
+      "phase": "install-exact-temporary-dependencies",
+      "exit": 0
+    },
+    {
+      "phase": "generate-temporary-client",
+      "exit": 0
+    },
+    {
+      "phase": "typecheck-public-adapter-and-application-callback",
+      "exit": 0
+    },
+    {
+      "phase": "bounded-client-engine-gates",
+      "exit": 1
+    }
+  ],
+  "versions": {
+    "prisma": "6.19.3",
+    "@prisma/client": "6.19.3",
+    "@prisma/adapter-pg": "6.19.3",
+    "@prisma/driver-adapter-utils": "6.19.3",
+    "pg": "8.23.0",
+    "typescript": "5.7.2",
+    "tsx": "4.19.2",
+    "@types/node": "22.10.2",
+    "@types/pg": "8.23.1"
+  },
+  "prismaCli": "6.19.3",
+  "packageRequirements": {
+    "prisma": {
+      "version": "6.19.3",
+      "engines": {
+        "node": ">=18.18"
+      },
+      "peerDependencies": {
+        "typescript": ">=5.1.0"
+      }
+    },
+    "@prisma/client": {
+      "version": "6.19.3",
+      "engines": {
+        "node": ">=18.18"
+      },
+      "peerDependencies": {
+        "prisma": "*",
+        "typescript": ">=5.1.0"
+      }
+    },
+    "@prisma/adapter-pg": {
+      "version": "6.19.3",
+      "engines": {},
+      "peerDependencies": {}
+    }
+  },
+  "temporaryLockSha256": "47a5d3b704b33bfd71fe0b890fd45b4b2d0aef1962393ade7b1ce883055710c5",
+  "migrationsApplied": 6,
+  "failure": {
+    "phase": "bounded-client-engine-gates",
+    "code": null,
+    "assertion": null
+  }
+}
