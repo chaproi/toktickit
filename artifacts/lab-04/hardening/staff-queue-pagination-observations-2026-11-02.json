@@ -1,0 +1,330 @@
+{
+  "date": "2026-11-02",
+  "timezone": "Asia/Bangkok",
+  "purpose": "actual returned-row cardinality; not latency measurements",
+  "startingHead": "c3c4b42ce542b65ded8e8f80b3a4185d31cd2066",
+  "redCommit": "a5ea5b0705d0480fb0589f64f3b5f283aa08349c",
+  "greenCommit": "4c7d78d0c70cf0bda6d5a94e3a18f04968504dc6",
+  "greenExecutionState": "HEAD a5ea5b0 plus pending production bytes subsequently committed unchanged as 4c7d78d; no clean post-commit rerun",
+  "fixture": {
+    "users": 5,
+    "sessions": 1,
+    "tickets": 63,
+    "matchingBaseTickets": 60,
+    "eachOwnerGroup": 12,
+    "categories": 2,
+    "systems": 2
+  },
+  "red1": [
+    {
+      "queueRetrieval": {
+        "page": 1
+      },
+      "returned": 10,
+      "observed": [
+        {
+          "kind": "projection",
+          "rows": 60,
+          "transaction": false
+        }
+      ],
+      "snapshots": []
+    }
+  ],
+  "red2": [
+    {
+      "queueRetrieval": {
+        "page": 1
+      },
+      "returned": 10,
+      "observed": [
+        {
+          "kind": "projection",
+          "rows": 60,
+          "transaction": false
+        }
+      ],
+      "aggregates": [],
+      "snapshots": []
+    }
+  ],
+  "green": [
+    {
+      "queueRetrieval": {
+        "page": 1
+      },
+      "returned": 10,
+      "observed": [
+        {
+          "kind": "page IDs",
+          "rows": 10,
+          "transaction": true
+        },
+        {
+          "kind": "projection",
+          "rows": 10,
+          "transaction": true
+        }
+      ],
+      "aggregates": [
+        {
+          "rows": 1,
+          "transaction": true
+        }
+      ],
+      "snapshots": [
+        {
+          "isolation": "repeatable read",
+          "readOnly": "on"
+        }
+      ]
+    },
+    {
+      "queueRetrieval": {
+        "page": 2
+      },
+      "returned": 10,
+      "observed": [
+        {
+          "kind": "page IDs",
+          "rows": 10,
+          "transaction": true
+        },
+        {
+          "kind": "projection",
+          "rows": 10,
+          "transaction": true
+        }
+      ],
+      "aggregates": [
+        {
+          "rows": 1,
+          "transaction": true
+        }
+      ],
+      "snapshots": [
+        {
+          "isolation": "repeatable read",
+          "readOnly": "on"
+        }
+      ]
+    },
+    {
+      "queueRetrieval": {
+        "page": 6
+      },
+      "returned": 10,
+      "observed": [
+        {
+          "kind": "page IDs",
+          "rows": 10,
+          "transaction": true
+        },
+        {
+          "kind": "projection",
+          "rows": 10,
+          "transaction": true
+        }
+      ],
+      "aggregates": [
+        {
+          "rows": 1,
+          "transaction": true
+        }
+      ],
+      "snapshots": [
+        {
+          "isolation": "repeatable read",
+          "readOnly": "on"
+        }
+      ]
+    },
+    {
+      "queueRetrieval": {
+        "page": 7
+      },
+      "returned": 0,
+      "observed": [],
+      "aggregates": [
+        {
+          "rows": 1,
+          "transaction": true
+        }
+      ],
+      "snapshots": [
+        {
+          "isolation": "repeatable read",
+          "readOnly": "on"
+        }
+      ]
+    },
+    {
+      "queueRetrieval": {
+        "owner": "me",
+        "page": 2
+      },
+      "returned": 2,
+      "observed": [
+        {
+          "kind": "page IDs",
+          "rows": 2,
+          "transaction": true
+        },
+        {
+          "kind": "projection",
+          "rows": 2,
+          "transaction": true
+        }
+      ],
+      "aggregates": [
+        {
+          "rows": 1,
+          "transaction": true
+        }
+      ],
+      "snapshots": [
+        {
+          "isolation": "repeatable read",
+          "readOnly": "on"
+        }
+      ]
+    },
+    {
+      "queueRetrieval": {
+        "page": 2,
+        "pageSize": 25
+      },
+      "returned": 25,
+      "observed": [
+        {
+          "kind": "page IDs",
+          "rows": 25,
+          "transaction": true
+        },
+        {
+          "kind": "projection",
+          "rows": 25,
+          "transaction": true
+        }
+      ],
+      "aggregates": [
+        {
+          "rows": 1,
+          "transaction": true
+        }
+      ],
+      "snapshots": [
+        {
+          "isolation": "repeatable read",
+          "readOnly": "on"
+        }
+      ]
+    },
+    {
+      "queueRetrieval": {
+        "page": 2,
+        "pageSize": 50
+      },
+      "returned": 10,
+      "observed": [
+        {
+          "kind": "page IDs",
+          "rows": 10,
+          "transaction": true
+        },
+        {
+          "kind": "projection",
+          "rows": 10,
+          "transaction": true
+        }
+      ],
+      "aggregates": [
+        {
+          "rows": 1,
+          "transaction": true
+        }
+      ],
+      "snapshots": [
+        {
+          "isolation": "repeatable read",
+          "readOnly": "on"
+        }
+      ]
+    }
+  ],
+  "results": [
+    {
+      "attempt": "RED-1",
+      "files": 1,
+      "collected": 19,
+      "executed": 19,
+      "passed": 18,
+      "failed": 1,
+      "skipped": 0,
+      "exit": 1,
+      "frameworkSeconds": 4.17,
+      "caseSeconds": 1.871,
+      "wallSeconds": 5.407
+    },
+    {
+      "attempt": "RED-2",
+      "files": 1,
+      "collected": 19,
+      "executed": 19,
+      "passed": 18,
+      "failed": 1,
+      "skipped": 0,
+      "exit": 1,
+      "frameworkSeconds": 4.09,
+      "caseSeconds": 1.74,
+      "wallSeconds": 5.12
+    },
+    {
+      "attempt": "GREEN-1",
+      "files": 1,
+      "collected": 19,
+      "executed": 19,
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0,
+      "frameworkSeconds": 4.33,
+      "caseSeconds": 2.078,
+      "wallSeconds": 5.424
+    },
+    {
+      "attempt": "INHERITED-1",
+      "files": 4,
+      "collected": 57,
+      "executed": 57,
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0,
+      "frameworkSeconds": 12.1,
+      "wallSeconds": 13.099
+    },
+    {
+      "attempt": "DASHBOARD-1",
+      "files": 3,
+      "collected": 157,
+      "executed": 157,
+      "passed": 157,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0,
+      "frameworkSeconds": 30.85,
+      "wallSeconds": 31.863
+    }
+  ],
+  "cleanup": {
+    "ownedTickets": 0,
+    "ownedUsers": 0,
+    "ownedSessions": 0,
+    "ownedCategories": 0,
+    "ownedSystems": 0,
+    "idleTransactions": 0,
+    "otherNonIdleConnections": 0,
+    "newSchemaOrFaultResources": 0
+  }
+}
