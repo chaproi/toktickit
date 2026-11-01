@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { basename, join, resolve, sep } from "node:path";
 import { isDeepStrictEqual } from "node:util";
 import request from "supertest";
-import { expect, it } from "vitest";
+import { expect, it, onTestFailed } from "vitest";
 import { DeleteObjectCommand, GetObjectCommand, HeadObjectCommand, ListObjectsV2Command, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getPrisma } from "../../src/prisma.js";
 import { applyLab3Baseline, applyLaterMigrations, identifier, oldTables, query, snapshot,
@@ -21,11 +21,36 @@ function same(actual: unknown, expected: unknown, label: string) {
 const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl2nFQAAAAASUVORK5CYII=", "base64");
 const pdf = Buffer.from("%PDF-1.7\n% Synthetic removed recovery fixture\n%%EOF\n");
 
+// Opt-in diagnostic output contains fixed phase labels and monotonic durations only.
+// A timeout snapshot does not cancel or claim completion of an in-flight operation.
+function recoveryPhases() {
+  const origin = performance.now();
+  const active = new Map<string, number>();
+  let lastCompleted: string | null = null;
+  function phase(name: string, event: "start" | "end") {
+    const now = performance.now();
+    const began = active.get(name);
+    console.info("T31 phase", { phase: name, event, atMs: Math.round(now - origin),
+      ...(event === "end" && began !== undefined ? { elapsedMs: Math.round(now - began) } : {}) });
+    if (event === "start") active.set(name, now);
+    else { active.delete(name); lastCompleted = name; }
+  }
+  onTestFailed(() => {
+    const now = performance.now();
+    console.info("T31 failed phase snapshot", { atMs: Math.round(now - origin), lastCompleted,
+      inFlight: [...active].map(([phase, began]) => ({ phase, elapsedMs: Math.round(now - began) })) });
+  });
+  return phase;
+}
+
 // T-31 / AC-31: actual production S3 adapter, owned on-disk SeaweedFS, native
 // PostgreSQL archive and actual binary export. No in-memory/storage mocks.
 it("restores a quiesced PostgreSQL/S3 recovery pair and enforces active/removed attachment access on restored targets", async () => {
+  const phase = recoveryPhases();
+  phase("prerequisites", "start");
   const target = verifiedTestTarget();
   const tools = nativeTools();
+  phase("prerequisites", "end");
   const root = mkdtempSync(join(tmpdir(), "toktickit-t31-"));
   const token = randomUUID().replaceAll("-", "");
   const sourceBucket = `toktickit-t31-source-${token}`, restoredBucket = `toktickit-t31-restored-${token}`;
@@ -38,14 +63,19 @@ it("restores a quiesced PostgreSQL/S3 recovery pair and enforces active/removed 
   try {
     expect(png.length).toBe(68); expect(digest(png)).toBe("15671d6715a3bb032b954ab94af9aedad9a7e0148253891238ff983a56641b12");
     expect(pdf.length).toBe(52); expect(digest(pdf)).toBe("d9324fdc1155ac356fb0f705f0b56b24183d7e4d26922adf8a95ec384cc3c8ea");
-    weed = await ownedSeaweed(join(root, "seaweed"), [sourceBucket, restoredBucket]);
+    weed = await ownedSeaweed(join(root, "seaweed"), [sourceBucket, restoredBucket], { onPhase: phase });
     const s3 = weed.client;
     process.env.SEAWEEDFS_S3_ENDPOINT = weed.endpoint;
     process.env.SEAWEEDFS_ACCESS_KEY = weed.credentials.accessKeyId;
     process.env.SEAWEEDFS_SECRET_KEY = weed.credentials.secretAccessKey;
+    phase("source-schema-create", "start");
     await withDisposableSchema("backup", async (client, sourceSchema) => {
+      phase("source-schema-create", "end");
+      phase("migrations", "start");
       stage = "migrated-source-and-application-target";
       await applyLab3Baseline(client); await applyLaterMigrations(client);
+      phase("migrations", "end");
+      phase("application-target-and-import", "start");
       const sourceUrl = new URL(target.databaseUrl); sourceUrl.searchParams.set("schema", sourceSchema);
       process.env.TEST_DATABASE_URL = sourceUrl.toString(); process.env.DATABASE_URL = sourceUrl.toString();
       process.env.NODE_ENV = "test"; process.env.SEAWEEDFS_BUCKET = sourceBucket;
@@ -57,6 +87,8 @@ it("restores a quiesced PostgreSQL/S3 recovery pair and enforces active/removed 
         "Actual app connection uses exact owned dedicated source, distinct from operational").toBe(true);
       const { app } = await import("../../src/app.js");
       const { cookieHeader, cookieValue, createAuthUser, loginRequest, APPROVED_ORIGIN } = await import("../lab-03/auth-test-helpers.js");
+      phase("application-target-and-import", "end");
+      phase("authentication", "start");
       const actors = [];
       for (const role of ["REQUESTER", "IT_STAFF", "ADMINISTRATOR", "REQUESTER"] as const) {
         const actor = await createAuthUser({ email: `t31-${actors.length}-${token}@example.test`, role });
@@ -64,6 +96,8 @@ it("restores a quiesced PostgreSQL/S3 recovery pair and enforces active/removed 
         expect(login.status, "Real authentication; response/credentials withheld").toBe(200);
         actors.push({ id: actor.user.id, cookie: cookieHeader(login.headers["set-cookie"]), csrf: cookieValue(login.headers["set-cookie"], "toktickit_csrf") });
       }
+      phase("authentication", "end");
+      phase("reference-and-ticket-fixtures", "start");
       const [owner, staff, admin, foreign] = actors;
       const category = await prisma.category.create({ data: { name: `T31 ${token}` } });
       const system = await prisma.relatedSystem.create({ data: { name: `T31 ${token}` } });
@@ -72,7 +106,9 @@ it("restores a quiesced PostgreSQL/S3 recovery pair and enforces active/removed 
         summary: "Synthetic consistent recovery Ticket", description: "Private synthetic recovery context", requestedPriority: "LOW", itPriority: "LOW" } });
       const base = `/api/tickets/${ticket.id}/attachments`;
       const unsafe = (call: request.Test) => call.set("Cookie", owner!.cookie).set("Origin", APPROVED_ORIGIN).set("X-CSRF-Token", owner!.csrf);
+      phase("reference-and-ticket-fixtures", "end");
       stage = "real-upload-and-soft-removal";
+      phase("uploads-and-removal", "start");
       const active = await unsafe(request(app).post(base)).attach("file", png, { filename: "active.png", contentType: "image/png" });
       expect(active.status).toBe(201);
       const removed = await unsafe(request(app).post(base)).attach("file", pdf, { filename: "removed.pdf", contentType: "application/pdf" });
@@ -95,7 +131,9 @@ it("restores a quiesced PostgreSQL/S3 recovery pair and enforces active/removed 
       await absent(sourceBucket, removedRow.storageKey);
       expect(weed!.persistentFiles(), "Real nonempty SeaweedFS files exist on disk, not a Map").toBeGreaterThan(0);
 
+      phase("uploads-and-removal", "end");
       stage = "quiesced-paired-backup";
+      phase("snapshot-and-archive-export", "start");
       // All owned HTTP writers have completed. No background browser/server writer
       // exists. Keep them quiesced until both archives and the manifest are sealed.
       await query(client, "BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY");
@@ -124,12 +162,18 @@ it("restores a quiesced PostgreSQL/S3 recovery pair and enforces active/removed 
       expect(digest(readFileSync(archive))).toBe(manifest.databaseSha256);
       expect(digest(readFileSync(binary))).toBe(manifest.active.sha256);
 
+      phase("snapshot-and-archive-export", "end");
+      phase("source-invalidation-and-disconnect", "start");
       // Invalidate only the owned SOURCE object after sealing the pair. Successful
       // later HTTP reads cannot be accidentally served from retained source data.
       await s3.send(new DeleteObjectCommand({ Bucket: sourceBucket, Key: activeRow.storageKey }));
       await absent(sourceBucket, activeRow.storageKey);
       adapter.close(); adapter = undefined; await prisma.$disconnect();
+      phase("source-invalidation-and-disconnect", "end");
+      phase("restore-schema-create", "start");
       await withDisposableSchema("restore", async (restoreClient, retainedSchema) => {
+        phase("restore-schema-create", "end");
+        phase("database-restore-and-checksums", "start");
         stage = "native-restore-to-separate-owned-targets";
         await query(restoreClient, `DROP SCHEMA ${identifier(retainedSchema)} CASCADE`);
         await query(client, `ALTER SCHEMA ${identifier(sourceSchema)} RENAME TO ${identifier(retainedSchema)}`);
@@ -140,6 +184,8 @@ it("restores a quiesced PostgreSQL/S3 recovery pair and enforces active/removed 
         await native(tools.restore, ["--dbname", environment.PGDATABASE!, "--single-transaction", "--exit-on-error", "--no-owner", "--no-privileges", archive], environment);
         same(await snapshot(restoreClient, sourceSchema, before, tables), before, "All 15 restored table checksums/counts match the sealed database archive");
         same(await snapshot(restoreClient, retainedSchema, before, tables), before, "Retained source DB remains independently unchanged");
+        phase("database-restore-and-checksums", "end");
+        phase("restored-bucket-put", "start");
         const empty = await s3.send(new ListObjectsV2Command({ Bucket: restoredBucket })); expect(empty.Contents ?? []).toEqual([]);
         // Restore only the sealed export, never read live source objects here.
         const sealed = JSON.parse(readFileSync(manifestPath, "utf8")) as typeof manifest;
@@ -147,6 +193,8 @@ it("restores a quiesced PostgreSQL/S3 recovery pair and enforces active/removed 
         expect(digest(readFileSync(binary))).toBe(sealed.active.sha256);
         await s3.send(new PutObjectCommand({ Bucket: restoredBucket, Key: sealed.active.key, Body: readFileSync(binary), ContentType: sealed.active.mimeType }));
         await absent(restoredBucket, removedRow.storageKey);
+        phase("restored-bucket-put", "end");
+        phase("restored-application-target", "start");
         process.env.SEAWEEDFS_BUCKET = restoredBucket; adapter = productionStorage(restoredBucket);
         const [restored] = await prisma.$queryRaw<Array<{ schema: string; oid: number }>>`
           SELECT current_schema() AS schema,to_regnamespace(current_schema())::oid::int AS oid`;
@@ -157,7 +205,9 @@ it("restores a quiesced PostgreSQL/S3 recovery pair and enforces active/removed 
           mimeType: row.mimeType, sizeBytes: row.sizeBytes, uploadedByRequesterId: row.uploadedByUserId, isRemoved: row.isRemoved,
           createdAt: row.createdAt.toISOString(), removedAt: row.removedAt?.toISOString() ?? null,
           removedByRequesterId: row.removedByUserId, removalReason: row.removalReason });
+        phase("restored-application-target", "end");
         stage = "restored-authenticated-reads-and-removal-denial";
+        phase("authorized-reads", "start");
         for (const actor of [owner!, staff!, admin!]) {
           const list = await request(app).get(base).set("Cookie", actor.cookie);
           expect(list.status).toBe(200); same(list.body, { items: metadata.map(safeMetadata) }, "Exact inherited safe metadata; no storage identifiers/private relations");
@@ -176,6 +226,8 @@ it("restores a quiesced PostgreSQL/S3 recovery pair and enforces active/removed 
           expect(/storageKey|seaweed|bucket|passwordHash|tokenHash/i.test(JSON.stringify(gone.body))).toBe(false);
           same(await snapshot(restoreClient, sourceSchema, domain, domainTables), domain, "Authorized recovery reads alter no domain rows; only live-session bookkeeping excluded");
         }
+        phase("authorized-reads", "end");
+        phase("denied-reads-and-preservation", "start");
         for (const suffix of ["", `/${activeRow.id}`, `/${activeRow.id}/content`, `/${removedRow.id}/content`]) {
           const denied = await request(app).get(`${base}${suffix}`).set("Cookie", foreign!.cookie);
           expect(denied.status).toBe(404); expect(denied.body.error.code).toBe(suffix ? "ATTACHMENT_NOT_FOUND" : "TICKET_NOT_FOUND");
@@ -184,23 +236,34 @@ it("restores a quiesced PostgreSQL/S3 recovery pair and enforces active/removed 
         }
         same(await snapshot(restoreClient, sourceSchema, domain, domainTables), domain, "Denials and binary recovery checks preserve exact restored domain");
         await absent(sourceBucket, activeRow.storageKey); await absent(restoredBucket, removedRow.storageKey);
+        phase("denied-reads-and-preservation", "end");
+        phase("restored-client-disconnect", "start");
         adapter.close(); adapter = undefined; await prisma.$disconnect();
+        phase("restored-client-disconnect", "end");
         console.info("T31 recovery pair verified: native archive/all 15 table checksums; real persistent SeaweedFS S3 binary export; fresh restored DB OID/bucket; active 68-byte digest; removed absent/410; 3 authorized roles and foreign denial; no domain writes.");
+        phase("restored-schema-cleanup", "start");
       });
+      phase("restored-schema-cleanup", "end");
+      phase("source-schema-cleanup", "start");
     });
+    phase("source-schema-cleanup", "end");
   } catch (error) {
     if (error instanceof RecoveryPrerequisiteError) throw error;
     const code = (error as { code?: unknown })?.code;
     throw new Error(`T31 ${stage} failed; class=${error instanceof Error ? error.name : "unknown"}; code=${typeof code === "string" && /^(P\d{4}|[A-Z0-9]{5})$/.test(code) ? code : "unclassified"}; details withheld.`);
   } finally {
+    phase("final-client-disconnect", "start");
     adapter?.close(); await getPrisma().$disconnect();
+    phase("final-client-disconnect", "end");
     try { await weed?.close(); }
     finally {
+      phase("settings-and-directory-cleanup", "start");
       for (const key of keys) { if (previous[key] === undefined) delete process.env[key]; else process.env[key] = previous[key]; }
       expect(keys.every(key => process.env[key] === previous[key]), "All scoped environment values restored").toBe(true);
       // Verify the absolute owned target before recursive removal; no shared path.
       expect(resolve(root).startsWith(resolve(tmpdir()) + sep) && basename(root).startsWith("toktickit-t31-")).toBe(true);
       rmSync(root, { recursive: true, force: true }); expect(existsSync(root)).toBe(false);
+      phase("settings-and-directory-cleanup", "end");
       console.info("T31 cleanup verified: owned buckets/objects, process, binary export/DB archive and directory removed; schema helpers check remaining=0; clients/settings restored.");
     }
   }

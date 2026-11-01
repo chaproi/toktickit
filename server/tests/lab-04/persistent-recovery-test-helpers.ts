@@ -21,10 +21,11 @@ export class RecoveryPrerequisiteError extends Error {
   constructor() { super("BLOCKED: explicit standalone SeaweedFS executable unavailable; persistent recovery unverified."); this.name = "RecoveryPrerequisiteError"; }
 }
 
-export async function ownedSeaweed(directory: string, buckets: string[], options: { writeReady?: boolean } = {}) {
+export async function ownedSeaweed(directory: string, buckets: string[], options: { writeReady?: boolean; onPhase?: (phase: string, event: "start" | "end") => void } = {}) {
   const executable = process.env.TOKTICKIT_RECOVERY_WEED_EXE;
   if (!executable || !existsSync(executable)) throw new RecoveryPrerequisiteError();
   expect(buckets.every(bucket => /^toktickit-t31-(source|restored)-[a-f0-9]{32}$/.test(bucket))).toBe(true);
+  options.onPhase?.("service-startup-and-listening", "start");
   mkdirSync(directory);
   const [master, masterGrpc, volume, volumeGrpc, filer, filerGrpc, s3, s3Grpc] = await Promise.all(Array.from({ length: 8 }, freePort));
   expect(new Set([master, masterGrpc, volume, volumeGrpc, filer, filerGrpc, s3, s3Grpc]).size).toBe(8);
@@ -48,6 +49,7 @@ export async function ownedSeaweed(directory: string, buckets: string[], options
   const client = new S3Client({ endpoint, region: "us-east-1", forcePathStyle: true, credentials, maxAttempts: 1 });
   const created = new Set<string>();
   async function close() {
+    options.onPhase?.("storage-and-process-cleanup", "start");
     try {
       for (const bucket of created) {
         const objects = await client.send(new ListObjectsV2Command({ Bucket: bucket }));
@@ -63,6 +65,7 @@ export async function ownedSeaweed(directory: string, buckets: string[], options
       client.destroy();
       if (!exited) { const ended = once(child, "exit"); child.kill(); await ended; }
       expect(exited, "Owned Seaweed process ended").toBe(true);
+      options.onPhase?.("storage-and-process-cleanup", "end");
     }
   }
   try {
@@ -71,11 +74,15 @@ export async function ownedSeaweed(directory: string, buckets: string[], options
       if (exited) return false;
       try { await client.send(new ListBucketsCommand({})); return true; } catch { return false; }
     }, { timeout: 10_000, interval: 100 }).toBe(true);
+    options.onPhase?.("service-startup-and-listening", "end");
+    options.onPhase?.("storage-namespace-creation", "start");
     const initial = await client.send(new ListBucketsCommand({}));
     expect(initial.Buckets ?? [], "Fresh service identity has no pre-existing buckets before writes").toEqual([]);
     for (const bucket of buckets) { await client.send(new CreateBucketCommand({ Bucket: bucket })); created.add(bucket); }
+    options.onPhase?.("storage-namespace-creation", "end");
     // Cold classification opts out explicitly; existing recovery remains write-ready by default.
     if (options.writeReady !== false) {
+    options.onPhase?.("storage-write-readiness", "start");
     // A listening S3 gateway is not yet evidence of an allocated, write-ready
     // volume. Complete one owned PUT/HEAD/DELETE before opening app mutations.
     // This isolates recovery from cold bootstrap; it does NOT fix slow S3 I/O
@@ -89,6 +96,7 @@ export async function ownedSeaweed(directory: string, buckets: string[], options
     await client.send(new DeleteObjectCommand({ Bucket: buckets[0]!, Key: readyKey }));
     expect((await client.send(new ListObjectsV2Command({ Bucket: buckets[0]! }))).Contents ?? []).toEqual([]);
     console.info("T31 owned persistent write-readiness completed before application transaction", { elapsedMs: Date.now() - started });
+    options.onPhase?.("storage-write-readiness", "end");
     }
     return { client, endpoint, credentials, close, persistentFiles() {
       const visit = (path: string): number => readdirSync(path, { withFileTypes: true }).reduce((n, entry) => {
