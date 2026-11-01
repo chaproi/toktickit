@@ -1,0 +1,119 @@
+{
+  "executionHead": "4a8829c1e2ccfb1ffc824ab0d49b19740fb4df5b",
+  "startedAt": "2026-11-01T19:21:24.630Z",
+  "stages": [
+    {
+      "name": "guarded-live-target-verification",
+      "elapsedMs": 61.436499999999995,
+      "passed": true
+    },
+    {
+      "name": "prepare-owned-directory",
+      "elapsedMs": 10.511600000000044,
+      "passed": true
+    },
+    {
+      "name": "install-pinned-temporary-dependencies",
+      "elapsedMs": 3002.5935,
+      "passed": true
+    },
+    {
+      "name": "generate-temporary-client",
+      "elapsedMs": 961.9754000000003,
+      "passed": true
+    },
+    {
+      "name": "typecheck-assessment",
+      "elapsedMs": 1045.9988000000003,
+      "passed": true
+    },
+    {
+      "name": "bounded-lifecycle-and-retention",
+      "elapsedMs": 2282.5061000000005,
+      "passed": false
+    }
+  ],
+  "commands": [
+    {
+      "name": "install-pinned-temporary-dependencies",
+      "exit": 0
+    },
+    {
+      "name": "generate-temporary-client",
+      "exit": 0
+    },
+    {
+      "name": "typecheck-assessment",
+      "exit": 0
+    },
+    {
+      "name": "bounded-lifecycle-and-retention",
+      "exit": 1
+    }
+  ],
+  "sourceDigests": {
+    "assessment.ts": "5946542f4b9e1d3f553050e2c3e1da069f91ca57a7c6c270b81754c301b5e596",
+    "run.mjs": "d6a670df57d29a367fa36cfd4a0ed1a0ebdeba5b72dca347a0989d91716d503b",
+    "plan.md": "32418ee89332a85104ae449852bbd0becfda663dc06a7eeb2e5913a311c4c37d"
+  },
+  "applicationChanged": false,
+  "node": "v24.14.0",
+  "platform": "win32",
+  "isolation": {
+    "liveTargetMatchesGuard": true,
+    "distinctOperationalDatabase": true,
+    "otherNonIdleConnections": 0,
+    "postgresVersion": "PostgreSQL 18.6"
+  },
+  "localUrlOptionNames": [
+    "schema"
+  ],
+  "ambientPgEnvironmentNames": [],
+  "sourceCopies": [
+    {
+      "path": "server/src/prisma.ts",
+      "sha256": "1f01de52f7cc1ccb09fbe84cc2b61167452b79afc3060aa6adcd9de6117d81d8"
+    },
+    {
+      "path": "server/src/testing/test-database.ts",
+      "sha256": "b6d0d470aace9b62f9e30e3f09b7288c7f82dae6184c8366c8528113e7deefe9"
+    }
+  ],
+  "versions": {
+    "@prisma/client": "5.22.0",
+    "@prisma/adapter-pg": "5.22.0",
+    "@prisma/driver-adapter-utils": "5.22.0",
+    "pg": "8.23.0",
+    "typescript": "5.7.2",
+    "tsx": "4.19.2",
+    "@types/node": "22.10.2",
+    "@types/pg": "8.23.1"
+  },
+  "temporaryLockSha256": "612a5489ed2bc018b6a2c5aed5951699f84ce2d1cd4453448034717ed68bd9b6",
+  "prismaCli": "5.22.0",
+  "assessment": {
+    "nativeLifecycle": {
+      "noConnectionAtImportOrConstruction": true,
+      "sameGetterInstance": true,
+      "missingTestTargetRejected": true,
+      "disconnectReleasedConnections": true,
+      "reconnectSameSettings": true
+    },
+    "nativeObservedPoolMax": 17,
+    "failure": {
+      "phase": "public-adapter-lifecycle-and-settings",
+      "assertion": null
+    },
+    "taggedConnectionsRemaining": 0
+  },
+  "failure": {
+    "phase": "bounded-lifecycle-and-retention",
+    "assertion": null
+  },
+  "cleanup": {
+    "taggedConnections": 0,
+    "observerEnded": true,
+    "ownedDirectoryRemoved": true
+  },
+  "finishedAt": "2026-11-01T19:21:32.092Z"
+}
