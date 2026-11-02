@@ -1,6 +1,7 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import { execFileSync } from "node:child_process";
-import { randomUUID } from "node:crypto";
+import { randomUUID, randomInt } from "node:crypto";
+import { setTimeout as wait } from "node:timers/promises";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { Prisma } from "@prisma/client";
@@ -12,6 +13,7 @@ import { actionSnapshot, assertSafeEqual, assertSafeError, LITERAL } from "./act
 import { retryState } from "./action-retry-test-helpers.js";
 import { rejectionEvidence } from "./create-contention-evidence.js";
 import { query, serverDirectory, verifiedTestTarget } from "./migration-test-fixtures.js";
+import { observeCreateQueries, type PlannerMode } from "./create-query-observer.js";
 
 const deferred = () => { let resolve!: () => void;
   const promise = new Promise<void>(accept => { resolve = accept; }); return { promise, resolve }; };
@@ -24,6 +26,8 @@ async function finite<T>(work: Promise<T>) {
 
 type Attempt = { number: number; backend?: number; xid?: string; isolation?: string;
   gates: boolean[]; gateRestartExecuted: boolean; callbackReturned: boolean;
+  queries: Array<{ operation: string; elapsedMs: number; sqlState?: string }>;
+  retryDelayMs?: number;
   missingReceipt?: boolean; rejection?: ReturnType<typeof rejectionEvidence>; rollbackExact?: boolean };
 type Command = { label: string; phase: "concurrent" | "serial"; attempts: Attempt[];
   status?: number; errorCode?: string; exactPersistence?: boolean };
@@ -36,6 +40,9 @@ type Source = { actor: CreateActor; parent: Awaited<ReturnType<ActionCreateFixtu
 // No SQL fault, synthetic dependency, query-plan setting or HTTP retry.
 it("attributes eight independent concurrent CREATE commands before choosing a T-47 correction", async () => {
   const fixtures = new ActionCreateFixtures(), context = new AsyncLocalStorage<Command>();
+  const attemptContext = new AsyncLocalStorage<Attempt>();
+  const mode = (process.env.TOKTICKIT_CREATE_PLANNER_DIAGNOSTIC ?? "default") as PlannerMode;
+  expect(["default", "ticket-index", "receipt-index", "both-index", "retry-jitter"]).toContain(mode);
   const ready = deferred(), release = deferred(); let arrivals = 0;
   const pending: Promise<unknown>[] = [], commands: Command[] = [];
   const report: Record<string, unknown> = { mode: "bounded-create-diagnosis-not-T47", startedAt: new Date().toISOString(),
@@ -43,6 +50,7 @@ it("attributes eight independent concurrent CREATE commands before choosing a T-
     node: process.version, commands, cleanup: {}, businessRequestsPlanned: 16 };
   let native: Client | undefined, restore: (() => void) | undefined, connected = false, stage = "guard";
   let failure: unknown;
+  let observation: ReturnType<typeof observeCreateQueries> | undefined;
   try {
     const target = verifiedTestTarget();
     native = new Client({ connectionString: target.databaseUrl });
@@ -51,6 +59,10 @@ it("attributes eight independent concurrent CREATE commands before choosing a T-
       "SELECT current_database() AS database,current_setting('server_version_num') AS version")).rows[0];
     expect(live.database === target.identity.databaseName, "Live dedicated target matches guard; identity redacted").toBe(true);
     report.postgresVersionNumber = live.version;
+    observation = observeCreateQueries(native, mode, () => {
+      const command = context.getStore(), attempt = attemptContext.getStore();
+      return command && attempt ? { label: command.label, attempt: attempt.number, backend: attempt.backend, queries: attempt.queries } : undefined;
+    }, report);
     stage = "fixtures"; await fixtures.initialize();
     const actors = [];
     for (let index = 0; index < 8; index++) actors.push(await fixtures.read.actor(`contention-${index}`, "IT_STAFF"));
@@ -67,6 +79,9 @@ it("attributes eight independent concurrent CREATE commands before choosing a T-
     expect(new Set(actors.map(actor => actor.user.id)).size).toBe(8);
     expect(new Set(sources.map(source => source.parent.id)).size).toBe(16);
     expect(new Set(sources.map(source => source.input.clientMutationId)).size).toBe(16);
+    report.fixtureScale = (await native.query(`SELECT
+      (SELECT count(*)::int FROM "Ticket") AS tickets,(SELECT count(*)::int FROM "MutationReceipt") AS receipts,
+      (SELECT count(*)::int FROM "User") AS users,(SELECT count(*)::int FROM "AuthSession") AS sessions`)).rows[0];
     report.independentActorAssigneeTicketKeysVerified = true;
     const db = getPrisma(), original = db.$transaction.bind(db);
     const spy = vi.spyOn(db, "$transaction").mockImplementation((...args: unknown[]) => {
@@ -76,11 +91,11 @@ it("attributes eight independent concurrent CREATE commands before choosing a T-
         return Reflect.apply(original, db, args);
       }
       const source = sources.find(value => value.command === command)!;
-      const attempt: Attempt = { number: command.attempts.length + 1, gates: [],
+      const attempt: Attempt = { number: command.attempts.length + 1, gates: [], queries: [],
         gateRestartExecuted: false, callbackReturned: false };
       command.attempts.push(attempt);
       const callback = args[0] as (tx: Prisma.TransactionClient) => Promise<unknown>;
-      return Reflect.apply(original, db, [async (tx: Prisma.TransactionClient) => {
+      const run = () => attemptContext.run(attempt, () => Reflect.apply(original, db, [async (tx: Prisma.TransactionClient) => {
         // Same public observation as the earlier diagnostic. This extra SELECT
         // precedes gates and may affect scheduling; this is not a timing run.
         const [identity] = await tx.$queryRaw<Array<{ backend: number; xid: string; isolation: string }>>`
@@ -120,7 +135,16 @@ it("attributes eight independent concurrent CREATE commands before choosing a T-
           return typeof value === "function" ? value.bind(target) : value;
         } });
         const result = await callback(observed); attempt.callbackReturned = true; return result;
-      }, ...args.slice(1)]).catch(async (error: unknown) => {
+      }, ...args.slice(1)]));
+      const previousAttempt = command.attempts.at(-2);
+      const work = mode === "retry-jitter" && attempt.number > 1 && previousAttempt?.rejection?.sqlStates.includes("40001")
+        ? (async () => {
+          // One finite test-only contrast, not a fourth attempt or an HTTP
+          // retry. Delay is outside the completed/rolled-back transaction.
+          attempt.retryDelayMs = randomInt(1, (attempt.number === 2 ? 64 : 128) + 1);
+          await wait(attempt.retryDelayMs); return run();
+        })() : run();
+      return work.catch(async (error: unknown) => {
         attempt.rejection = rejectionEvidence(error, attempt.gateRestartExecuted, attempt.callbackReturned);
         // Real transaction completion/rejection precedes this independent read.
         // This command has a unique parent; no other command can alter it.
@@ -201,6 +225,7 @@ it("attributes eight independent concurrent CREATE commands before choosing a T-
     failure = error; report.failure = { stage, kind: "diagnostic-infrastructure-or-domain-check", ...rejectionEvidence(error, false, false) };
   } finally {
     release.resolve(); await Promise.allSettled(pending); restore?.();
+    await observation?.drain(); observation?.restore();
     const cleanup: Record<string, unknown> = { operationsDrained: true, transactionObserverRestored: true };
     try { await fixtures.cleanup(); cleanup.ownedFixturesRemoved = true; }
     catch (error) { failure ??= error; cleanup.ownedFixturesRemoved = false; }
