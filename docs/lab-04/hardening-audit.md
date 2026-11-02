@@ -400,6 +400,12 @@ All nine runner records remain: initial deadline pass; two failed first-read att
 
 Real authorized Action CREATE/EDIT RED, candidate package/engine adoption, fresh authorization/eligibility/token retry checks, exhaustion/negative classifications, T-51/T-52 and affected/full-server/build are **blocked/unexecuted**, not waived. The original T-47 workload/samples remain unchanged and were not rerun. Guard/live identity, exact owned schema/directory/process cleanup, zero idle/owned connections and539 starting tracked-file hashes passed. Only this audit changes afterward among those originals. All55 scenario/status/decision/checkbox cells remain unchanged; T-47 remains F current+I. No PR, merge, Issue metadata or acceptance promotion.
 
+## 23. Prospective Lab4-only retention decision and candidate adoption - 2026-11-02
+
+The student explicitly accepts the section22 failed-start waiting-record retention **only for the Lab4 candidate**. Records may accumulate until disconnect; no per-record public cleanup or memory-growth bound is established. This is neither a retention fix, production deployment approval nor peer acceptance. Preserve the [exact retention evidence](../../artifacts/lab-04/hardening/prisma6193-start-deadline-retention-2026-11-02.json) and all historical stop/failure records. The [dated prospective adoption ledger](../../artifacts/lab-04/hardening/prisma6193-adoption-2026-11-02.md) records the decision before application edits/tests. Do not reopen retention exploration or request the same authorization again.
+
+Only that specific adoption stop condition is removed. The authorized next batch is real authenticated CREATE/EDIT COMMIT-recovery RED, pinned6.19.3 public-composition candidate GREEN and focused/affected/build/filtered-comprehensive server verification. All remaining correctness, resource, security, <=3 confirmed40001-only retries, safe receipt recovery and performance requirements remain in force. The unchanged T-47 benchmark is explicitly excluded from this adoption batch and stays failed; no Product DoD/scenario status or peer/release approval changes.
+
 [t01]: https://github.com/chaproi/toktickit/blob/dd8eafb9a101625d07e4ce164fcc856402ecaed5/docs/lab-04/tests.md#L17
 [t02]: https://github.com/chaproi/toktickit/blob/dd8eafb9a101625d07e4ce164fcc856402ecaed5/docs/lab-04/tests.md#L18
 [t03]: https://github.com/chaproi/toktickit/blob/dd8eafb9a101625d07e4ce164fcc856402ecaed5/docs/lab-04/tests.md#L19
