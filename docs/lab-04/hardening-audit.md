@@ -438,6 +438,15 @@ Initial2050 Tickets/8000 Actions/24000 Action histories/3800 Ticket events/50 us
 Independent post-run probes confirm zero owned schemas/fixtures/sessions/candidate or other dedicated connections/idle transactions/workers; all requests drained/listeners/observers/settings restored. No application, test, helper, dependency, migration, plan or historical artifact change. Known Lab4-only failed-start metadata retention and15 untriaged dependency-audit findings remain explicit, not waived. **T-47 remains F current+I**, all55 scenarios remain Planned, and Product DoD/decisions/Issue/PR metadata unchanged. Broader visual/accessibility, fresh final integration, implementation peer review and #50 release remain separate.
 
 
+
+## 26. Concurrent CREATE diagnosis prepared; execution blocked by missing test target - 2026-11-02
+
+The user authorized proceeding from section25. The [preparation ledger and resume command](../../artifacts/lab-04/hardening/t47-create-contention-preparation-2026-11-02.md) correct the shared-assignee hypothesis: the original workload already uses separate self-assigned workers. Existing predicate-lock observations remain evidence of overlap, not an identified dangerous dependency. Structured40001 must also distinguish the gate's explicitly executed restart statement from a completion/query failure. Historical samples are not reclassified.
+
+A new bounded eight-actor concurrent CREATE diagnostic plus eight serial controls preserves real auth, independent actor/assignee/Ticket/key targets, maximum3 attempts and exact rollback/persistence checks. It prepares request/attempt attribution and a receipt-boundary lock snapshot without changing production or injecting a dependency/fault. Its pass is diagnostic completion only, never T-47 acceptance. New safe projection unit tests pass **5/5** after one retained observer bug correction; corrected TypeScript passes after an initial new type error.
+
+The database integration command **did not collect or execute tests**: existing global setup rejected the absent TEST_DATABASE_URL on the new Linux workspace. No actual concurrency/rollback result, diagnostic JSON, semantic RED, application GREEN, regression or performance run is claimed. Resume once on the already configured guarded Windows/PostgreSQL host using the ledger command, inspect evidence, then choose a supported narrow correction. Do not rerun T-47 or reopen compatibility/retention proofs for this preparation. Production, manifests/locks, existing tests/DDL, workload and all historical artifacts remain unchanged. T-47 remains **F current+I**; scenario/DoD/Issue/PR states and known limitations are preserved.
+
 [t01]: https://github.com/chaproi/toktickit/blob/dd8eafb9a101625d07e4ce164fcc856402ecaed5/docs/lab-04/tests.md#L17
 [t02]: https://github.com/chaproi/toktickit/blob/dd8eafb9a101625d07e4ce164fcc856402ecaed5/docs/lab-04/tests.md#L18
 [t03]: https://github.com/chaproi/toktickit/blob/dd8eafb9a101625d07e4ce164fcc856402ecaed5/docs/lab-04/tests.md#L19
