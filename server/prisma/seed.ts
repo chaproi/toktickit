@@ -364,8 +364,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  const { PrismaClient } = await import("@prisma/client");
-  const prisma = new PrismaClient();
+  const { createPrismaClient } = await import("../src/prisma-client.js");
+  const prisma = createPrismaClient();
   try {
     await seedDatabase(prisma);
   } finally {

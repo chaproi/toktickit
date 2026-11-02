@@ -1,3 +1,4 @@
+import { observePrisma } from "./prisma-observation-test-helper.js";
 import { randomUUID } from "node:crypto";
 import type { Prisma, RequestedPriority, TicketStatus } from "@prisma/client";
 import { Client } from "pg";
@@ -10,7 +11,8 @@ import { verifiedTestTarget } from "./migration-test-fixtures.js";
 
 // Ordinary OP-19 semantics; T-47 diagnosis regression, not a latency benchmark.
 const marker = `queue49-${randomUUID().slice(0, 8)}`;
-const db = getPrisma();
+const originalClient = getPrisma();
+let db = originalClient;
 const users: number[] = [], tickets: number[] = [], categories: number[] = [], systems: number[] = [];
 let staff: number, administrator: number, inactive: number, demoted: number, cookie: string;
 const ids: number[] = [];
@@ -26,7 +28,7 @@ const aggregates: Array<{ rows: number; transaction: boolean }> = [];
 
 // Pass-through middleware observes actual returned Ticket projections/page IDs.
 // No successful result, query argument, authorization or transaction is replaced.
-db.$use(async (params, next) => {
+db = observePrisma(originalClient, async (params, next) => {
   const result: unknown = await next(params);
   if (capture && params.action === "queryRaw" && Array.isArray(result) && result.length === 1 &&
       result[0] !== null && typeof result[0] === "object" && "matching" in result[0]) {
@@ -43,6 +45,7 @@ db.$use(async (params, next) => {
 });
 
 beforeAll(async () => {
+  vi.spyOn(await import("../../src/prisma.js"), "getPrisma").mockReturnValue(db);
   const target = verifiedTestTarget();
   const probe = new Client({ connectionString: target.databaseUrl });
   try {

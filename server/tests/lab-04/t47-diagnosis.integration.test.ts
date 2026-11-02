@@ -1,3 +1,4 @@
+import { createPrismaClient } from "../../src/prisma-client.js";
 import { randomUUID } from "node:crypto";
 import { createServer, Agent, type Server } from "node:http";
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -35,7 +36,7 @@ it("diagnoses two-worker receipt conflicts and profiles four real routes with 35
         url.searchParams.set("schema", schema); url.searchParams.set("application_name", tag);
         process.env.DATABASE_URL = url.toString(); process.env.TEST_DATABASE_URL = url.toString(); process.env.NODE_ENV = "test";
         // Same real client/driver/default pool; query events only. No delegate/results mock.
-        db = new PrismaClient({ log: [{ emit: "event", level: "query" }] });
+        db = createPrismaClient({ log: [{ emit: "event", level: "query" }] });
         getter = vi.spyOn(prismaModule, "getPrisma").mockReturnValue(db as ReturnType<typeof prismaModule.getPrisma>);
         const [live] = await db.$queryRaw<Array<{ db: string; schema: string; tag: string }>>`
           SELECT current_database() AS db,current_schema() AS schema,current_setting('application_name') AS tag`;
@@ -43,6 +44,7 @@ it("diagnoses two-worker receipt conflicts and profiles four real routes with 35
           "Real diagnostic app uses exact guarded owned target/tag; identities withheld").toBe(true);
         report.isolationVerified = true;
         observer = new DiagnosticObserver(db, client, tag, schema);
+        getter.mockReturnValue(observer.db as ReturnType<typeof prismaModule.getPrisma>);
         listener = createServer((req, res) => {
           const id = String(req.headers["x-t47-diagnostic"] ?? "provisioning");
           const trace = observer!.traces.get(id);

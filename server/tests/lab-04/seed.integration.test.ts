@@ -1,3 +1,5 @@
+import { observePrisma } from "./prisma-observation-test-helper.js";
+import { createPrismaClient } from "../../src/prisma-client.js";
 import { randomBytes, randomUUID } from "node:crypto";
 import { Prisma, PrismaClient, type Action } from "@prisma/client";
 import type { Client } from "pg";
@@ -27,7 +29,7 @@ async function withSeedSchema(
     await applyLaterMigrations(client);
     const url = new URL(verifiedTestTarget().databaseUrl);
     url.searchParams.set("schema", schema);
-    const prisma = new PrismaClient({ datasources: { db: { url: url.toString() } }, log: [] });
+    const prisma = createPrismaClient({ datasources: { db: { url: url.toString() } }, log: [] });
     const previous = process.env.LAB3_SEED_INITIAL_CREDENTIALS;
     process.env.LAB3_SEED_INITIAL_CREDENTIALS = JSON.stringify(Object.fromEntries(
       LAB3_SEEDED_USERS.map((user) => [user.email, credential()]),
@@ -588,14 +590,15 @@ describe("Safe seed failure diagnostics", () => {
       let observed: { errorClass: string; code: string | null } | undefined;
       // Observe only the failing operation's safe classification before the
       // production/test wrappers redact it. Do not retain/log the error itself.
-      prisma.$use(async (parameters, next) => {
+      prisma = observePrisma(prisma, async (parameters, next) => {
         const started = performance.now();
         try { return await next(parameters); }
         catch (error) {
           if (parameters.model === "InternalNote" && parameters.action === "create") {
             observed = {
               errorClass: error instanceof Prisma.PrismaClientKnownRequestError ? "PrismaClientKnownRequestError" :
-                error instanceof Prisma.PrismaClientUnknownRequestError ? "PrismaClientUnknownRequestError" : "Error",
+                error instanceof Prisma.PrismaClientUnknownRequestError ? "PrismaClientUnknownRequestError" :
+                  error instanceof Error && error.name === "DriverAdapterError" ? "UnknownError" : "Error",
               code: error instanceof Prisma.PrismaClientKnownRequestError && /^P\d{4}$/u.test(error.code) ? error.code : null,
             };
             console.info(JSON.stringify({ ...observed, stage: "seed.internal-note.insert", elapsedMs: Math.round(performance.now() - started) }));
@@ -646,7 +649,7 @@ describe("Bounded atomic seed bootstrap transaction", () => {
     await withSeedSchema(async (prisma, client, schema) => {
       const before = await snapshot(client, schema, undefined, tables);
       let expired = false;
-      prisma.$use(async (parameters, next) => {
+      prisma = observePrisma(prisma, async (parameters, next) => {
         try { return await next(parameters); }
         catch (error) {
           // Inspect transiently, retain only this allowlisted classification.

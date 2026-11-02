@@ -110,15 +110,20 @@ async function gatesAvailable(ticketId: number) {
 }
 type ClassifiedFailure = { code: string; expired: boolean; timeoutMs: number | null; engineElapsedMs: number | null; elapsedMs: number };
 function classify(error: unknown, elapsedMs: number): ClassifiedFailure {
-  const value = error as { code?: unknown; meta?: { error?: unknown } };
+  const value = error as { code?: unknown; meta?: { error?: unknown; operation?: unknown; timeout?: unknown; timeTaken?: unknown } };
   const code = typeof value?.code === "string" && /^P\d{4}$/.test(value.code) ? value.code : "unclassified";
   // Inspect ONLY the specific engine detail transiently. Never retain or log it.
   // Bare P2028, message-only matches and other transaction causes are not expiry.
   const detail = typeof value?.meta?.error === "string" ? value.meta.error : "";
-  const expired = code === "P2028" && /\bexpired transaction\b/i.test(detail);
+  // Prisma6's public execution-timeout subtype supplies structured fields;
+  // acquisition/closed/unknown P2028 variants do not have this combination.
+  const boundedNumber = (n: unknown): n is number => typeof n === "number" && Number.isSafeInteger(n) && n > 0 && n < 120_000;
+  const structuredExpiry = code === "P2028" && ["query", "commit", "rollback"].includes(String(value.meta?.operation)) &&
+    boundedNumber(value.meta?.timeout) && boundedNumber(value.meta?.timeTaken) && value.meta.timeTaken >= value.meta.timeout;
+  const expired = code === "P2028" && (/\bexpired transaction\b/i.test(detail) || structuredExpiry);
   const number = (pattern: RegExp) => { const n = Number(detail.match(pattern)?.[1]); return Number.isSafeInteger(n) && n > 0 && n < 120_000 ? n : null; };
-  return { code, expired, timeoutMs: expired ? number(/timeout.{0,100}?(\d+)\s*ms/i) : null,
-    engineElapsedMs: expired ? number(/however\s+(\d+)\s*ms/i) : null, elapsedMs };
+  return { code, expired, timeoutMs: structuredExpiry ? value.meta!.timeout as number : expired ? number(/timeout.{0,100}?(\d+)\s*ms/i) : null,
+    engineElapsedMs: structuredExpiry ? value.meta!.timeTaken as number : expired ? number(/however\s+(\d+)\s*ms/i) : null, elapsedMs };
 }
 function observeUpload(ticketId: number, controlledExpiry: boolean) {
   const evidence = { attempts: 0, failure: null as ClassifiedFailure | null, storeMs: 0, putSucceeded: false,

@@ -1,3 +1,4 @@
+import { observePrisma } from "./prisma-observation-test-helper.js";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { createHash } from "node:crypto";
 import { Prisma, PrismaClient } from "@prisma/client";
@@ -35,8 +36,10 @@ export class DiagnosticObserver {
   private restoreTransaction?: () => void;
   private sampler: ReturnType<typeof setInterval> | undefined;
   private samplePending: Promise<unknown> = Promise.resolve();
-  constructor(readonly db: PrismaClient<any, "query">, readonly native: Client, readonly tag: string, readonly schema: string) {
-    db.$use(async (params, next) => {
+  readonly db: PrismaClient<any, "query">;
+  constructor(db: PrismaClient<any, "query">, readonly native: Client, readonly tag: string, readonly schema: string) {
+    const events = db;
+    db = observePrisma(db, async (params, next) => {
       const trace = this.context.getStore(), begin = performance.now();
       try {
         const result = await next(params);
@@ -51,7 +54,8 @@ export class DiagnosticObserver {
         throw error;
       }
     });
-    db.$on("query", event => {
+    this.db = db;
+    events.$on("query", event => {
       if (this.phase === "setup") return;
       const request = this.baselineRequest; // Only single-request baselines are unambiguously assigned.
       const shape = createHash("sha256").update(event.query.replaceAll(this.schema, "<owned>")).digest("hex").slice(0, 16);
