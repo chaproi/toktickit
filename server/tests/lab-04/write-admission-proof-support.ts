@@ -5,13 +5,15 @@ import type { SqlDriverAdapterFactory } from "@prisma/driver-adapter-utils";
 import type { PoolClient } from "pg";
 
 const selected = new AsyncLocalStorage<boolean>();
-const attempts = new AsyncLocalStorage<AdmissionAttempt>();
+const attempts = new AsyncLocalStorage<AdmissionAttempt | undefined>();
 const handoff = new AsyncLocalStorage<{ client: PoolClient; used: boolean }>();
 export const ADMISSION_NAMESPACE = 0x544b3441;
 export function withWriteAdmission<T>(work: () => T): T { return selected.run(true, work); }
 export function newAdmissionAttempt(maxWait: number) { return selected.getStore() ? new AdmissionAttempt(maxWait) : undefined; }
 export function admissionContext<T>(attempt: AdmissionAttempt | undefined, work: () => T): T {
-  return attempt ? attempts.run(attempt, work) : work();
+  // Selection belongs to this one public transaction call, never to unrelated
+  // nested reads. Clear both contexts even when the new call is not selected.
+  return selected.run(false, () => attempts.run(attempt, work));
 }
 const deferred = () => { let resolve!: () => void; const promise = new Promise<void>(r => { resolve = r; }); return { promise, resolve }; };
 export class AdmissionDeadlineError extends Error {
