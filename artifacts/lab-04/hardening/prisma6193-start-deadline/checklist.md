@@ -1,0 +1,24 @@
+# Single completion checklist: startup deadline and conditional adoption
+
+Prospective inventory, 2026-11-02, baseline a5e1ab4d78d24125050a3cb5be9ed0ccdcf75033. Exact candidate6.19.3/client engine only; no rotation, other version, private hooks, budget/retry relaxation or T-47 rerun. Earlier attempts stay immutable. This file tracks this implementation gate, not Product DoD or scenario acceptance.
+
+| Obligation | Existing evidence to retain / new completion requirement | Initial status |
+| --- | --- | --- |
+| Repository/isolation | Correct baseline, origin equality, clean tree, no AGENTS found; verify dedicated live target before writes and no overlapping job | Git verified; live probe pending |
+| Supported interfaces/version | Version-matched6.19.3 source/manifests and engineType=client package generation already verified | Carry d0ca9f9, no repeat version search |
+| COMMIT release | Public ROLLBACK plus idempotent completion, primary identity, secondary stage-only reports, genuine pairs both orders | Carry924f21e; rerun only combined-wrapper genuine pairs |
+| Deadline boundary/options | Public transaction call captures per-call > constructor > inherited maxWait2s/timeout5s/isolation, without private option reads | New |
+| Startup versus execution | Arm deadline at actual adapter transaction start; stop before user callback; preserve separate callback timeout | New real-pool default/constructor/override/success/long-callback checks |
+| Late acquisition/rejection | Prompt non-retryable timeout, never execute expired callback, observe/drain late result/rejection; rollback/release once; no unhandled rejection | New real-pool checks, no bare unobserved race |
+| Caller isolation/shutdown | Concurrent option/deadline contexts; drain pending startup before disconnect; preserve ordinary lazy/reconnect; no per-timeout pool shutdown | New |
+| Retention/lifecycle | Client engine bypasses old permanent ID registry; prior bounded debug-tail evidence; configuration-owned factory closes/reconnects correctly | Carry prior source/probe; inspect new wrapper's bounded pending/context lifecycle |
+| Connection configuration | Map actual URL identity/schema/timezone, TLS, max/default physical-core pool size, distinct connect5s/pool10s and overrides; reject unsupported unused options explicitly | Existing local observations only; complete used configurations before adoption |
+| Raw result/error semantics | Actual enum/date/JSON/bigint/name projections and SQLSTATE envelope differences; sanitized only actual40001 bridge; no generic P2034/40P01/uniqueness/message retries | New focused compatibility matrix; current negative contract unchanged |
+| Application RED | Real authorized independent CREATE/EDIT genuine COMMIT faults, exact rollback/state/history/receipt/parent preservation and expected recovery | Only after compatibility gates pass; commit RED first |
+| Candidate production | Pin matching CLI/client/adapter6.19.3, public client engine, lazy guarded factory and public wrappers; preserve DDL/business/gates/receipts | Conditional, not yet authorized as passing |
+| Existing integration seams | Inventory direct Prisma constructors (20 matches) and four $use test observers incompatible with6.19; demonstrate necessary factory/observation corrections without weakening assertions | Pending only after candidate gate passes |
+| Retry/security/receipt regressions | Fresh auth/session/eligibility/token reads, rollback before external state changes, <=3 attempts/exhaustion, unknown errors non-retryable, T-51/T-52 recovery separate | Reuse T-42/T-51/T-52; run affected suites after focused GREEN |
+| Whole-server verification | Focused/affected checks first, then server regression/build sequentially; explicitly preserve prohibition on executing T-47 workload (its default test discovery runs benchmark) | Conditional; must report any explicit workload exclusion accurately, never call it a benchmark confirmation |
+| Resources/evidence/publication | Drain all work, exact owned cleanup, immutable old evidence, source provenance, UTF-8/links/whitespace/scope; separate proof/RED/GREEN/evidence commits as applicable | Required on every path |
+
+Declared finite sandbox: exactly matching6.19.3 packages, copied complete schema and committed migrations, existing public release remedy and observer reused unchanged. Real-pool deadline cases run once in one sequential diagnostic execution (default2s; smaller constructor/per-call values are intentional option tests, not raised application budgets). One late rejection waits for the original10s pool-wait limit. Safety timers bound coordination, not business outcomes. Combined genuine COMMIT proof uses two winning orders. Stop at any essential public-interface or semantic failure; do not invent private workarounds or repeat unchanged baseline failures.
