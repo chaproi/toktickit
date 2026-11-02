@@ -1,3 +1,4 @@
+import { withWriteAdmission } from "../database/write-admission.js";
 import { timingSafeEqual } from "node:crypto";
 import { Router, type Request, type Response } from "express";
 import type { AuthSession, User, UserRole } from "@prisma/client";
@@ -570,7 +571,7 @@ authRouter.post("/api/auth/change-password", async (req, res) => {
     const csrfToken = createOpaqueToken();
     const now = new Date();
     const expiresAt = new Date(now.getTime() + ABSOLUTE_SESSION_MILLISECONDS);
-    const changed = await getPrisma().$transaction(async (transaction) => {
+    const changed = await withWriteAdmission(() => getPrisma().$transaction(async (transaction) => {
       const update = await transaction.user.updateMany({
         where: {
           id: live.user.id,
@@ -601,7 +602,7 @@ authRouter.post("/api/auth/change-password", async (req, res) => {
         },
       });
       return user;
-    });
+    }));
 
     setAuthenticationCookies(req, res, sessionToken, csrfToken, expiresAt);
     res.status(200).json(authenticationResponse(changed, expiresAt));

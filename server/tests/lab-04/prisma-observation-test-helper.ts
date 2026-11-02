@@ -15,7 +15,9 @@ export function observePrisma<T extends PrismaClient<any, any>>(client: T, obser
       return observer(parameters, () => query(args));
     },
   } });
-  const transaction = extended.$transaction;
+  // Keep the original public deadline/admission/error boundary. Supply the
+  // extended receiver so its query observations still run on the real tx.
+  const transaction = client.$transaction;
   Object.defineProperty(extended, "$transaction", { configurable: true, writable: true,
     value: function(this: typeof extended, input: unknown, options: unknown) {
       const callback = typeof input === "function"

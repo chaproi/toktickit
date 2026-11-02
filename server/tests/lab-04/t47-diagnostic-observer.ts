@@ -106,8 +106,10 @@ export class DiagnosticObserver {
               const barrier = this.barrier;
               if (barrier?.ids.has(trace.id) && !barrier.seen.has(trace.id)) {
                 barrier.seen.add(trace.id);
-                if (barrier.seen.size === barrier.ids.size) barrier.ready.resolve();
-                await bounded(barrier.release.promise);
+                if (barrier.seen.size === 1) {
+                  barrier.ready.resolve();
+                  await bounded(barrier.release.promise);
+                }
               }
               return result;
             };

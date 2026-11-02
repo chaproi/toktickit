@@ -1,5 +1,5 @@
 import { Prisma, type TicketStatus } from "@prisma/client";
-import { runSerializableMutation, type MutationGateKey } from "../auth/eligibility-transaction.js";
+import { runAdmittedSerializableMutation as runSerializableMutation, type MutationGateKey } from "../auth/eligibility-transaction.js";
 import { getPrisma } from "../prisma.js";
 import { actionSelect, toActionDTO, toActionSnapshot } from "./action-projection.js";
 import { fingerprintCreateAction, isReceiptKeyConflict, storedActionResponse } from "./action-receipt.js";

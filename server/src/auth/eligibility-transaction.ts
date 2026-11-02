@@ -1,5 +1,6 @@
 import { Prisma, type UserRole } from "@prisma/client";
 import { getPrisma } from "../prisma.js";
+import { withWriteAdmission } from "../database/write-admission.js";
 
 export type LockedActor = {
   id: number;
@@ -74,16 +75,18 @@ export async function runSerializableMutation<T>(
   operation: (transaction: Prisma.TransactionClient) => Promise<T>,
   onAttemptFailure?: (error: unknown) => Promise<void>,
   gateKeys: readonly MutationGateKey[] = [],
+  admitted = false,
 ): Promise<T> {
   const prisma = getPrisma();
   for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
-      return await prisma.$transaction(async (transaction) => {
+      const execute = () => prisma.$transaction(async (transaction) => {
         await acquireMutationGates(transaction, gateKeys);
         return operation(transaction);
       }, {
           isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
       });
+      return await (admitted ? withWriteAdmission(execute) : execute());
     } catch (error) {
       await onAttemptFailure?.(error);
       if (!hasConfirmedPostgresSqlState(error, "40001")) throw error;
@@ -91,6 +94,16 @@ export async function runSerializableMutation<T>(
     }
   }
   throw new Error("Serializable mutation retry loop exhausted unexpectedly.");
+}
+
+// Explicit domain-writer opt-in. Existing Comments/Notes/Attachment callers of
+// the shared executor retain their old behavior; read transactions never opt in.
+export function runAdmittedSerializableMutation<T>(
+  operation: (transaction: Prisma.TransactionClient) => Promise<T>,
+  onAttemptFailure?: (error: unknown) => Promise<void>,
+  gateKeys: readonly MutationGateKey[] = [],
+): Promise<T> {
+  return runSerializableMutation(operation, onAttemptFailure, gateKeys, true);
 }
 
 export async function lockCurrentActor(

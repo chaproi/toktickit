@@ -1,3 +1,4 @@
+import { waitForWriteAdmission } from "./write-admission-test-helpers.js";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { execFileSync } from "node:child_process";
 import { randomUUID, randomInt } from "node:crypto";
@@ -126,8 +127,7 @@ it("attributes eight independent concurrent CREATE commands before choosing a T-
               const result = await Reflect.apply(call, delegate, input);
               attempt.missingReceipt = result === null;
               if (command.phase === "concurrent" && attempt.number === 1 && result === null) {
-                if (++arrivals === 8) ready.resolve();
-                await finite(release.promise);
+                if (++arrivals === 1) { ready.resolve(); await finite(release.promise); }
               }
               return result;
             };
@@ -199,7 +199,9 @@ it("attributes eight independent concurrent CREATE commands before choosing a T-
     let coordinationFailure: unknown;
     try {
       await finite(ready.promise);
-      const backends = commands.slice(0, 8).map(command => command.attempts[0].backend!);
+      const waiting = await waitForWriteAdmission(native, target.identity.schema, 7);
+      report.observedAdmissionWaiters = waiting.length;
+      const backends = [...commands.slice(0, 8).flatMap(command => command.attempts.map(attempt => attempt.backend).filter((pid): pid is number => pid !== undefined)), ...waiting];
       expect(new Set(backends).size).toBe(8);
       report.locksAtMissingReceiptBarrier = (await query(native, `SELECT l.pid AS backend,l.locktype,l.mode,l.granted,
         c.relname AS relation,l.page,l.tuple FROM pg_locks l LEFT JOIN pg_class c ON c.oid=l.relation

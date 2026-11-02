@@ -1,3 +1,4 @@
+import { waitForWriteAdmission } from "./write-admission-test-helpers.js";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { randomUUID } from "node:crypto";
 import { Client } from "pg";
@@ -72,6 +73,12 @@ describe("real authorized Action recovery after coordinated COMMIT serialization
     const inputs = sources.map((source, index) => operation === "create"
       ? fixtures.creates.input(source.parent, assignees[index].user.id)
       : fixtures.editInput({ parent: source.parent, action: source.action! }, { description: "Committed independent recovery edit" }));
+    const winner = operation === "create" ? 0 : 1, loser = 1 - winner;
+    const target = verifiedTestTarget();
+    const native = new Client({ connectionString: target.databaseUrl });
+    await native.connect();
+    await native.query("BEGIN ISOLATION LEVEL SERIALIZABLE");
+    await native.query('SELECT "id","isActive" FROM "Category" WHERE "id"=ANY($1::int[])', [categories]);
     const context = new AsyncLocalStorage<number>();
     const ready = [deferred(), deferred()], release = [deferred(), deferred()];
     type State = Awaited<ReturnType<typeof retryState>>;
@@ -102,7 +109,8 @@ describe("real authorized Action recovery after coordinated COMMIT serialization
         attempt.staged = await retryState(tx, sources[index].parent.id);
         if (first) {
           await tx.category.update({ where: { id: categories[index] }, data: { isActive: false } });
-          attempt.complete = true; ready[index].resolve(); await finite(release[index].promise);
+          attempt.complete = true; ready[index].resolve();
+          if (index === loser) await finite(release[index].promise);
         }
         return result;
       }, ...args.slice(1)]).catch(async (error: unknown) => {
@@ -112,18 +120,25 @@ describe("real authorized Action recovery after coordinated COMMIT serialization
         throw error;
       });
     });
-    const pending = actors.map((actor, index) => context.run(index, async () => operation === "create"
-      ? await fixtures.creates.post(fixtures.creates.path(sources[index].parent.id), inputs[index], actor)
-      : await fixtures.patch(fixtures.path({ parent: sources[index].parent, action: sources[index].action! }, "edit"), inputs[index], actor)));
-    const winner = operation === "create" ? 0 : 1, loser = 1 - winner;
+    const pending: Promise<any>[] = [];
+    const send = (index: number) => context.run(index, async () => operation === "create"
+      ? await fixtures.creates.post(fixtures.creates.path(sources[index].parent.id), inputs[index], actors[index])
+      : await fixtures.patch(fixtures.path({ parent: sources[index].parent, action: sources[index].action! }, "edit"), inputs[index], actors[index]));
     try {
-      await finite(Promise.all(ready.map(value => value.promise)));
+      pending[loser] = send(loser); void pending[loser].catch(() => undefined);
+      await finite(ready[loser].promise);
+      // Native participant deliberately does not cooperate with admission.
+      // Its genuine SSI dependency commits before the held application attempt.
+      await native.query('UPDATE "Category" SET "isActive"=false WHERE "id"=$1', [categories[winner]]);
+      pending[winner] = send(winner); void pending[winner].catch(() => undefined);
+      expect(await waitForWriteAdmission(native, target.identity.schema)).toHaveLength(1);
+      await native.query("COMMIT");
+      release[loser].resolve();
+      const [winning, losing] = await finite(Promise.all([pending[winner], pending[loser]]));
       expect(attempts.map(values => values[0].complete)).toEqual([true, true]);
       expect(attempts[0][0].backend).not.toBe(attempts[1][0].backend);
       expect(attempts[0][0].xid).not.toBe(attempts[1][0].xid);
-      release[winner].resolve(); const winning = await finite(pending[winner]);
       expect(winning.status).toBe(operation === "create" ? 201 : 200);
-      release[loser].resolve(); const losing = await finite(pending[loser]);
       expect(attempts[loser][0].rollback).toBeDefined();
       assertSafeEqual(attempts[loser][0].rollback, before[loser], "Failed COMMIT rolls back Action/history/receipt and parent exactly");
       const dependencies = await db.category.findMany({ where: { id: { in: categories } }, orderBy: { id: "asc" } });
@@ -175,6 +190,7 @@ describe("real authorized Action recovery after coordinated COMMIT serialization
     } finally {
       release.forEach(value => value.resolve()); await Promise.allSettled(pending);
       spy.mockRestore(); log.mockRestore();
+      try { await native.query("ROLLBACK"); } finally { await native.end(); }
     }
   });
 });

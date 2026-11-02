@@ -1,3 +1,4 @@
+import { admissionContext, newAdmissionAttempt } from "./write-admission.js";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { PrismaClient, Prisma } from "@prisma/client";
 import type { SqlDriverAdapterFactory } from "@prisma/driver-adapter-utils";
@@ -5,7 +6,7 @@ import type { SqlDriverAdapterFactory } from "@prisma/driver-adapter-utils";
 type Options = { maxWait?: number; timeout?: number; isolationLevel?: Prisma.TransactionIsolationLevel };
 type Attempt = { options: Required<Pick<Options, "maxWait" | "timeout">> & Options;
   phase: "waiting" | "entered" | "expired" | "finished"; timer?: ReturnType<typeof setTimeout>;
-  reject: (error: unknown) => void };
+  reject: (error: unknown) => void; expireAdmission?: () => void };
 export class TransactionStartDeadlineError extends Error {
   readonly code = "P2028";
   readonly meta: { phase: string; maxWait: number };
@@ -33,7 +34,7 @@ export function deadlineClient(options: Prisma.PrismaClientOptions & { adapter: 
             statistics.started++;
             attempt.timer = setTimeout(() => {
               if (attempt.phase !== "waiting") return;
-              attempt.phase = "expired"; statistics.expired++; attempt.timer = undefined;
+              attempt.phase = "expired"; statistics.expired++; attempt.timer = undefined; attempt.expireAdmission?.();
               attempt.reject(new TransactionStartDeadlineError(attempt.options.maxWait));
             }, attempt.options.maxWait);
           }
@@ -59,20 +60,25 @@ export function deadlineClient(options: Prisma.PrismaClientOptions & { adapter: 
     // client would silently drop its query extensions inside transactions.
     const receiver = this ?? actual;
     if (closing) return Promise.reject(new Error("Database client is draining."));
-    if (typeof input !== "function") return track(Reflect.apply(baseTransaction, receiver, [input, supplied]));
+    if (typeof input !== "function") return track(admissionContext(undefined,
+      () => Reflect.apply(baseTransaction, receiver, [input, supplied])));
     const effective = { maxWait: supplied?.maxWait ?? defaults.maxWait,
       timeout: supplied?.timeout ?? defaults.timeout, isolationLevel: supplied?.isolationLevel ?? defaults.isolationLevel };
     return new Promise((resolve, reject) => {
       const attempt: Attempt = { options: effective, phase: "waiting", reject };
+      const admission = newAdmissionAttempt(effective.maxWait);
+      attempt.expireAdmission = () => admission?.expire();
       let work: Promise<unknown>;
       try {
-        work = context.run(attempt, () => Reflect.apply(baseTransaction, receiver, [
+        work = admissionContext(admission, () => context.run(attempt, () => Reflect.apply(baseTransaction, receiver, [
           async (transaction: Prisma.TransactionClient) => {
             if (attempt.phase === "expired") throw new TransactionStartDeadlineError(effective.maxWait);
             stopTimer(attempt); attempt.phase = "entered"; statistics.callbackEntered++;
-            return input(transaction);
+            admission?.enter();
+            try { return await input(transaction); } finally { admission?.drained(); }
           }, effective,
-        ]));
+        ])));
+        work = work.then(async value => { await admission?.finish(); return value; }, async primary => { const failure = admission?.expired ? new TransactionStartDeadlineError(effective.maxWait) : primary; await admission?.finish(failure, true); throw failure; });
       } catch (error) { stopTimer(attempt); attempt.phase = "finished"; reject(error); return; }
       track(work);
       void work.then(value => {

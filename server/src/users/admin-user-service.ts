@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { Prisma, type UserRole } from "@prisma/client";
-import { runSerializableMutation } from "../auth/eligibility-transaction.js";
+import { runAdmittedSerializableMutation as runSerializableMutation } from "../auth/eligibility-transaction.js";
 import { hashPassword } from "../auth/password.js";
 import { getPrisma } from "../prisma.js";
 import { escapePostgresLikePattern } from "../tickets/ticket-query.js";

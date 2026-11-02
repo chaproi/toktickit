@@ -92,7 +92,15 @@ it("bounds default and concurrent explicit admission waits while the external ho
     const elapsed = performance.now() - start; expect(elapsed).toBeGreaterThanOrEqual(1900); expect(elapsed).toBeLessThan(3000);
     await Promise.all([80, 130, 200].map(maxWait => withWriteAdmission(() => owner.client.$transaction(async () => { callbacks++; }, { maxWait }))
       .then(() => { throw new Error("Timed-out admission entered callback."); }, error => { expect(error).toMatchObject({ code: "P2028" }); })));
-    await owner.drain(); expect(callbacks).toBe(0); expect(await lockCount(true)).toBe(1); expect(await lockCount(false)).toBe(0);
+    await owner.drain();
+    const waitingAfterLocalDrain = await lockCount(false), cleanupObservation = performance.now();
+    // A local socket end is not an acknowledgement from PostgreSQL's lock
+    // view. Observe server-side teardown while the real holder still owns the
+    // gate; never release it to let a late callback acquire and pass this check.
+    await until(async () => await lockCount(false) === 0);
+    observations.push({ check: "deadline-server-teardown", waitingAfterLocalDrain,
+      serverTeardownObservedMs: performance.now() - cleanupObservation, holderStillAcquired: true });
+    expect(callbacks).toBe(0); expect(await lockCount(true)).toBe(1); expect(await lockCount(false)).toBe(0);
     await owner.client.$disconnect(); expect(owner.pools.at(-1)?.totalCount).toBe(0);
     observations.push({ check: "default-and-per-call-deadlines", defaultElapsedMs: elapsed, concurrentExplicitMs: [80,130,200], lateCallbacks: callbacks, checkedOut: 0 });
   } finally { await native.query("SELECT pg_advisory_unlock($1::integer,$2::integer)", [ADMISSION_NAMESPACE, schemaKey]); }

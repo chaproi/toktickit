@@ -1,3 +1,4 @@
+import { waitForWriteAdmission } from "./write-admission-test-helpers.js";
 import { randomUUID } from "node:crypto";
 import { Client } from "pg";
 import { expect } from "vitest";
@@ -47,17 +48,12 @@ export async function orderedUserRace<T>(userId: number, first: () => PromiseLik
         AND gate.objsubid=2 AND gate.granted)
     `, [pid, userId]);
     const secondPending = start(second);
-    const secondPid = await observe(`
-      SELECT waiting.pid FROM pg_locks waiting
-      WHERE waiting.locktype='advisory' AND waiting.classid=1::oid
-        AND waiting.objid=$1::oid AND waiting.objsubid=2 AND NOT waiting.granted
-        AND $2::integer = ANY(pg_blocking_pids(waiting.pid))
-    `, [userId, firstPid]);
+    const [secondPid] = await waitForWriteAdmission(observer, identity.schema);
     expect(secondPid === firstPid, "Two distinct live request backends overlap").toBe(false);
     await blocker.query("COMMIT"); open = false;
     const [a, b] = await Promise.all([firstPending, secondPending]);
     if (!("value" in a) || !("value" in b)) throw new Error("Race HTTP transport failed; details redacted.");
-    console.info("Race evidence: first holds target User gate and waits on owned row blocker; second waits on first's gate; distinct backends overlap; blocker released.");
+    console.info("Race evidence: first holds target User gate and waits on owned row blocker; second waits on pre-snapshot admission; distinct backends overlap; blocker released.");
     return { first: a.value, second: b.value };
   } finally {
     if (open) await blocker.query("ROLLBACK").catch(() => undefined);

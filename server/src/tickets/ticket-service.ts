@@ -1,7 +1,7 @@
 import { Prisma, type Ticket, type TicketStatus } from "@prisma/client";
 import {
   lockCurrentActor,
-  runSerializableMutation,
+  runAdmittedSerializableMutation as runSerializableMutation,
 } from "../auth/eligibility-transaction.js";
 import { getPrisma } from "../prisma.js";
 import { formatTicketNumber } from "./ticket-number.js";

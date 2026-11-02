@@ -1,4 +1,5 @@
 import { createPrismaClient } from "../../src/prisma-client.js";
+import { waitForWriteAdmission } from "./write-admission-test-helpers.js";
 import { randomUUID } from "node:crypto";
 import { createServer, Agent, type Server } from "node:http";
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -110,7 +111,11 @@ it("diagnoses two-worker receipt conflicts and profiles four real routes with 35
           const boundary = await logBoundary(client);
           const barrier = observer!.coordinate(ids);
           const tasks = calls.map(call => call());
-          try { await bounded(barrier.ready); await observer!.inspectLocks(label); }
+          try {
+            await bounded(barrier.ready);
+            expect(await waitForWriteAdmission(client, schema)).toHaveLength(1);
+            await observer!.inspectLocks(label);
+          }
           finally { barrier.release(); }
           const settled = await Promise.allSettled(tasks);
           if (settled.some(value => value.status === "rejected")) throw new Error("Diagnostic request rejected; work drained.");

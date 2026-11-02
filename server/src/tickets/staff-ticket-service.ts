@@ -1,6 +1,6 @@
 import { Prisma, type Action, type RequestedPriority, type TicketStatus, type UserRole } from "@prisma/client";
 import { toActionSnapshot } from "../actions/action-projection.js";
-import { runSerializableMutation } from "../auth/eligibility-transaction.js";
+import { runAdmittedSerializableMutation as runSerializableMutation } from "../auth/eligibility-transaction.js";
 import { getPrisma } from "../prisma.js";
 import {
   allowedStatusTransitions,

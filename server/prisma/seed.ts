@@ -1,3 +1,4 @@
+import { withWriteAdmission } from "../src/database/write-admission.js";
 import { pathToFileURL } from "node:url";
 import { createHash, randomBytes } from "node:crypto";
 import {
@@ -121,7 +122,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   let reports: string[];
   const transactionStarted = performance.now();
   try {
-    reports = await prisma.$transaction(async (transaction) => {
+    reports = await withWriteAdmission(() => prisma.$transaction(async (transaction) => {
       const report = new Set<string>();
       const skip = (fixture: string, reason: string) => report.add(`Seed skipped ${fixture}: ${reason}; review required.`);
       // Schema-scoped seed mutex, acquired before reads. READ COMMITTED gives a
@@ -353,7 +354,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       // this seed-only transaction,
       // retaining hashing/identity revalidation under its gates and row locks.
       timeout: 15_000,
-    });
+    }));
   } catch (error) {
     // Preserve mapping validation errors (outside this catch), but never expose
     // Prisma query arguments, credential material or database error details.

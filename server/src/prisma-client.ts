@@ -1,3 +1,4 @@
+import { admissionFactory } from "./database/write-admission.js";
 import { type PrismaClient, type Prisma } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { connectionConfiguration } from "./database/connection-configuration.js";
@@ -21,7 +22,7 @@ export function createPrismaClient<const T extends Prisma.PrismaClientOptions = 
   if (process.env.NODE_ENV === "test") resolveTestDatabaseUrl({ testDatabaseUrl: url,
     developmentDatabaseUrl: process.env.TOKTICKIT_DEVELOPMENT_DATABASE_URL });
   const configured = connectionConfiguration(url);
-  const factory = withReleaseRemedy(withUtcParameters(new PrismaPg(configured.pool, { schema: configured.schema })),
+  const factory = withReleaseRemedy(withUtcParameters(admissionFactory(new PrismaPg(configured.pool, { schema: configured.schema }), configured.schema)),
     stage => console.error("Transaction cleanup encountered a secondary failure.", { stage }));
   const { client } = deadlineClient({ ...remaining, adapter: factory }, transactionError);
   // Only datasource/adapter construction changes; options/log event types and

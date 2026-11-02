@@ -1,4 +1,6 @@
 import { AsyncLocalStorage } from "node:async_hooks";
+import { Client } from "pg";
+import { waitForWriteAdmission } from "./write-admission-test-helpers.js";
 import { randomUUID } from "node:crypto";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -21,12 +23,14 @@ async function bounded<T>(work: Promise<T>) {
 }
 
 it("eight eligible independent concurrent CREATE commands all commit one exact operation within three attempts", async () => {
-  verifiedTestTarget();
+  const target = verifiedTestTarget();
+  const native = new Client({ connectionString: target.databaseUrl });
   const fixtures = new ActionCreateFixtures(), context = new AsyncLocalStorage<number>();
   const release = deferred(), ready = deferred(); let arrivals = 0;
   const pending: Promise<any>[] = [], evidence: Array<Record<string, any>> = [];
   let restore: (() => void) | undefined;
   try {
+    await native.connect();
     await fixtures.initialize();
     const sources: Array<{ actor: Awaited<ReturnType<typeof fixtures.read.actor>>;
       parent: Awaited<ReturnType<typeof fixtures.parent>>; input: Record<string, unknown>;
@@ -55,7 +59,7 @@ it("eight eligible independent concurrent CREATE commands all commit one exact o
             if (method !== "findUnique") return typeof operation === "function" ? operation.bind(delegate) : operation;
             return async (...input: unknown[]) => {
               const result = await Reflect.apply(operation, delegate, input);
-              if (attempt.number === 1 && result === null) { if (++arrivals === 8) ready.resolve(); await bounded(release.promise); }
+              if (attempt.number === 1 && result === null) { if (++arrivals === 1) { ready.resolve(); await bounded(release.promise); } }
               return result;
             };
           } });
@@ -77,7 +81,10 @@ it("eight eligible independent concurrent CREATE commands all commit one exact o
       });
       void work.catch(() => undefined); pending.push(work);
     }
-    try { await bounded(ready.promise); } finally { release.resolve(); }
+    try {
+      await bounded(ready.promise);
+      expect(await waitForWriteAdmission(native, target.identity.schema, 7)).toHaveLength(7);
+    } finally { release.resolve(); }
     const responses = await Promise.all(pending);
     expect(evidence.map(row => row.status), "Every valid independent command must succeed; a diagnostic permitting409 is not GREEN")
       .toEqual(Array(8).fill(201));
@@ -101,7 +108,7 @@ it("eight eligible independent concurrent CREATE commands all commit one exact o
     }
   } finally {
     release.resolve(); await Promise.allSettled(pending); restore?.();
-    try { await fixtures.cleanup(); } finally { await getPrisma().$disconnect(); }
+    try { await fixtures.cleanup(); } finally { await getPrisma().$disconnect(); await native.end(); }
     const directory = resolve(serverDirectory, "../artifacts/lab-04/hardening"); mkdirSync(directory, { recursive: true });
     const filename = `independent-create-red-${new Date().toISOString().slice(0, 10)}-${randomUUID().slice(0, 8)}.json`;
     writeFileSync(resolve(directory, filename), JSON.stringify({ mode: "all-success-application-regression", commands: evidence,
