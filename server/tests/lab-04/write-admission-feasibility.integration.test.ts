@@ -9,6 +9,7 @@ import { beforeAll, afterAll, expect, it, vi } from "vitest";
 import { applyLab3Baseline, applyLaterMigrations, query, serverDirectory, verifiedTestTarget } from "./migration-test-fixtures.js";
 import { makeAdmissionProofClient } from "./write-admission-proof-client.js";
 import { ADMISSION_NAMESPACE, withWriteAdmission } from "./write-admission-proof-support.js";
+import { observePrisma } from "./prisma-observation-test-helper.js";
 
 const signal = () => { let resolve!: () => void; const promise = new Promise<void>(r => { resolve = r; }); return { promise, resolve }; };
 async function until(check: () => Promise<boolean> | boolean, budget = 1500) {
@@ -305,4 +306,20 @@ it("restores the admission session budget after a non-timeout acquisition reject
     expect(after).toBe(before);
     observations.push({ check: "acquisition-failure-settings", syntheticFault: "40P01", noBusinessEntry: true, sessionBudgetRestored: true });
   } finally { spy.mockRestore(); }
+}, 10_000);
+
+it("keeps public query observation on the admitted transaction boundary", async () => {
+  const owner = create("observed-boundary"); let callbacks = 0, operations = 0;
+  const observed = observePrisma(owner.client, async (parameters, next) => { operations++; return next(parameters); });
+  await observed.$queryRaw`SELECT 1`;
+  await native.query("SELECT pg_advisory_lock($1::integer,$2::integer)", [ADMISSION_NAMESPACE, schemaKey]);
+  try {
+    await expect(withWriteAdmission(() => observed.$transaction(async tx => {
+      callbacks++; await tx.$queryRaw`SELECT 1`;
+    }, { maxWait: 100 }))).rejects.toMatchObject({ code: "P2028" });
+    expect(callbacks).toBe(0);
+    await owner.drain();
+    expect(operations).toBe(1);
+    observations.push({ check: "public-query-observer-boundary", callbackAfterDeadline: false, observationRetained: true });
+  } finally { await native.query("SELECT pg_advisory_unlock($1::integer,$2::integer)", [ADMISSION_NAMESPACE, schemaKey]); }
 }, 10_000);
