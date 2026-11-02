@@ -58,7 +58,7 @@ All test commands below run sequentially from `server/`, without changing retrie
 | 16 | feasibility with database-side teardown readiness | 0; 1; 13/13/13/0/0 | 14.07s; original zero-resource assertions retained |
 | 17 | comprehensive with corrected resource observation | 0; 88; 2073/2073/2073/0/0 | 773.98s; 775.153s wall; only T-47 excluded |
 | 18 | server build | 0; no tests | 11.036s wall |
-| 19 | unchanged T-47, once alone | NOT RUN | preserve full result regardless of target outcome |
+| 19 | unchanged T-47, once alone at clean published b31c67b | 1; 1; 1/1/0/1/0 | 94.31s framework;88.337s case;95.668s command |
 
 TypeScript checks are recorded independently: an accidental root-directory compiler command was interrupted (exit1, no compiler verdict); a new unsupported `windowsHide` fork-option type and later implicit row-array type failed locally, then were corrected without changing assertions. Other server checks passed, including post-adoption/coordinator and observer checks. One edit script used a root-relative path from server and failed before writing; the following compiler pass did not verify that unapplied edit, which was then applied at the correct location and type-checked. No tracked manifest/lock change or alternative candidate version resulted from these mistakes.
 
@@ -72,10 +72,58 @@ Existing controlled late-fault cases separately prove fresh authorization/sessio
 
 ## T-47 result and next action
 
-Corrected comprehensive17 and build18 pass. Candidate source is committed unchanged as `0d404268a02131a029e8ec32899caea5b8f93d95`. No benchmark has executed at this pre-measurement evidence publication. Original benchmark, workload helper, plan, thresholds and all historical samples remain byte-identical. This section must be completed from the single unchanged measurement, including failures and assertions not reached, before final measurement publication. No whole-scenario/Issue/Product DoD or peer/release acceptance is claimed.
+Correctness-regression candidate GREEN is `0d404268a02131a029e8ec32899caea5b8f93d95`; the single measurement executes at clean published **b31c67b39c4eea4fc2d56e4b0ad78060bd13b7d6**, after its evidence-only increment. Guard/live target, zero competing checks,50 sessions provisioned by real login outside measured traffic, original workload/helper/plan equality to8053570 and unchanged pool17/connect5s/pool10s/start2s/execution5s are recorded. Validation-only mode is explicitly unset/restored. No request retry, reduced concurrency, timeout or threshold change.
+
+Command: `npm.cmd test -- tests/lab-04/performance-smoke.integration.test.ts`, once alone from server/. **Exit1;1 file;1 collected/executed;0 passed,1 failed,0 skipped**. Actual command2026-11-02T19:38:36.262Z to19:40:11.935Z, i.e. November3 02:38:36.262-02:40:11.935 Bangkok. Case starts19:38:43.458Z. Framework94.31s,case88.337s,command95.668s; artifact's own case counter88,292.474ms. [Complete unchanged-workload artifact](t47-performance-2026-11-03-measurement-7bc549d5.json) and [independent analysis](write-admission-t47-analysis-2026-11-03.json) retain every sample.
+
+| Phase | Requests | Errors | Error rate | p50 ms | p95 ms | Elapsed s | Throughput req/s | Peak / time-weighted HTTP concurrency |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Warm-up | 5000 | 2 | 0.04% | 376.881 | 1179.419 | 56.287 | 88.831 | 50 /43.276 |
+| Measured | 500 | 0 | 0% | 440.969 | 973.907 | 5.616 | 89.032 | 50 /43.143 |
+
+All50 users execute100 warm-ups then10 measured requests, sequential per user, with a complete phase barrier. Independent calculations confirm all5500 samples, exact per-user sequences and measured operation mix, both concurrency peaks50/final0 and all aggregate/operation nearest-rank percentiles. These are **artifact-derived checks**, not later inline assertions that the failed test did not reach.
+
+| Measured operation | Count | Errors | p50 ms | p95 ms | Strict p95 <500ms |
+| --- | --- | --- | --- | --- | --- |
+| action.cancel | 15 | 0 | 555.893 | 620.659 | Fail |
+| action.complete | 15 | 0 | 628.673 | 782.502 | Fail |
+| action.create | 30 | 0 | 587.259 | 966.402 | Fail |
+| action.detail | 30 | 0 | 288.056 | 449.446 | Pass |
+| action.edit | 30 | 0 | 866.459 | 1056.739 | Fail |
+| action.history | 30 | 0 | 29.072 | 225.579 | Pass |
+| action.start | 30 | 0 | 750.190 | 970.665 | Fail |
+| comments.create | 20 | 0 | 277.109 | 417.400 | Pass |
+| comments.list | 40 | 0 | 348.368 | 458.659 | Pass |
+| requester.dashboard | 40 | 0 | 440.990 | 1074.327 | Fail |
+| requester.ticket.detail | 40 | 0 | 348.867 | 432.482 | Pass |
+| requester.tickets.filtered-list | 20 | 0 | 402.103 | 543.975 | Fail |
+| requester.tickets.list | 20 | 0 | 552.367 | 932.763 | Fail |
+| staff.actions.list | 30 | 0 | 393.305 | 486.578 | Pass |
+| staff.dashboard | 30 | 0 | 818.162 | 1065.067 | Fail |
+| staff.ticket.detail | 30 | 0 | 285.077 | 315.144 | Pass |
+| staff.tickets.list | 30 | 0 | 506.904 | 739.059 | Fail |
+| ticket.actions.list | 20 | 0 | 188.917 | 340.885 | Pass |
+
+The two unexpected responses are **warm-up COMPLETE**, users32 and44, sequence8, HTTP500 INTERNAL_ERROR, durations2302.174/2296.229ms. Exactly two transaction rejections are retained: P2028, SERIALIZABLE,2005.023/2000.428ms, no confirmed SQLSTATE/model. The original observer does not retain subtype or transaction phase; those durations are consistent with, but do not positively classify, startup-deadline expiry. Do not treat allP2028 as equivalent, infer a dangerous dependency, invent a retry or label this confirmed40001. No transport/semantic/replay failures are observed; measured HTTP status expectations all match. No second workload or tuning follows.
+
+| Persisted field | Expected | Observed |
+| --- | --- | --- |
+| Tickets | 2050 | 2050 |
+| Actions | 8330 | 8330 |
+| Action history | 25320 | 25318 |
+| Ticket status history | 3800 | 3800 |
+| Mutation receipts | 1320 | 1318 |
+| Public Comments | 220 | 220 |
+| Users /sessions in owned fixture | 50 /50 | 50 /50 |
+
+The first unsupported inline invariant is the independent persisted-count comparison: two history/receipt operations are missing, consistent with the two failed completions. Counts alone do not prove per-command rollback. Cleanup/harness-primary checks execute and pass before this assertion fails. Receipt-replay, phase/user count, concurrency/mix, zero-error and p95 inline assertions are **unreached**. Their actual artifact values remain available: no receipt replays; zero measured errors true; zero warm-up errors false; aggregate p95 false; all-operation p95 false (10/18 fail). The required T-47 verdict is **FAILED**, despite zero measured errors and passing correctness regressions.
+
+Comparison, without overwriting or re-executing earlier results: original8053570/native5.22 had1245 warm-up errors,112/500 measured errors,p95749.008ms,177.866 measured req/s; previous36f86b8/candidate6.19.3 had794 warm-up errors,71/500 measured errors,p95590.303ms,165.622req/s. This admission run has2 warm-up errors,0/500 measured errors but p95973.907ms and89.032req/s. These are descriptive local observations, **not a controlled causal A/B**. Candidate/runtime and Queue changes, timestamps/fixtures and host conditions differ. Same host reports Windows10.0.26200/x64,Node24.14.0,Intel i5-13420H,12 logical CPUs,34,049,220,608 total RAM bytes,13,698,768,896 available before/13,549,113,344 after; Vitest-transformed source Express/NODE_ENV=test, loopback HTTP without TLS, not production build. Actual representative plans are retained outside latency measurement in the raw artifact. No CPU-pressure, pool-exhaustion, index or long-term capacity conclusion is established.
+
+**Next bounded action:** attribute these two COMPLETE P2028 failures and successful-operation delay using transaction-local acquisition/admission/start/callback/cleanup timestamps on a small real authenticated cohort, with actual lock/pool-wait observations and one representative read under that load. Preserve all budgets, pool settings, retry policy and business assertions. Confirm the subtype before proposing any correction. This is a performance/resource-phase diagnosis, not a new adapter-version/retention gate or another full benchmark. The admission tradeoff is not accepted for release; physical-layout or another design decision requires evidence rather than speculation. T-47 remains failed; peer review, remaining audit gaps and #50 remain outstanding.
 
 ## Cleanup and limitations
 
 Resource proofs verify child exit, callback/request draining, exactly-once checkout release, zero granted/waiting admission locks, tagged connections and owned schemas after disconnect. All fixtures clean only owned IDs in FK-safe order. The interrupted cohort required separate ownership-proven cleanup and is preserved as failed/incomplete evidence. The official Seaweed4.51 archive matches its previously recorded SHA-256; executable/storage setting is scoped to owned test processes and no shared service is changed.
 
-Create-only seed review warnings, existing pg queued-query deprecation, Prisma configuration deprecation and expected sanitized controlled-fault/PowerShell stderr remain disclosed. No claimed latency improvement before measurement, no certified memory bound, deployment/TLS support expansion, cross-browser/accessibility completion, peer acceptance or #50 release approval. The public composition and serialized-write tradeoff require implementation review.
+A temporary independent-analysis formatting script emitted Python lexical spacing warnings; spacing was corrected before reuse, without changing samples or test outcomes. Create-only seed review warnings, existing pg queued-query deprecation, Prisma configuration deprecation and expected sanitized controlled-fault/PowerShell stderr remain disclosed. The failed measurement does not support latency-target acceptance, no certified memory bound, deployment/TLS support expansion, cross-browser/accessibility completion, peer acceptance or #50 release approval. The public composition and serialized-write tradeoff require implementation review.

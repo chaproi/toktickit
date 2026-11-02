@@ -270,6 +270,26 @@
       "exitCode": 0,
       "startedAt": "2026-11-02T19:36:25.2262060+00:00",
       "wallSeconds": 11.0358851
+    },
+    {
+      "attempt": 19,
+      "validationSettingRestored": true,
+      "exitCode": 1,
+      "source": "b31c67b39c4eea4fc2d56e4b0ad78060bd13b7d6",
+      "command": "npm.cmd test -- tests/lab-04/performance-smoke.integration.test.ts",
+      "startedAt": "2026-11-02T19:38:36.2617256+00:00",
+      "wallSeconds": 95.6680815,
+      "finishedAt": "2026-11-02T19:40:11.9353431+00:00",
+      "counts": {
+        "files": 1,
+        "collected": 1,
+        "executed": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0
+      },
+      "verdict": "FAILED persisted-count assertion; all5500samples retained",
+      "frameworkSeconds": 94.31
     }
   ],
   "interruption": {
@@ -353,7 +373,154 @@
     "noManifestOrLockChange": true
   },
   "candidateGreen": "0d404268a02131a029e8ec32899caea5b8f93d95",
-  "benchmark": "not executed at this evidence publication; one unchanged run is next",
+  "benchmark": {
+    "verdict": "FAILED; no repeat",
+    "artifact": "t47-performance-2026-11-03-measurement-7bc549d5.json",
+    "independentAnalysis": "write-admission-t47-analysis-2026-11-03.json",
+    "command": {
+      "validationSettingRestored": true,
+      "exitCode": 1,
+      "source": "b31c67b39c4eea4fc2d56e4b0ad78060bd13b7d6",
+      "command": "npm.cmd test -- tests/lab-04/performance-smoke.integration.test.ts",
+      "startedAt": "2026-11-02T19:38:36.2617256+00:00",
+      "wallSeconds": 95.6680815,
+      "finishedAt": "2026-11-02T19:40:11.9353431+00:00"
+    },
+    "preflight": {
+      "guardedLiveIdentity": true,
+      "operationalDistinct": true,
+      "version": "18.6",
+      "other_connections": 0,
+      "owned_schemas": 0,
+      "sessions": 0,
+      "budgets": {
+        "max": 17,
+        "connectTimeoutMs": 5000,
+        "poolTimeoutMs": 10000,
+        "idleTimeoutMs": 300000,
+        "maxLifetimeSeconds": 0
+      },
+      "node": "v24.14.0"
+    },
+    "counts": {
+      "files": 1,
+      "collected": 1,
+      "executed": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0
+    },
+    "frameworkSeconds": 94.31,
+    "caseSeconds": 88.337,
+    "artifactCaseElapsedMs": 88292.474,
+    "phases": {
+      "warmup": {
+        "count": 5000,
+        "errors": 2,
+        "errorRate": 0.0004,
+        "p50Ms": 376.88119999999617,
+        "p95Ms": 1179.418899999997,
+        "elapsedMs": 56286.9374,
+        "throughputPerSecond": 88.83055698105898,
+        "peakHttpInFlight": 50,
+        "timeWeightedHttpInFlight": 43.275957186826915
+      },
+      "measured": {
+        "count": 500,
+        "errors": 0,
+        "errorRate": 0,
+        "p50Ms": 440.96940000000177,
+        "p95Ms": 973.9070999999967,
+        "elapsedMs": 5615.930599999992,
+        "throughputPerSecond": 89.03243925414617,
+        "peakHttpInFlight": 50,
+        "timeWeightedHttpInFlight": 43.143366871378426
+      }
+    },
+    "target": {
+      "overallP95Below500": false,
+      "allOperationsP95Below500": false,
+      "zeroMeasuredErrors": true,
+      "zeroWarmupErrors": false
+    },
+    "transactionFailures": [
+      {
+        "phase": "warmup",
+        "atCaseMs": 34726.5227,
+        "elapsedMs": 2005.0230999999985,
+        "code": "P2028",
+        "confirmedSqlStates": [],
+        "model": null,
+        "isolation": "Serializable"
+      },
+      {
+        "phase": "warmup",
+        "atCaseMs": 34798.1398,
+        "elapsedMs": 2000.4284999999945,
+        "code": "P2028",
+        "confirmedSqlStates": [],
+        "model": null,
+        "isolation": "Serializable"
+      }
+    ],
+    "P2028Qualification": "No subtype/transaction-phase retained; about2s durations support but do not prove startup-deadline hypothesis. No confirmed40001 in these two records; no retry justified.",
+    "firstInlineFailure": "persistedCountsMatchExpected false: ActionHistory25318/25320 and receipts1318/1320",
+    "unreachedInlineAssertions": [
+      "receipt replay count",
+      "phase/user counts",
+      "peak concurrency",
+      "endpoint mix",
+      "warmup/measured zero errors",
+      "aggregate p95",
+      "all operation p95"
+    ],
+    "independentArtifactChecks": {
+      "exact5500Samples": true,
+      "exact5000Warmups": true,
+      "exact500Measured": true,
+      "sequences": true,
+      "measuredMix": true,
+      "allPercentilesMatch": true,
+      "bothPeaks50": true
+    },
+    "firstUnexpectedByUser": {
+      "32": {
+        "phase": "warmup",
+        "sequence": 8,
+        "operation": "action.complete",
+        "status": 500,
+        "errorCode": "INTERNAL_ERROR",
+        "transportError": null,
+        "semanticError": null
+      },
+      "44": {
+        "phase": "warmup",
+        "sequence": 8,
+        "operation": "action.complete",
+        "status": 500,
+        "errorCode": "INTERNAL_ERROR",
+        "transportError": null,
+        "semanticError": null
+      }
+    },
+    "cleanup": {
+      "guardedLiveTarget": true,
+      "other_connections": 0,
+      "idle_transactions": 0,
+      "owned_schemas": 0,
+      "advisory_locks": 0,
+      "sessions": 0,
+      "categories": 4,
+      "active_systems": 7,
+      "owned_fault_sequences": 0,
+      "owned_fault_functions": 0,
+      "owned_fault_triggers": 0
+    },
+    "ownedToolArchiveExecutableRemoved": true,
+    "ownedTestStorageProcesses": 0,
+    "ownedT31ColdStorageDirectories": 0,
+    "privateRawLogsRetained": true
+  },
   "actualDiscovery": {
     "configuredFiles": 89,
     "executedFiles": 88,
@@ -538,6 +705,14 @@
     {
       "path": "write-admission-feasibility-2026-11-02-ea288f38.json",
       "sha256": "440c866ed0e99456bdb238b4c20837ea9caa3d632ae01af52265fb397a57a133"
+    },
+    {
+      "path": "t47-performance-2026-11-03-measurement-7bc549d5.json",
+      "sha256": "8d43eb057607e5fbf2b4e9dcf4174a05f3b36f46aebbe3b489cd04ea212504dc"
+    },
+    {
+      "path": "write-admission-t47-analysis-2026-11-03.json",
+      "sha256": "0a4c4e3d45ee075b411d2850afc14be8401f909f78c53c5db4208fc7b5dc163b"
     }
   ]
 }
