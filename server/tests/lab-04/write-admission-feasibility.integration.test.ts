@@ -279,7 +279,30 @@ it("does not inherit writer admission into an unrelated read transaction inside 
       return read.$queryRaw<Array<{ value: number }>>`SELECT value FROM "AdmissionProbe" WHERE id=1`;
     }, { isolationLevel: "RepeatableRead", maxWait: 150 });
     expect(result).toHaveLength(1);
+    const [batch] = await owner.client.$transaction([owner.client.category.count()]);
+    expect(Number.isSafeInteger(batch)).toBe(true);
   }, { isolationLevel: "Serializable" }));
   expect(await lockCount(true)).toBe(0);
   observations.push({ check: "nested-unrelated-read", inheritedAdmission: false, readSucceededWhileWriterHeld: true });
+}, 10_000);
+
+it("restores the admission session budget after a non-timeout acquisition rejection", async () => {
+  let injected = false; const original = Client.prototype.query;
+  const spy = vi.spyOn(Client.prototype, "query").mockImplementation(function(this: Client, ...args: any[]) {
+    if (!injected && typeof args[0] === "string" && args[0].startsWith("SELECT pg_advisory_lock")) {
+      injected = true; throw Object.assign(new Error("Synthetic acquisition classification fault"), { code: "40P01" });
+    }
+    return Reflect.apply(original,this,args);
+  } as Client["query"]);
+  const owner = create("acquisition-settings",true); let callbacks = 0;
+  try {
+    await owner.client.$executeRaw`SELECT set_config('statement_timeout','3200',false)`;
+    const before = (await owner.client.$queryRaw<Array<{ statement_timeout: string }>>`SHOW statement_timeout`)[0].statement_timeout;
+    await withWriteAdmission(() => owner.client.$transaction(async () => { callbacks++; }))
+      .then(() => { throw new Error("Rejected acquisition entered business."); },error => { expect(error?.code).not.toBe("40001"); });
+    expect(injected).toBe(true); expect(callbacks).toBe(0);
+    const after = (await owner.client.$queryRaw<Array<{ statement_timeout: string }>>`SHOW statement_timeout`)[0].statement_timeout;
+    expect(after).toBe(before);
+    observations.push({ check: "acquisition-failure-settings", syntheticFault: "40P01", noBusinessEntry: true, sessionBudgetRestored: true });
+  } finally { spy.mockRestore(); }
 }, 10_000);
