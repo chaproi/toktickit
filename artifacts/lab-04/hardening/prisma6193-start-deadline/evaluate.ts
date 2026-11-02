@@ -138,6 +138,13 @@ try {
     assert.equal(scalars.decimal.toString(), "1.25"); assert.equal(scalars.timestamp.toISOString(), "2026-11-01T12:34:56.789Z");
     assert.deepEqual(scalars.json, { safe: true }); assert.equal(scalars.status, "PLANNED");
     assert.deepEqual([...scalars.bytes], [0,255,66]);
+    phase = "configuration-public-query-extension";
+    let extensionQueries = 0;
+    const extended = configured.client.$extends({ query: { $allOperations({ args, query }) {
+      extensionQueries++; return query(args);
+    } } });
+    await extended.$transaction(async tx => { await tx.$queryRaw`SELECT 1`; });
+    assert.equal(extensionQueries, 1, "public query extension must remain active inside transactions");
     phase = "configuration-public-instrumentation";
     const ordinary = configured.client.$transaction;
     let publicCalls = 0;

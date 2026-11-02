@@ -23,7 +23,7 @@ assert.notEqual(new URL(environment.TOKTICKIT_DEVELOPMENT_DATABASE_URL).pathname
 const executionHead = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8', windowsHide: true }).trim();
 const report = { baselineHead: 'a5e1ab4d78d24125050a3cb5be9ed0ccdcf75033', executionHead,
   startedAt: new Date().toISOString(),
-  sourceDigests: Object.fromEntries(await Promise.all(['deadline.ts', 'deadlines.ts', 'configuration.ts', 'diagnostic.ts', 'evaluate.ts', 'run.mjs', 'checklist.md'].map(async name =>
+  sourceDigests: Object.fromEntries(await Promise.all(['deadline.ts', 'deadlines.ts', 'configuration.ts', 'diagnostic.ts', 'retention.ts', 'evaluate.ts', 'run.mjs', 'checklist.md'].map(async name =>
     [name, createHash('sha256').update(await readFile(join(here, name))).digest('hex')]))),
   executedSourceState: 'recorded execution HEAD plus any source bytes identified by sourceDigests; application unchanged',
   node: process.version, platform: process.platform, stages: [], evaluatedPrismaVersion: '6.19.3', proof: null, cleanup: null };
@@ -55,6 +55,15 @@ async function command(label, executable, args, cwd, env = environment) {
       clearTimeout(timer);
       await writeFile(join(privateLogs, `${runLabel}-${label}.log`), output);
       const entry = { phase: label, exit: code }; (report.commands ??= []).push(entry);
+      if (label === 'bounded-client-engine-gates' && process.env.EVAL_RETENTION_DIAGNOSTIC === '1') {
+        const afterDrain = output.split('retention-marker:drained-before-disconnect')[1] ?? '';
+        const beforeDisconnect = afterDrain.split('retention-marker:public-disconnect')[0];
+        const duringDisconnect = afterDrain.split('retention-marker:public-disconnect')[1]?.split('retention-marker:public-disconnect-complete')[0] ?? '';
+        report.retentionLogObservation = { diagnosticOnlyNotRetryMechanism: true,
+          closingBeforeDisconnect: (beforeDisconnect.match(/Closing transaction\./g) ?? []).length,
+          closingDuringDisconnect: (duringDisconnect.match(/Closing transaction\./g) ?? []).length,
+          discardedRawDebugText: true };
+      }
       if (code !== 0) reject(new Error(`Proof command failed at ${label}.`)); else accept(undefined);
     });
   }));
@@ -87,11 +96,11 @@ try {
     }
     await writeFile(join(temp, 'evaluate.ts'), await readFile(join(here, 'evaluate.ts')));
     await writeFile(join(temp, 'observe.ts'), await readFile(join(here, '../prisma6193-evaluation/observe.ts')));
-    for (const name of ['deadline.ts', 'deadlines.ts', 'configuration.ts', 'diagnostic.ts']) await writeFile(join(temp, name), await readFile(join(here, name)));
+    for (const name of ['deadline.ts', 'deadlines.ts', 'configuration.ts', 'diagnostic.ts', 'retention.ts']) await writeFile(join(temp, name), await readFile(join(here, name)));
     await writeFile(join(temp, 'remedy.ts'), await readFile(join(here, '../prisma6193-release-remedy/remedy.ts')));
     await writeFile(join(temp, 'tsconfig.json'), JSON.stringify({ compilerOptions: { target: 'ES2022', module: 'ES2022',
       moduleResolution: 'bundler', esModuleInterop: true, strict: true, skipLibCheck: true, noEmit: true,
-      allowImportingTsExtensions: true, types: ['node'] }, include: ['evaluate.ts', 'observe.ts', 'remedy.ts', 'deadline.ts', 'deadlines.ts', 'configuration.ts', 'diagnostic.ts'] }));
+      allowImportingTsExtensions: true, types: ['node'] }, include: ['evaluate.ts', 'observe.ts', 'remedy.ts', 'deadline.ts', 'deadlines.ts', 'configuration.ts', 'diagnostic.ts', 'retention.ts'] }));
   });
   const packages = ['prisma@6.19.3', '@prisma/client@6.19.3', '@prisma/adapter-pg@6.19.3', '@prisma/driver-adapter-utils@6.19.3',
     'pg@8.23.0', 'typescript@5.7.2', 'tsx@4.19.2', '@types/node@22.10.2', '@types/pg@8.23.1'];
@@ -123,8 +132,8 @@ try {
   const proofResult = join(temp, 'proof-result.json');
   try {
     await command('bounded-client-engine-gates', process.execPath,
-      ['--expose-gc', '--import', 'tsx', join(temp, process.env.EVAL_CONFIGURATION_DIAGNOSTIC === '1' ? 'diagnostic.ts' : 'evaluate.ts')], temp,
-      { ...childEnvironment, EVAL_DATABASE_URL: environment.TEST_DATABASE_URL, EVAL_SCHEMA: schema, EVAL_RESULT: proofResult });
+      ['--expose-gc', '--import', 'tsx', join(temp, process.env.EVAL_RETENTION_DIAGNOSTIC === '1' ? 'retention.ts' : process.env.EVAL_CONFIGURATION_DIAGNOSTIC === '1' ? 'diagnostic.ts' : 'evaluate.ts')], temp,
+      { ...childEnvironment, ...(process.env.EVAL_RETENTION_DIAGNOSTIC === '1' ? { DEBUG: 'prisma:client:transactionManager' } : {}), EVAL_DATABASE_URL: environment.TEST_DATABASE_URL, EVAL_SCHEMA: schema, EVAL_RESULT: proofResult });
   } finally { try { report.proof = JSON.parse(await readFile(proofResult, 'utf8')); } catch {} }
 } catch (error) {
   const code = typeof error?.code === 'string' && /^[A-Z0-9]{5}$/.test(error.code) ? error.code : null;

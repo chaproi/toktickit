@@ -40,7 +40,28 @@ export function connectionConfiguration(input: string) {
   const connectTimeoutMs = numeric("connect_timeout", () => 5, 0) * 1000;
   const poolTimeoutMs = numeric("pool_timeout", () => 10, 0) * 1000;
   class ConnectBudgetClient extends pg.Client {
-    constructor(config: pg.ClientConfig = {}) { super({ ...config, password: config.password, connectionTimeoutMillis: connectTimeoutMs }); }
+    constructor(config: pg.ClientConfig = {}) {
+      super({ ...config, password: config.password, connectionTimeoutMillis: connectTimeoutMs });
+      const query = this.query.bind(this);
+      // The adapter's public per-query parser changes a timestamptz offset to
+      // +00 without shifting its wall time. Preserve the instant through pg's
+      // documented QueryConfig.types seam, before that information is lost.
+      this.query = ((input: unknown, ...rest: unknown[]) => {
+        if (input !== null && typeof input === "object" && "types" in input &&
+            "rowMode" in input && input.rowMode === "array" && input.types !== null &&
+            typeof input.types === "object" && "getTypeParser" in input.types &&
+            typeof input.types.getTypeParser === "function") {
+          const parsers = input.types;
+          const getTypeParser = input.types.getTypeParser;
+          return Reflect.apply(query, this, [{ ...input, types: {
+            getTypeParser: (oid: number, format?: string) => oid === 1184 && (!format || format === "text")
+              ? (value: string) => new Date(value).toISOString()
+              : Reflect.apply(getTypeParser, parsers, [oid, format]),
+          } }, ...rest]);
+        }
+        return Reflect.apply(query, this, [input, ...rest]);
+      }) as pg.Client["query"];
+    }
   }
   // Pass decoded fields explicitly, so pg cannot reinterpret Prisma URL options
   // or silently replace SSL policy via its connection-string parser.

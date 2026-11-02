@@ -26,3 +26,28 @@ All results record execution HEAD a5e1ab4 plus source digests of pending proof b
 - [pg per-query parsers](https://node-postgres.com/features/queries#types) are a possible public correction seam. No parser remedy is claimed by this checkpoint.
 
 The candidate configuration maps only the repository's evaluated loopback/plaintext Windows setup, not arbitrary TLS deployments. It preserves physical-core pool sizing (8 cores ->17), connect5000ms, pool-wait10000ms, idle300000ms, unlimited lifetime and backend timezone. Unknown/repeated options, unmapped TLS/remote defaults and unsupported schema spellings reject explicitly. No pg defaults are silently substituted. Production adoption remains conditional on the entire checklist.
+
+## Subsequent corrections and final disposition
+
+- Attempt5 stopped at temporary TypeScript: the new parser's narrowed `getTypeParser` function was not retained across an object alias. Capturing the already narrowed function fixed only that typing defect. No database schema was created in this attempt.
+- Attempt6 passed the exact raw scalar assertions through the documented pg per-query parser seam, then exposed a public-extension failure: query-extension calls inside a transaction were0 instead of1. The wrapper had bound the base public transaction method to the original client, dropping an extended receiver.
+- Attempt7 retained that assertion and the original scalar/deadline/release expectations, preserving the public receiver. All gates in that script passed: eight deadline observation groups (including three concurrent callers), constructor/per-call/default precedence, a185.2542ms callback with maxWait60ms, two genuine COMMIT40001 winning orders, exact rollback/release, actual configuration and scalar types, public pass-through observation/query extension and disconnect/reconnect. No forced release or remaining checkout/idle transaction.
+- A single separate real late-pool-rejection diagnostic then tested the outstanding source-backed bookkeeping risk. Caller rejected at74.0511ms with maxWait60ms; underlying pool rejection drained at10008.7836ms without running its callback. There were zero pending wrapper promises/checkouts after holder release. Public diagnostic events reported zero transaction closures after drain and **one closure only during explicit disconnect**. This matches the version-matched failed-start path retaining a waiting record until disconnect.
+
+That waiting metadata is not the old5.22 exception registry or a checked-out database connection. Its source path has no per-failure bound/removal on rejection; no heap-byte or production leak-rate claim is made. No supported per-failed-start cleanup interface was identified. Periodically disconnecting/rotating clients or patching the manager is outside the authorized remedy. **Application adoption stops at this remaining lifecycle/retention gate.** No application CREATE/EDIT RED, dependency migration, application GREEN, affected/full regression or benchmark execution is claimed.
+
+All results are diagnostic scripts, not invented Vitest case totals. [Attempt7](../prisma6193-start-deadline-attempt-7-2026-11-02.json) and [the retention observation](../prisma6193-start-deadline-retention-2026-11-02.json) record execution61be356 plus pending source fingerprints, not execution at a later publication commit. The later runner adds retention-only mode; core substantive sources match the successful run. The original `unsupportedOptionsRejected` summary lists both inspected and exercised rejections: unknown and unmapped TLS were executed, while repeated/remote/non-simple-schema rejection was assessed by code inspection.
+
+For the single retention diagnostic, use a new result path and preserve the native process exit code:
+
+```powershell
+$env:EVAL_RETENTION_DIAGNOSTIC='1'
+$proofExit=1
+try {
+  node --import tsx ../artifacts/lab-04/hardening/prisma6193-start-deadline/run.mjs ../artifacts/lab-04/hardening/<new-retention-result>.json
+  $proofExit=$LASTEXITCODE
+} finally { Remove-Item Env:EVAL_RETENTION_DIAGNOSTIC }
+exit $proofExit
+```
+
+The child alone receives the narrow public DEBUG namespace. Only event counts enter the redacted JSON; log text is not a production error/retry mechanism. Neither mode raises existing application budgets or runs the T-47 workload.

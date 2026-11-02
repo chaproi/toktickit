@@ -44,7 +44,7 @@ export function deadlineClient(options: Prisma.PrismaClientOptions & { adapter: 
         } };
     } };
   const actual = new PrismaClient({ ...options, adapter });
-  const baseTransaction = actual.$transaction.bind(actual);
+  const baseTransaction = actual.$transaction;
   const baseDisconnect = actual.$disconnect.bind(actual);
   const baseConnect = actual.$connect.bind(actual);
   const defaults = { maxWait: options.transactionOptions?.maxWait ?? 2000,
@@ -54,16 +54,19 @@ export function deadlineClient(options: Prisma.PrismaClientOptions & { adapter: 
     pending.add(work); void work.then(() => pending.delete(work), () => pending.delete(work)); return work;
   };
   const drain = async () => { while (pending.size) await Promise.allSettled([...pending]); };
-  const transact = (input: unknown, supplied?: Options) => {
+  function transact(this: PrismaClient, input: unknown, supplied?: Options) {
+    // Preserve a public $extends receiver; binding every call to the original
+    // client would silently drop its query extensions inside transactions.
+    const receiver = this ?? actual;
     if (closing) return Promise.reject(new Error("Database client is draining."));
-    if (typeof input !== "function") return track(Reflect.apply(baseTransaction, actual, [input, supplied]));
+    if (typeof input !== "function") return track(Reflect.apply(baseTransaction, receiver, [input, supplied]));
     const effective = { maxWait: supplied?.maxWait ?? defaults.maxWait,
       timeout: supplied?.timeout ?? defaults.timeout, isolationLevel: supplied?.isolationLevel ?? defaults.isolationLevel };
     return new Promise((resolve, reject) => {
       const attempt: Attempt = { options: effective, phase: "waiting", reject };
       let work: Promise<unknown>;
       try {
-        work = context.run(attempt, () => Reflect.apply(baseTransaction, actual, [
+        work = context.run(attempt, () => Reflect.apply(baseTransaction, receiver, [
           async (transaction: Prisma.TransactionClient) => {
             if (attempt.phase === "expired") throw new TransactionStartDeadlineError(effective.maxWait);
             stopTimer(attempt); attempt.phase = "entered"; statistics.callbackEntered++;
