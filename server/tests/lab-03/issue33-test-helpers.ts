@@ -1,5 +1,4 @@
-import { waitForWriteAdmission, observePendingAdmission } from "../lab-04/write-admission-test-helpers.js";
-import { ADMISSION_NAMESPACE } from "../../src/database/write-admission.js";
+import { observePendingAdmission } from "../lab-04/write-admission-test-helpers.js";
 import { configureTestDatabaseEnvironment } from "../../src/testing/test-database.js";
 import { randomUUID } from "node:crypto";
 import type { RequestedPriority, TicketStatus } from "@prisma/client";
@@ -95,11 +94,14 @@ export async function overlapOnMutationGate<T>(
     await blocker.query("BEGIN");
     transactionOpen = true;
     const identity = configureTestDatabaseEnvironment();
-    const namespace = (await blocker.query<{ oid: string }>("SELECT oid::text AS oid FROM pg_namespace WHERE nspname=$1", [identity.schema])).rows[0];
-    await blocker.query("SELECT pg_advisory_xact_lock($1::integer, $2::integer)", [ADMISSION_NAMESPACE, Number(namespace.oid) | 0]);
+    // Proposed D-12: hold the declared shared resource, not the removed global
+    // lane. Both live requests reach their public command boundary; an actual
+    // PostgreSQL waiter proves exclusion on the declared resource.
+    expect(identity.databaseName.toLowerCase()).toContain("test");
+    await blocker.query("SELECT pg_advisory_xact_lock($1::integer, $2::integer)", [gate.scope, gate.id]);
     pending.push(...operations.map((operation) => Promise.resolve(operation())));
     const blockedCount = await admission.wait(operations.length);
-    expect(await waitForWriteAdmission(observer, identity.schema)).toHaveLength(1);
+    expect(await waitForBlockedAdvisoryCount(observer, gate, 1)).toBeGreaterThanOrEqual(1);
     expect(blockedCount).toBeGreaterThanOrEqual(operations.length);
     await blocker.query("COMMIT");
     transactionOpen = false;

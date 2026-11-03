@@ -1,3 +1,5 @@
+// D-12 candidate: observe selected READ COMMITTED commands; retain all business assertions.
+import { currentCommandPlan } from "../../src/database/write-admission.js";
 import { Prisma } from "@prisma/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { getPrisma } from "../../src/prisma.js";
@@ -80,15 +82,10 @@ describe("SEC-15 concurrent Administrator edits", () => {
     await import("../../src/users/admin-user-service.js");
     const { administrator, staff } = await issue35Actors();
     const prisma = getPrisma();
-    const [target, firstActiveAdministrator] = await Promise.all([
-      prisma.user.findUniqueOrThrow({ where: { id: staff.user.id } }),
-      prisma.user.findFirstOrThrow({
-        where: { role: "ADMINISTRATOR", isActive: true },
-        orderBy: { id: "asc" },
-        select: { id: true },
-      }),
-    ]);
-    const { responses } = await overlapOnMutationGate({ scope: 1, id: firstActiveAdministrator.id }, [
+    const target = await prisma.user.findUniqueOrThrow({ where: { id: staff.user.id } });
+    // This actor is in both commands' required footprint. An unrelated first
+    // Administrator is no longer locked by every User edit under proposed D-12.
+    const { responses } = await overlapOnMutationGate({ scope: 1, id: administrator.user.id }, [
       () => adminPatch(`/api/admin/users/${target.id}`, administrator, editableUser(target, { name: "First Edit" })),
       () => adminPatch(`/api/admin/users/${target.id}`, administrator, editableUser(target, { name: "Second Edit" })),
     ]);
@@ -106,7 +103,7 @@ describe("SEC-15 concurrent Administrator edits", () => {
     const original = prisma.$transaction.bind(prisma);
     let attempts = 0;
     vi.spyOn(prisma, "$transaction").mockImplementation((async (operation: unknown, options?: object) => {
-      if ((options as { isolationLevel?: unknown } | undefined)?.isolationLevel !== Prisma.TransactionIsolationLevel.Serializable) {
+      if ((options as { isolationLevel?: unknown } | undefined)?.isolationLevel !== Prisma.TransactionIsolationLevel.ReadCommitted || !currentCommandPlan()) {
         return original(operation as never, options as never);
       }
       attempts += 1;

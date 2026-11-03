@@ -9,6 +9,12 @@ export type CommandPlan = { keys: ReadonlyArray<{ scope: number; id: number }>; 
   ownedTicketsOf?: number; cascadeTicketId?: number };
 const commandPlans = new AsyncLocalStorage<CommandPlan | undefined>();
 export function withCommandCoordination<T>(plan: CommandPlan, work: () => T): T { return commandPlans.run(plan, work); }
+// Public composition marker: transaction observers can distinguish a selected
+// command from an unrelated READ COMMITTED recovery/read transaction.
+export function currentCommandPlan(): CommandPlan | undefined { return commandPlans.getStore(); }
+export function commandOwns(scope: number, id: number): boolean {
+  return attempts.getStore()?.owns(scope, id) ?? false;
+}
 const attempts = new AsyncLocalStorage<AdmissionAttempt | undefined>();
 const handoff = new AsyncLocalStorage<{ client: PoolClient; used: boolean }>();
 export const ADMISSION_NAMESPACE = 0x544b3441;
@@ -75,6 +81,9 @@ class AdmissionAttempt {
   private waitingAbort = new AbortController(); private frontPermit?: () => void;
   releaseRequests = 0; physicalReleases = 0;
   constructor(readonly maxWait: number, readonly commandPlan?: CommandPlan) {}
+  owns(scope: number, id: number) {
+    return this.commandPlan !== undefined && this.ownedKeys.some(key => key.scope === scope && key.id === id);
+  }
   start() {
     if (this.deadline !== Infinity) throw new Error("Admission attempt startup was already assigned.");
     this.deadline = performance.now() + this.maxWait;

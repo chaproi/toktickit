@@ -1,5 +1,8 @@
 import { Client } from "pg";
-import { beforeAll, afterAll, expect, it } from "vitest";
+import { beforeAll, afterAll, expect, it, vi } from "vitest";
+import { randomUUID } from "node:crypto";
+import { createAuthUser, loginRequest, syntheticPassword } from "../lab-03/auth-test-helpers.js";
+import * as passwords from "../../src/auth/password.js";
 import { ActionPatchFixtures } from "./action-patch-test-fixtures.js";
 import { verifiedTestTarget } from "./migration-test-fixtures.js";
 import { editableUser } from "../lab-03/issue35-test-helpers.js";
@@ -16,9 +19,9 @@ it.each(["comment", "priority", "user-edit"] as const)("real logout before %s Us
   const target = await f.read.actor(`session-target-${operation}`, "IT_STAFF");
   const before = { ticket: await retryState(f.prisma, parent.id), user: await f.prisma.user.findUniqueOrThrow({ where: { id: target.user.id } }),
     comments: await f.prisma.publicComment.findMany({ where: { ticketId: parent.id } }) };
-  const endpoint = operation === "comment" ? `/api/tickets/${parent.id}/comments` : operation === "priority" ? `/api/staff/tickets/${parent.id}/priority` : `/api/admin/users/${target.user.id}`;
+  const endpoint = operation === "comment" ? `/api/tickets/${parent.id}/comments` : operation === "priority" ? `/api/staff/tickets/${parent.id}/it-priority` : `/api/admin/users/${target.user.id}`;
   const body = operation === "comment" ? { content: "A revoked session must not append this text" } : operation === "priority" ?
-    { itPriority: "CRITICAL", expectedUpdatedAt: parent.updatedAt.toISOString() } : editableUser(before.user, { name: "Revoked command must not rename" });
+    { itPriority: "URGENT", expectedUpdatedAt: parent.updatedAt.toISOString() } : editableUser(before.user, { name: "Revoked command must not rename" });
   const native = new Client({ connectionString: verifiedTestTarget().databaseUrl });
   let pending: Promise<any> | undefined, open = false;
   try {
@@ -38,4 +41,51 @@ it.each(["comment", "priority", "user-edit"] as const)("real logout before %s Us
     assertSafeEqual({ ticket: await retryState(f.prisma, parent.id), user: await f.prisma.user.findUniqueOrThrow({ where: { id: target.user.id } }),
       comments: await f.prisma.publicComment.findMany({ where: { ticketId: parent.id } }) }, before, "Revocation denial preserves exact domain state");
   } finally { if (open) await native.query("ROLLBACK"); await pending?.catch(() => {}); await native.end(); }
+});
+
+// Verification additions for proposed D-12's new login/session participation.
+// The public password observer returns the real verification result unchanged;
+// its barrier only orders a real Administrator operation before session INSERT.
+it.each(["email", "password", "inactive"] as const)("verified credentials cannot create a session after an intervening %s change", async change => {
+  const { user, password } = await createAuthUser({ role: "IT_STAFF" });
+  f.read.userIds.push(user.id);
+  const verify = passwords.verifyPassword;
+  let ready!: () => void, release!: () => void;
+  const verified = new Promise<void>(resolve => { ready = resolve; });
+  const held = new Promise<void>(resolve => { release = resolve; });
+  let observed = false, pending: Promise<any> | undefined;
+  const spy = vi.spyOn(passwords, "verifyPassword").mockImplementation(async (hash, candidate) => {
+    const result = await verify(hash, candidate);
+    if (!observed && hash === user.passwordHash && result) { observed = true; ready(); await held; }
+    return result;
+  });
+  try {
+    pending = Promise.resolve(loginRequest(user.email, password));
+    await verified;
+    const nextPassword = syntheticPassword();
+    const changed = change === "password"
+      ? await f.creates.post(`/api/admin/users/${user.id}/initial-password`, { initialPassword: nextPassword, confirmPassword: nextPassword }, f.administrator)
+      : await f.patch(`/api/admin/users/${user.id}`, editableUser(user, change === "email"
+        ? { email: `changed-${randomUUID()}@example.test` } : { isActive: false }), f.administrator);
+    expect(changed.status).toBe(200);
+    const afterChange = await f.prisma.user.findUniqueOrThrow({ where: { id: user.id } });
+    expect(await f.prisma.authSession.count({ where: { userId: user.id } })).toBe(0);
+    release();
+    const response = await pending;
+    assertSafeError(response, change === "inactive" ? 403 : 401, change === "inactive" ? "ACCOUNT_INACTIVE" : "INVALID_CREDENTIALS");
+    expect(response.headers["set-cookie"]).toBeUndefined();
+    expect(await f.prisma.authSession.count({ where: { userId: user.id } })).toBe(0);
+    assertSafeEqual(await f.prisma.user.findUniqueOrThrow({ where: { id: user.id } }), afterChange, "Rejected stale credentials cannot rewrite current account state");
+  } finally { release(); await pending?.catch(() => {}); spy.mockRestore(); }
+});
+
+it("a login committed before a real password reset is included in session revocation", async () => {
+  const { user, password } = await createAuthUser({ role: "IT_STAFF" }); f.read.userIds.push(user.id);
+  const loggedIn = await loginRequest(user.email, password); expect(loggedIn.status).toBe(200);
+  expect(await f.prisma.authSession.count({ where: { userId: user.id } })).toBe(1);
+  const nextPassword = syntheticPassword();
+  const changed = await f.creates.post(`/api/admin/users/${user.id}/initial-password`, { initialPassword: nextPassword, confirmPassword: nextPassword }, f.administrator);
+  expect(changed.status).toBe(200);
+  expect(await f.prisma.authSession.count({ where: { userId: user.id } })).toBe(0);
+  expect((await f.prisma.user.findUniqueOrThrow({ where: { id: user.id } })).mustChangePassword).toBe(true);
 });

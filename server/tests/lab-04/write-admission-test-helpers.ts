@@ -1,5 +1,5 @@
 import type { Client } from "pg";
-import { ADMISSION_NAMESPACE } from "../../src/database/write-admission.js";
+import { ADMISSION_NAMESPACE, currentCommandPlan } from "../../src/database/write-admission.js";
 import { vi } from "vitest";
 
 export async function waitForObservedAdmission(check: () => number, count = 1) {
@@ -18,7 +18,7 @@ export function observePendingAdmission(db: any) {
   const calls: Array<{ entered: boolean; settled: boolean }> = [];
   const original = db.$transaction.bind(db);
   const spy = vi.spyOn(db, "$transaction").mockImplementation((...args: unknown[]) => {
-    if (typeof args[0] !== "function" || (args[1] as { isolationLevel?: string } | undefined)?.isolationLevel !== "Serializable") return Reflect.apply(original, db, args);
+    if (typeof args[0] !== "function" || ((args[1] as { isolationLevel?: string } | undefined)?.isolationLevel !== "Serializable" && !currentCommandPlan())) return Reflect.apply(original, db, args);
     const call = { entered: false, settled: false }; calls.push(call);
     const callback = args[0] as (...args: unknown[]) => unknown;
     const work = Reflect.apply(original, db, [(...input: unknown[]) => { call.entered = true; return callback(...input); }, ...args.slice(1)]) as Promise<unknown>;

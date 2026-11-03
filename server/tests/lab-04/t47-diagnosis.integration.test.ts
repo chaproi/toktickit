@@ -113,8 +113,9 @@ it("diagnoses two-worker receipt conflicts and profiles four real routes with 35
           const tasks = calls.map(call => call());
           try {
             await bounded(barrier.ready);
-            expect(await waitForObservedAdmission(() => observer!.transactions.filter(value => ids.includes(value.request) && value.isolationOption === "Serializable").length, 2)).toBe(2);
-            expect(observer!.transactions.filter(value => ids.includes(value.request) && value.callbackStartMs !== undefined)).toHaveLength(1);
+            // Proposed D-12 changes isolation/coordination, not domain outcomes.
+            expect(await waitForObservedAdmission(() => observer!.transactions.filter(value => ids.includes(value.request) && value.isolationOption === "ReadCommitted").length, 2)).toBe(2);
+            expect(observer!.transactions.filter(value => ids.includes(value.request) && value.callbackStartMs !== undefined)).toHaveLength(2);
             await observer!.inspectLocks(label);
           }
           finally { barrier.release(); }

@@ -198,7 +198,7 @@ export async function orderedWorkflowRace(ticketId: number,
         (classid=1::oid AND objid=ANY($1::oid[])) OR (classid=2::oid AND objid=$2::oid)
         OR (classid=3::oid AND objid IN (SELECT id::oid FROM "Action" WHERE "ticketId"=$2)))`, [[...first.users, ...second.users], ticketId]);
     expect(locks.rows[0].count, "Completed requests retain no transaction gates").toBe(0);
-    console.info("Workflow race overlap: first User gates observed; first holds Ticket gate/awaits owned row; second HTTP command awaits front admission without a business callback; released and drained.");
+    console.info("Workflow race overlap: first User gates observed; first holds Ticket gate/awaits owned row; second HTTP command awaits resource admission without a business callback; released and drained.");
     return { first: a.response, second: b.response };
   } finally {
     if (open) await blocker.query("ROLLBACK").catch(() => undefined);

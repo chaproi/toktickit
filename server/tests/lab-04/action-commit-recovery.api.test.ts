@@ -1,4 +1,7 @@
-import { waitForObservedAdmission } from "./write-admission-test-helpers.js";
+import { currentCommandPlan } from "../../src/database/write-admission.js";
+// D-12 candidate: explicitly retain SERIALIZABLE transport proof. The public
+// test composition below overrides only these selected commands to SERIALIZABLE;
+// genuine PostgreSQL COMMIT40001 is not replaced by a synthetic RC fault.
 import { AsyncLocalStorage } from "node:async_hooks";
 import { randomUUID } from "node:crypto";
 import { Client } from "pg";
@@ -95,7 +98,7 @@ describe("real authorized Action recovery after coordinated COMMIT serialization
     const spy = vi.spyOn(db, "$transaction").mockImplementation((...args: unknown[]) => {
       const index = context.getStore();
       if (index === undefined || typeof args[0] !== "function" ||
-          (args[1] as { isolationLevel?: string } | undefined)?.isolationLevel !== "Serializable") {
+          ((args[1] as { isolationLevel?: string } | undefined)?.isolationLevel !== "ReadCommitted" || !currentCommandPlan())) {
         return Reflect.apply(original, db, args);
       }
       const callback = args[0] as (tx: Prisma.TransactionClient) => Promise<unknown>;
@@ -114,7 +117,7 @@ describe("real authorized Action recovery after coordinated COMMIT serialization
           if (index === loser) await finite(release[index].promise);
         }
         return result;
-      }, ...args.slice(1)]).catch(async (error: unknown) => {
+      }, { ...(args[1] as object), isolationLevel: Prisma.TransactionIsolationLevel.Serializable }]).catch(async (error: unknown) => {
         attempt.error = classification(error);
         // Independent reads only after the actual transaction promise rejected.
         attempt.rollback = await retryState(fixtures.prisma, sources[index].parent.id);
@@ -131,12 +134,13 @@ describe("real authorized Action recovery after coordinated COMMIT serialization
       // Native participant deliberately does not cooperate with admission.
       // Its genuine SSI dependency commits before the held application attempt.
       await native.query('UPDATE "Category" SET "isActive"=false WHERE "id"=$1', [categories[winner]]);
-      pending[winner] = send(winner); void pending[winner].catch(() => undefined);
-      expect(await waitForObservedAdmission(() => attempts[winner].length)).toBe(1);
-      expect(attempts[winner][0].backend, "Queued HTTP command has no business backend before admission").toBe(0);
       await native.query("COMMIT");
       release[loser].resolve();
-      const [winning, losing] = await finite(Promise.all([pending[winner], pending[loser]]));
+      const losing = await finite(pending[loser]);
+      // Independent successful control follows the genuine loser/retry. Normal
+      // RC cross-process overlap is proved by command-coordination, not SSI here.
+      pending[winner] = send(winner); void pending[winner].catch(() => undefined);
+      const winning = await finite(pending[winner]);
       expect(attempts.map(values => values[0].complete)).toEqual([true, true]);
       expect(attempts[0][0].backend).not.toBe(nativeBackend);
       expect(attempts[1][0].backend).not.toBe(nativeBackend);

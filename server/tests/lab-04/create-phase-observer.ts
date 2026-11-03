@@ -148,7 +148,8 @@ export class CreatePhaseObserver {
       let kind = "metadata", operation = "other";
       if (typeof sql === "string") {
         operation = sql.trim().match(/^(SELECT|INSERT|UPDATE|DELETE|COMMIT|ROLLBACK|BEGIN|SET|SHOW|WITH)\b/i)?.[1].toUpperCase() ?? "other";
-        if (sql.startsWith("SELECT pg_advisory_lock(")) kind = "admission";
+        if (sql.startsWith("SELECT pg_advisory_lock_shared(")) kind = "maintenance-shared";
+        else if (sql.startsWith("SELECT pg_advisory_lock(")) kind = [1,2,3,1002,1003,1004].includes(values?.[0]) ? `resource-${values[0]}` : "admission";
         else if (sql.startsWith("SELECT pg_advisory_unlock(")) kind = "unlock";
         else if (sql.includes("pg_try_advisory_xact_lock") || sql.includes("pg_advisory_xact_lock")) {
           kind = [1, 2, 3].includes(values?.[0]) ? `guard-gate-${values[0]}` : "guard-gate";
@@ -157,7 +158,7 @@ export class CreatePhaseObserver {
       }
       const queryId = `q${++owner.queryNumber}`;
       if (frame) {
-        if (kind === "admission") owner.state(frame).stage = "database-admission";
+        if (kind === "admission" || kind.startsWith("resource-")) owner.state(frame).stage = kind === "admission" ? "database-admission" : "database-resource";
         if (kind === "commit") owner.state(frame).stage = "commit";
         owner.state(frame).activeQuery = queryId;
       }
@@ -165,8 +166,8 @@ export class CreatePhaseObserver {
       const done = (error?: unknown) => {
         owner.record("query-end", { queryId, kind, operation, error: error ? safeCreateError(error) : null }, frame);
         if (frame && owner.state(frame).activeQuery === queryId) owner.state(frame).activeQuery = null;
-        if (kind === "admission" && !error) {
-          owner.record("admission-acquired", {}, frame);
+        if ((kind === "admission" || kind.startsWith("resource-") || kind === "maintenance-shared") && !error) {
+          owner.record("admission-acquired", { kind }, frame);
           if (frame) owner.state(frame).stage = "post-admission";
         }
       };
@@ -205,10 +206,18 @@ export class CreatePhaseObserver {
     this.restores.push(() => spy.mockRestore());
   }
   async locks(native: Client, schema: string) {
-    return (await native.query<{ waiters: number; owners: number }>(`SELECT count(*) FILTER(WHERE NOT l.granted)::int AS waiters,
+    const global = (await native.query<{ waiters: number; owners: number }>(`SELECT count(*) FILTER(WHERE NOT l.granted)::int AS waiters,
       count(*) FILTER(WHERE l.granted)::int AS owners FROM pg_locks l JOIN pg_namespace n ON n.oid=l.objid
       WHERE l.locktype='advisory' AND l.database=(SELECT oid FROM pg_database WHERE datname=current_database()) AND l.classid=$1::oid AND n.nspname=$2`,
       [admission.ADMISSION_NAMESPACE, schema])).rows[0];
+    // Resource keys are intentionally database-scoped. Report that exact scope,
+    // separately from old schema-global admission; never label zero old waiters
+    // as zero new resource contention. These bounded runs execute alone.
+    const resources = (await native.query(`SELECT count(*) FILTER(WHERE NOT granted)::int AS "databaseResourceWaiters",
+      count(*) FILTER(WHERE granted)::int AS "databaseResourceOwners" FROM pg_locks
+      WHERE locktype='advisory' AND database=(SELECT oid FROM pg_database WHERE datname=current_database())
+      AND classid=ANY($1::oid[])`, [[1,2,3,1002,1003,1004]])).rows[0];
+    return { ...global, ...resources };
   }
   sample(native: Client, schema: string) {
     this.timer = setInterval(() => { this.polling = this.polling.then(async () => {

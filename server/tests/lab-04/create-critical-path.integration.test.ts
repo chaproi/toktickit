@@ -16,7 +16,7 @@ import { CreatePhaseObserver, safeCreateError } from "./create-phase-observer.js
 
 // One bounded first-wave diagnostic, not T-47 or an all-success regression:
 // 50 VUs x five sequential operations = 30 CREATEs +220 representative reads.
-it("attributes the FIFO and actual query critical path of independent CREATE with mixed reads", async () => {
+it("attributes resource coordination and actual query critical paths of independent CREATE with mixed reads", async () => {
   const keys = ["DATABASE_URL", "TEST_DATABASE_URL", "NODE_ENV"], saved = keys.map(k => process.env[k]);
   const target = verifiedTestTarget(), observer = new CreatePhaseObserver(), actors: Actor[] = [];
   const report: Record<string, any> = { startedAt: new Date().toISOString(),
@@ -135,7 +135,14 @@ it("attributes the FIFO and actual query critical path of independent CREATE wit
         const successful = [...privateWrites.values()].filter(w => w.status === 201).length;
         expect(report.after).toEqual({ ...report.before, actions: 8000 + successful, actionHistory: 24000 + successful, receipts: successful });
         expect(report.responses).toHaveLength(250);
-        expect(observer.events.filter(e => e.stage === "fifo-enqueue").length).toBeGreaterThanOrEqual(30);
+        // Proposed D-12 explicitly removes the global writer FIFO. Observe
+        // actual command selection and User/Ticket gate execution instead.
+        expect(observer.events.filter(e => e.stage === "fifo-enqueue")).toHaveLength(0);
+        expect(observer.events.filter(e => e.stage === "attempt-selected")).toHaveLength(30);
+        for (const kind of ["resource-1", "resource-2"]) {
+          expect(observer.events.filter(e => e.stage === "query-end" && e.kind === kind && !e.error).length).toBeGreaterThanOrEqual(30);
+        }
+        expect(successful).toBe(30);
         report.successfulCreates = successful; report.phase = "verified";
       } finally {
         await Promise.allSettled(pending); for (const actor of actors) actor.agent.destroy();
@@ -143,7 +150,8 @@ it("attributes the FIFO and actual query critical path of independent CREATE wit
         await db?.$disconnect(); await observer.stop();
         report.cleanup = { listenerClosed: !listener?.listening, checkedOut: observer.pools.reduce((n, pool) => n + pool.totalCount - pool.idleCount, 0),
           admission: await observer.locks(native, schema) };
-        expect(report.cleanup.checkedOut).toBe(0); expect(report.cleanup.admission).toEqual({ waiters: 0, owners: 0 });
+        expect(report.cleanup.checkedOut).toBe(0);
+        expect(report.cleanup.admission).toEqual({ waiters: 0, owners: 0, databaseResourceWaiters: 0, databaseResourceOwners: 0 });
       }
     });
     report.cleanup.ownedSchemaRemoved = true;

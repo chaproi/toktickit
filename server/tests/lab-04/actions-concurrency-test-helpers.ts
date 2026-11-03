@@ -55,7 +55,7 @@ export async function orderedUserRace<T>(userId: number, first: () => PromiseLik
     await blocker.query("COMMIT"); open = false;
     const [a, b] = await Promise.all([firstPending, secondPending]);
     if (!("value" in a) || !("value" in b)) throw new Error("Race HTTP transport failed; details redacted.");
-    console.info("Race evidence: first holds target User gate and waits on owned row blocker; second overlapping HTTP request waits before checkout/callback; blocker released.");
+    console.info("Race evidence: first holds target User gate and waits on owned row blocker; second overlapping HTTP request waits on resource admission before callback; blocker released.");
     return { first: a.value, second: b.value };
   } finally {
     if (open) await blocker.query("ROLLBACK").catch(() => undefined);

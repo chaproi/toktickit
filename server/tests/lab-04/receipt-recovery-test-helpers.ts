@@ -1,3 +1,5 @@
+// D-12 candidate: observe selected READ COMMITTED commands; retain all business assertions.
+import { currentCommandPlan } from "../../src/database/write-admission.js";
 import { createPrismaClient } from "../../src/prisma-client.js";
 import { randomUUID } from "node:crypto";
 import { Prisma, PrismaClient, type MutationReceipt } from "@prisma/client";
@@ -60,7 +62,7 @@ export async function withReceiptCollision(
     const before = await ownedReceiptState(observer, input.ticketIds);
     spy = vi.spyOn(application, "$transaction").mockImplementation((async (operation: unknown, options?: Options) => {
       if (typeof operation !== "function") throw new Error("Receipt harness requires real interactive transactions.");
-      if (options?.isolationLevel === Prisma.TransactionIsolationLevel.Serializable) {
+      if (options?.isolationLevel === Prisma.TransactionIsolationLevel.ReadCommitted && currentCommandPlan()) {
         evidence.mutationTransactions += 1;
         // Only the first transaction receives the controlled fault. A forbidden
         // mutation re-execution remains observable instead of being hidden.

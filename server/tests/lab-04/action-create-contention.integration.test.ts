@@ -1,3 +1,5 @@
+// D-12 candidate: observe selected READ COMMITTED commands; retain all business assertions.
+import { currentCommandPlan } from "../../src/database/write-admission.js";
 import { waitForObservedAdmission } from "./write-admission-test-helpers.js";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { execFileSync } from "node:child_process";
@@ -88,7 +90,7 @@ it("attributes eight independent concurrent CREATE commands before choosing a T-
     const spy = vi.spyOn(db, "$transaction").mockImplementation((...args: unknown[]) => {
       const command = context.getStore();
       if (!command || typeof args[0] !== "function" ||
-          (args[1] as { isolationLevel?: string } | undefined)?.isolationLevel !== "Serializable") {
+          ((args[1] as { isolationLevel?: string } | undefined)?.isolationLevel !== "ReadCommitted" || !currentCommandPlan())) {
         return Reflect.apply(original, db, args);
       }
       const source = sources.find(value => value.command === command)!;
@@ -127,7 +129,7 @@ it("attributes eight independent concurrent CREATE commands before choosing a T-
               const result = await Reflect.apply(call, delegate, input);
               attempt.missingReceipt = result === null;
               if (command.phase === "concurrent" && attempt.number === 1 && result === null) {
-                if (++arrivals === 1) { ready.resolve(); await finite(release.promise); }
+                if (++arrivals === 8) ready.resolve(); await finite(release.promise);
               }
               return result;
             };
@@ -186,7 +188,7 @@ it("attributes eight independent concurrent CREATE commands before choosing a T-
         }
         expect(source.command.attempts.length).toBeLessThanOrEqual(3);
         for (const attempt of source.command.attempts) {
-          expect(attempt.isolation).toBe("serializable");
+          expect(attempt.isolation).toBe("read committed");
           if (attempt.rejection) { expect(attempt.rejection.sqlStates).toContain("40001"); expect(attempt.rollbackExact).toBe(true); }
         }
         source.command.exactPersistence = true;
@@ -202,7 +204,7 @@ it("attributes eight independent concurrent CREATE commands before choosing a T-
       report.observedPublicAttempts = await waitForObservedAdmission(() => commands.slice(0, 8).filter(command => command.attempts.length === 1).length, 8);
       expect(report.observedPublicAttempts).toBe(8);
       const backends = commands.slice(0, 8).flatMap(command => command.attempts.map(attempt => attempt.backend).filter((pid): pid is number => pid !== undefined));
-      expect(new Set(backends).size).toBe(1); // seven callers intentionally have no checkout/business snapshot yet
+      expect(new Set(backends).size).toBe(8); // D-12 candidate: disjoint resource callbacks actually overlap
       report.locksAtMissingReceiptBarrier = (await query(native, `SELECT l.pid AS backend,l.locktype,l.mode,l.granted,
         c.relname AS relation,l.page,l.tuple FROM pg_locks l LEFT JOIN pg_class c ON c.oid=l.relation
         LEFT JOIN pg_namespace n ON n.oid=c.relnamespace
