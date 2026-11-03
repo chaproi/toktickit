@@ -1,0 +1,653 @@
+{
+  "mode": "public-interface-proof-not-application-GREEN",
+  "recordedAt": "2026-11-03T11:00:44.007Z",
+  "executionHead": "3ef8ec2de4a5c0113de2809c8b29758355e270ba",
+  "observations": [
+    {
+      "check": "nested-unrelated-read",
+      "passed": true,
+      "primary": null,
+      "events": [
+        {
+          "atMs": 1.2903000000001157,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "transaction-start"
+        },
+        {
+          "atMs": 1.57320000000027,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "attempt-selected",
+          "maxWait": 2000
+        },
+        {
+          "atMs": 32.22470000000021,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "fifo-enqueue",
+          "queueLength": 1,
+          "activeHolder": null,
+          "effectiveDeadlineMs": 2031.8386
+        },
+        {
+          "atMs": 32.470700000000306,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "fifo-grant",
+          "queueLength": 0,
+          "activeHolder": "nested-writer:1"
+        },
+        {
+          "atMs": 94.96140000000014,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q6",
+          "kind": "metadata",
+          "operation": "SHOW",
+          "inStage": "checkout"
+        },
+        {
+          "atMs": 95.41310000000021,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q6",
+          "kind": "metadata",
+          "operation": "SHOW",
+          "error": null
+        },
+        {
+          "atMs": 95.47029999999995,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q7",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "inStage": "checkout"
+        },
+        {
+          "atMs": 98.78630000000021,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q7",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 98.91210000000001,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q8",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "inStage": "checkout"
+        },
+        {
+          "atMs": 99.29870000000028,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q8",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 99.33429999999998,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q10",
+          "kind": "admission",
+          "operation": "SELECT",
+          "inStage": "database-admission"
+        },
+        {
+          "atMs": 99.7813000000001,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q10",
+          "kind": "admission",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 99.78850000000011,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "admission-acquired"
+        },
+        {
+          "atMs": 99.81850000000031,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q11",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "inStage": "post-admission"
+        },
+        {
+          "atMs": 100.0326,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q11",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 100.39040000000023,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q12",
+          "kind": "metadata",
+          "operation": "BEGIN",
+          "inStage": "post-admission"
+        },
+        {
+          "atMs": 100.54610000000002,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q12",
+          "kind": "metadata",
+          "operation": "BEGIN",
+          "error": null
+        },
+        {
+          "atMs": 100.63079999999991,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q13",
+          "kind": "metadata",
+          "operation": "SET",
+          "inStage": "post-admission"
+        },
+        {
+          "atMs": 100.73520000000008,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q13",
+          "kind": "metadata",
+          "operation": "SET",
+          "error": null
+        },
+        {
+          "atMs": 101.21109999999999,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "callback-entry"
+        },
+        {
+          "atMs": 110.91750000000002,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q14",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "inStage": "callback"
+        },
+        {
+          "atMs": 111.38509999999997,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q14",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 111.81600000000026,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "transaction-start"
+        },
+        {
+          "atMs": 154.5344,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q18",
+          "kind": "metadata",
+          "operation": "BEGIN",
+          "inStage": "transaction-call"
+        },
+        {
+          "atMs": 154.74940000000015,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q18",
+          "kind": "metadata",
+          "operation": "BEGIN",
+          "error": null
+        },
+        {
+          "atMs": 154.8191999999999,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q19",
+          "kind": "metadata",
+          "operation": "SET",
+          "inStage": "transaction-call"
+        },
+        {
+          "atMs": 154.98340000000007,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q19",
+          "kind": "metadata",
+          "operation": "SET",
+          "error": null
+        },
+        {
+          "atMs": 155.1331,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "callback-entry"
+        },
+        {
+          "atMs": 156.11180000000013,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q20",
+          "kind": "metadata",
+          "operation": "SET",
+          "inStage": "callback"
+        },
+        {
+          "atMs": 156.3152,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q20",
+          "kind": "metadata",
+          "operation": "SET",
+          "error": null
+        },
+        {
+          "atMs": 156.89400000000023,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q21",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "inStage": "callback"
+        },
+        {
+          "atMs": 158.76410000000033,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q21",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 158.83110000000033,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "callback-exit"
+        },
+        {
+          "atMs": 158.83200000000033,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "callback-drained"
+        },
+        {
+          "atMs": 159.0918999999999,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q22",
+          "kind": "commit",
+          "operation": "COMMIT",
+          "inStage": "commit"
+        },
+        {
+          "atMs": 159.2260000000001,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q22",
+          "kind": "commit",
+          "operation": "COMMIT",
+          "error": null
+        },
+        {
+          "atMs": 159.49029999999993,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "transaction-result"
+        },
+        {
+          "atMs": 168.2551000000003,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q23",
+          "kind": "Category",
+          "operation": "SELECT",
+          "inStage": "callback"
+        },
+        {
+          "atMs": 170.4997000000003,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q23",
+          "kind": "Category",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 171.1181999999999,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "callback-exit"
+        },
+        {
+          "atMs": 171.1199999999999,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "callback-drained"
+        },
+        {
+          "atMs": 171.20170000000007,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q25",
+          "kind": "commit",
+          "operation": "COMMIT",
+          "inStage": "commit"
+        },
+        {
+          "atMs": 171.39969999999994,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q25",
+          "kind": "commit",
+          "operation": "COMMIT",
+          "error": null
+        },
+        {
+          "atMs": 171.5367000000001,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "finish-before-cleanup",
+          "observed": {
+            "stage": "commit",
+            "activeQuery": null
+          },
+          "hasPrimary": false,
+          "error": null
+        },
+        {
+          "atMs": 171.64139999999998,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q26",
+          "kind": "rollback",
+          "operation": "ROLLBACK",
+          "inStage": "cleanup"
+        },
+        {
+          "atMs": 172.2431999999999,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q26",
+          "kind": "rollback",
+          "operation": "ROLLBACK",
+          "error": null
+        },
+        {
+          "atMs": 172.26650000000018,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q27",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "inStage": "cleanup"
+        },
+        {
+          "atMs": 172.50610000000006,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q27",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 172.5237000000002,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q28",
+          "kind": "unlock",
+          "operation": "SELECT",
+          "inStage": "cleanup"
+        },
+        {
+          "atMs": 172.79750000000013,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q28",
+          "kind": "unlock",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 172.8747000000003,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "fifo-release-start",
+          "queueLength": 0,
+          "activeHolder": "nested-writer:1"
+        },
+        {
+          "atMs": 172.88619999999992,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "fifo-release-end",
+          "queueLength": 0,
+          "activeHolder": null
+        },
+        {
+          "atMs": 172.89350000000013,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "finish-drained"
+        },
+        {
+          "atMs": 172.8996000000002,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "transaction-result"
+        }
+      ],
+      "poolAndAdmissionSamples": [
+        {
+          "atMs": 33.8738000000003,
+          "total": 0,
+          "idle": 0,
+          "waiting": 0,
+          "waiters": 0,
+          "owners": 0,
+          "fronts": [
+            {
+              "queueLength": 0,
+              "activeHolder": "nested-writer:1"
+            }
+          ]
+        },
+        {
+          "atMs": 44.83230000000003,
+          "total": 0,
+          "idle": 0,
+          "waiting": 0,
+          "waiters": 0,
+          "owners": 0,
+          "fronts": [
+            {
+              "queueLength": 0,
+              "activeHolder": "nested-writer:1"
+            }
+          ]
+        },
+        {
+          "atMs": 59.72769999999991,
+          "total": 0,
+          "idle": 0,
+          "waiting": 0,
+          "waiters": 0,
+          "owners": 0,
+          "fronts": [
+            {
+              "queueLength": 0,
+              "activeHolder": "nested-writer:1"
+            }
+          ]
+        },
+        {
+          "atMs": 75.89560000000029,
+          "total": 0,
+          "idle": 0,
+          "waiting": 0,
+          "waiters": 0,
+          "owners": 0,
+          "fronts": [
+            {
+              "queueLength": 0,
+              "activeHolder": "nested-writer:1"
+            }
+          ]
+        },
+        {
+          "atMs": 88.79179999999997,
+          "total": 0,
+          "idle": 0,
+          "waiting": 0,
+          "waiters": 0,
+          "owners": 0,
+          "fronts": [
+            {
+              "queueLength": 0,
+              "activeHolder": "nested-writer:1"
+            }
+          ]
+        },
+        {
+          "atMs": 99.10150000000021,
+          "total": 0,
+          "idle": 0,
+          "waiting": 0,
+          "waiters": 0,
+          "owners": 0,
+          "fronts": [
+            {
+              "queueLength": 0,
+              "activeHolder": "nested-writer:1"
+            }
+          ]
+        },
+        {
+          "atMs": 111.10820000000012,
+          "total": 0,
+          "idle": 0,
+          "waiting": 0,
+          "waiters": 0,
+          "owners": 1,
+          "fronts": [
+            {
+              "queueLength": 0,
+              "activeHolder": "nested-writer:1"
+            }
+          ]
+        },
+        {
+          "atMs": 136.1268,
+          "total": 0,
+          "idle": 0,
+          "waiting": 0,
+          "waiters": 0,
+          "owners": 1,
+          "fronts": [
+            {
+              "queueLength": 0,
+              "activeHolder": "nested-writer:1"
+            }
+          ]
+        },
+        {
+          "atMs": 150.22650000000021,
+          "total": 0,
+          "idle": 0,
+          "waiting": 0,
+          "waiters": 0,
+          "owners": 1,
+          "fronts": [
+            {
+              "queueLength": 0,
+              "activeHolder": "nested-writer:1"
+            }
+          ]
+        },
+        {
+          "atMs": 168.4641999999999,
+          "total": 0,
+          "idle": 0,
+          "waiting": 0,
+          "waiters": 0,
+          "owners": 1,
+          "fronts": [
+            {
+              "queueLength": 0,
+              "activeHolder": "nested-writer:1"
+            }
+          ]
+        }
+      ],
+      "cleanup": {
+        "pending": 0,
+        "admissionOwners": 0,
+        "admissionWaiters": 0,
+        "checkedOut": 0
+      }
+    }
+  ],
+  "cleanup": {
+    "childrenExited": true,
+    "poolsDisconnected": true,
+    "grantedOrWaitingAdmissionLocks": 0,
+    "taggedConnections": 0,
+    "ownedSchemasRemoved": true
+  }
+}
