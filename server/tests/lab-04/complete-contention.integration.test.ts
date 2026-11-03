@@ -66,6 +66,16 @@ it("attributes one independent COMPLETE cohort and overlapping real reads", asyn
         for (const [i, actor] of workers.entries()) {
           report.phase = "real-CREATE-START-preparation"; report.preparationOrdinal = i;
           const headers = { Cookie: actor.cookie, Origin: APPROVED_ORIGIN, "X-CSRF-Token": actor.csrf };
+          // Native pg decodes timestamp-without-time-zone in the host timezone.
+          // Obtain the optimistic token from the real authorized application
+          // DTO, as the benchmark's initial Staff detail operation does.
+          const detail = await jsonHttp(port, actor.agent, "GET", `/api/staff/tickets/${actor.writeTicketId}`, headers);
+          report.preparationResponses.push({ operation: "detail", ordinal: i, status: detail.status,
+            error: object(object(detail.body).error).code ?? null });
+          expect(detail.status).toBe(200);
+          const ticket = object(detail.body); expect(ticket.id).toBe(actor.writeTicketId);
+          expect(new Date(ticket.updatedAt).toISOString()).toBe(ticket.updatedAt);
+          actor.ticketToken = ticket.updatedAt;
           const created = await jsonHttp(port, actor.agent, "POST", `/api/tickets/${actor.writeTicketId}/actions`, headers,
             { description: "Independent real COMPLETE diagnostic Action", result: null, assigneeId: workers[(i + 1) % 30].id,
               followUpRequired: false, followUpNote: null, attachmentNotes: null,
