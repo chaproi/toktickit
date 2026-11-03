@@ -1,11 +1,13 @@
 import { Prisma, type UserRole } from "@prisma/client";
 import { getPrisma } from "../prisma.js";
 import { withCommandCoordination, type CommandPlan } from "../database/write-admission.js";
+import { validateCommandSession } from "./command-session.js";
 
 export type LockedActor = {
   id: number;
   role: UserRole;
   isActive: boolean;
+  mustChangePassword: boolean;
 };
 
 export class ConcurrentUpdateError extends Error {
@@ -114,11 +116,12 @@ export async function lockCurrentActor(
   expectedRole: UserRole,
 ): Promise<LockedActor | null> {
   const [actor] = await transaction.$queryRaw<LockedActor[]>`
-    SELECT "id", "role", "isActive"
+    SELECT "id", "role", "isActive", "mustChangePassword"
     FROM "User"
     WHERE "id" = ${userId}
     FOR UPDATE
   `;
   if (!actor || !actor.isActive || actor.role !== expectedRole) return null;
+  await validateCommandSession(transaction, userId, true, actor.mustChangePassword);
   return actor;
 }

@@ -1,4 +1,4 @@
-import { withWriteAdmission } from "../src/database/write-admission.js";
+import { withCommandCoordination } from "../src/database/write-admission.js";
 import { pathToFileURL } from "node:url";
 import { createHash, randomBytes } from "node:crypto";
 import {
@@ -122,7 +122,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   let reports: string[];
   const transactionStarted = performance.now();
   try {
-    reports = await withWriteAdmission(() => prisma.$transaction(async (transaction) => {
+    reports = await withCommandCoordination({ keys: [], maintenance: "exclusive" }, () => prisma.$transaction(async (transaction) => {
       const report = new Set<string>();
       const skip = (fixture: string, reason: string) => report.add(`Seed skipped ${fixture}: ${reason}; review required.`);
       // Schema-scoped seed mutex, acquired before reads. READ COMMITTED gives a
@@ -133,7 +133,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       // prevents concurrent creates/reuse racing missing fixture identities.
       const gates = [...new Set([...LAB3_SEEDED_USERS, emptyRequester].map(({ email }) =>
         createHash("sha256").update(email).digest().readInt32BE(0)))].sort((a, b) => a - b);
-      for (const gate of gates) await transaction.$queryRaw`SELECT pg_advisory_xact_lock(3,${gate}::integer)::text`;
+      for (const gate of gates) await transaction.$queryRaw`SELECT pg_advisory_xact_lock(1003,${gate}::integer)::text`;
       const lockedUsers = await transaction.$queryRaw<SeedUser[]>`
         SELECT id,name,email,role,"isActive" FROM "User" ORDER BY id FOR UPDATE
       `;

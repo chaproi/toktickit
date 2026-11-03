@@ -2,6 +2,7 @@ import cors from "cors";
 import express, { type NextFunction, type Request, type Response } from "express";
 import multer from "multer";
 import { Prisma, type UserRole } from "@prisma/client";
+import { CommandSessionError } from "./auth/command-session.js";
 import { parseActionListQuery, parseActionHistoryQuery, validateActionDetailQuery } from "./actions/action-query.js";
 import { listTicketActions, getTicketAction, listTicketActionHistory } from "./actions/action-read-service.js";
 import { createTicketAction } from "./actions/action-create-service.js";
@@ -116,6 +117,11 @@ function isDatabaseUnavailableError(error: unknown): boolean {
 }
 
 function sendDatabaseError(res: Response, error: unknown, operation: string): void {
+  if (error instanceof CommandSessionError) {
+    res.status(error.code === "AUTHENTICATION_REQUIRED" ? 401 : 403).json(errorBody(error.code,
+      error.code === "AUTHENTICATION_REQUIRED" ? "Authentication is required." : error.code === "PASSWORD_CHANGE_REQUIRED" ? "Change your password before continuing." : "CSRF validation failed."));
+    return;
+  }
   console.error(`Database error while ${operation}.`);
   if (isDatabaseUnavailableError(error)) {
     res.status(503).json(errorBody(

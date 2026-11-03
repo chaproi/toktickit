@@ -452,7 +452,7 @@ export async function createTicketForRequester(
         return { kind: "created" as const, ticket };
       }, undefined, [
         { scope: 1, id: requesterId },
-        { scope: 3, id: year },
+        { scope: 1004, id: year },
       ]);
   } catch (error) {
     if (
