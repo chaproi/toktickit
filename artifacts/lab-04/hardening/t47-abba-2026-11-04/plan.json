@@ -1,0 +1,71 @@
+{
+  "declaredAtUtc": "2026-11-03T20:53:46.595718+00:00",
+  "publicationBranch": "feat/49-d12-rc-candidate",
+  "startingPublishedHead": "23246c17c90e3c0a181f37e2dd021339a4a03647",
+  "question": "Does the shared PATCH projection correction consistently change warmed performance in this finite matched ABBA comparison, or is there substantial run/time variability?",
+  "versions": {
+    "A": "169811dfde4a22f0ff7a9acf8e45f755e062597b",
+    "B": "84ef0ad91502a0c660998ddc13d0c7a163f1a169"
+  },
+  "order": [
+    {
+      "run": 1,
+      "version": "A"
+    },
+    {
+      "run": 2,
+      "version": "B"
+    },
+    {
+      "run": 3,
+      "version": "B"
+    },
+    {
+      "run": 4,
+      "version": "A"
+    }
+  ],
+  "maximumExecutions": 4,
+  "replacementExecutions": 0,
+  "command": "npm.cmd test -- tests/lab-04/performance-smoke.integration.test.ts",
+  "workload": {
+    "users": 50,
+    "warmupRequests": 5000,
+    "measuredRequests": 500,
+    "warmupPerUser": 100,
+    "measuredPerUser": 10,
+    "peakVirtualUsers": 50,
+    "uploads": false,
+    "inProcessObservation": "unchanged benchmark observation only; no added diagnostic observer",
+    "settings": "original workload/pool/budgets/retries/dependencies/thresholds retained"
+  },
+  "externalObservation": {
+    "intervalMs": 1000,
+    "sameForAllRuns": true,
+    "cpu": "GetSystemTimes host interval CPU and summed public process TotalProcessorTime for node/postgres/observer, with process-set changes qualified",
+    "power": "GetSystemPowerStatus each sample; powercfg active scheme before/after each run",
+    "memory": "GlobalMemoryStatusEx available physical bytes each sample",
+    "limitation": "Whole-command samples include setup/cleanup and cannot be assigned to individual request SQL or phase without temporal alignment; no thermal/clock telemetry or causal environmental claim"
+  },
+  "abortConditions": [
+    "Guard/live target mismatch",
+    "Competing repository workload",
+    "Changed source/dependencies/settings",
+    "Changed or unavailable expected power source/profile between runs",
+    "Owned cleanup not independently established",
+    "Missing/incompatible workload artifact or incomplete 5000/500 workload"
+  ],
+  "verdictPolicy": "Retain failed latency verdicts and continue only when isolation/cleanup/conditions remain compatible. No replacement or repeat-until-pass. Two observations/version are descriptive, not broad statistical confidence.",
+  "matchedTrackedFileSha256": {
+    "server/tests/lab-04/performance-smoke.integration.test.ts": "6d937849f4ccb145ef787d4c15860500c06ef1a40d8db6152d1cb8bcf9b0a6d9",
+    "server/tests/lab-04/performance-test-helpers.ts": "c372e9162cfb72515739aa09497db9df75616e06e4e3fb9a5cdedfc6cfd858f1",
+    "server/package.json": "28508b70b96669d4ad8be915cbad41a7c2c19071d400390c97719859328dcffe",
+    "server/package-lock.json": "fdd705c5c7644042ebd55122d5530ed398b86d98f09bd9670e9c9dfb568a67b4",
+    "server/prisma/schema.prisma": "1ddede4157dcaff0786203bb99fad49b3a110ce8d0c5e95c96d83d637b66c9e8",
+    "server/vitest.config.ts": "82d1da44c670a927876261d41ef8f6c763e94c373f7d033b9b0d1e9b3f2f521d",
+    "server/src/database/connection-configuration.ts": "03a11121a19613c88bad80e3a53a226db5746e6ee792d5ca4809ad4ebb84a28d",
+    "server/src/database/transaction-deadline.ts": "bd45c5e417ad43b0977796d82ff277405289c2a935c469031f5126104fd1f354",
+    "server/src/database/write-admission.ts": "0e34243851d264d3eeae8255bfc6af172402db90e49f4cd30af3881cf94a4449"
+  },
+  "ignoredEnvironment": "Byte-identical copied fixture settings; values/hashes withheld; validation-only mode unset only for each child command and restored"
+}
