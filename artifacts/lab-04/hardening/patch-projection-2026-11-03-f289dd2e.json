@@ -1,0 +1,70 @@
+{
+  "executionHead": "169811dfde4a22f0ff7a9acf8e45f755e062597b",
+  "observations": [
+    {
+      "label": "edit",
+      "currentHistoricalCreator": true,
+      "nullableOrActualPerformer": true,
+      "exactDTOHistoryReceiptParentChecksPassed": true,
+      "projectionSelects": [
+        "Action",
+        "User",
+        "User",
+        "User"
+      ]
+    },
+    {
+      "label": "reassign",
+      "currentHistoricalCreator": true,
+      "nullableOrActualPerformer": true,
+      "exactDTOHistoryReceiptParentChecksPassed": true,
+      "projectionSelects": [
+        "Action",
+        "User",
+        "User",
+        "User"
+      ]
+    },
+    {
+      "label": "start",
+      "currentHistoricalCreator": true,
+      "nullableOrActualPerformer": true,
+      "exactDTOHistoryReceiptParentChecksPassed": true,
+      "projectionSelects": [
+        "Action",
+        "User",
+        "User",
+        "User"
+      ]
+    },
+    {
+      "label": "complete",
+      "currentHistoricalCreator": true,
+      "nullableOrActualPerformer": true,
+      "exactDTOHistoryReceiptParentChecksPassed": true,
+      "projectionSelects": [
+        "Action",
+        "User",
+        "User",
+        "User"
+      ]
+    },
+    {
+      "label": "cancel",
+      "currentHistoricalCreator": true,
+      "nullableOrActualPerformer": true,
+      "exactDTOHistoryReceiptParentChecksPassed": true,
+      "projectionSelects": [
+        "Action",
+        "User",
+        "User",
+        "User"
+      ]
+    }
+  ],
+  "cleanup": {
+    "ownedRecordsRemoved": true,
+    "disconnected": true,
+    "observerRestored": true
+  }
+}
