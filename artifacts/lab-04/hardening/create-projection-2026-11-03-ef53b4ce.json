@@ -1,0 +1,34 @@
+{
+  "executionHead": "28ab9841c536676a67b4b70765277c41c0392169",
+  "observations": [
+    {
+      "assignment": "self",
+      "exactCurrentIdentities": true,
+      "exactDTOHistoryReceiptAndParentChecksReached": true,
+      "realCallbackDriverQueries": 14,
+      "postInsertProjectionReads": [
+        "Action.SELECT",
+        "User.SELECT",
+        "User.SELECT",
+        "User.SELECT"
+      ]
+    },
+    {
+      "assignment": "distinct",
+      "exactCurrentIdentities": true,
+      "exactDTOHistoryReceiptAndParentChecksReached": true,
+      "realCallbackDriverQueries": 15,
+      "postInsertProjectionReads": [
+        "Action.SELECT",
+        "User.SELECT",
+        "User.SELECT",
+        "User.SELECT"
+      ]
+    }
+  ],
+  "cleanup": {
+    "fixturesRemoved": true,
+    "prismaDisconnected": true,
+    "observersRestored": true
+  }
+}
