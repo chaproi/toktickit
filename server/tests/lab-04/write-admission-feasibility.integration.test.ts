@@ -10,6 +10,8 @@ import { applyLab3Baseline, applyLaterMigrations, query, serverDirectory, verifi
 import { makeAdmissionProofClient } from "./write-admission-proof-client.js";
 import { ADMISSION_NAMESPACE, withWriteAdmission } from "./write-admission-proof-support.js";
 import { observePrisma } from "./prisma-observation-test-helper.js";
+import { CreatePhaseObserver, safeCreateError } from "./create-phase-observer.js";
+import { observeNestedStartup } from "./nested-read-observer.js";
 
 const signal = () => { let resolve!: () => void; const promise = new Promise<void>(r => { resolve = r; }); return { promise, resolve }; };
 async function until(check: () => Promise<boolean> | boolean, budget = 1500) {
@@ -279,20 +281,99 @@ it("transports genuine COMMIT40001 against an independent native participant and
   } finally { write.resolve(); finish.resolve(); if (active) await native.query("ROLLBACK"); await work.catch(() => {}); }
 }, 15_000);
 
+async function retainNestedObservation(owner: ReturnType<typeof makeAdmissionProofClient>, trace: CreatePhaseObserver,
+  restoreStartup: () => void, evidence: Record<string, unknown>, hasPrimary: boolean) {
+  let cleanupFailure: unknown;
+  const cleanupErrors: ReturnType<typeof safeCreateError>[] = [];
+  for (const cleanup of [() => owner.drain(), () => trace.stop(), () => {
+    trace.enabled = false; restoreStartup(); trace.restore();
+  }]) {
+    try { await cleanup(); }
+    catch (error) { cleanupFailure ??= error; cleanupErrors.push(safeCreateError(error)); }
+  }
+  let locks: { owners: number; waiters: number } | undefined;
+  try { locks = { owners: await lockCount(true), waiters: await lockCount(false) }; }
+  catch (error) { cleanupFailure ??= error; cleanupErrors.push(safeCreateError(error)); }
+  observations.push({ ...evidence, events: trace.events, poolAndAdmissionSamples: trace.samples, cleanupErrors,
+    cleanup: { pending: owner.pendingCount(), checkouts: owner.events.acquired, releases: owner.events.released,
+      admissionOwners: locks?.owners ?? null, admissionWaiters: locks?.waiters ?? null,
+      checkedOut: owner.pools.reduce((n, p) => n + p.totalCount - p.idleCount, 0) } });
+  if (cleanupFailure && !hasPrimary) throw cleanupFailure;
+}
+
 it("does not inherit writer admission into an unrelated read transaction inside a callback", async () => {
-  const owner = create("nested-read");
-  await withWriteAdmission(() => owner.client.$transaction(async tx => {
-    await tx.$queryRaw`SELECT 1`;
-    const result = await owner.client.$transaction(async read => {
-      await read.$executeRaw`SET TRANSACTION READ ONLY`;
-      return read.$queryRaw<Array<{ value: number }>>`SELECT value FROM "AdmissionProbe" WHERE id=1`;
-    }, { isolationLevel: "RepeatableRead", maxWait: 150 });
-    expect(result).toHaveLength(1);
-    const [batch] = await owner.client.$transaction([owner.client.category.count()]);
-    expect(Number.isSafeInteger(batch)).toBe(true);
-  }, { isolationLevel: "Serializable" }));
-  expect(await lockCount(true)).toBe(0);
-  observations.push({ check: "nested-unrelated-read", inheritedAdmission: false, readSucceededWhileWriterHeld: true });
+  // Earlier cross-process cases intentionally change id1. This case owns id2.
+  await native.query('INSERT INTO "AdmissionProbe" VALUES (2,37)');
+  const owner = create("nested-read"), trace = new CreatePhaseObserver();
+  let primary: unknown, passed = false;
+  trace.install(); const restoreStartup = observeNestedStartup(trace);
+  trace.observeTransactions(owner.client); trace.enabled = true; trace.sample(native, schema);
+  try {
+    await trace.context.run({ request: "nested-writer", attempt: 0 }, () => withWriteAdmission(() => owner.client.$transaction(async tx => {
+      const [writer] = await tx.$queryRaw<Array<{ backend: number }>>`SELECT pg_backend_pid()::int AS backend`;
+      expect(await lockCount(true)).toBe(1);
+      const result = await trace.context.run({ request: "nested-read", attempt: 0 }, () => owner.client.$transaction(async read => {
+        await read.$executeRaw`SET TRANSACTION READ ONLY`;
+        expect(await lockCount(true)).toBe(1); expect(await lockCount(false)).toBe(0);
+        return read.$queryRaw<Array<{ value: number; backend: number; readOnly: string }>>`
+          SELECT value,pg_backend_pid()::int AS backend,current_setting('transaction_read_only') AS "readOnly" FROM "AdmissionProbe" WHERE id=2`;
+      }, { isolationLevel: "RepeatableRead" }));
+      expect(result).toEqual([{ value: 37, backend: result[0].backend, readOnly: "on" }]);
+      expect(result[0].backend).not.toBe(writer.backend);
+      const [batch] = await owner.client.$transaction([owner.client.category.count()]);
+      expect(Number.isSafeInteger(batch)).toBe(true);
+    }, { isolationLevel: "Serializable" })));
+    expect(trace.events.filter(e => e.request === "nested-read" && ["attempt-selected", "fifo-enqueue", "admission-acquired"].includes(e.stage))).toHaveLength(0);
+    expect(trace.events.filter(e => e.request === "nested-read" && e.stage === "callback-entry")).toHaveLength(1);
+    expect(await lockCount(true)).toBe(0); passed = true;
+  } catch (error) { primary = safeCreateError(error); throw error; }
+  finally {
+    await retainNestedObservation(owner, trace, restoreStartup,
+      { check: "nested-unrelated-read", passed, primary: primary ?? null }, primary !== undefined);
+  }
+}, 10_000);
+
+it("enforces nested read maxWait150 at an observed occupied checkout without admission inheritance or late callback", async () => {
+  const owner = create("nested-deadline", true), trace = new CreatePhaseObserver();
+  let callbacks = 0, primary: ReturnType<typeof safeCreateError> | undefined, failure: unknown;
+  trace.install(); const restoreStartup = observeNestedStartup(trace);
+  trace.observeTransactions(owner.client); trace.enabled = true;
+  try {
+    await trace.context.run({ request: "deadline-writer", attempt: 0 }, () => withWriteAdmission(() => owner.client.$transaction(async tx => {
+      await tx.$queryRaw`SELECT 1`;
+      expect(owner.pools[0].totalCount - owner.pools[0].idleCount).toBe(1);
+      const started = performance.now();
+      const read = trace.context.run({ request: "deadline-read", attempt: 0 }, () => owner.client.$transaction(async () => { callbacks++; },
+        { isolationLevel: "RepeatableRead", maxWait: 150 }));
+      // Attach immediately; rejection is observed while the writer still owns
+      // the only physical checkout, not after a sleep or timed holder release.
+      const outcome = read.then(() => ({ succeeded: true, error: undefined }), error => ({ succeeded: false, error }));
+      await until(() => owner.pools[0].waitingCount === 1);
+      expect(await lockCount(true)).toBe(1); expect(await lockCount(false)).toBe(0);
+      const result = await outcome; primary = safeCreateError(result.error);
+      expect(result.succeeded).toBe(false);
+      expect(result.error).toMatchObject({ name: "TransactionStartDeadlineError", code: "P2028", meta: { phase: "transaction-start", maxWait: 150 } });
+      expect(performance.now() - started).toBeGreaterThanOrEqual(140);
+      expect(performance.now() - started).toBeLessThan(1000); // diagnostic scheduling tolerance, not a new business budget
+      expect(callbacks).toBe(0); expect(owner.pools[0].idleCount).toBe(0);
+      expect(trace.events.filter(e => e.request === "deadline-read" && ["attempt-selected", "fifo-enqueue", "admission-acquired"].includes(e.stage))).toHaveLength(0);
+      expect(trace.events.filter(e => e.request === "deadline-read" && e.stage === "query-start")).toHaveLength(0);
+      trace.record("observed-deadline-while-checkout-pending", { error: primary, observedActiveStage: "pool-checkout",
+        poolWaiting: owner.pools[0].waitingCount }, { request: "deadline-read", attempt: 1 });
+    }, { isolationLevel: "Serializable" })));
+    // Releasing the outer writer lets the late start acquire/BEGIN, then the
+    // public callback guard rejects and rollback/release drain exactly once.
+    await owner.drain(); expect(callbacks).toBe(0); expect(owner.pendingCount()).toBe(0);
+    expect(owner.events.acquired).toBe(owner.events.released);
+    expect(owner.pools[0].waitingCount).toBe(0); expect(owner.pools[0].totalCount - owner.pools[0].idleCount).toBe(0);
+    expect(await lockCount(true)).toBe(0);
+    expect(await owner.client.$queryRaw<Array<{ value: number }>>`SELECT 17::int AS value`).toEqual([{ value: 17 }]);
+  } catch (error) { failure = safeCreateError(error); throw error; }
+  finally {
+    await retainNestedObservation(owner, trace, restoreStartup,
+      { check: "nested-read-explicit-deadline", controlledPoolOccupation: true, primary: primary ?? null,
+        failure: failure ?? null, callbacks }, failure !== undefined);
+  }
 }, 10_000);
 
 it("restores the admission session budget after a non-timeout acquisition rejection", async () => {
