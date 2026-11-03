@@ -2,6 +2,10 @@
 
 **Status: PROPOSED — not accepted, not implemented.** Prepared 2026-11-03 on `feat/49-final-hardening` at `535a2e5426ffe263630e44b763779050a95ab436`; branch/tree initially clean. No applicable AGENTS.md found. Accepted D-12/D-13, all twenty accepted decisions, production SERIALIZABLE/global admission, scenario statuses and Product DoD remain in force. This file is a review package, not a normative replacement or a new accepted decision identifier. No diagnostic, application suite, build or T-47 execution accompanies it.
 
+### Isolated candidate continuation, 2026-11-03
+
+The preparation statement above records the original design-only draft. A later user authorization permits an isolated implementation candidate, not adoption of this normative proposal. Candidate branch `feat/49-d12-rc-candidate` preserves the [initial execution ledger](../../artifacts/lab-04/hardening/d12-rc-candidate-2026-11-03.md),including its historical approval-authentication blocker. The [resumed candidate ledger](../../artifacts/lab-04/hardening/d12-rc-resume-2026-11-03.md) records the completed writer/session integration,actual failures and narrowly justified observer corrections,normal RC/process overlap and genuine SERIALIZABLE transport distinctions,independent cleanup,and96files/2101passing cases with only unchanged T-47 excluded at8b877b6. TypeScript/build pass. Reference creation currently participates only through exclusive seed maintenance;the candidate retains active-reference reads under shared maintenance instead of adding redundant reference row locks,and any new reference writer requires reviewed participation. Student acceptance,implementation peer approval,performance acceptance and deployment authorization remain absent. T-47 remains failed/unexecuted in this continuation. The original branch's proposal remains uncommitted and preserved.
+
 ## 1. Exact proposed replacement for D-12
 
 The following block is the complete proposed replacement; it must not be labelled “Accepted” without review. Section3 is its concrete protocol, not an optional implementation sketch.
