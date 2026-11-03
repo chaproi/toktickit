@@ -5,15 +5,22 @@ import type { SqlDriverAdapterFactory } from "@prisma/driver-adapter-utils";
 import type { PoolClient } from "pg";
 
 const selected = new AsyncLocalStorage<boolean>();
+export type CommandPlan = { keys: ReadonlyArray<{ scope: number; id: number }>; maintenance?: "exclusive";
+  ownedTicketsOf?: number; cascadeTicketId?: number };
+const commandPlans = new AsyncLocalStorage<CommandPlan | undefined>();
+export function withCommandCoordination<T>(plan: CommandPlan, work: () => T): T { return commandPlans.run(plan, work); }
 const attempts = new AsyncLocalStorage<AdmissionAttempt | undefined>();
 const handoff = new AsyncLocalStorage<{ client: PoolClient; used: boolean }>();
 export const ADMISSION_NAMESPACE = 0x544b3441;
 export function withWriteAdmission<T>(work: () => T): T { return selected.run(true, work); }
-export function newAdmissionAttempt(maxWait: number) { return selected.getStore() ? new AdmissionAttempt(maxWait) : undefined; }
+export function newAdmissionAttempt(maxWait: number) {
+  const plan = commandPlans.getStore();
+  return plan || selected.getStore() ? new AdmissionAttempt(maxWait, plan) : undefined;
+}
 export function admissionContext<T>(attempt: AdmissionAttempt | undefined, work: () => T): T {
   // Selection belongs to this one public transaction call, never to unrelated
   // nested reads. Clear both contexts even when the new call is not selected.
-  return selected.run(false, () => attempts.run(attempt, work));
+  return selected.run(false, () => commandPlans.run(undefined, () => attempts.run(attempt, work)));
 }
 const deferred = () => { let resolve!: () => void; const promise = new Promise<void>(r => { resolve = r; }); return { promise, resolve }; };
 export class AdmissionDeadlineError extends Error {
@@ -64,9 +71,10 @@ class AdmissionAttempt {
   private ended = deferred(); private endedAlready = false; private physicallyReleased = false;
   private acquired = false; private key = 0; private releaseError: Error | boolean | undefined;
   private priorTimeout?: string;
+  private ownedKeys: Array<{ scope: number; id: number; shared: boolean }> = [];
   private waitingAbort = new AbortController(); private frontPermit?: () => void;
   releaseRequests = 0; physicalReleases = 0;
-  constructor(readonly maxWait: number) {}
+  constructor(readonly maxWait: number, readonly commandPlan?: CommandPlan) {}
   start() {
     if (this.deadline !== Infinity) throw new Error("Admission attempt startup was already assigned.");
     this.deadline = performance.now() + this.maxWait;
@@ -103,17 +111,43 @@ class AdmissionAttempt {
     const namespace = (await client.query("SELECT oid::text AS oid FROM pg_namespace WHERE nspname=$1", [schema])).rows[0];
     if (!namespace || !/^\d+$/.test(namespace.oid)) throw new Error("Admission schema could not be established.");
     this.key = Number(namespace.oid) | 0;
-    const remaining = Math.floor(this.deadline - performance.now());
-    if (this.expired || remaining < 1) { this.expire(); throw new AdmissionDeadlineError(this.maxWait); }
-    await client.query("SELECT set_config('statement_timeout',$1,false)", [String(remaining)]);
-    try {
-      await client.query("SELECT pg_advisory_lock($1::integer,$2::integer)", [ADMISSION_NAMESPACE, this.key]);
-      this.acquired = true;
-    } catch (error) {
-      if (this.expired || (error && typeof error === "object" && "code" in error && error.code === "57014")) {
-        this.expire(); throw new AdmissionDeadlineError(this.maxWait);
+    const acquireKey = async (scope: number, id: number, shared = false) => {
+      if (!Number.isInteger(id) || id < -2147483648 || id > 2147483647) throw new Error("Invalid command coordination key.");
+      const remaining = Math.floor(this.deadline - performance.now());
+      if (this.expired || remaining < 1) { this.expire(); throw new AdmissionDeadlineError(this.maxWait); }
+      await client.query("SELECT set_config('statement_timeout',$1,false)", [String(remaining)]);
+      try {
+        await client.query(shared ? "SELECT pg_advisory_lock_shared($1::integer,$2::integer)" : "SELECT pg_advisory_lock($1::integer,$2::integer)", [scope, id]);
+        this.ownedKeys.push({ scope, id, shared });
+      } catch (error) {
+        if (this.expired || (error && typeof error === "object" && "code" in error && error.code === "57014")) {
+          this.expire(); throw new AdmissionDeadlineError(this.maxWait);
+        }
+        throw error;
       }
-      throw error;
+    };
+    if (!this.commandPlan) {
+      await acquireKey(ADMISSION_NAMESPACE, this.key);
+    } else {
+      const plan = this.commandPlan;
+      await acquireKey(1001, this.key, plan.maintenance !== "exclusive");
+      const keys = [...plan.keys];
+      for (const scope of [1002, 1003, 1, 1004, 2, 3]) {
+        if (scope === 2 && plan.ownedTicketsOf !== undefined) {
+          if (!keys.some(k => k.scope === 1 && k.id === plan.ownedTicketsOf)) throw new Error("Owned Ticket planning requires its User gate.");
+          const rows = await client.query<{ id: number }>('SELECT id FROM "Ticket" WHERE "ownerId"=$1 AND "currentStatus" NOT IN (\'CLOSED\',\'CANCELLED\') ORDER BY id', [plan.ownedTicketsOf]);
+          keys.push(...rows.rows.map(row => ({ scope: 2, id: row.id })));
+        }
+        if (scope === 3 && plan.cascadeTicketId !== undefined) {
+          if (!keys.some(k => k.scope === 2 && k.id === plan.cascadeTicketId)) throw new Error("Cascade planning requires its Ticket gate.");
+          const rows = await client.query<{ id: number }>('SELECT id FROM "Action" WHERE "ticketId"=$1 AND status IN (\'PLANNED\',\'IN_PROGRESS\') ORDER BY id', [plan.cascadeTicketId]);
+          keys.push(...rows.rows.map(row => ({ scope: 3, id: row.id })));
+        }
+        for (const id of [...new Set(keys.filter(k => k.scope === scope).map(k => scope === 1002 ? this.key : k.id))].sort((a,b) => a-b)) {
+          await acquireKey(scope, id);
+        }
+      }
+      if (keys.some(k => ![1002,1003,1,1004,2,3].includes(k.scope))) throw new Error("Unsupported command coordination namespace.");
     }
     if (this.expired || performance.now() >= this.deadline) { this.expire(); throw new AdmissionDeadlineError(this.maxWait); }
     await client.query("SELECT set_config('statement_timeout',$1,false)", [prior]);
@@ -131,8 +165,8 @@ class AdmissionAttempt {
       if (!this.physicallyReleased && !this.endedAlready) {
         await client.query("ROLLBACK");
         if (this.priorTimeout !== undefined) await client.query("SELECT set_config('statement_timeout',$1,false)", [this.priorTimeout]);
-        if (this.acquired) {
-          const result = await client.query("SELECT pg_advisory_unlock($1::integer,$2::integer) AS unlocked", [ADMISSION_NAMESPACE, this.key]);
+        for (const key of [...this.ownedKeys].reverse()) {
+          const result = await client.query(key.shared ? "SELECT pg_advisory_unlock_shared($1::integer,$2::integer) AS unlocked" : "SELECT pg_advisory_unlock($1::integer,$2::integer) AS unlocked", [key.scope, key.id]);
           if (result.rows[0].unlocked !== true) { this.lost = true; throw new AdmissionOwnershipError(); }
         }
       }
@@ -167,7 +201,7 @@ export function admissionFactory(factory: PrismaPg, schema: string): SqlDriverAd
         const state = attempts.getStore();
         if (!state) return actual.startTransaction(level);
         state.start();
-        await state.join(front);
+        if (!state.commandPlan) await state.join(front);
         if (state.expired || performance.now() >= state.deadline) throw new AdmissionDeadlineError(state.maxWait);
         const client = await connect();
         await state.acquire(client, schema);
