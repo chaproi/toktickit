@@ -11,13 +11,14 @@ const observer = new CreatePhaseObserver(), fixtures = new ActionCreateFixtures(
 const observations: unknown[] = [];
 beforeAll(async () => { observer.install(); await fixtures.initialize(); observer.observeTransactions(fixtures.prisma); observer.enabled = true; });
 afterAll(async () => {
-  try { await fixtures.cleanup(); }
+  let cleanupVerified = false;
+  try { await fixtures.cleanup(); cleanupVerified = true; }
   finally {
     observer.enabled = false; observer.restore(); vi.restoreAllMocks();
     const directory = resolve(serverDirectory, "../artifacts/lab-04/hardening"); mkdirSync(directory, { recursive: true });
     const name = `create-projection-${new Date().toISOString().slice(0, 10)}-${randomUUID().slice(0, 8)}.json`;
     writeFileSync(resolve(directory, name), JSON.stringify({ executionHead: execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8", windowsHide: true }).trim(),
-      observations, cleanup: { fixturesRemoved: true, prismaDisconnected: true, observersRestored: true } }, null, 2) + "\n", { flag: "wx" });
+      observations, cleanup: { fixturesRemoved: cleanupVerified, prismaDisconnected: cleanupVerified, observersRestored: true } }, null, 2) + "\n", { flag: "wx" });
     console.info(`CREATE projection evidence: ${name}`);
   }
 });
