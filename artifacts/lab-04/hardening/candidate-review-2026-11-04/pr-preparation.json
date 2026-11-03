@@ -1,0 +1,20 @@
+{
+  "title": "Lab4: Review hardening and explicit-lock READ COMMITTED candidate",
+  "base": "lab4-staging",
+  "baseSha": "dd8eafb9a101625d07e4ce164fcc856402ecaed5",
+  "head": "feat/49-d12-rc-candidate",
+  "applicationSourceHead": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+  "bodyFile": "pr-body.md",
+  "candidateReviewPackage": "docs/lab-04/d12-candidate-review.md",
+  "existingRelatedHardeningPrs": [],
+  "ultimateIssue49Base": "lab4-staging",
+  "ultimateBaseSha": "dd8eafb9a101625d07e4ce164fcc856402ecaed5",
+  "prCreated": false,
+  "studentAdoption": "Pending",
+  "humanImplementationReview": "Pending",
+  "t47": "Complete passing B2 observation; observed variability; acceptance pending; all four ABBA outcomes preserved; no four-of-four requirement",
+  "metadataChanges": false,
+  "focusedComparisonBase": "feat/49-final-hardening",
+  "focusedComparisonBaseSha": "535a2e5426ffe263630e44b763779050a95ab436",
+  "baseRationale": "Issue49 DoD requires feature PR to lab4-staging; retain original parent as a focused review comparison, not unreviewed integration approval."
+}

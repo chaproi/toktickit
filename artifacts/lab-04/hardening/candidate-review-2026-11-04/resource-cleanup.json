@@ -1,0 +1,12 @@
+{
+  "atUtc": "2026-11-03T21:24:03.6484425Z",
+  "newOwnedZoomProfiles": 0,
+  "ownedRepositoryOrZoomProcesses": 0,
+  "applicationListeners": 0,
+  "preexistingBrowsersPreserved": true,
+  "scopedE2eValuesWereChildProcessOnly": true,
+  "clientsAndContextsClosed": true,
+  "requestWorkDrained": true,
+  "twoNewDependencyJunctionsRemoved": true,
+  "preexistingServerJunctionAndSharedInstallationsPreserved": true
+}
