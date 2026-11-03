@@ -75,3 +75,61 @@ After regression/build,an independent guarded probe confirms zero owned disposab
 Existing create-only seed review warnings,pg concurrent-client-query deprecation,Prisma configuration deprecation and sanitized deliberate-fault logs remain. Attempt06 also retains its explicit fixture timeouts/unhandled errors and failed teardown,followed by ownership-proven cleanup and the justified fixture correction. Passing later checks do not erase any failed verdict.
 
 **At this pre-measurement publication,T-47 has not rerun.** The next authorized action is one unchanged workload,alone,at the clean evidence-publication revision,with validation-only mode unset/restored and no competing repository processes. Its50 users/5000 warm-up/500 measured requests,original concurrency/operations/fixtures,all samples and strict thresholds remain. The candidate correctness result does not waive the failed performance gate,accepted metadata limitation,untriaged dependency findings or implementation peer review.
+
+## One unchanged T-47 confirmation - FAILED
+
+The preceding paragraph describes the pre-measurement state and is preserved. The single authorized measurement subsequently executes at **clean published3683daa5d28587e1d205246571619f8817288030**. Local/upstream/live alignment and guarded database identity are verified;no competing repository/test/build/seed/storage process exists. Installed Prisma CLI/client/adapter and generated client are all6.19.3;actual mapped pool size remains17. The first read-only version probe uses an unexported package.json subpath and fails before workload execution;reading the installed metadata file directly corrects that probe without changing any package. Validation-only is initially absent,explicitly unset for the command and restored afterward. No other pool,budget,retry or workload setting changes.
+
+Attempt10,from server/: `npm.cmd test -- tests/lab-04/performance-smoke.integration.test.ts`,**exactly once,alone**. **Exit1;1 file/1 collected/executed,0 passed,1 failed,0 skipped**. Actual command2026-11-03T05:25:59.8429526Z–05:27:16.3828984Z (12:25:59.843–12:27:16.383 Bangkok),76.5429459s wall;75.47s framework;70.41s reported tests,artifact case counter70,392.717ms. The artifact starts05:26:05.818Z. The filename date is the unchanged harness's2026-11-03 label;actual execution timestamps are retained independently. No result is attributed to later evidence publication or hosted CI.
+
+[All5500 raw samples and plans](t47-performance-2026-11-03-measurement-e9510798.json),[independent validation](front-queue-t47-analysis-2026-11-03.json) and [offline reproducer](analyze-front-queue-t47-2026-11-03.py) retain the failure without filtering slow/error responses or retrying HTTP calls. Offline validation independently confirms50 users with sequences0–99 warm-up and0–9 measured,sequential within each user,exact18-operation measured mix,all aggregate/operation nearest-rank percentiles,throughput and peak/final concurrency50/0. The source's awaited warm-up barrier is unchanged. These artifact-derived checks are not the later inline assertions that remained unreached.
+
+| Phase | Requests | Errors | Error rate | p50 ms | p95 ms | Elapsed s | Throughput req/s | Peak HTTP |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Warm-up | 5000 | 632 | 12.64% | 208.384 | 1141.887 | 42.230 | 118.399 | 50 |
+| Measured | 500 | 0 | 0% | 305.555 | 1089.992 | 4.444 | 112.508 | 50 |
+
+| Measured operation | Count | Errors | p50 ms | p95 ms | Strict p95 <500ms |
+| --- | --- | --- | --- | --- | --- |
+| action.cancel | 15 | 0 | 485.056 | 518.964 | Fail |
+| action.complete | 15 | 0 | 488.759 | 529.419 | Fail |
+| action.create | 30 | 0 | 1112.341 | 1160.460 | Fail |
+| action.detail | 30 | 0 | 5.906 | 123.917 | Pass |
+| action.edit | 30 | 0 | 441.959 | 632.647 | Fail |
+| action.history | 30 | 0 | 6.788 | 12.446 | Pass |
+| action.start | 30 | 0 | 516.352 | 543.361 | Fail |
+| comments.create | 20 | 0 | 132.050 | 150.368 | Pass |
+| comments.list | 40 | 0 | 88.470 | 342.199 | Pass |
+| requester.dashboard | 40 | 0 | 261.186 | 840.679 | Fail |
+| requester.ticket.detail | 40 | 0 | 135.327 | 244.091 | Pass |
+| requester.tickets.filtered-list | 20 | 0 | 165.906 | 186.374 | Pass |
+| requester.tickets.list | 20 | 0 | 561.177 | 742.395 | Fail |
+| staff.actions.list | 30 | 0 | 334.207 | 366.974 | Pass |
+| staff.dashboard | 30 | 0 | 677.104 | 919.311 | Fail |
+| staff.ticket.detail | 30 | 0 | 164.659 | 260.428 | Pass |
+| staff.tickets.list | 30 | 0 | 471.523 | 602.273 | Fail |
+| ticket.actions.list | 20 | 0 | 156.741 | 218.786 | Pass |
+
+All unexpected responses occur in warm-up:138 HTTP500 INTERNAL_ERROR,480 HTTP400 INVALID_ACTION_ID,11 ACTION_TERMINAL,2 INVALID_ACTION_TRANSITION and1 ACTION_STATUS_UNCHANGED409. No transport/semantic/replay error is recorded. All30 worker chains first encounter an HTTP500 (25 CREATE,2 EDIT,3 START). The earliest unexpected sample is user44,sequence4,CREATE,2245.666ms. Across all warm-up500s,the operation counts areCREATE108,EDIT10,START12,COMPLETE2,CANCEL6. Later invalid-ID and terminal/status symptoms follow failed chains under the unchanged acknowledged-token/Action-ID policy;do not describe all632 as independent primary faults or excuse failed writes.
+
+The unchanged observer retains138 SERIALIZABLE **P2028** failures with no confirmed SQLSTATE/model. It records workload phase `warmup`,**not transaction subtype or meta.phase**. Therefore these new failures remain unclassified as startup/local-queue/database admission/execution expiry. Their durations are not a positive classification;historical P2028s also remain unclassified. No generic retry,larger budget or retrospective relabelling follows.
+
+| Persisted count | Expected | Observed |
+| --- | --- | --- |
+| Tickets | 2050 | 2050 |
+| Actions | 8330 | 8222 |
+| Action history | 25320 | 24880 |
+| Mutation receipts | 1320 | 880 |
+| Ticket status history | 3800 | 3800 |
+| Comments | 220 | 220 |
+| Users /sessions | 50 /50 | 50 /50 |
+
+Observed Actions are short108,matching failed CREATE sample count;history/receipts are short440. Independent analysis finds880 successful mutation samples,agreeing with880 new history/receipt rows. This aggregate reconciliation is not proof of each command's atomic rollback. Inline primary/cleanup checks execute and pass;the first unsupported invariant is the expected persisted-count assertion atline376. Receipt replay,phase/user counts,concurrency/mix,zero-error and p95 inline assertions remain **unreached**. Their artifact-derived values are explicit:receiptReplays0,zero measured errors true,zero warm-up errors false,aggregate p95 false,and9/18 measured operation p95 targets fail. T-47 is **FAILED**,despite candidate correctness checks and the small COMPLETE cohort passing.
+
+Compared descriptively with the previous admitted candidate measurement7bc549d5:that run has2 warm-up errors,0 measured errors,p95973.907ms and89.032 measured req/s;this front-queue run has632 warm-up errors,0 measured errors,p951089.992ms and112.508req/s. This is not a controlled causal A/B or a claim of target improvement. The small COMPLETE cohort shows improved pool occupation,but cannot establish the mixed-workload queue/hold-time behaviour. Both failures and original samples remain unchanged.
+
+Host:Windows10.0.26200/x64,Node24.14.0,PostgreSQL18.6,Intel i5-13420H/12 logical CPUs,34,049,220,608 RAM bytes,16,789,008,384 available before the run. Runtime is Vitest-transformed TypeScript Express,NODE_ENV=test,loopback HTTP without TLS,not a production build. The unchanged raw pool-label text says inherited defaults;the separate actual configuration probe confirms the candidate maps17 connections. No new representative-plan traffic is run;the workload's existing out-of-measurement plans are retained as originally implemented. No CPU,pool-exhaustion,index or long-term capacity claim is inferred from this measurement.
+
+Final cleanup/guard probes confirm zero disposable schemas,other connections,idle transactions,advisory locks,sessions and fault functions. Harness flags show listener closed,Prisma disconnected,schema removed,transaction observer restored and environment restored. No test/application/storage process remains. Only the resolved owned tools directory (pinned executable/archive) is removed;private failed/successful command logs are retained. No broad reset/clean,operational database change or shared service teardown.
+
+**Next bounded gate:**attribute a small valid independent CREATE wave,with representative mixed reads and the same pool/budgets,to local FIFO wait,checkout,database admission,callback,COMMIT and drain/release. Retain trusted safe P2028 phase/subtype per attempt before proposing any remedy. The first unsupported operation is CREATE;the shared serial hold-time floor and possible load/queue interaction need measurement,not assumptions. This batch stops after publishing the actual failure:there is **no second benchmark,speculative tuning or additional production edit**. Accepted metadata retention,15 untriaged dependency findings,peer review and remaining #49/#50 obligations are not waived;no Issue/scenario/Product DoD status is promoted.

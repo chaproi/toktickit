@@ -1,0 +1,817 @@
+{
+  "source": "t47-performance-2026-11-03-measurement-e9510798.json",
+  "sha256": "535fa7f2aad40796c4cc4d9ee4865d2ac1198cee84a5c2f4fce6f4bf1ecad74a",
+  "executionHead": "3683daa5d28587e1d205246571619f8817288030",
+  "method": "Nearest rank ceil(p*n)-1; all5500 samples, failures and per-user sequences retained; no HTTP retries",
+  "command": {
+    "text": "server/: npm.cmd test -- tests/lab-04/performance-smoke.integration.test.ts",
+    "startedAt": "2026-11-03T05:25:59.8429526Z",
+    "finishedAt": "2026-11-03T05:27:16.3828984Z",
+    "exitCode": 1,
+    "files": 1,
+    "collected": 1,
+    "executed": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "wallSeconds": 76.5429459,
+    "frameworkSeconds": 75.47,
+    "caseElapsedMs": 70392.71669999999
+  },
+  "phases": {
+    "warmup": {
+      "count": 5000,
+      "errors": 632,
+      "errorRate": 0.1264,
+      "p50Ms": 208.38380000000325,
+      "p95Ms": 1141.8871,
+      "maxMs": 2623.0334000000003,
+      "statuses": {
+        "200": 3976,
+        "201": 392,
+        "500": 138,
+        "400": 480,
+        "409": 14
+      },
+      "elapsedMs": 42230.04059999999,
+      "throughputPerSecond": 118.3991284157089,
+      "peakHttpInFlight": 50,
+      "operations": {
+        "action.cancel": {
+          "count": 150,
+          "errors": 46,
+          "errorRate": 0.30666666666666664,
+          "p50Ms": 527.4922999999981,
+          "p95Ms": 2187.1276,
+          "maxMs": 2521.204700000002,
+          "statuses": {
+            "400": 37,
+            "500": 6,
+            "200": 104,
+            "409": 3
+          }
+        },
+        "action.complete": {
+          "count": 150,
+          "errors": 64,
+          "errorRate": 0.4266666666666667,
+          "p50Ms": 505.4834999999948,
+          "p95Ms": 1119.5037999999986,
+          "maxMs": 2623.0334000000003,
+          "statuses": {
+            "400": 59,
+            "200": 86,
+            "409": 3,
+            "500": 2
+          }
+        },
+        "action.create": {
+          "count": 300,
+          "errors": 108,
+          "errorRate": 0.36,
+          "p50Ms": 1057.6751000000004,
+          "p95Ms": 2261.398000000001,
+          "maxMs": 2595.954099999999,
+          "statuses": {
+            "201": 192,
+            "500": 108
+          }
+        },
+        "action.detail": {
+          "count": 300,
+          "errors": 96,
+          "errorRate": 0.32,
+          "p50Ms": 15.069499999997788,
+          "p95Ms": 258.015999999996,
+          "maxMs": 471.11209999999846,
+          "statuses": {
+            "200": 204,
+            "400": 96
+          }
+        },
+        "action.edit": {
+          "count": 300,
+          "errors": 110,
+          "errorRate": 0.36666666666666664,
+          "p50Ms": 452.21749999999884,
+          "p95Ms": 2114.8255999999965,
+          "maxMs": 2596.2750000000015,
+          "statuses": {
+            "400": 96,
+            "200": 190,
+            "500": 10,
+            "409": 4
+          }
+        },
+        "action.history": {
+          "count": 300,
+          "errors": 96,
+          "errorRate": 0.32,
+          "p50Ms": 19.731299999999464,
+          "p95Ms": 203.27850000000035,
+          "maxMs": 528.4546000000046,
+          "statuses": {
+            "400": 96,
+            "200": 204
+          }
+        },
+        "action.start": {
+          "count": 300,
+          "errors": 112,
+          "errorRate": 0.37333333333333335,
+          "p50Ms": 502.3266000000003,
+          "p95Ms": 2109.402399999999,
+          "maxMs": 2477.591400000005,
+          "statuses": {
+            "400": 96,
+            "200": 188,
+            "500": 12,
+            "409": 4
+          }
+        },
+        "comments.create": {
+          "count": 200,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 194.49429999999847,
+          "p95Ms": 445.1537000000026,
+          "maxMs": 663.0246000000043,
+          "statuses": {
+            "201": 200
+          }
+        },
+        "comments.list": {
+          "count": 400,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 146.74099999999453,
+          "p95Ms": 442.8173999999999,
+          "maxMs": 654.4301999999952,
+          "statuses": {
+            "200": 400
+          }
+        },
+        "requester.dashboard": {
+          "count": 400,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 286.2769999999982,
+          "p95Ms": 540.5118000000002,
+          "maxMs": 1314.644400000001,
+          "statuses": {
+            "200": 400
+          }
+        },
+        "requester.ticket.detail": {
+          "count": 400,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 137.56289999999717,
+          "p95Ms": 545.7132000000056,
+          "maxMs": 699.2644999999975,
+          "statuses": {
+            "200": 400
+          }
+        },
+        "requester.tickets.filtered-list": {
+          "count": 200,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 243.00280000000203,
+          "p95Ms": 552.6140999999989,
+          "maxMs": 710.5368000000017,
+          "statuses": {
+            "200": 200
+          }
+        },
+        "requester.tickets.list": {
+          "count": 200,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 267.59360000000015,
+          "p95Ms": 608.7285999999986,
+          "maxMs": 1187.6905000000006,
+          "statuses": {
+            "200": 200
+          }
+        },
+        "staff.actions.list": {
+          "count": 300,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 40.838999999992666,
+          "p95Ms": 497.4832999999999,
+          "maxMs": 561.5535000000018,
+          "statuses": {
+            "200": 300
+          }
+        },
+        "staff.dashboard": {
+          "count": 300,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 69.5743000000075,
+          "p95Ms": 886.345400000002,
+          "maxMs": 1187.2204999999994,
+          "statuses": {
+            "200": 300
+          }
+        },
+        "staff.ticket.detail": {
+          "count": 300,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 22.33289999999397,
+          "p95Ms": 465.7422000000006,
+          "maxMs": 641.6353999999992,
+          "statuses": {
+            "200": 300
+          }
+        },
+        "staff.tickets.list": {
+          "count": 300,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 36.20479999999952,
+          "p95Ms": 632.5959000000003,
+          "maxMs": 877.1890000000021,
+          "statuses": {
+            "200": 300
+          }
+        },
+        "ticket.actions.list": {
+          "count": 200,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 176.70929999999498,
+          "p95Ms": 425.6174000000028,
+          "maxMs": 550.6731,
+          "statuses": {
+            "200": 200
+          }
+        }
+      }
+    },
+    "measured": {
+      "count": 500,
+      "errors": 0,
+      "errorRate": 0.0,
+      "p50Ms": 305.5552000000025,
+      "p95Ms": 1089.9921000000031,
+      "maxMs": 1170.949099999998,
+      "statuses": {
+        "200": 450,
+        "201": 50
+      },
+      "elapsedMs": 4444.1109,
+      "throughputPerSecond": 112.50844347741187,
+      "peakHttpInFlight": 50,
+      "operations": {
+        "action.cancel": {
+          "count": 15,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 485.05569999999716,
+          "p95Ms": 518.9640000000072,
+          "maxMs": 518.9640000000072,
+          "statuses": {
+            "200": 15
+          }
+        },
+        "action.complete": {
+          "count": 15,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 488.75909999999567,
+          "p95Ms": 529.4188999999897,
+          "maxMs": 529.4188999999897,
+          "statuses": {
+            "200": 15
+          }
+        },
+        "action.create": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 1112.3413999999902,
+          "p95Ms": 1160.4597000000067,
+          "maxMs": 1170.949099999998,
+          "statuses": {
+            "201": 30
+          }
+        },
+        "action.detail": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 5.9055999999982305,
+          "p95Ms": 123.91670000000158,
+          "maxMs": 166.119200000001,
+          "statuses": {
+            "200": 30
+          }
+        },
+        "action.edit": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 441.95870000000286,
+          "p95Ms": 632.6473000000115,
+          "maxMs": 861.3744999999908,
+          "statuses": {
+            "200": 30
+          }
+        },
+        "action.history": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 6.787599999996019,
+          "p95Ms": 12.446099999986473,
+          "maxMs": 12.918700000009267,
+          "statuses": {
+            "200": 30
+          }
+        },
+        "action.start": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 516.3524000000034,
+          "p95Ms": 543.3608000000095,
+          "maxMs": 544.7837999999902,
+          "statuses": {
+            "200": 30
+          }
+        },
+        "comments.create": {
+          "count": 20,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 132.0503000000026,
+          "p95Ms": 150.36849999999686,
+          "maxMs": 155.66139999999723,
+          "statuses": {
+            "201": 20
+          }
+        },
+        "comments.list": {
+          "count": 40,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 88.46980000000622,
+          "p95Ms": 342.1993000000075,
+          "maxMs": 361.2865999999922,
+          "statuses": {
+            "200": 40
+          }
+        },
+        "requester.dashboard": {
+          "count": 40,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 261.1857000000018,
+          "p95Ms": 840.678700000004,
+          "maxMs": 853.6245000000054,
+          "statuses": {
+            "200": 40
+          }
+        },
+        "requester.ticket.detail": {
+          "count": 40,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 135.32660000000033,
+          "p95Ms": 244.09130000000005,
+          "maxMs": 248.97899999999208,
+          "statuses": {
+            "200": 40
+          }
+        },
+        "requester.tickets.filtered-list": {
+          "count": 20,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 165.90590000001248,
+          "p95Ms": 186.3744999999908,
+          "maxMs": 186.53059999999823,
+          "statuses": {
+            "200": 20
+          }
+        },
+        "requester.tickets.list": {
+          "count": 20,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 561.176999999996,
+          "p95Ms": 742.3953000000038,
+          "maxMs": 796.2277999999933,
+          "statuses": {
+            "200": 20
+          }
+        },
+        "staff.actions.list": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 334.206600000005,
+          "p95Ms": 366.97389999999723,
+          "maxMs": 374.8154000000068,
+          "statuses": {
+            "200": 30
+          }
+        },
+        "staff.dashboard": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 677.1039000000019,
+          "p95Ms": 919.3113999999914,
+          "maxMs": 929.9913000000088,
+          "statuses": {
+            "200": 30
+          }
+        },
+        "staff.ticket.detail": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 164.65939999998955,
+          "p95Ms": 260.4277000000002,
+          "maxMs": 262.14190000000235,
+          "statuses": {
+            "200": 30
+          }
+        },
+        "staff.tickets.list": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 471.5228999999963,
+          "p95Ms": 602.2727999999915,
+          "maxMs": 643.8559999999998,
+          "statuses": {
+            "200": 30
+          }
+        },
+        "ticket.actions.list": {
+          "count": 20,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 156.74120000000403,
+          "p95Ms": 218.78569999999308,
+          "maxMs": 227.01140000000305,
+          "statuses": {
+            "200": 20
+          }
+        }
+      }
+    }
+  },
+  "perUserSequencesAndMeasuredMixValid": true,
+  "failureClasses": [
+    {
+      "status": 500,
+      "code": "INTERNAL_ERROR",
+      "count": 138
+    },
+    {
+      "status": 400,
+      "code": "INVALID_ACTION_ID",
+      "count": 480
+    },
+    {
+      "status": 409,
+      "code": "INVALID_ACTION_TRANSITION",
+      "count": 2
+    },
+    {
+      "status": 409,
+      "code": "ACTION_TERMINAL",
+      "count": 11
+    },
+    {
+      "status": 409,
+      "code": "ACTION_STATUS_UNCHANGED",
+      "count": 1
+    }
+  ],
+  "firstUnexpectedByStart": {
+    "phase": "warmup",
+    "user": 44,
+    "role": "ADMINISTRATOR",
+    "sequence": 4,
+    "operation": "action.create",
+    "method": "POST",
+    "endpoint": "/api/tickets/:ticketId/actions",
+    "expectedStatus": 201,
+    "status": 500,
+    "startMs": 2366.7101000000002,
+    "durationMs": 2245.666000000001,
+    "bytes": 87,
+    "errorCode": "INTERNAL_ERROR",
+    "transportError": null,
+    "semanticError": null,
+    "replayed": false
+  },
+  "firstUnexpectedPerUser": [
+    {
+      "user": 20,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 21,
+      "sequence": 6,
+      "operation": "action.edit",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 22,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 23,
+      "sequence": 17,
+      "operation": "action.start",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 24,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 25,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 26,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 27,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 28,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 29,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 30,
+      "sequence": 14,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 31,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 32,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 33,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 34,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 35,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 36,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 37,
+      "sequence": 17,
+      "operation": "action.start",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 38,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 39,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 40,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 41,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 42,
+      "sequence": 6,
+      "operation": "action.edit",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 43,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 44,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 45,
+      "sequence": 7,
+      "operation": "action.start",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 46,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 47,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 48,
+      "sequence": 4,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    },
+    {
+      "user": 49,
+      "sequence": 14,
+      "operation": "action.create",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR"
+    }
+  ],
+  "http500Operations": {
+    "action.create": 108,
+    "action.edit": 10,
+    "action.start": 12,
+    "action.cancel": 6,
+    "action.complete": 2
+  },
+  "transactionFailures": {
+    "count": 138,
+    "code": "P2028",
+    "confirmedSqlStates": [],
+    "transactionSubtypeRetained": false,
+    "metaPhaseRetained": false,
+    "classification": "Unclassified; duration is not proof of startup/admission versus execution expiry"
+  },
+  "expectedFixtureAfter": {
+    "tickets": 2050,
+    "actions": 8330,
+    "actionHistory": 25320,
+    "ticketHistory": 3800,
+    "receipts": 1320,
+    "comments": 220,
+    "users": 50,
+    "sessions": 50
+  },
+  "observedFixtureAfter": {
+    "tickets": 2050,
+    "actions": 8222,
+    "actionHistory": 24880,
+    "ticketHistory": 3800,
+    "receipts": 880,
+    "comments": 220,
+    "users": 50,
+    "sessions": 50
+  },
+  "successfulMutationSamples": 880,
+  "persistedTotalsMatch": false,
+  "receiptReplays": 0,
+  "target": {
+    "overallP95Below500": false,
+    "allOperationsP95Below500": false,
+    "zeroMeasuredErrors": true,
+    "zeroWarmupErrors": false
+  },
+  "measuredOperationP95Failures": [
+    "action.cancel",
+    "action.complete",
+    "action.create",
+    "action.edit",
+    "action.start",
+    "requester.dashboard",
+    "requester.tickets.list",
+    "staff.dashboard",
+    "staff.tickets.list"
+  ],
+  "inlineReached": [
+    "primary/cleanup error assertions",
+    "all cleanup flags",
+    "persisted counts assertion (fails)"
+  ],
+  "inlineUnreached": [
+    "receipt replay assertion",
+    "phase/per-user counts",
+    "concurrency/mix",
+    "warmup/measured zero-error assertions",
+    "aggregate/per-operation p95 assertions"
+  ],
+  "artifactDerivedOnly": [
+    "all5500 counts/sequences/mix/concurrency/percentiles",
+    "zero receipt replay",
+    "target verdicts",
+    "aggregate success-count reconciliation"
+  ],
+  "cleanup": {
+    "listenerClosed": true,
+    "prismaDisconnected": true,
+    "ownedSchemaRemoved": true,
+    "environmentRestored": true,
+    "transactionObserverRestored": true
+  },
+  "verdict": "FAILED: warmup errors, missing expected domain writes, aggregate p95 and9/18 operation p95 targets fail despite zero measured errors",
+  "limitations": [
+    "One local Windows source-runtime measurement, not production capacity or controlled causal A/B",
+    "480 INVALID_ACTION_ID and14 terminal/status conflicts occur after earlier command failures; do not relabel all632 failures as independent primary faults",
+    "Aggregate mutation counts agree with880 successful samples, but do not prove every per-attempt rollback or request-to-error attribution",
+    "Historical P2028s remain unclassified; no new runtime phase diagnosis or tuning is executed",
+    "Accepted failed-start metadata retention and15 untriaged dependency findings remain"
+  ]
+}

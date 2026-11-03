@@ -294,6 +294,39 @@
       "sourceState": "final candidate pending bytes; subsequently committed unchanged as9534b86826dc3c959b989d27f91439f49338eda9",
       "frameworkSeconds": null,
       "unhandledErrors": 0
+    },
+    {
+      "label": "10-t47",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-04/performance-smoke.integration.test.ts"
+      ],
+      "started": "2026-11-03T05:25:59.8429526Z",
+      "finished": "2026-11-03T05:27:16.3828984Z",
+      "exit": 1,
+      "seconds": 76.54294589999999,
+      "validationPreviouslyPresent": false,
+      "validationRestored": true,
+      "workingDirectory": "server/",
+      "executionHead": "3683daa5d28587e1d205246571619f8817288030",
+      "sourceState": "clean published candidate plus pre-measurement evidence",
+      "files": {
+        "collected": 1,
+        "executed": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0
+      },
+      "cases": {
+        "collected": 1,
+        "executed": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0
+      },
+      "frameworkSeconds": 75.47,
+      "unhandledErrors": 0
     }
   ],
   "pendingFinalSourceSha256": {
@@ -321,7 +354,10 @@
     "testSha256": "c9165e7e181562c5380f8d877d2bada26b82807bd99e860a2d567bffe3df77c4",
     "helperSha256": "ff2f4fdf3c9a0cd7f28a8fe77338b88155ebe39927fbf889cf77cb7c738d35f0",
     "unchanged": true,
-    "executedInThisBatchYet": false
+    "executedInThisBatchYet": true,
+    "executionsInThisBatch": 1,
+    "result": "failed; no repeat or tuning",
+    "executionHead": "3683daa5d28587e1d205246571619f8817288030"
   },
   "failedAttempt06": {
     "diagnosis": "new cumulative fixture used same native client for blocked lock acquisition and observation",
@@ -358,5 +394,71 @@
     "advisoryLocks": 0,
     "sessions": 0,
     "cascadeFaultFunctions": 0
-  }
+  },
+  "benchmarkPreflight": {
+    "installedPrisma": "6.19.3",
+    "installedClient": "6.19.3",
+    "installedAdapter": "6.19.3",
+    "generatedClient": "6.19.3",
+    "actualPoolMax": 17,
+    "priorValidationOnlyPresent": false,
+    "targetAndProcessGuardPass": true,
+    "metadataProbeInitially": "ERR_PACKAGE_PATH_NOT_EXPORTED reading adapter package.json through require; no workload executed",
+    "metadataProbeCorrection": "read only the installed metadata file; versions match; probe exits0"
+  },
+  "finalCleanup": {
+    "dedicatedGuardMatches": true,
+    "distinctFromOperational": true,
+    "disposableSchemas": 0,
+    "otherConnections": 0,
+    "idleTransactions": 0,
+    "advisoryLocks": 0,
+    "sessions": 0,
+    "faultFunctions": 0,
+    "ownedExecutableArchiveRemoved": true,
+    "privateLogsRetained": true,
+    "activeRepositoryStorageWorkloads": 0,
+    "validationOnlyRestored": true
+  },
+  "changedFilesFromStartingHead": [
+    "artifacts/lab-04/hardening/analyze-front-queue-2026-11-03.py",
+    "artifacts/lab-04/hardening/analyze-front-queue-t47-2026-11-03.py",
+    "artifacts/lab-04/hardening/complete-phases-2026-11-03-35893ec8.json",
+    "artifacts/lab-04/hardening/complete-phases-2026-11-03-7dd92bd7.json",
+    "artifacts/lab-04/hardening/create-predicate-2026-11-03-receipt-default-6cd368aa.json",
+    "artifacts/lab-04/hardening/create-predicate-2026-11-03-receipt-index-e205cad6.json",
+    "artifacts/lab-04/hardening/create-predicate-2026-11-03-receipt-no-negative-read-dd5d1aec.json",
+    "artifacts/lab-04/hardening/create-predicate-2026-11-03-ticket-default-c1709ad3.json",
+    "artifacts/lab-04/hardening/create-predicate-2026-11-03-ticket-index-bf11a3e6.json",
+    "artifacts/lab-04/hardening/front-queue-2026-11-03.md",
+    "artifacts/lab-04/hardening/front-queue-cohort-analysis-2026-11-03.json",
+    "artifacts/lab-04/hardening/front-queue-commands-2026-11-03.json",
+    "artifacts/lab-04/hardening/front-queue-resource-2026-11-03-1116b91c.json",
+    "artifacts/lab-04/hardening/front-queue-resource-2026-11-03-5360d5fb.json",
+    "artifacts/lab-04/hardening/front-queue-resource-2026-11-03-57cd1de9.json",
+    "artifacts/lab-04/hardening/front-queue-resource-2026-11-03-9cc70623.json",
+    "artifacts/lab-04/hardening/front-queue-resource-2026-11-03-f527b5b6.json",
+    "artifacts/lab-04/hardening/front-queue-t47-analysis-2026-11-03.json",
+    "artifacts/lab-04/hardening/independent-create-red-2026-11-03-1c8bec18.json",
+    "artifacts/lab-04/hardening/independent-create-red-2026-11-03-eef283ba.json",
+    "artifacts/lab-04/hardening/t47-create-contention-2026-11-03-18aeb5ea.json",
+    "artifacts/lab-04/hardening/t47-create-contention-2026-11-03-1c033029.json",
+    "artifacts/lab-04/hardening/t47-diagnostic-observations-2026-11-01-ab8ea99e.json",
+    "artifacts/lab-04/hardening/t47-diagnostic-observations-2026-11-01-b9073ff0.json",
+    "artifacts/lab-04/hardening/t47-performance-2026-11-03-measurement-e9510798.json",
+    "artifacts/lab-04/hardening/write-admission-feasibility-2026-11-03-253b5684.json",
+    "artifacts/lab-04/hardening/write-admission-feasibility-2026-11-03-f3165023.json",
+    "docs/lab-04/hardening-audit.md",
+    "server/src/database/write-admission.ts",
+    "server/tests/lab-03/issue33-test-helpers.ts",
+    "server/tests/lab-04/action-commit-recovery.api.test.ts",
+    "server/tests/lab-04/action-create-contention.integration.test.ts",
+    "server/tests/lab-04/actions-concurrency-test-helpers.ts",
+    "server/tests/lab-04/independent-action-create.api.test.ts",
+    "server/tests/lab-04/t47-diagnosis.integration.test.ts",
+    "server/tests/lab-04/workflow-race-test-helpers.ts",
+    "server/tests/lab-04/write-admission-front-queue.integration.test.ts",
+    "server/tests/lab-04/write-admission-test-helpers.ts"
+  ],
+  "finalEvidenceScope": "evidence only after single failed benchmark; no further production/test edits"
 }
