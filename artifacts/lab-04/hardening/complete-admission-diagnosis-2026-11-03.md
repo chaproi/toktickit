@@ -55,3 +55,59 @@ The smallest **test-only** correction is [5ae96eb0d675e30babb6e3a5de8ef263be092b
 After this correction,server `npm.cmd exec -- tsc --noEmit` passes,exit0. **The corrected diagnostic has not executed.** The single authorized confirmation is exhausted; no second invocation,production change,semantic RED,comprehensive regression,build or T-47 run follows. Read-only probes pass,exit0. The independent final probe confirms dedicated identity distinct from operational and zero disposable schemas,other connections,idle transactions and advisory locks. The owned listener closed and checked-out count is0 in the confirmation artifact; the disposable-schema helper separately reports removal/remaining0. Process settings are scoped/restored and both probe clients disconnect.
 
 **Current next action:** execute the corrected bounded diagnostic with explicit confirmation authorization. Obtain actual checkout/admission/start/callback/drain/release measurements before selecting a front queue or any other production correction. Pool-slot starvation,admission hold-time contribution and P2028 attribution remain unestablished. T-47 remains failed; all accepted limitations,historical evidence and release/review gates remain intact.
+
+## Corrected cohort, explicitly authorized once - 2026-11-03
+
+This prospectively supersedes the preceding next-action state. The student explicitly authorizes **one** execution containing token correction5ae96eb. Preflight verifies clean local/upstream/live `99dc50cc6b49b930691d68bc0d8f23b2d3f6ff65`,ahead/behind0/0,correct repository and branch,no applicable AGENTS.md and no competing repository test/build/seed workload. Read-only guard/live probes verify the dedicated target differs from operational and starts with zero disposable schemas,other connections,idle transactions and advisory locks. The server/test bytes match the prior successful TypeScript check; no compiler rerun is needed. There is no source,configuration,dependency,pool,budget or retry change in this batch.
+
+**Exactly one command**,from server/: `npm.cmd test -- tests/lab-04/complete-contention.integration.test.ts`. Exit0; **1 file,1 collected/executed/passed,0 failed/skipped**. Command04:30:55.7417770Z–04:31:25.6910929Z (11:30:55.742–11:31:25.691 Bangkok),29.951943s wall;28.71s framework;23.551s case. Case artifact04:31:02.030Z–04:31:25.566Z. Run at clean99dc50c,not this later evidence commit or hosted CI. Both preceding failed attempts remain byte-for-byte intact; no repeat is used to select a favourable result.
+
+[Raw phase artifact](complete-phases-2026-11-03-0c00b65a.json),[independent analysis](complete-cohort-analysis-2026-11-03.json) and [offline analysis script](analyze-complete-cohort-2026-11-03.py) retain all responses/events/samples. Reproduce analysis with `python artifacts/lab-04/hardening/analyze-complete-cohort-2026-11-03.py`; it performs no HTTP/database work and refuses to overwrite different evidence. Percentiles use nearest rank `ceil(p*n)-1`,without exclusions. The first offline analysis exited1 on duplicate post-release checkout labels; the corrected analysis exited0 after bounding adapter phases at physical release,without changing raw events or application assertions. This was an observation-analysis correction,not another application run.
+
+Preparation **completes**:50 identities,30 real worker sessions,30 authorized detail200,30 CREATE201 and30 START200. Assigned workers differ from completing actors. Current server-returned tokens and fresh random UUIDs are used. The observed cohort has **30 COMPLETE200 on first attempts,4 baseline read200 and20 overlap read200**,zero unexpected HTTP responses and zero recorded query/start/transaction errors. Each read route has one baseline and five overlap responses. No P2028 occurs: there is no new subtype/phase classification,and historical benchmark P2028s remain unclassified.
+
+| HTTP operation/group | Count | p50 ms | p95 ms | Maximum ms |
+| --- | --- | --- | --- | --- |
+| COMPLETE | 30 | 1136.368 | 1418.911 | 1436.126 |
+| Baseline reads,combined | 4 | 11.776 | 47.178 | 47.178 |
+| Overlap reads,combined | 20 | 468.364 | 555.545 | 585.043 |
+| Staff detail,overlap | 5 | 551.279 | 585.043 | 585.043 |
+| Staff Dashboard,overlap | 5 | 523.854 | 544.161 | 544.161 |
+| Staff Tickets,overlap | 5 | 441.260 | 459.407 | 459.407 |
+| My Actions,overlap | 5 | 456.923 | 474.905 | 474.905 |
+
+The respective single baseline route observations are5.863,47.178,11.776 and14.335ms. These tiny,ordered diagnostic samples are not a new T-47 measurement or a controlled capacity estimate.
+
+| COMPLETE client-observed phase | Count | p50 ms | p95 ms | Maximum ms |
+| --- | --- | --- | --- | --- |
+| Pool checkout start/result | 30 | 128.908 | 406.087 | 467.627 |
+| Advisory admission wait/acquired | 30 | 441.068 | 630.363 | 638.269 |
+| Public transaction start/callback entry | 30 | 659.943 | 815.759 | 831.276 |
+| Adapter BEGIN start/result | 30 | 0.883 | 7.448 | 16.040 |
+| Awaited business callback entry/exit | 30 | 19.201 | 49.140 | 129.859 |
+| COMMIT start/result | 30 | 0.806 | 2.585 | 3.639 |
+| Callback exit/physical release | 30 | 2.041 | 5.684 | 13.404 |
+| Admission acquired/unlock response | 30 | 25.337 | 62.119 | 167.820 |
+| Public transaction start/result | 30 | 692.425 | 829.485 | 846.479 |
+
+The callback-drained marker follows exit in the wrapper's synchronous `finally`:p50 0.001ms,p95 0.006ms,max0.008ms. It marks completion of the awaited callback,not arbitrary background work. Every COMPLETE's public transaction window contains one attributed physical release. Raw fallback client labels can persist for later unscoped validation queries:59 release events outside these windows and2 checkout-result labels after release/before public result are excluded from transaction phase calculations,not deleted from evidence. Read checkout pairs are FIFO within exact request/attempt frames,with balanced starts/results. They have baseline18 checkouts,p50 0.015ms/p95 0.195ms;overlap90 checkouts,p50 77.304ms/p95 123.028ms,max152.320ms. Aggregate naked release counts must not be interpreted as duplicate releases or exact transaction attribution.
+
+**Demonstrated coupling:**110 pool/native-lock samples reach pool17,idle0,waiting51(maximum),admission waiters16 andowner1. Forty-four samples show all17 slots consumed by16 waiting writers plus the owner while pool work remains queued. Pool counters and the separate native lock query are not atomic;10ms sampling is approximate. In the concrete `overlap-12` attempt0 read span,a checkout starts at22350.2552ms and returns at22455.2840ms (**105.0288ms**),containing two saturated samples. `complete-1` unlocks at22455.2463ms and physically releases at22455.2587ms;the read checkout returns0.0253ms later. These monotonic offsets are relative to the observer epoch,not wall-clock timestamps. This directly supports pool-slot occupation by admission waiters delaying a real read,without requiring an artificial holder.
+
+**Hold time remains material:**client-observed admission hold intervals total1019.195ms across30 commands;the first command holds167.820ms. Callback time totals828.306ms;COMMIT31.010ms. Waiting across all commands accumulates12728.706ms at admission and4861.627ms at checkout,which is overlapping caller time,not additional wall time. Neither summing medians nor calling all latency pool wait is valid. There is no evidence here of removable guard work,server CPU attribution or how much of the original benchmark delay this mechanism explains.
+
+| Persisted count | Before COMPLETE cohort | After |
+| --- | --- | --- |
+| Tickets | 2050 | 2050 |
+| Actions | 8030 | 8030 |
+| Action history | 24060 | 24090 |
+| Mutation receipts | 60 | 90 |
+| Ticket status history | 3800 | 3800 |
+| Comments | 0 | 0 |
+| Users /sessions | 50 /30 | 50 /30 |
+
+All inline checks execute and pass:30 persisted COMPLETED states/version increments/actual completing actors,strictly advanced parent times equal to authoritative responses,unchanged Action count,history/receipt deltas30 and unchanged Ticket status-history count. Other unchanged counts are independently verified from retained before/after data. This diagnostic does not independently inspect every receipt fingerprint or full historical snapshot;it does not replace existing atomicity/replay evidence. The60 post-response Action/parent verification reads also use the application pool during the observed interval;this differs from the unchanged benchmark workload and is a stated load limitation.
+
+Cleanup executes:all HTTP work settles;agents/listener close;Prisma disconnects;checked-out count0;database admission owner/waiter assertion0;owned schema removed. A separate final guarded read-only probe exits0 and confirms zero disposable schemas,other connections,idle transactions and advisory locks;no repository test/application process remains. Test spies restore and environment settings are scoped/restored. The two guard/probe commands exit0. Existing create-only seed review warnings and pg's concurrent-client-query deprecation warning are retained locally;no warning is represented as a new failure. Private raw command output is not published;the committed artifacts contain no SQL,parameters,credentials,connection values or raw errors.
+
+**Smallest supported next candidate:**tests-first evaluation of one bounded process-local admission competitor per pool,before checkout,for already-selected writers only. Keep the same-connection PostgreSQL advisory lock as cross-process authority. Queue time must consume the existing single maxWait;expired queued callers must never acquire/run later,and ownership/draining/exactly-once release must remain intact. Reads stay outside the front queue. First add a resource/behaviour RED proving read access under admission saturation and queue deadline/late-result safety. This is a recommendation only: **no queue or production correction is implemented here**. It does not eliminate the measured serial hold floor or guarantee500ms. T-47 remains failed;no benchmark,compatibility proof,full regression or build is repeated. The Lab-only metadata-retention and15 untriaged dependency-audit limitations,peer review and all Issue/scenario/DoD gates remain unchanged.
