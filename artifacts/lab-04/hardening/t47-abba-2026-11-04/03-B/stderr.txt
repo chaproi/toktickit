@@ -1,0 +1,47 @@
+warn The configuration property `package.json#prisma` is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file (e.g., `prisma.config.ts`).
+For more information, see: https://pris.ly/prisma-config
+
+Environment variables loaded from .env
+Seed skipped Emily Carter: legacy identity is ambiguous or lacks durable evidence; no original-email account guessed; review required.
+Seed skipped Noah Williams: legacy identity is ambiguous or lacks durable evidence; no original-email account guessed; review required.
+Seed skipped Sofia Garcia: legacy identity is ambiguous or lacks durable evidence; no original-email account guessed; review required.
+Seed skipped Inactive Support: legacy identity is ambiguous or lacks durable evidence; no original-email account guessed; review required.
+Seed skipped Avery Chen: legacy identity is ambiguous or lacks durable evidence; no original-email account guessed; review required.
+Seed skipped Empty Dashboard Requester: legacy identity is ambiguous or lacks durable evidence; no original-email account guessed; review required.
+Seed skipped lab3:categoryId:Account and Access: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:categoryId:Software: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:categoryId:Network: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:relatedSystemId:Email: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:relatedSystemId:Campus Wi-Fi: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:relatedSystemId:VPN: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:relatedSystemId:LEB2 App: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:relatedSystemId:Grade Submission App: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:relatedSystemId:Printer: legacy reference requires verified identity mapping; review required.
+Seed skipped lab4:action:202 on TKT-2026-00167: frozen parent or ineligible worker (mina.patel@example.com, noah.williams@example.com); review required.
+Seed skipped lab4:action:203 on TKT-2026-00167: frozen parent or ineligible worker (noah.williams@example.com, mina.patel@example.com); review required.
+Seed skipped lab4:action:204 on TKT-2026-00169: frozen parent or ineligible worker (mina.patel@example.com, noah.williams@example.com); review required.
+Seed skipped lab4:action:205 on TKT-2026-00170: frozen parent or ineligible worker (noah.williams@example.com, mina.patel@example.com); review required.
+Seed skipped lab4:action:206 on TKT-2026-00171: frozen parent or ineligible worker (mina.patel@example.com, noah.williams@example.com); review required.
+Seed skipped lab4:action:207 on TKT-2026-00172: frozen parent or ineligible worker (mina.patel@example.com, mina.patel@example.com); review required.
+(node:43776) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/lab-04/performance-smoke.integration.test.ts > executes T-47: 50 authenticated concurrent users, 5000 warm-up then 500 measured real HTTP requests
+AssertionError: Per-operation p95 target evaluated separately; no slow endpoint excluded: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/lab-04/performance-smoke.integration.test.ts:392:128
+    390|     expect(report.measured.errors, "All measured failures are retained…
+    391|     expect(report.measured.p95Ms, "Reviewed T-47 aggregate p95 <500ms …
+    392|     expect(report.target.allOperationsP95Below500, "Per-operation p95 …
+       |                                                                                                                                ^
+    393|   }
+    394| }, plan.caseBudgetMs); // Initial finite budget: 110 sequential waves/…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯

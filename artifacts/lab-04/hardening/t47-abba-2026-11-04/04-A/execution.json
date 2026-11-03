@@ -1,0 +1,380 @@
+{
+    "index":  4,
+    "version":  "A",
+    "expectedHead":  "169811dfde4a22f0ff7a9acf8e45f755e062597b",
+    "command":  "npm.cmd test -- tests/lab-04/performance-smoke.integration.test.ts",
+    "executionStarted":  true,
+    "safeToContinue":  true,
+    "observerIntervalMs":  1000,
+    "observerProcessId":  44288,
+    "error":  null,
+    "preflight":  {
+                      "at":  "2026-11-03T21:01:08.729Z",
+                      "guardVerified":  true,
+                      "liveIdentityMatches":  true,
+                      "distinctOperationalDatabase":  true,
+                      "identityValuesWithheld":  true,
+                      "counts":  {
+                                     "owned_schemas":  0,
+                                     "other_connections":  0,
+                                     "idle_transactions":  0,
+                                     "advisory_locks":  0,
+                                     "sessions":  0,
+                                     "read_and_benchmark_users":  0,
+                                     "owned_relations":  0,
+                                     "owned_functions":  0,
+                                     "owned_triggers":  0,
+                                     "owned_fixture_users":  0
+                                 },
+                      "versions":  {
+                                       "postgres":  "18.6",
+                                       "max_connections":  "100",
+                                       "shared_buffers":  "128MB",
+                                       "work_mem":  "4MB",
+                                       "effective_cache_size":  "4GB",
+                                       "jit":  "on",
+                                       "track_io_timing":  "off"
+                                   },
+                      "packages":  {
+                                       "prisma":  "6.19.3",
+                                       "@prisma/client":  "6.19.3",
+                                       "@prisma/adapter-pg":  "6.19.3",
+                                       "@prisma/driver-adapter-utils":  "6.19.3",
+                                       "pg":  "8.23.0",
+                                       "vitest":  "2.1.9",
+                                       "typescript":  "5.9.3"
+                                   },
+                      "node":  "v24.14.0",
+                      "generatedClient":  "6.19.3"
+                  },
+    "externalBefore":  {
+                           "atUtc":  "2026-11-03T21:01:08.8758882Z",
+                           "monotonicTicks":  1487715139327,
+                           "cpuAvailable":  true,
+                           "idle100ns":  11009446250000,
+                           "kernel100ns":  12255037500000,
+                           "user100ns":  1335105468750,
+                           "powerAvailable":  true,
+                           "acLine":  1,
+                           "batteryPercent":  100,
+                           "memoryAvailable":  true,
+                           "availableRamBytes":  14399647744,
+                           "totalRamBytes":  34049220608,
+                           "processes":  [
+                                             {
+                                                 "workingSetBytes":  36470784,
+                                                 "cpuMs":  140.625,
+                                                 "id":  29700,
+                                                 "kind":  "node"
+                                             },
+                                             {
+                                                 "workingSetBytes":  46034944,
+                                                 "cpuMs":  812.5,
+                                                 "id":  44020,
+                                                 "kind":  "node"
+                                             },
+                                             {
+                                                 "workingSetBytes":  37371904,
+                                                 "cpuMs":  343.75,
+                                                 "id":  48496,
+                                                 "kind":  "node"
+                                             },
+                                             {
+                                                 "workingSetBytes":  37220352,
+                                                 "cpuMs":  234.375,
+                                                 "id":  35584,
+                                                 "kind":  "node"
+                                             },
+                                             {
+                                                 "workingSetBytes":  37605376,
+                                                 "cpuMs":  140.625,
+                                                 "id":  44764,
+                                                 "kind":  "node"
+                                             },
+                                             {
+                                                 "workingSetBytes":  39419904,
+                                                 "cpuMs":  78.125,
+                                                 "id":  22664,
+                                                 "kind":  "node"
+                                             },
+                                             {
+                                                 "workingSetBytes":  37621760,
+                                                 "cpuMs":  156.25,
+                                                 "id":  38056,
+                                                 "kind":  "node"
+                                             },
+                                             {
+                                                 "workingSetBytes":  37392384,
+                                                 "cpuMs":  250,
+                                                 "id":  44364,
+                                                 "kind":  "node"
+                                             },
+                                             {
+                                                 "workingSetBytes":  19177472,
+                                                 "cpuMs":  null,
+                                                 "id":  9076,
+                                                 "kind":  "postgres"
+                                             },
+                                             {
+                                                 "workingSetBytes":  12242944,
+                                                 "cpuMs":  null,
+                                                 "id":  9072,
+                                                 "kind":  "postgres"
+                                             },
+                                             {
+                                                 "workingSetBytes":  11948032,
+                                                 "cpuMs":  null,
+                                                 "id":  9916,
+                                                 "kind":  "postgres"
+                                             },
+                                             {
+                                                 "workingSetBytes":  12111872,
+                                                 "cpuMs":  null,
+                                                 "id":  10168,
+                                                 "kind":  "postgres"
+                                             },
+                                             {
+                                                 "workingSetBytes":  10833920,
+                                                 "cpuMs":  null,
+                                                 "id":  7968,
+                                                 "kind":  "postgres"
+                                             },
+                                             {
+                                                 "workingSetBytes":  38002688,
+                                                 "cpuMs":  null,
+                                                 "id":  8860,
+                                                 "kind":  "postgres"
+                                             },
+                                             {
+                                                 "workingSetBytes":  13131776,
+                                                 "cpuMs":  null,
+                                                 "id":  8816,
+                                                 "kind":  "postgres"
+                                             },
+                                             {
+                                                 "workingSetBytes":  26419200,
+                                                 "cpuMs":  null,
+                                                 "id":  8736,
+                                                 "kind":  "postgres"
+                                             },
+                                             {
+                                                 "workingSetBytes":  15638528,
+                                                 "cpuMs":  null,
+                                                 "id":  4908,
+                                                 "kind":  "postgres"
+                                             },
+                                             {
+                                                 "workingSetBytes":  15466496,
+                                                 "cpuMs":  null,
+                                                 "id":  8512,
+                                                 "kind":  "postgres"
+                                             },
+                                             {
+                                                 "workingSetBytes":  122703872,
+                                                 "cpuMs":  765.625,
+                                                 "id":  44288,
+                                                 "kind":  "powershell"
+                                             },
+                                             {
+                                                 "workingSetBytes":  66347008,
+                                                 "cpuMs":  2515.625,
+                                                 "id":  49196,
+                                                 "kind":  "powershell"
+                                             }
+                                         ]
+                       },
+    "powerSchemeBefore":  "Power Scheme GUID: 98fb7a86-c837-41f4-930a-34fe7b6bb1a8  (Acer)",
+    "startedAtUtc":  "2026-11-03T21:01:08.9597419Z",
+    "finishedAtUtc":  "2026-11-03T21:02:19.6285234Z",
+    "seconds":  70.6128705,
+    "exit":  1,
+    "testSummary":  [
+                        "Test Files  1 failed (1)",
+                        "Tests  1 failed (1)",
+                        "Duration  69.54s (transform 518ms, setup 0ms, collect 1.08s, tests 64.30s, environment 0ms, prepare 120ms)"
+                    ],
+    "externalAfter":  {
+                          "atUtc":  "2026-11-03T21:02:19.7038095Z",
+                          "monotonicTicks":  1488423382725,
+                          "cpuAvailable":  true,
+                          "idle100ns":  11014968125000,
+                          "kernel100ns":  12261822031250,
+                          "user100ns":  1336822343750,
+                          "powerAvailable":  true,
+                          "acLine":  1,
+                          "batteryPercent":  100,
+                          "memoryAvailable":  true,
+                          "availableRamBytes":  14084239360,
+                          "totalRamBytes":  34049220608,
+                          "processes":  [
+                                            {
+                                                "workingSetBytes":  36966400,
+                                                "cpuMs":  156.25,
+                                                "id":  29700,
+                                                "kind":  "node"
+                                            },
+                                            {
+                                                "workingSetBytes":  46546944,
+                                                "cpuMs":  828.125,
+                                                "id":  44020,
+                                                "kind":  "node"
+                                            },
+                                            {
+                                                "workingSetBytes":  37916672,
+                                                "cpuMs":  343.75,
+                                                "id":  48496,
+                                                "kind":  "node"
+                                            },
+                                            {
+                                                "workingSetBytes":  37810176,
+                                                "cpuMs":  250,
+                                                "id":  35584,
+                                                "kind":  "node"
+                                            },
+                                            {
+                                                "workingSetBytes":  38129664,
+                                                "cpuMs":  140.625,
+                                                "id":  44764,
+                                                "kind":  "node"
+                                            },
+                                            {
+                                                "workingSetBytes":  39849984,
+                                                "cpuMs":  78.125,
+                                                "id":  22664,
+                                                "kind":  "node"
+                                            },
+                                            {
+                                                "workingSetBytes":  38100992,
+                                                "cpuMs":  156.25,
+                                                "id":  38056,
+                                                "kind":  "node"
+                                            },
+                                            {
+                                                "workingSetBytes":  37998592,
+                                                "cpuMs":  250,
+                                                "id":  44364,
+                                                "kind":  "node"
+                                            },
+                                            {
+                                                "workingSetBytes":  19701760,
+                                                "cpuMs":  null,
+                                                "id":  9076,
+                                                "kind":  "postgres"
+                                            },
+                                            {
+                                                "workingSetBytes":  12746752,
+                                                "cpuMs":  null,
+                                                "id":  9072,
+                                                "kind":  "postgres"
+                                            },
+                                            {
+                                                "workingSetBytes":  12357632,
+                                                "cpuMs":  null,
+                                                "id":  9916,
+                                                "kind":  "postgres"
+                                            },
+                                            {
+                                                "workingSetBytes":  12492800,
+                                                "cpuMs":  null,
+                                                "id":  10168,
+                                                "kind":  "postgres"
+                                            },
+                                            {
+                                                "workingSetBytes":  11292672,
+                                                "cpuMs":  null,
+                                                "id":  7968,
+                                                "kind":  "postgres"
+                                            },
+                                            {
+                                                "workingSetBytes":  38248448,
+                                                "cpuMs":  null,
+                                                "id":  8860,
+                                                "kind":  "postgres"
+                                            },
+                                            {
+                                                "workingSetBytes":  13639680,
+                                                "cpuMs":  null,
+                                                "id":  8816,
+                                                "kind":  "postgres"
+                                            },
+                                            {
+                                                "workingSetBytes":  26640384,
+                                                "cpuMs":  null,
+                                                "id":  8736,
+                                                "kind":  "postgres"
+                                            },
+                                            {
+                                                "workingSetBytes":  16011264,
+                                                "cpuMs":  null,
+                                                "id":  4908,
+                                                "kind":  "postgres"
+                                            },
+                                            {
+                                                "workingSetBytes":  15953920,
+                                                "cpuMs":  null,
+                                                "id":  8512,
+                                                "kind":  "postgres"
+                                            },
+                                            {
+                                                "workingSetBytes":  124952576,
+                                                "cpuMs":  10781.25,
+                                                "id":  44288,
+                                                "kind":  "powershell"
+                                            },
+                                            {
+                                                "workingSetBytes":  66650112,
+                                                "cpuMs":  2578.125,
+                                                "id":  49196,
+                                                "kind":  "powershell"
+                                            }
+                                        ]
+                      },
+    "powerSchemeAfter":  "Power Scheme GUID: 98fb7a86-c837-41f4-930a-34fe7b6bb1a8  (Acer)",
+    "artifact":  "t47-performance-2026-11-04-measurement-6ed7bb21.json",
+    "artifactSha256":  "750e6c68734518b408746abe3c8320a158b29ea722671abb66fe320ee98d01c1",
+    "artifactHead":  "169811dfde4a22f0ff7a9acf8e45f755e062597b",
+    "cleanup":  {
+                    "at":  "2026-11-03T21:02:20.290Z",
+                    "guardVerified":  true,
+                    "liveIdentityMatches":  true,
+                    "distinctOperationalDatabase":  true,
+                    "identityValuesWithheld":  true,
+                    "counts":  {
+                                   "owned_schemas":  0,
+                                   "other_connections":  0,
+                                   "idle_transactions":  0,
+                                   "advisory_locks":  0,
+                                   "sessions":  0,
+                                   "read_and_benchmark_users":  0,
+                                   "owned_relations":  0,
+                                   "owned_functions":  0,
+                                   "owned_triggers":  0,
+                                   "owned_fixture_users":  0
+                               },
+                    "versions":  {
+                                     "postgres":  "18.6",
+                                     "max_connections":  "100",
+                                     "shared_buffers":  "128MB",
+                                     "work_mem":  "4MB",
+                                     "effective_cache_size":  "4GB",
+                                     "jit":  "on",
+                                     "track_io_timing":  "off"
+                                 },
+                    "packages":  {
+                                     "prisma":  "6.19.3",
+                                     "@prisma/client":  "6.19.3",
+                                     "@prisma/adapter-pg":  "6.19.3",
+                                     "@prisma/driver-adapter-utils":  "6.19.3",
+                                     "pg":  "8.23.0",
+                                     "vitest":  "2.1.9",
+                                     "typescript":  "5.9.3"
+                                 },
+                    "node":  "v24.14.0",
+                    "generatedClient":  "6.19.3"
+                },
+    "competingProcessesAfter":  [
+
+                                ],
+    "powerStable":  true,
+    "completeWorkload":  true
+}

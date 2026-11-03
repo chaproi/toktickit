@@ -1,0 +1,26 @@
+{
+    "currentOriginalWorktreesPreserved":  true,
+    "atUtc":  "2026-11-03T21:05:23.7044302Z",
+    "ownedWorkloads":  [
+
+                       ],
+    "validationEnvAbsent":  true,
+    "ownedCheckoutRemoval":  [
+                                 {
+                                     "detachedHead":  "169811dfde4a22f0ff7a9acf8e45f755e062597b",
+                                     "version":  "A",
+                                     "checkoutRemoved":  true,
+                                     "ignoredEnvironmentRemoved":  true,
+                                     "junctionOnlyRemoved":  true,
+                                     "archivedArtifacts":  2
+                                 },
+                                 {
+                                     "detachedHead":  "84ef0ad91502a0c660998ddc13d0c7a163f1a169",
+                                     "version":  "B",
+                                     "checkoutRemoved":  true,
+                                     "ignoredEnvironmentRemoved":  true,
+                                     "junctionOnlyRemoved":  true,
+                                     "archivedArtifacts":  2
+                                 }
+                             ]
+}

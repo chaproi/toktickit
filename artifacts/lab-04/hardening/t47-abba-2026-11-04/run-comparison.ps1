@@ -15,7 +15,11 @@ if($RunIndex -gt 1){
  $previousVersion=$plan.order[$RunIndex-2].version
  $previousLabel=('{0:d2}-{1}' -f ($RunIndex-1),$previousVersion)
  $previous=Get-Content -Raw -LiteralPath (Join-Path $EvidenceDirectory "$previousLabel\execution.json") | ConvertFrom-Json
- if(!$previous.safeToContinue){throw 'Previous cleanup/compatibility gate failed; abort sequence'}
+ if(!$previous.safeToContinue){
+  $recovery=Join-Path $EvidenceDirectory "$previousLabel\post-execution-recovery.json"
+  if(Test-Path -LiteralPath $recovery){$previous=Get-Content -Raw -LiteralPath $recovery|ConvertFrom-Json}
+  if(!$previous.safeToContinue){throw 'Previous cleanup/compatibility gate failed; abort sequence'}
+ }
 }
 New-Item -ItemType Directory -Path $destination | Out-Null
 if(!('AbbaNative' -as [type])){
@@ -98,7 +102,7 @@ try {
  [IO.File]::WriteAllText((Join-Path $PrivateDirectory "$label-stderr.log"),$err,(New-Object Text.UTF8Encoding($false)))
  $record.testSummary=@([regex]::Matches($out,'(?m)^\s*(Test Files|Tests|Duration)\s+[^\r\n]+')|ForEach-Object {$_.Value.Trim()})
  $record.externalAfter=Snapshot;$record.powerSchemeAfter=Scheme
- SaveJson @($samples) (Join-Path $destination 'external-samples.json')
+ SaveJson ($samples.ToArray()) (Join-Path $destination 'external-samples.json')
  $newArtifacts=@(Get-ChildItem -LiteralPath $artifactDirectory -Filter 't47-performance-*-measurement-*.json'|Where-Object {$_.Name -notin $priorArtifacts})
  if($newArtifacts.Count -ne 1){throw 'Expected exactly one newly retained workload artifact; abort sequence'}
  $raw=$newArtifacts[0];$target=Join-Path $destination $raw.Name

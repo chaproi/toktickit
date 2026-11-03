@@ -26,4 +26,3 @@ const packages={};for(const name of ['prisma','@prisma/client','@prisma/adapter-
 console.log(JSON.stringify({at:new Date().toISOString(),guardVerified:true,liveIdentityMatches:true,distinctOperationalDatabase:true,identityValuesWithheld:true,counts:row,versions,packages,node:process.version,generatedClient:require('@prisma/client').Prisma.prismaVersion.client}));
 if(Object.values(row).some(v=>v!==0))process.exitCode=1;
 } finally {await c.end();}
-
