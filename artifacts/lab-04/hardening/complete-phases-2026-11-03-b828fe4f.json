@@ -1,0 +1,29 @@
+{
+  "startedAt": "2026-11-03T04:22:44.945Z",
+  "executionHead": "04f137365603e21ecc83a957971d2f2a978dcbcf",
+  "mode": "bounded-natural-COMPLETE-cohort-not-T47",
+  "phase": "real-CREATE-START-preparation",
+  "preparationResponses": [
+    {
+      "operation": "create",
+      "ordinal": 0,
+      "status": 409,
+      "error": "STALE_WRITE"
+    }
+  ],
+  "responses": [],
+  "cleanup": {
+    "listenerClosed": true,
+    "checkedOut": 0
+  },
+  "isolationVerified": true,
+  "preparationOrdinal": 0,
+  "failure": {
+    "name": "other",
+    "code": null,
+    "phase": null
+  },
+  "finishedAt": "2026-11-03T04:23:07.248Z",
+  "events": [],
+  "poolAndDatabaseSamples": []
+}
