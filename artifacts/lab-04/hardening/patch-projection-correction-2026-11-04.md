@@ -68,3 +68,65 @@ The single comprehensive command runs2026-11-03T20:12:26.017Z-20:29:03.071Z (Ban
 The same checksum-pinned SeaweedFS4.51 prerequisite is provisioned in an owned temporary directory only for existing persistent tests, with its environment setting restored. Download/extraction overlaps05 outside timing measurement; no repository test/build runs overlap. Expected seed-preservation, sanitized controlled-fault and Prisma/pg deprecation warnings remain; no unhandled-error summary occurs. No application timeout, retry or concurrency change.
 
 Independent native guard/live probe at2026-11-03T20:29:32.980Z confirms0owned schemas,other connections,idle transactions,advisory locks,sessions,fixture Users and fault objects. Process inventory finds0owned node/weed workloads. The runner restores scoped settings; existing tests verify owned directory/bucket/object/archive removal. Every486pre-validation tracked artifact retains its exact saved byte hash; original proposal SHA-256 remains `e3bd394edae0c677a301e43f02b04ec6363907bf27972b302fa19647aee7790d`. The original branch stays535a2e5. Clean-source publication and the sole unchanged measurement follow these correctness gates; their outcome is appended separately.
+
+## One unchanged post-correction T-47 - failed latency target
+
+Clean source/evidence HEAD `84ef0ad91502a0c660998ddc13d0c7a163f1a169` is committed, pushed and verified equal to live origin before execution. It contains production0abd40d and no additional source changes. Benchmark/helper remain byte-identical to535a2e5. From candidate server/, exactly once:
+
+```text
+npm.cmd test -- tests/lab-04/performance-smoke.integration.test.ts
+```
+
+Command2026-11-03T20:31:13.378Z-20:32:30.812Z (Bangkok4November03:31:13-03:32:30); case starts20:31:21.085Z. Exit1;1file/1case collected/executed,0passed/1failed/0skipped. Framework75.88s,reported case69.563s,monotonic body69.540s,outer77.385s. There is no repeat. The later evidence commit is not an application execution revision.
+
+| Phase | Samples | Errors | p50 /p95 ms | Elapsed seconds | Throughput requests/s | Peak /weighted/final concurrency |
+|---|---:|---:|---|---:|---:|---|
+|Warm-up|5000|0 (0%)|317.555 /648.369|37.6639|132.753|50 /47.160 /0|
+|Measured|500|0 (0%)|339.695 /653.955|3.8996|128.218|50 /46.103 /0|
+
+Status counts4500HTTP200+500HTTP201 during warm-up;450HTTP200+50HTTP201 measured. No sample is excluded or retried; normal5000-request warm-up completes before measurement. Actual role mix20Requester/20Staff/10Administrator,50sequential-within-VU concurrent users, indexed fixture and expected endpoint mix remain unchanged. No extra observer, pool override or competing repository workload runs alongside the benchmark; validation-only mode is unset for this invocation and restored afterward.
+
+### Per-operation artifact calculations
+
+All error counts are0in both phases. Warm-up sample count is10times measured n. Strict<500ms target evaluation below is **independently artifact-derived**, not an executed per-operation assertion after aggregate failure. Warm-up latency is reported without inventing another acceptance threshold.
+
+| Operation | Measured n | Warm-up p50 /p95 ms | Measured p50 /p95 ms | Measured p95 target |
+|---|---:|---|---|---|
+|action.cancel|15|520.262 /773.149|531.377 /604.799|Fail|
+|action.complete|15|561.625 /745.026|579.180 /736.972|Fail|
+|action.create|30|462.890 /644.973|461.020 /656.850|Fail|
+|action.detail|30|265.016 /433.848|287.009 /373.012|Pass|
+|action.edit|30|493.576 /802.034|481.139 /650.711|Fail|
+|action.history|30|245.790 /340.264|143.385 /270.077|Pass|
+|action.start|30|590.037 /875.004|718.777 /781.963|Fail|
+|comments.create|20|368.584 /539.064|446.555 /502.969|Fail|
+|comments.list|40|314.581 /486.539|325.428 /411.532|Pass|
+|requester.dashboard|40|253.018 /379.844|224.993 /347.746|Pass|
+|requester.ticket.detail|40|335.758 /558.759|238.491 /456.853|Pass|
+|requester.tickets.filtered-list|20|319.535 /420.003|382.634 /449.076|Pass|
+|requester.tickets.list|20|330.870 /496.291|352.669 /465.164|Pass|
+|staff.actions.list|30|275.544 /411.284|338.718 /418.067|Pass|
+|staff.dashboard|30|286.876 /447.702|267.677 /366.815|Pass|
+|staff.ticket.detail|30|309.607 /481.045|189.078 /200.291|Pass|
+|staff.tickets.list|30|285.149 /417.341|310.436 /414.574|Pass|
+|ticket.actions.list|20|284.866 /394.738|281.940 /398.470|Pass|
+
+All exact persistence assertions pass:2050Tickets,8330Actions,25320ActionHistory,3800TicketStatusHistory,1320receipts,220comments,50Users/50sessions. This represents330newActions,1320real Action mutations/history/receipts and220comments across warm-up/measured cycles;zero replay. This does not replace per-row correctness/race evidence. Cleanup flags alltrue,cleanupFailure null. `primaryFailure:null` means the pre-assertion workload body completed, not that the test passed. `transactionFailures:[]` retains no P2028; historical unknown subtypes remain unknown.
+
+All inline assertions before line391 execute and pass: guard/authentication/setup,cleanup,exact persistence,5000/500and100/10per-user counts,role/operation mix,peak50,zero errors and zero replays. Line391 aggregate p95<500 executes/fails at653.9553ms. Line392 combined per-operation target is **unreached**. Independent calculations show12/18operations pass;comments.create plus all five Action writes fail. All three previously corrected read operations remain below500ms (RequesterDashboard347.746,MyTickets465.164,StaffDashboard366.815). START781.963ms is worse numerically than the retained prior648.602ms; no benefit is manufactured from fewer queries or the diagnostic confirmation.
+
+[Raw5500samples](t47-performance-2026-11-04-measurement-b4c6eade.json), [independent calculations](t47-patch-analysis-2026-11-04.json), [offline reproducer](analyze-t47-patch-2026-11-04.py), [exact execution/source/cleanup manifest](t47-patch-execution-2026-11-04.json).
+
+```text
+python artifacts/lab-04/hardening/analyze-t47-patch-2026-11-04.py
+```
+
+Offline checks independently reproduce all5500samples, each user's exact sequence/role/count, expected operation/status mix, nearest-rank percentiles, interval-sweep concurrency and throughput and literal persistence totals. They introduce no new requests and do not replace failed inline evidence. The original raw sample/analyzer/evidence remain unchanged. All215tracked server files retain their premeasurement saved bytes;all486saved historical artifacts and21new premeasurement JSON artifacts match saved SHA-256 values. Original worktree/proposal remain unchanged.
+
+Runtime remains local Windows10.0.26200 x64, Intel i5-13420H/12logical CPUs,34.049GB totalRAM,Node24.14,PostgreSQL18.6,Prisma6.19.3 client engine,Vitest-transformed TypeScript Express under NODE_ENV=test,loopbackHTTP withoutTLS. AvailableRAM before this run10.613GB versus14.448GB in the prior retained run is an observation, not an explanation of latency. PostgreSQL settings remain max_connections100/shared_buffers128MB/work_mem4MB/effective_cache_size4GB/JITon/track_io_timingoff. The unchanged benchmark's textual pool metadata still says inherited engine default; actual candidate mapping remains17pool connections,connect5s,pool10s and separate effective maxWait2s/execution5s. No setting is silently replaced by that historical metadata string.
+
+The bounded traces establish redundant shared PATCH projection round trips and significant pretransaction/checkout/User-resource waiting; they do not attribute the warmed benchmark's new broad write tail. Query reduction is verified, but **T-47 remains failed**. No CPU-pressure, missing-index, pool-exhaustion or SQL-only causal claim follows. The next action is a bounded review of the retained pretransaction/checkout/resource critical path and auth/discovery round trips under representative warmed mixed traffic before proposing any further correction; not another unchanged benchmark or speculative tuning.
+
+Independent native guard/live probe2026-11-03T20:33:00.408Z reports0owned schemas,other connections,idle transactions,advisory locks,sessions,fixture identities and fault objects. Process inventory0owned node/weed workloads;validation/recovery settings restored. Requests,Agents,listeners,clients and coordination resources are drained;owned recovery tooling was marker/path-verified and removed before measurement. Expected seed-preservation and Prisma/pg warnings remain, no unhandled-error summary. Only evidence publication follows. D-12 is still proposed;student/peer review,retention/dependency risks,deployment and Issue/scenario/Product DoD gates remain separate and unchanged.
+
+Final publication validation:132local links and9Markdown tables pass;UTF-8/JSON/whitespace and complete staged scope pass. A final independent probe20:34:41.682Z again finds0owned database resources;the original535a2e5branch retains only its original uncommitted proposal with the saved digest. Read-only inspection under the sandbox initially hit Git ownership protection;the same check under the authorized host identity succeeded without changing Git configuration. No further application execution follows measurement.
