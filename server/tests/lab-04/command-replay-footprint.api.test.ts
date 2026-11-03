@@ -3,17 +3,11 @@ import { ActionPatchFixtures } from "./action-patch-test-fixtures.js";
 import { retryState } from "./action-retry-test-helpers.js";
 import { assertSafeEqual, assertSafeError } from "./action-read-test-fixtures.js";
 import { editableUser } from "../lab-03/issue35-test-helpers.js";
-import { safeCreateError } from "./create-phase-observer.js";
+import * as prismaModule from "../../src/prisma.js";
+import { observePrisma } from "./prisma-observation-test-helper.js";
 
 const f = new ActionPatchFixtures();
 beforeAll(() => f.initialize());
-// Preserve actual transaction classification if preparation fails; do not
-// substitute a successful response or retain SQL/credentials/raw errors.
-const originalTransaction = f.prisma.$transaction.bind(f.prisma);
-beforeAll(() => { vi.spyOn(f.prisma, "$transaction").mockImplementation(((...args: unknown[]) =>
-  Reflect.apply(originalTransaction, f.prisma, args).catch((error: unknown) => {
-    console.info("Replay transaction failure classification", safeCreateError(error)); throw error;
-  })) as any); });
 afterAll(async () => { vi.restoreAllMocks(); await f.cleanup(); });
 
 it.each([false, true])("receipt survives mutable discovery drift; revoked=%s still denies replay", async revoked => {
@@ -24,10 +18,9 @@ it.each([false, true])("receipt survives mutable discovery drift; revoked=%s sti
   const original = await f.patch(f.path(source, "edit"), input, actor);
   expect(original.status).toBe(200);
   let injected = false, expected: Awaited<ReturnType<typeof retryState>> | undefined;
-  const find = f.prisma.action.findFirst.bind(f.prisma.action);
-  const spy = vi.spyOn(f.prisma.action, "findFirst").mockImplementation((async (args: any) => {
-    const found = await find(args);
-    if (!injected && args?.where?.id === source.action.id && args?.select?.assigneeId) {
+  const observed = observePrisma(f.prisma, async (parameters, next) => {
+    const found = await next(parameters);
+    if (!injected && parameters.model === "Action" && parameters.action === "findFirst" && !parameters.runInTransaction) {
       injected = true;
       // Real independent commands after original discovery, before User gates.
       const current = { action: await f.prisma.action.findUniqueOrThrow({ where: { id: source.action.id } }),
@@ -42,7 +35,8 @@ it.each([false, true])("receipt survives mutable discovery drift; revoked=%s sti
       expected = await retryState(f.prisma, source.parent.id);
     }
     return found;
-  }) as any);
+  });
+  const spy = vi.spyOn(prismaModule, "getPrisma").mockReturnValue(observed);
   try {
     const replay = await f.patch(f.path(source, "edit"), input, actor);
     expect(injected).toBe(true);
