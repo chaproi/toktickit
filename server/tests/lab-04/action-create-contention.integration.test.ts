@@ -1,4 +1,4 @@
-import { waitForWriteAdmission } from "./write-admission-test-helpers.js";
+import { waitForObservedAdmission } from "./write-admission-test-helpers.js";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { execFileSync } from "node:child_process";
 import { randomUUID, randomInt } from "node:crypto";
@@ -199,10 +199,10 @@ it("attributes eight independent concurrent CREATE commands before choosing a T-
     let coordinationFailure: unknown;
     try {
       await finite(ready.promise);
-      const waiting = await waitForWriteAdmission(native, target.identity.schema, 7);
-      report.observedAdmissionWaiters = waiting.length;
-      const backends = [...commands.slice(0, 8).flatMap(command => command.attempts.map(attempt => attempt.backend).filter((pid): pid is number => pid !== undefined)), ...waiting];
-      expect(new Set(backends).size).toBe(8);
+      report.observedPublicAttempts = await waitForObservedAdmission(() => commands.slice(0, 8).filter(command => command.attempts.length === 1).length, 8);
+      expect(report.observedPublicAttempts).toBe(8);
+      const backends = commands.slice(0, 8).flatMap(command => command.attempts.map(attempt => attempt.backend).filter((pid): pid is number => pid !== undefined));
+      expect(new Set(backends).size).toBe(1); // seven callers intentionally have no checkout/business snapshot yet
       report.locksAtMissingReceiptBarrier = (await query(native, `SELECT l.pid AS backend,l.locktype,l.mode,l.granted,
         c.relname AS relation,l.page,l.tuple FROM pg_locks l LEFT JOIN pg_class c ON c.oid=l.relation
         LEFT JOIN pg_namespace n ON n.oid=c.relnamespace

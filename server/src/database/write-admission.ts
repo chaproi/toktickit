@@ -23,6 +23,40 @@ export class AdmissionDeadlineError extends Error {
 }
 export class AdmissionOwnershipError extends Error { constructor() { super("Database write admission ownership was lost."); } }
 
+// One competitor per actual pool, before checkout. The database advisory lock
+// remains the authority across pools/processes. Entries have no new allowance:
+// the existing public startup timer aborts them, and promotion checks the same
+// monotonic deadline before granting a permit.
+class AdmissionFrontQueue {
+  private busy = false;
+  private waiting: Array<{ signal: AbortSignal; deadline: number; fail: () => Error;
+    grant: (release: () => void) => void; reject: (error: Error) => void; cancel: () => void }> = [];
+  take(signal: AbortSignal, deadline: number, fail: () => Error): Promise<() => void> {
+    if (signal.aborted || performance.now() >= deadline) return Promise.reject(fail());
+    return new Promise((grant, reject) => {
+      const entry = { signal, deadline, fail, grant, reject, cancel: () => {
+        const position = this.waiting.indexOf(entry);
+        if (position < 0) return;
+        this.waiting.splice(position, 1); signal.removeEventListener("abort", entry.cancel);
+        reject(fail()); this.promote();
+      } };
+      signal.addEventListener("abort", entry.cancel, { once: true });
+      this.waiting.push(entry); this.promote();
+    });
+  }
+  private promote() {
+    if (this.busy) return;
+    while (this.waiting.length) {
+      const entry = this.waiting.shift()!;
+      entry.signal.removeEventListener("abort", entry.cancel);
+      if (entry.signal.aborted || performance.now() >= entry.deadline) { entry.reject(entry.fail()); continue; }
+      this.busy = true; let released = false;
+      entry.grant(() => { if (released) return; released = true; this.busy = false; this.promote(); });
+      return;
+    }
+  }
+}
+
 class AdmissionAttempt {
   deadline = Infinity; expired = false; entered = false; lost = false;
   readonly callbackDone = deferred();
@@ -30,6 +64,7 @@ class AdmissionAttempt {
   private ended = deferred(); private endedAlready = false; private physicallyReleased = false;
   private acquired = false; private key = 0; private releaseError: Error | boolean | undefined;
   private priorTimeout?: string;
+  private waitingAbort = new AbortController(); private frontPermit?: () => void;
   releaseRequests = 0; physicalReleases = 0;
   constructor(readonly maxWait: number) {}
   start() {
@@ -38,12 +73,16 @@ class AdmissionAttempt {
   }
   expire() {
     this.expired = true;
+    this.waitingAbort.abort();
     // No business callback has entered. Destroy only this owned checkout;
     // a late lock/BEGIN result cannot remain usable or run a callback later.
     if (!this.entered && this.client) this.releasePhysical(true);
   }
   enter() { if (this.expired) throw new AdmissionDeadlineError(this.maxWait); this.entered = true; }
   drained() { this.callbackDone.resolve(); }
+  async join(front: AdmissionFrontQueue) {
+    this.frontPermit = await front.take(this.waitingAbort.signal, this.deadline, () => new AdmissionDeadlineError(this.maxWait));
+  }
   private releasePhysical(error?: Error | boolean) {
     if (this.physicallyReleased || !this.physicalRelease) return;
     this.physicallyReleased = true; this.physicalReleases++;
@@ -80,6 +119,10 @@ class AdmissionAttempt {
     await client.query("SELECT set_config('statement_timeout',$1,false)", [prior]);
   }
   async finish(primary?: unknown, hasPrimary = false) {
+    try { await this.finishCheckout(primary, hasPrimary); }
+    finally { this.frontPermit?.(); this.frontPermit = undefined; }
+  }
+  private async finishCheckout(primary?: unknown, hasPrimary = false) {
     if (this.entered) await this.callbackDone.promise;
     const client = this.client;
     if (!client) return;
@@ -108,7 +151,7 @@ export function admissionFactory(factory: PrismaPg, schema: string): SqlDriverAd
   return { provider: factory.provider, adapterName: factory.adapterName, connect: async () => {
     const actual = await factory.connect();
     // Declared public API of the pinned official adapter, not an engine field.
-    const pool = actual.underlyingDriver(), connect = pool.connect.bind(pool);
+    const pool = actual.underlyingDriver(), connect = pool.connect.bind(pool), front = new AdmissionFrontQueue();
     pool.connect = ((...args: any[]) => {
       const transfer = handoff.getStore();
       if (!transfer) return Reflect.apply(connect, pool, args);
@@ -124,6 +167,8 @@ export function admissionFactory(factory: PrismaPg, schema: string): SqlDriverAd
         const state = attempts.getStore();
         if (!state) return actual.startTransaction(level);
         state.start();
+        await state.join(front);
+        if (state.expired || performance.now() >= state.deadline) throw new AdmissionDeadlineError(state.maxWait);
         const client = await connect();
         await state.acquire(client, schema);
         return handoff.run({ client, used: false }, () => actual.startTransaction(level));

@@ -52,15 +52,15 @@ afterAll(async () => {
 });
 
 it("keeps queued selected writers out of the pool while real reads proceed", async () => {
-  const owner = create(), settled: number[] = [], entered: number[] = [];
+  const owner = create(), settled: number[] = [], entered: number[] = [], failures: number[] = [];
   await owner.client.$queryRaw`SELECT 1`;
   await native.query("SELECT pg_advisory_lock($1::integer,$2::integer)", [ADMISSION_NAMESPACE, key]);
   const pending: Promise<unknown>[] = [];
   try {
-    pending.push(write(owner, async tx => { entered.push(0); await tx.$queryRaw`SELECT 1`; }).finally(() => { settled.push(0); }).catch(() => {}));
+    pending.push(write(owner, async tx => { entered.push(0); await tx.$queryRaw`SELECT 1`; }).finally(() => { settled.push(0); }).catch(() => { failures.push(0); }));
     await until(async () => (await locks(false)) === 1);
     for (const i of [1, 2]) pending.push(write(owner, async tx => { entered.push(i); await tx.$queryRaw`SELECT 1`; })
-      .finally(() => { settled.push(i); }).catch(() => {}));
+      .finally(() => { settled.push(i); }).catch(() => { failures.push(i); }));
     const before = performance.now();
     const [read] = await owner.client.$queryRaw<Array<{ value: number }>>`SELECT 7::int AS value`;
     const observation = { check: "read-under-admission-pressure", read: read.value, readElapsedMs: performance.now() - before,
@@ -72,6 +72,45 @@ it("keeps queued selected writers out of the pool while real reads proceed", asy
   } finally {
     await native.query("SELECT pg_advisory_unlock($1::integer,$2::integer)", [ADMISSION_NAMESPACE, key]);
     await Promise.all(pending); await owner.client.$disconnect();
+  }
+  expect(failures).toEqual([]); expect(entered).toEqual([0, 1, 2]);
+}, 10_000);
+
+it("consumes queue time from the same later database-admission deadline", async () => {
+  const owner = create(), entered = deferred(), work = deferred(); let callbacks = 0;
+  // The holder must be distinct from the observer: querying pg_locks through
+  // a client already blocked on pg_advisory_lock queues behind that request.
+  const holder = new Client({ connectionString: verifiedTestTarget().databaseUrl }); await holder.connect();
+  const head = write(owner, async tx => {
+    await tx.$queryRaw`SELECT 1`; entered.resolve(); await work.promise;
+    // Controlled real work consumes a known part of startup waiting for the
+    // next caller; this is a phase-budget experiment, not readiness by sleep.
+    await tx.$executeRaw`SELECT pg_sleep(0.2)`;
+  });
+  void head.catch(() => undefined);
+  await entered.promise;
+  const external = holder.query("SELECT pg_advisory_lock($1::integer,$2::integer)", [ADMISSION_NAMESPACE, key]);
+  void external.catch(() => undefined);
+  let held = false;
+  try {
+    await until(async () => (await locks(false)) === 1);
+    const start = performance.now();
+    const queued = write(owner, async () => { callbacks++; }, { maxWait: 400 });
+    const rejected = expect(queued).rejects.toMatchObject({ code: "P2028", meta: { phase: "transaction-start", maxWait: 400 } });
+    work.resolve(); await head; await external; held = true;
+    await until(async () => (await locks(false)) === 1);
+    await rejected;
+    const elapsed = performance.now() - start;
+    expect(elapsed).toBeGreaterThanOrEqual(380); expect(elapsed).toBeLessThan(550);
+    await owner.drain(); expect(callbacks).toBe(0);
+    observations.push({ check: "single-queue-plus-database-startup-allowance", configuredMs: 400, elapsedMs: elapsed, lateCallbacks: callbacks });
+  } finally {
+    work.resolve(); const headResult = await Promise.allSettled([head]);
+    try {
+      await external;
+      if (held || await locks(true)) await holder.query("SELECT pg_advisory_unlock($1::integer,$2::integer)", [ADMISSION_NAMESPACE, key]);
+    } finally { await holder.end(); await owner.client.$disconnect(); }
+    expect(headResult[0].status).toBe("fulfilled");
   }
 }, 10_000);
 

@@ -1,4 +1,5 @@
-import { waitForWriteAdmission } from "./write-admission-test-helpers.js";
+import { observePendingAdmission } from "./write-admission-test-helpers.js";
+import { getPrisma } from "../../src/prisma.js";
 import { randomUUID } from "node:crypto";
 import { Client } from "pg";
 import { expect } from "vitest";
@@ -16,6 +17,7 @@ export async function orderedUserRace<T>(userId: number, first: () => PromiseLik
   const blocker = new Client({ connectionString: process.env.DATABASE_URL, application_name: `issue44-race-blocker-${randomUUID()}` });
   const observer = new Client({ connectionString: process.env.DATABASE_URL, application_name: `issue44-race-observer-${randomUUID()}` });
   const pending: Array<Promise<{ value: T } | { failed: true }>> = [];
+  const admission = observePendingAdmission(getPrisma());
   let open = false;
   const start = (operation: () => PromiseLike<T>) => {
     const promise = Promise.resolve().then(operation).then((value) => ({ value }), () => ({ failed: true as const }));
@@ -48,16 +50,17 @@ export async function orderedUserRace<T>(userId: number, first: () => PromiseLik
         AND gate.objsubid=2 AND gate.granted)
     `, [pid, userId]);
     const secondPending = start(second);
-    const [secondPid] = await waitForWriteAdmission(observer, identity.schema);
-    expect(secondPid === firstPid, "Two distinct live request backends overlap").toBe(false);
+    expect(await admission.wait(), "Second live HTTP request waits before its business callback").toBe(1);
+    expect(admission.calls.filter(call => call.entered)).toHaveLength(1);
     await blocker.query("COMMIT"); open = false;
     const [a, b] = await Promise.all([firstPending, secondPending]);
     if (!("value" in a) || !("value" in b)) throw new Error("Race HTTP transport failed; details redacted.");
-    console.info("Race evidence: first holds target User gate and waits on owned row blocker; second waits on pre-snapshot admission; distinct backends overlap; blocker released.");
+    console.info("Race evidence: first holds target User gate and waits on owned row blocker; second overlapping HTTP request waits before checkout/callback; blocker released.");
     return { first: a.value, second: b.value };
   } finally {
     if (open) await blocker.query("ROLLBACK").catch(() => undefined);
     await Promise.all(pending); // Even failed coordination drains requests before cleanup.
+    admission.restore();
     const closed = await Promise.allSettled([observer.end(), blocker.end()]);
     expect(closed.every((result) => result.status === "fulfilled"), "Both owned race clients disconnect").toBe(true);
     console.info("Race cleanup: blocker released; requests drained before fixture cleanup; both owned clients disconnected; no injection resources.");

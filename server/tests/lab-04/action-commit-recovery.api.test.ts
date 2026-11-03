@@ -1,4 +1,4 @@
-import { waitForWriteAdmission } from "./write-admission-test-helpers.js";
+import { waitForObservedAdmission } from "./write-admission-test-helpers.js";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { randomUUID } from "node:crypto";
 import { Client } from "pg";
@@ -77,6 +77,7 @@ describe("real authorized Action recovery after coordinated COMMIT serialization
     const target = verifiedTestTarget();
     const native = new Client({ connectionString: target.databaseUrl });
     await native.connect();
+    const nativeBackend = (await native.query("SELECT pg_backend_pid()::int AS pid")).rows[0].pid;
     await native.query("BEGIN ISOLATION LEVEL SERIALIZABLE");
     await native.query('SELECT "id","isActive" FROM "Category" WHERE "id"=ANY($1::int[])', [categories]);
     const context = new AsyncLocalStorage<number>();
@@ -131,12 +132,14 @@ describe("real authorized Action recovery after coordinated COMMIT serialization
       // Its genuine SSI dependency commits before the held application attempt.
       await native.query('UPDATE "Category" SET "isActive"=false WHERE "id"=$1', [categories[winner]]);
       pending[winner] = send(winner); void pending[winner].catch(() => undefined);
-      expect(await waitForWriteAdmission(native, target.identity.schema)).toHaveLength(1);
+      expect(await waitForObservedAdmission(() => attempts[winner].length)).toBe(1);
+      expect(attempts[winner][0].backend, "Queued HTTP command has no business backend before admission").toBe(0);
       await native.query("COMMIT");
       release[loser].resolve();
       const [winning, losing] = await finite(Promise.all([pending[winner], pending[loser]]));
       expect(attempts.map(values => values[0].complete)).toEqual([true, true]);
-      expect(attempts[0][0].backend).not.toBe(attempts[1][0].backend);
+      expect(attempts[0][0].backend).not.toBe(nativeBackend);
+      expect(attempts[1][0].backend).not.toBe(nativeBackend);
       expect(attempts[0][0].xid).not.toBe(attempts[1][0].xid);
       expect(winning.status).toBe(operation === "create" ? 201 : 200);
       expect(attempts[loser][0].rollback).toBeDefined();

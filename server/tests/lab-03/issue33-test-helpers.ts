@@ -1,4 +1,4 @@
-import { waitForWriteAdmission } from "../lab-04/write-admission-test-helpers.js";
+import { waitForWriteAdmission, observePendingAdmission } from "../lab-04/write-admission-test-helpers.js";
 import { ADMISSION_NAMESPACE } from "../../src/database/write-admission.js";
 import { configureTestDatabaseEnvironment } from "../../src/testing/test-database.js";
 import { randomUUID } from "node:crypto";
@@ -89,6 +89,7 @@ export async function overlapOnMutationGate<T>(
   const observer = new Client({ connectionString: process.env.DATABASE_URL, application_name: `issue33-observer-${randomUUID()}` });
   let transactionOpen = false;
   const pending: Promise<T>[] = [];
+  const admission = observePendingAdmission(getPrisma());
   await Promise.all([blocker.connect(), observer.connect()]);
   try {
     await blocker.query("BEGIN");
@@ -97,7 +98,8 @@ export async function overlapOnMutationGate<T>(
     const namespace = (await blocker.query<{ oid: string }>("SELECT oid::text AS oid FROM pg_namespace WHERE nspname=$1", [identity.schema])).rows[0];
     await blocker.query("SELECT pg_advisory_xact_lock($1::integer, $2::integer)", [ADMISSION_NAMESPACE, Number(namespace.oid) | 0]);
     pending.push(...operations.map((operation) => Promise.resolve(operation())));
-    const blockedCount = (await waitForWriteAdmission(observer, identity.schema, operations.length)).length;
+    const blockedCount = await admission.wait(operations.length);
+    expect(await waitForWriteAdmission(observer, identity.schema)).toHaveLength(1);
     expect(blockedCount).toBeGreaterThanOrEqual(operations.length);
     await blocker.query("COMMIT");
     transactionOpen = false;
@@ -105,6 +107,7 @@ export async function overlapOnMutationGate<T>(
   } finally {
     if (transactionOpen) await blocker.query("ROLLBACK").catch(() => undefined);
     await Promise.allSettled(pending);
+    admission.restore();
     await Promise.all([blocker.end(), observer.end()]);
   }
 }
@@ -150,6 +153,7 @@ export async function orderedOnMutationGate<T>(
   const observer = new Client({ connectionString: process.env.DATABASE_URL, application_name: `issue35-ordered-observer-${randomUUID()}` });
   let transactionOpen = false;
   const pending: Promise<T>[] = [];
+  const admission = observePendingAdmission(getPrisma());
   await Promise.all([blocker.connect(), observer.connect()]);
   try {
     await blocker.query("BEGIN");
@@ -173,7 +177,7 @@ export async function orderedOnMutationGate<T>(
     expect(firstBlocked).toBeGreaterThanOrEqual(1);
 
     const secondPending = Promise.resolve(second()); pending.push(secondPending);
-    const secondBlocked = (await waitForWriteAdmission(observer, configureTestDatabaseEnvironment().schema)).length;
+    const secondBlocked = await admission.wait();
     expect(secondBlocked).toBeGreaterThanOrEqual(1);
 
     await blocker.query("COMMIT");
@@ -183,6 +187,7 @@ export async function orderedOnMutationGate<T>(
   } finally {
     if (transactionOpen) await blocker.query("ROLLBACK").catch(() => undefined);
     await Promise.allSettled(pending);
+    admission.restore();
     await Promise.all([blocker.end(), observer.end()]);
   }
 }

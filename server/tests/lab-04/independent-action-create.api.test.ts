@@ -1,6 +1,6 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import { Client } from "pg";
-import { waitForWriteAdmission } from "./write-admission-test-helpers.js";
+import { waitForObservedAdmission } from "./write-admission-test-helpers.js";
 import { randomUUID } from "node:crypto";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -83,7 +83,8 @@ it("eight eligible independent concurrent CREATE commands all commit one exact o
     }
     try {
       await bounded(ready.promise);
-      expect(await waitForWriteAdmission(native, target.identity.schema, 7)).toHaveLength(7);
+      expect(await waitForObservedAdmission(() => evidence.filter(row => row.attempts.length === 1).length, 8)).toBe(8);
+      expect(arrivals, "Other overlapping HTTP commands have not entered business callbacks before the held admission releases").toBe(1);
     } finally { release.resolve(); }
     const responses = await Promise.all(pending);
     expect(evidence.map(row => row.status), "Every valid independent command must succeed; a diagnostic permitting409 is not GREEN")
