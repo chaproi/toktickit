@@ -54,3 +54,74 @@ Comprehensive execution is2026-11-03T17:37:11.802Z-17:49:21.384Z (Bangkok2026-11
 Independent guarded native live-target probe after comprehensive execution at2026-11-03T17:49:37.248Z reports0owned schemas,other connections,idle transactions,advisory locks,sessions and fault resources. Process inventory0owned workloads. Existing tests verify owned row/bucket/archive/profile/listener removal and restored spies;current scoped storage executable setting is restored. Only the verified owned temporary prerequisite directory is removed after processes drain. Pinned SeaweedFS4.51 archive digest08866a53e1bdd5378ee9880f8ee30d981d1bbb6ae22ee1897deb17ff87f8d2fb;no shared installation/configuration change. Prisma/pg deprecation and inherited seed-preservation/controlled-fault warnings remain;no Vitest unhandled-error summary.
 
 The clean candidate source and these redacted correctness observations will be normally published before **one** unchanged T-47. Its existing5000warm-up/500measured requests,50VUs,thresholds,observer,pools and budgets remain intact. No benchmark has executed yet in this correction batch. Prior failed verdicts remain authoritative historical evidence. D-12 remains proposed;failed-start retention and15untriaged dependency findings remain accepted/unresolved limitations respectively. No peer approval,merge,deployment or Issue/scenario/Product DoD promotion.
+
+
+## Single clean published-source T-47 result
+
+**FAIL remains the overall benchmark verdict. All three scoped read-operation targets pass in this measurement.** No second execution or further tuning occurs. The next artifact is additive;no prior failed result is overwritten.
+
+Execution HEAD `69164d1dc57aeeee28447bd445df657e12354d77` is clean,upstream/live-aligned and normally published before execution. It contains GREEN56092ce unchanged plus evidence only. The benchmark and performance helper still match original535a2e5 exactly. The native guard verifies the actual dedicated target,0connections/resources and no competing owned workload immediately before execution. Matching6.19.3 candidate dependencies,Windows/Node24.14.0/PostgreSQL18.6,50users/50VUs,5000warm-up/500measured requests,original role/operation mix,pool/budgets/thresholds and the existing pass-through observer remain unchanged. No diagnostic observer,cache,extra warm-up,HTTP retry or exclusion is added. Validation-only mode is absent for the command and its prior absent setting is restored.
+
+Exactly once from candidate server/:
+
+```text
+npm.cmd test -- tests/lab-04/performance-smoke.integration.test.ts
+```
+
+Command2026-11-03T17:52:20.963Z-17:53:17.652Z (Bangkok2026-11-04 00:52:20-00:53:17);case starts17:52:26.895Z. Exit1;1file/1case collected/executed,0passed/1failed/0skipped. Framework55.58s,reported case50.632s,monotonic body50.612s,outer command56.688s. No application execution is attributed to the later result-publication commit.
+
+| Phase | Requests | Errors/rate | p50 /p95 ms | Elapsed s | Requests/s | Peak /time-weighted/final HTTP concurrency |
+|---|---:|---:|---:|---:|---:|---|
+|Warm-up|5000|0 /0%|226.245 /431.041|26.6546|187.585|50 /47.026 /0|
+|Measured|500|0 /0%|203.549 /500.6755|2.4567|203.523|50 /46.059 /0|
+
+All statuses are expected:4500HTTP200+500HTTP201 warm-up;450HTTP200+50HTTP201 measured. All5500 responses/samples remain,including every slow response. No replay,transport/semantic error or transaction failure is retained. No P2028 observed;historical unknown subtypes remain unknown. The stricter aggregate threshold is genuinely missed by0.6755ms;it is not rounded down or waived.
+
+### Per-operation sample calculations
+
+The table's count is measured;warm-up count is ten times that number. Every error count is0in both phases. Nearest-rank percentiles include all samples. The last column is **artifact-derived measured evaluation**,not individually executed inline assertions.
+
+| Operation | Measured n | Warm-up p50 /p95 ms | Measured p50 /p95 ms | Warm-up/measured errors | Measured target |
+|---|---:|---:|---:|---:|---|
+| action.cancel | 15 | 370.014 / 467.601 | 264.477 / 328.116 | 0 / 0 | Pass |
+| action.complete | 15 | 425.337 / 515.862 | 310.806 / 357.037 | 0 / 0 | Pass |
+| action.create | 30 | 309.624 / 502.012 | 274.155 / 325.708 | 0 / 0 | Pass |
+| action.detail | 30 | 178.499 / 266.004 | 166.116 / 199.955 | 0 / 0 | Pass |
+| action.edit | 30 | 346.645 / 439.608 | 291.198 / 459.855 | 0 / 0 | Pass |
+| action.history | 30 | 177.617 / 245.008 | 97.639 / 135.700 | 0 / 0 | Pass |
+| action.start | 30 | 407.276 / 505.363 | 520.362 / 648.602 | 0 / 0 | Fail |
+| comments.create | 20 | 243.311 / 301.378 | 347.341 / 408.395 | 0 / 0 | Pass |
+| comments.list | 40 | 218.975 / 298.382 | 216.517 / 330.242 | 0 / 0 | Pass |
+| requester.dashboard | 40 | 178.826 / 276.837 | 131.668 / 164.632 | 0 / 0 | Pass |
+| requester.ticket.detail | 40 | 248.584 / 388.818 | 140.319 / 265.043 | 0 / 0 | Pass |
+| requester.tickets.filtered-list | 20 | 227.629 / 328.525 | 228.079 / 375.539 | 0 / 0 | Pass |
+| requester.tickets.list | 20 | 224.081 / 383.796 | 209.984 / 238.345 | 0 / 0 | Pass |
+| staff.actions.list | 30 | 200.245 / 294.042 | 184.666 / 215.726 | 0 / 0 | Pass |
+| staff.dashboard | 30 | 212.411 / 306.535 | 159.993 / 213.279 | 0 / 0 | Pass |
+| staff.ticket.detail | 30 | 213.439 / 393.296 | 119.285 / 126.205 | 0 / 0 | Pass |
+| staff.tickets.list | 30 | 206.578 / 307.943 | 211.182 / 237.243 | 0 / 0 | Pass |
+| ticket.actions.list | 20 | 196.523 / 265.715 | 174.052 / 181.524 | 0 / 0 | Pass |
+
+The original three targeted read p95 values change from546.596/533.311/551.129ms to164.632/238.345/213.279ms (RequesterDashboard/MyTickets/StaffDashboard). These are two specific historical executions,not a controlled causal estimate or production capacity guarantee. All17other measured operations pass their per-operation target;action.start is the sole miss at648.6022ms (p50520.3615ms). No internal cause of that write tail is established or investigated in this read-only correction batch. The writer protocol is unchanged.
+
+### Persistence and assertion reachability
+
+Exact expected and observed final totals remain2050Tickets,8330Actions,25320ActionHistory,3800TicketStatusHistory,1320receipts,220PublicComments,50Users/50sessions. This is330new Actions,1320real Action mutations/history/receipt operations and220comments across11cycles;zero replays. These are the benchmark's persisted totals/response-token checks,not a replacement for the comprehensive per-row business/race suites.
+
+All inline assertions before line391 pass:guard/real login/fixture invariants,no harness/cleanup failure,cleanup flags,exact persistence,zero replays,5000/500total and100/10per-user samples,50peak concurrency,exact operation mix,zero errors in both phases. Line391 **executes and fails** aggregate measured p95<500. Line392's combined per-operation assertion is **unreached**;its false result/action.start failure is retained in the artifact and independently recalculated. `primaryFailure:null` is the pre-assertion body classification,not a passing test verdict.
+
+[Raw5500-sample artifact](t47-performance-2026-11-04-measurement-2e8762bf.json),[independent calculations](t47-read-batched-analysis-2026-11-04.json),[offline reproducer](analyze-t47-read-batched-2026-11-04.py),[exact execution and cleanup](t47-read-batched-execution-2026-11-04.json).
+
+```text
+python artifacts/lab-04/hardening/analyze-t47-read-batched-2026-11-04.py
+```
+
+Independent Python reproduces all5500 samples,role/mix/per-user sequences,aggregate and each phase-operation p50/p95/error counts,interval-sweep peak50/final0,time-weighted concurrency,elapsed/throughput and literal persistence totals. These are offline checks,not new HTTP traffic or substitutes for the failed inline verdict. The historical analyzer/raw artifacts remain unchanged. All480pre-run tracked artifact SHA-256 values match after execution. The normal5000-request warm-up barrier is established by unchanged source/await ordering;phase-relative sample clocks do not invent a cross-phase absolute timeline.
+
+### Independent cleanup and disposition
+
+Artifact cleanup flags are all true;cleanupFailure null. Independent native guard/live probe2026-11-03T17:54:05.494Z finds0owned schemas,other connections,idle transactions,advisory locks,sessions and fault resources;process inventory0at17:54:06.255Z. Requests drain,Agents/listener/client close,owned schema disappears,environment/transaction spy restore. Owned recovery tooling had already been removed before measurement. Expected Prisma/pg deprecation warnings remain;no Vitest unhandled-error summary.
+
+The supported read-path correction is correctness-verified and all three scoped read targets pass **this** measurement. **T-47 as a whole remains failed.** No additional attempt,tuning,write-protocol change or unsupported inference follows. A separate authorization would be needed to investigate the residual action.start tail from its retained samples. D-12 remains proposed;student/human peer review,retention/dependency limitations,Issue/scenario/Product DoD and deployment gates remain unchanged. The original branch/proposal and every historical failed verdict remain intact.
+
+Final publication checks:122 local links and9 Markdown tables validate;the independent analysis reproduces exactly,all480historical artifact digests match,and every tested protected server byte remains unchanged. A further native guard probe at2026-11-03T17:57:03.865Z independently confirms0new read/benchmark Users as well as0schemas,connections,idle transactions,locks,sessions and fault resources. The original535a2e5branch and uncommitted proposal retain exact state/bytes.
