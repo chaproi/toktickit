@@ -42,8 +42,17 @@ it.each(["self", "distinct"] as const)("%s assignment uses current locked identi
   const queries = events.filter(e => e.stage === "query-start" && e.atMs >= from && e.atMs <= before);
   const insert = queries.find(e => e.kind === "Action" && e.operation === "INSERT")!;
   const preceding = queries.filter(e => e.atMs < insert.atMs);
-  expect(preceding.filter(e => e.kind.startsWith("guard-gate")).map(e => e.kind)).toEqual(assignment === "self"
-    ? ["guard-gate-1", "guard-gate-2"] : ["guard-gate-1", "guard-gate-1", "guard-gate-2"]);
+  // Proposed D-12 moves these same User/Ticket protections before BEGIN.
+  // Assert actual driver query completion before the callback, rather than
+  // requiring the superseded in-transaction advisory-query implementation.
+  const resources = events.filter(e => e.stage === "query-start" && e.kind.startsWith("resource-"));
+  expect(resources.map(e => e.kind)).toEqual(assignment === "self"
+    ? ["resource-1", "resource-2"] : ["resource-1", "resource-1", "resource-2"]);
+  for (const gate of resources) {
+    const completed = events.find(e => e.stage === "query-end" && e.queryId === gate.queryId)!;
+    expect(completed.error).toBeNull(); expect(completed.atMs).toBeLessThan(from);
+  }
+  expect(preceding.filter(e => e.kind.startsWith("guard-gate"))).toHaveLength(0);
   for (const model of ["User", "AuthSession", "Ticket", "MutationReceipt"]) {
     expect(preceding.filter(e => e.kind === model && e.operation === "SELECT")).toHaveLength(1);
   }
