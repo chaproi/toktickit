@@ -4,6 +4,7 @@ import {
   runAdmittedSerializableMutation as runSerializableMutation,
 } from "../auth/eligibility-transaction.js";
 import { getPrisma } from "../prisma.js";
+import { readRequesterTicketPage } from "./requester-ticket-page.js";
 import { formatTicketNumber } from "./ticket-number.js";
 import type { CreateTicketInput } from "./ticket-validation.js";
 import { buildTicketListOrderBy } from "./ticket-query.js";
@@ -202,6 +203,11 @@ export async function listTicketsForRequester(
   return prisma.$transaction(async (transaction) => {
     await transaction.$executeRaw`SET TRANSACTION READ ONLY`;
     const [clock] = await transaction.$queryRaw<Array<{ asOf: Date }>>`SELECT CURRENT_TIMESTAMP AS "asOf"`;
+
+    if (query.updatedWindow === undefined && query.resolvedWindow === undefined &&
+        query.statusGroup === undefined && query.dashboardWidget === undefined) {
+      return readRequesterTicketPage(transaction, requesterId, query);
+    }
 
     const statusGroups: Record<RequesterStatusGroup, TicketStatus[]> = {
       active: ["NEW", "OPEN", "IN_PROGRESS", "WAITING_FOR_REQUESTER", "REOPENED", "RESOLVED"],

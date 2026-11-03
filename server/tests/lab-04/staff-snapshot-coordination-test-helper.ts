@@ -86,7 +86,11 @@ export async function withStaffSnapshot<T>(seam: Seam, work: (probe: {
           const sql = args[0] as { strings?: string[] } | undefined;
           if (sql?.strings !== undefined) {
             const count = sql.strings.join(" ").includes("SELECT COUNT(*) FILTER");
-            await completed(count ? "raw list count" : "raw list rows", seam === "list-count" && count);
+            const summary = sql.strings.join(" ").includes("dashboard-summary");
+            await completed(summary ? "combined Dashboard aggregates" : count ? "raw list count" : "raw list rows",
+              (seam === "list-count" && count) || (summary && (seam === "ticket-count" || seam === "action-bins")));
+          } else if (Array.isArray(args[0]) && args[0].join(" ").includes('CURRENT_TIMESTAMP AS "asOf"')) {
+            await completed("snapshot clock", false);
           }
           return result;
         };
@@ -103,7 +107,9 @@ export async function withStaffSnapshot<T>(seam: Seam, work: (probe: {
         } });
         return typeof value === "function" ? value.bind(target) : value;
       } });
-      return (operation as Operation)(wrapped);
+      const value = await (operation as Operation)(wrapped);
+      await completed("snapshot callback completed", false);
+      return value;
     }, options);
     if (writer !== undefined) commits.push(writer); // Only after real COMMIT acknowledgement.
     return result;

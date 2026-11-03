@@ -400,10 +400,10 @@ describe.each(surfaces)("$name safe business-read failures", (surface) => {
           }
           const wrapped = new Proxy(tx, { get(target, property) {
             const value = Reflect.get(target, property);
-            if (surface.name === "Ticket drill-down" && property === "$queryRaw") return async (...args: unknown[]) => {
+            if ((surface.name === "Ticket drill-down" || surface.name === "Dashboard") && property === "$queryRaw") return async (...args: unknown[]) => {
               const result: unknown = await Reflect.apply(value, target, args);
               const sql = args[0] as { strings?: string[] } | undefined;
-              if (sql?.strings?.join(" ").includes("SELECT COUNT(*) FILTER")) await failAfterRead();
+              if (sql?.strings?.join(" ").includes("SELECT COUNT(*) FILTER") || sql?.strings?.join(" ").includes("dashboard-summary")) await failAfterRead();
               return result;
             };
             if ((surface.name === "Dashboard" && property === "ticket") || (surface.name === "My Actions" && property === "action")) return new Proxy(value, { get(delegate, method) {

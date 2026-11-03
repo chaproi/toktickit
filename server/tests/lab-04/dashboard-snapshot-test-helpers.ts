@@ -59,6 +59,17 @@ export async function withDashboardReadProbe<T>(
     if (typeof operation !== "function") return original(operation as Operation, options);
     evidence.transactions += 1;
     return original(async (tx) => {
+      async function completedRaw(method: string, count: boolean) {
+        const [actual] = await tx.$queryRaw<Array<{ pid: number; isolation: string; readOnly: string }>>`
+          SELECT pg_backend_pid() AS pid,current_setting('transaction_isolation') AS isolation,
+            current_setting('transaction_read_only') AS "readOnly"`;
+        const record = { ...actual, model: "raw", method };
+        evidence.reads.push(record);
+        if (count && !evidence.countCompleted) {
+          evidence.countCompleted = true; ready.resolve(record);
+          if (input.pauseAfterFirstCount) await bounded(resume.promise);
+        }
+      }
       const observed = new Proxy(tx, { get(target, property) {
         const value = Reflect.get(target, property);
         if (property === "$queryRaw") return async (...args: unknown[]) => {
@@ -66,8 +77,15 @@ export async function withDashboardReadProbe<T>(
           const fragments = Array.isArray(args[0]) ? args[0] : [];
           const isClock = args.length === 1 && fragments.length === 1 &&
             String(fragments[0]).trim().replace(/\s+/gu, " ") === 'SELECT CURRENT_TIMESTAMP AS "asOf"';
-          if (!isClock) return result;
+          if (!isClock) {
+            const sql = args[0] as { strings?: string[] };
+            if (/dashboard-summary|requester-page/.test(sql?.strings?.join(" ") ?? "")) {
+              await completedRaw("combined aggregate/page", true);
+            }
+            return result;
+          }
           evidence.clockReads += 1;
+          await completedRaw("snapshot clock", false);
           if (input.clock === undefined) return result;
           if (!Array.isArray(result) || result.length !== 1 || !(result[0].asOf instanceof Date)) {
             throw new Error("Real Dashboard clock result was not observed.");
