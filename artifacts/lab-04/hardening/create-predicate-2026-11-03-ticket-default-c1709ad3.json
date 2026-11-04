@@ -1,0 +1,43 @@
+{
+  "mode": "minimal-SQL-mechanism-not-application-GREEN",
+  "variant": "ticket-default",
+  "startedAt": "2026-11-03T05:22:05.097Z",
+  "outcomes": [
+    {
+      "command": 0,
+      "committed": true
+    },
+    {
+      "command": 1,
+      "committed": false,
+      "sqlState": "40001",
+      "stage": "write"
+    }
+  ],
+  "predicateLocks": [
+    {
+      "backend": 35404,
+      "locktype": "relation",
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 42756,
+      "locktype": "relation",
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    }
+  ],
+  "cleanup": {
+    "connectionsClosed": true
+  },
+  "fixtureScale": {
+    "tickets": 26,
+    "actions": 66,
+    "receipts": 2
+  },
+  "persistenceVerified": true,
+  "finishedAt": "2026-11-03T05:22:05.309Z"
+}

@@ -1,3 +1,5 @@
+// D-12 candidate: observe selected READ COMMITTED commands; retain all business assertions.
+import { currentCommandPlan } from "../../src/database/write-admission.js";
 import { Prisma, type PrismaClient } from "@prisma/client";
 import { expect, vi } from "vitest";
 import { getPrisma } from "../../src/prisma.js";
@@ -41,7 +43,7 @@ export async function withLateActionFaults(
   let external = false;
   const log = vi.spyOn(console, "error").mockImplementation(() => undefined);
   const spy = vi.spyOn(prisma, "$transaction").mockImplementation((async (operation: unknown, options?: Options) => {
-    if (external || options?.isolationLevel !== Prisma.TransactionIsolationLevel.Serializable) return original(operation as Operation, options);
+    if (external || (options?.isolationLevel !== Prisma.TransactionIsolationLevel.ReadCommitted || !currentCommandPlan())) return original(operation as Operation, options);
     if (typeof operation !== "function") throw new Error("Focused retry observer requires an interactive application transaction.");
     const record: AttemptEvidence = { attempt: attempts.length + 1, transactionId: "", isolation: "", stages: [] };
     attempts.push(record);

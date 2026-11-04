@@ -1,0 +1,95 @@
+{
+  "executionHead": "4a8829c1e2ccfb1ffc824ab0d49b19740fb4df5b",
+  "startedAt": "2026-11-01T19:21:03.939Z",
+  "stages": [
+    {
+      "name": "guarded-live-target-verification",
+      "elapsedMs": 61.351099999999974,
+      "passed": true
+    },
+    {
+      "name": "prepare-owned-directory",
+      "elapsedMs": 11.386099999999999,
+      "passed": true
+    },
+    {
+      "name": "install-pinned-temporary-dependencies",
+      "elapsedMs": 4596.1763,
+      "passed": true
+    },
+    {
+      "name": "generate-temporary-client",
+      "elapsedMs": 960.1632,
+      "passed": true
+    },
+    {
+      "name": "typecheck-assessment",
+      "elapsedMs": 1135.5141999999996,
+      "passed": false
+    }
+  ],
+  "commands": [
+    {
+      "name": "install-pinned-temporary-dependencies",
+      "exit": 0
+    },
+    {
+      "name": "generate-temporary-client",
+      "exit": 0
+    },
+    {
+      "name": "typecheck-assessment",
+      "exit": 2
+    }
+  ],
+  "sourceDigests": {
+    "assessment.ts": "77c2ab534ed9839e2d4e77ef313348755818ecc842cd1225aabe2c5c6a0c184a",
+    "run.mjs": "d6a670df57d29a367fa36cfd4a0ed1a0ebdeba5b72dca347a0989d91716d503b",
+    "plan.md": "32418ee89332a85104ae449852bbd0becfda663dc06a7eeb2e5913a311c4c37d"
+  },
+  "applicationChanged": false,
+  "node": "v24.14.0",
+  "platform": "win32",
+  "isolation": {
+    "liveTargetMatchesGuard": true,
+    "distinctOperationalDatabase": true,
+    "otherNonIdleConnections": 0,
+    "postgresVersion": "PostgreSQL 18.6"
+  },
+  "localUrlOptionNames": [
+    "schema"
+  ],
+  "ambientPgEnvironmentNames": [],
+  "sourceCopies": [
+    {
+      "path": "server/src/prisma.ts",
+      "sha256": "1f01de52f7cc1ccb09fbe84cc2b61167452b79afc3060aa6adcd9de6117d81d8"
+    },
+    {
+      "path": "server/src/testing/test-database.ts",
+      "sha256": "b6d0d470aace9b62f9e30e3f09b7288c7f82dae6184c8366c8528113e7deefe9"
+    }
+  ],
+  "versions": {
+    "@prisma/client": "5.22.0",
+    "@prisma/adapter-pg": "5.22.0",
+    "@prisma/driver-adapter-utils": "5.22.0",
+    "pg": "8.23.0",
+    "typescript": "5.7.2",
+    "tsx": "4.19.2",
+    "@types/node": "22.10.2",
+    "@types/pg": "8.23.1"
+  },
+  "temporaryLockSha256": "612a5489ed2bc018b6a2c5aed5951699f84ce2d1cd4453448034717ed68bd9b6",
+  "prismaCli": "5.22.0",
+  "failure": {
+    "phase": "typecheck-assessment",
+    "assertion": null
+  },
+  "cleanup": {
+    "taggedConnections": 0,
+    "observerEnded": true,
+    "ownedDirectoryRemoved": true
+  },
+  "finishedAt": "2026-11-01T19:21:10.774Z"
+}

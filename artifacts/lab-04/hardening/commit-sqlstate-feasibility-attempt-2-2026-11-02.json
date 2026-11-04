@@ -1,0 +1,183 @@
+{
+  "startingHead": "b487220a3b10de906e3d341a3477f00f1589cffa",
+  "executedSourceState": "starting HEAD plus pending standalone proof files; application unchanged",
+  "node": "v24.14.0",
+  "platform": "win32",
+  "stages": [
+    {
+      "phase": "live-target-verification",
+      "elapsedMs": 57.2081,
+      "passed": true
+    },
+    {
+      "phase": "prepare-owned-directory-and-client-schema",
+      "elapsedMs": 13.686800000000005,
+      "passed": true
+    },
+    {
+      "phase": "install-exact-temporary-dependencies",
+      "elapsedMs": 2891.5391999999997,
+      "passed": true
+    },
+    {
+      "phase": "generate-temporary-client",
+      "elapsedMs": 948.1316000000002,
+      "passed": true
+    },
+    {
+      "phase": "typecheck-public-adapter-and-application-callback",
+      "elapsedMs": 1200.9272999999998,
+      "passed": true
+    },
+    {
+      "phase": "owned-schema-and-committed-migrations",
+      "elapsedMs": 690.2256000000007,
+      "passed": true
+    },
+    {
+      "phase": "three-coordinated-real-prisma-commit-pairs",
+      "elapsedMs": 2208.8022,
+      "passed": true
+    }
+  ],
+  "approachLimit": 2,
+  "proof": {
+    "pairs": [
+      {
+        "label": "official-control",
+        "preserve": false,
+        "winner": 0,
+        "callbacksCompleted": [
+          true,
+          true
+        ],
+        "distinctBackendsAndTransactions": true,
+        "sameCallbackConnectionAndTransaction": true,
+        "nativeFailureAtCommit": "40001",
+        "applicationError": {
+          "prismaCode": "P2034",
+          "sqlState": null
+        },
+        "exactThrownObjectAttributed": null,
+        "scopeReleaseCalls": [
+          1,
+          1
+        ],
+        "independentRollbackAndWinnerState": true,
+        "checkedOutConnections": 0,
+        "idleTransactions": 0
+      },
+      {
+        "label": "composed-first",
+        "preserve": true,
+        "winner": 0,
+        "callbacksCompleted": [
+          true,
+          true
+        ],
+        "distinctBackendsAndTransactions": true,
+        "sameCallbackConnectionAndTransaction": true,
+        "nativeFailureAtCommit": "40001",
+        "applicationError": {
+          "prismaCode": null,
+          "sqlState": "40001"
+        },
+        "exactThrownObjectAttributed": true,
+        "scopeReleaseCalls": [
+          1,
+          1
+        ],
+        "independentRollbackAndWinnerState": true,
+        "checkedOutConnections": 0,
+        "idleTransactions": 0
+      },
+      {
+        "label": "composed-reversed",
+        "preserve": true,
+        "winner": 1,
+        "callbacksCompleted": [
+          true,
+          true
+        ],
+        "distinctBackendsAndTransactions": true,
+        "sameCallbackConnectionAndTransaction": true,
+        "nativeFailureAtCommit": "40001",
+        "applicationError": {
+          "prismaCode": null,
+          "sqlState": "40001"
+        },
+        "exactThrownObjectAttributed": true,
+        "scopeReleaseCalls": [
+          1,
+          1
+        ],
+        "independentRollbackAndWinnerState": true,
+        "checkedOutConnections": 0,
+        "idleTransactions": 0
+      }
+    ],
+    "cleanup": {
+      "leakedBeforeForcedCleanup": 0,
+      "poolEnded": true,
+      "observerEnded": true
+    }
+  },
+  "cleanup": {
+    "schemasRemaining": 0,
+    "proofConnectionsRemaining": 0,
+    "nativeClientEnded": true,
+    "temporaryDirectoryRemoved": true
+  },
+  "database": {
+    "guard": true,
+    "liveIdentityMatches": true,
+    "distinctOperationalDatabase": true,
+    "postgresVersion": "PostgreSQL 18.6",
+    "otherNonIdleConnections": 0
+  },
+  "applicationSourceCopies": [
+    {
+      "path": "server/src/auth/eligibility-transaction.ts",
+      "sha256": "8142bee26facc105fd1749de8ff771fb5863484e87e08fd1c09d9346a0b1ba3c"
+    },
+    {
+      "path": "server/src/prisma.ts",
+      "sha256": "1f01de52f7cc1ccb09fbe84cc2b61167452b79afc3060aa6adcd9de6117d81d8"
+    },
+    {
+      "path": "server/src/testing/test-database.ts",
+      "sha256": "b6d0d470aace9b62f9e30e3f09b7288c7f82dae6184c8366c8528113e7deefe9"
+    }
+  ],
+  "commands": [
+    {
+      "phase": "install-exact-temporary-dependencies",
+      "exit": 0
+    },
+    {
+      "phase": "generate-temporary-client",
+      "exit": 0
+    },
+    {
+      "phase": "typecheck-public-adapter-and-application-callback",
+      "exit": 0
+    },
+    {
+      "phase": "three-coordinated-real-prisma-commit-pairs",
+      "exit": 0
+    }
+  ],
+  "versions": {
+    "@prisma/client": "5.22.0",
+    "@prisma/adapter-pg": "5.22.0",
+    "@prisma/driver-adapter-utils": "5.22.0",
+    "pg": "8.23.0",
+    "typescript": "5.7.2",
+    "tsx": "4.19.2",
+    "@types/node": "22.10.2",
+    "@types/pg": "8.23.1"
+  },
+  "prismaCli": "5.22.0",
+  "temporaryLockSha256": "624049b2d9b724960a6b5cc2c9481bdea5dde28b34169aca81ba0e2a5ca6f6c0",
+  "migrationsApplied": 6
+}

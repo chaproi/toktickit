@@ -1,0 +1,35 @@
+{
+  "parent": "8e259ce2b8222d733c34f8bdfda756c40a139593",
+  "previousArtifactBlobCount": 557,
+  "rawOriginalsAdded": 165,
+  "pngsReviewed": 92,
+  "metadataReferencedMissingPngs": 4,
+  "sourceComparisons": [
+    {
+      "reference": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "protectedBlobCount": 304,
+      "identical": true
+    },
+    {
+      "reference": "84ef0ad91502a0c660998ddc13d0c7a163f1a169",
+      "protectedBlobCount": 304,
+      "identical": true
+    }
+  ],
+  "applicationCommandsExecuted": 0,
+  "checks": {
+    "originalSha256": true,
+    "uploadedPngGitSha": true,
+    "currentDocSourceSha": true,
+    "jsonParsing": true,
+    "newRelativeLinkCount": 198,
+    "utf8Whitespace": true
+  },
+  "priorArtifactAndProtectedTreeComparison": {
+    "allPreserved": true,
+    "priorArtifactBlobCount": 557,
+    "protectedBlobCount": 304,
+    "unexpectedChanges": [],
+    "checkedBeforeBranchUpdate": true
+  }
+}

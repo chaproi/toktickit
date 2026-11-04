@@ -1,0 +1,94 @@
+{
+  "mode": "public-interface-proof-not-application-GREEN",
+  "recordedAt": "2026-11-02T18:32:54.918Z",
+  "executionHead": "b8ab0a3f234b325c11c456d1ced506da05296107",
+  "observations": [
+    {
+      "check": "cross-process",
+      "observedWaitingBeforeSecondCallback": true,
+      "secondSnapshotSawFirstCommit": true
+    },
+    {
+      "check": "default-and-per-call-deadlines",
+      "defaultElapsedMs": 2042.7423,
+      "concurrentExplicitMs": [
+        80,
+        130,
+        200
+      ],
+      "lateCallbacks": 0,
+      "checkedOut": 0
+    },
+    {
+      "check": "late-checkout-and-reconnect",
+      "lateCallbacks": 0,
+      "checkedOut": 0,
+      "freshPools": 2
+    },
+    {
+      "check": "execution-timeout",
+      "admissionHeldWhileExpiredCallbackUndrained": true,
+      "releasedAfterDrain": true
+    },
+    {
+      "check": "cumulative-startup",
+      "configuredMs": 400,
+      "observedMs": 414.6127999999999,
+      "extraAllowanceGranted": false
+    },
+    {
+      "check": "scope-and-budget-separation",
+      "readsAdmitted": false,
+      "anotherSchemaProceeds": true,
+      "executionMs": 150,
+      "maxWaitMs": 80,
+      "onePhysicalRelease": true
+    },
+    {
+      "check": "failure-cleanup",
+      "callbackPrimaryPreserved": true,
+      "uniquenessNot40001": true,
+      "syntheticCleanupFault": true,
+      "physicalReleasePerCheckout": 1
+    },
+    {
+      "check": "ownership-loss",
+      "actualBackendTerminated": true,
+      "originalTransactionAborted": true,
+      "lateWritePersisted": false,
+      "successReturned": false
+    },
+    {
+      "check": "constructor-and-ORM-raw",
+      "constructorMaxWaitMs": 100,
+      "overrideMs": 200,
+      "settingsRestoredBeforeBegin": true,
+      "sameTransactionAndBackend": true
+    },
+    {
+      "check": "genuine-COMMIT40001",
+      "nativeParticipantNotAdmitted": true,
+      "bothBodiesCompleted": true,
+      "loserRollbackExact": true,
+      "lockReleased": true
+    },
+    {
+      "check": "nested-unrelated-read",
+      "inheritedAdmission": false,
+      "readSucceededWhileWriterHeld": true
+    },
+    {
+      "check": "acquisition-failure-settings",
+      "syntheticFault": "40P01",
+      "noBusinessEntry": true,
+      "sessionBudgetRestored": true
+    }
+  ],
+  "cleanup": {
+    "childrenExited": true,
+    "poolsDisconnected": true,
+    "grantedOrWaitingAdmissionLocks": 0,
+    "taggedConnections": 0,
+    "ownedSchemasRemoved": true
+  }
+}

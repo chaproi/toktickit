@@ -1,0 +1,159 @@
+{
+  "date": "2026-11-03",
+  "percentile": "nearest-rank ceil(p*n)-1; all responses included",
+  "cohorts": [
+    {
+      "artifact": "create-critical-path-2026-11-03-df2a866c.json",
+      "notT47": true,
+      "statuses": {
+        "200": 220,
+        "201": 30
+      },
+      "cleanup": {
+        "listenerClosed": true,
+        "checkedOut": 0,
+        "admission": {
+          "waiters": 0,
+          "owners": 0,
+          "databaseResourceWaiters": 0,
+          "databaseResourceOwners": 0
+        },
+        "ownedSchemaRemoved": true
+      },
+      "writes": {
+        "n": 30,
+        "p50Ms": 1266.7450000000026,
+        "p95Ms": 1505.763500000001,
+        "maximumMs": 1590.6719000000012
+      },
+      "reads": {
+        "n": 220,
+        "p50Ms": 1266.2441000000035,
+        "p95Ms": 2471.2393999999986,
+        "maximumMs": 2642.434699999998
+      },
+      "matchedAttemptPhaseIntervals": {
+        "checkout": {
+          "n": 30,
+          "p50Ms": 194.9948000000004,
+          "p95Ms": 258.95350000000326,
+          "maximumMs": 345.45390000000043
+        },
+        "callback": {
+          "n": 30,
+          "p50Ms": 167.34350000000268,
+          "p95Ms": 296.56470000000263,
+          "maximumMs": 315.303899999999
+        },
+        "drain": {
+          "n": 30,
+          "p50Ms": 89.88739999999962,
+          "p95Ms": 143.72630000000208,
+          "maximumMs": 155.83239999999932
+        },
+        "begin": {
+          "n": 30,
+          "p50Ms": 44.01559999999881,
+          "p95Ms": 75.52169999999751,
+          "maximumMs": 86.6047000000035
+        },
+        "resource-1": {
+          "n": 30,
+          "p50Ms": 19.076600000000326,
+          "p95Ms": 41.92809999999736,
+          "maximumMs": 43.082500000004075
+        },
+        "resource-2": {
+          "n": 30,
+          "p50Ms": 19.15009999999893,
+          "p95Ms": 43.603000000002794,
+          "maximumMs": 47.41139999999723
+        }
+      },
+      "callbackQueryCounts": {
+        "minimum": 8,
+        "maximum": 8,
+        "n": 30
+      },
+      "intervalQualification": "Matched request-local/attempt-local intervals only; overlapping phases are not summed. Diagnostic observation adds cost; not performance acceptance."
+    },
+    {
+      "artifact": "command-hot-resource-2026-11-03-77faf7cf.json",
+      "notT47": true,
+      "statuses": {
+        "200": 4,
+        "201": 8
+      },
+      "cleanup": {
+        "requestsDrained": true,
+        "observersRestored": true,
+        "fixturesRemoved": true,
+        "nativeDisconnected": true
+      },
+      "writes": {
+        "n": 8,
+        "p50Ms": 745.2777000000006,
+        "p95Ms": 988.8143999999993,
+        "maximumMs": 988.8143999999993
+      },
+      "reads": {
+        "n": 4,
+        "p50Ms": 261.15170000000035,
+        "p95Ms": 298.5128999999997,
+        "maximumMs": 298.5128999999997
+      },
+      "matchedAttemptPhaseIntervals": {
+        "checkout": {
+          "n": 8,
+          "p50Ms": 0.04530000000158907,
+          "p95Ms": 0.1301999999996042,
+          "maximumMs": 0.1301999999996042
+        },
+        "callback": {
+          "n": 8,
+          "p50Ms": 31.254100000001927,
+          "p95Ms": 74.33979999999792,
+          "maximumMs": 74.33979999999792
+        },
+        "drain": {
+          "n": 8,
+          "p50Ms": 2.1741999999976542,
+          "p95Ms": 11.290500000002794,
+          "maximumMs": 11.290500000002794
+        },
+        "begin": {
+          "n": 8,
+          "p50Ms": 0.5815000000002328,
+          "p95Ms": 3.509200000000419,
+          "maximumMs": 3.509200000000419
+        },
+        "resource-1": {
+          "n": 16,
+          "p50Ms": 6.6762999999991735,
+          "p95Ms": 733.9926999999989,
+          "maximumMs": 733.9926999999989
+        },
+        "resource-2": {
+          "n": 8,
+          "p50Ms": 0.40459999999802676,
+          "p95Ms": 1.5347000000001572,
+          "maximumMs": 1.5347000000001572
+        }
+      },
+      "callbackQueryCounts": {
+        "minimum": 8,
+        "maximum": 8,
+        "n": 8
+      },
+      "intervalQualification": "Matched request-local/attempt-local intervals only; overlapping phases are not summed. Diagnostic observation adds cost; not performance acceptance.",
+      "observedHotWaiters": 8,
+      "heldPool": {
+        "total": 8,
+        "idle": 0,
+        "waiting": 0
+      },
+      "exactPersistence": true
+    }
+  ],
+  "T47Decision": "Do not execute unchanged T47 in this batch: correctness fixes SSI/global serialization but instrumented independent read/write p95 remains above500ms and hot-resource checkouts remain occupied. No measured latency improvement or acceptance claim."
+}

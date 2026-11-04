@@ -80,7 +80,9 @@ describe("API-08 seven Bangkok calendar days through the public Dashboard servic
     const originalInstant = clock.getTime();
     const transaction = {
       $executeRaw: vi.fn().mockResolvedValue(0),
-      $queryRaw: vi.fn().mockResolvedValue([{ asOf: clock }]),
+      $queryRaw: vi.fn().mockResolvedValueOnce([{ asOf: clock }]).mockResolvedValueOnce([{
+        outstanding: 0, needsAttention: 0, recentUpdated: 0, recentResolved: 0, updatedRows: [], resolvedRows: [],
+      }]),
       ticket: { count: vi.fn().mockResolvedValue(0), findMany: vi.fn().mockResolvedValue([]) },
       ticketStatusHistory: { groupBy: vi.fn().mockResolvedValue([]) },
     };

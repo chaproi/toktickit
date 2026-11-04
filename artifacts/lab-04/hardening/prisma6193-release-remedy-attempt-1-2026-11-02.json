@@ -1,0 +1,444 @@
+{
+  "baselineHead": "3a3a953a5af3db8ce355c1827e2ee6bfeadc9650",
+  "executionHead": "3a3a953a5af3db8ce355c1827e2ee6bfeadc9650",
+  "startedAt": "2026-11-01T19:42:59.110Z",
+  "sourceDigests": {
+    "remedy.ts": "5d9155da9b240a5748b7c80a890524d4822d1209f13c8606027b9c51a45e94e4",
+    "components.ts": "191c5f0878c6165f2bf035dd0224bf78843df4e51455fea65bdb3b3e04b012ac",
+    "budget.ts": "20e1b15dd5e1067a79ce67610edbb812011fa93d2031a32b384fef1ddfc79a9c",
+    "evaluate.ts": "8f68ecdb56714452c146f90f27fb09f6d89c70495fbaac3b5fcc0924ae39abeb",
+    "run.mjs": "fdd8c560c166aae67200a1cadc71b738665813b60664dcbaf240ff5f8397bace",
+    "plan.md": "13bf79e4e2c88d0afbcee6b5e38cb127d77be57a27d6c1e70f38d95244aecfbf"
+  },
+  "executedSourceState": "recorded execution HEAD plus any source bytes identified by sourceDigests; application unchanged",
+  "node": "v24.14.0",
+  "platform": "win32",
+  "stages": [
+    {
+      "phase": "live-target-verification",
+      "elapsedMs": 194.1714,
+      "passed": true
+    },
+    {
+      "phase": "prepare-owned-directory-and-client-schema",
+      "elapsedMs": 24.756700000000023,
+      "passed": true
+    },
+    {
+      "phase": "install-exact-temporary-dependencies",
+      "elapsedMs": 11105.9432,
+      "passed": true
+    },
+    {
+      "phase": "generate-temporary-client",
+      "elapsedMs": 2095.1851000000006,
+      "passed": true
+    },
+    {
+      "phase": "typecheck-public-adapter-and-application-callback",
+      "elapsedMs": 1755.7675999999992,
+      "passed": true
+    },
+    {
+      "phase": "owned-schema-and-committed-migrations",
+      "elapsedMs": 588.8625000000011,
+      "passed": true
+    },
+    {
+      "phase": "bounded-client-engine-gates",
+      "elapsedMs": 10421.1082,
+      "passed": false
+    }
+  ],
+  "evaluatedPrismaVersion": "6.19.3",
+  "proof": {
+    "pairs": [
+      {
+        "label": "remedy-first",
+        "winner": 0,
+        "callbacksCompleted": [
+          true,
+          true
+        ],
+        "distinctBackendsAndTransactions": true,
+        "sameConnectionOrmRawAndInheritedLock": true,
+        "nativeCommitState": [
+          "40001"
+        ],
+        "applicationError": {
+          "code": null,
+          "state": "40001",
+          "kind": "TransactionWriteConflict"
+        },
+        "exactAdapterErrorObjectReachesAttempt": true,
+        "loserBackendAndXidAttributed": true,
+        "winnerReleaseCalls": 1,
+        "loserReleaseCalls": 1,
+        "checkedOutConnections": 0,
+        "idleTransactions": 0,
+        "independentExactState": true
+      },
+      {
+        "label": "remedy-reversed",
+        "winner": 1,
+        "callbacksCompleted": [
+          true,
+          true
+        ],
+        "distinctBackendsAndTransactions": true,
+        "sameConnectionOrmRawAndInheritedLock": true,
+        "nativeCommitState": [
+          "40001"
+        ],
+        "applicationError": {
+          "code": null,
+          "state": "40001",
+          "kind": "TransactionWriteConflict"
+        },
+        "exactAdapterErrorObjectReachesAttempt": true,
+        "loserBackendAndXidAttributed": true,
+        "winnerReleaseCalls": 1,
+        "loserReleaseCalls": 1,
+        "checkedOutConnections": 0,
+        "idleTransactions": 0,
+        "independentExactState": true
+      },
+      {
+        "label": "remedy-repeat-first",
+        "winner": 0,
+        "callbacksCompleted": [
+          true,
+          true
+        ],
+        "distinctBackendsAndTransactions": true,
+        "sameConnectionOrmRawAndInheritedLock": true,
+        "nativeCommitState": [
+          "40001"
+        ],
+        "applicationError": {
+          "code": null,
+          "state": "40001",
+          "kind": "TransactionWriteConflict"
+        },
+        "exactAdapterErrorObjectReachesAttempt": true,
+        "loserBackendAndXidAttributed": true,
+        "winnerReleaseCalls": 1,
+        "loserReleaseCalls": 1,
+        "checkedOutConnections": 0,
+        "idleTransactions": 0,
+        "independentExactState": true
+      },
+      {
+        "label": "remedy-repeat-reversed",
+        "winner": 1,
+        "callbacksCompleted": [
+          true,
+          true
+        ],
+        "distinctBackendsAndTransactions": true,
+        "sameConnectionOrmRawAndInheritedLock": true,
+        "nativeCommitState": [
+          "40001"
+        ],
+        "applicationError": {
+          "code": null,
+          "state": "40001",
+          "kind": "TransactionWriteConflict"
+        },
+        "exactAdapterErrorObjectReachesAttempt": true,
+        "loserBackendAndXidAttributed": true,
+        "winnerReleaseCalls": 1,
+        "loserReleaseCalls": 1,
+        "checkedOutConnections": 0,
+        "idleTransactions": 0,
+        "independentExactState": true
+      }
+    ],
+    "components": {
+      "syntheticOnly": true,
+      "independentlyReportedRecords": 12,
+      "records": [
+        {
+          "label": "success and repeated/concurrent completion",
+          "releases": 1,
+          "rollbackQueries": 0,
+          "commits": 1
+        },
+        {
+          "label": "engine callback/query rollback completion",
+          "releases": 1,
+          "rollbackQueries": 1,
+          "commits": 0
+        },
+        {
+          "label": "confirmed 40001",
+          "exactPrimaryIdentity": true,
+          "releases": 1,
+          "rollbackQueries": 1,
+          "commits": 1
+        },
+        {
+          "label": "deadlock 40P01",
+          "exactPrimaryIdentity": true,
+          "releases": 1,
+          "rollbackQueries": 1,
+          "commits": 1
+        },
+        {
+          "label": "uniqueness 23505",
+          "exactPrimaryIdentity": true,
+          "releases": 1,
+          "rollbackQueries": 1,
+          "commits": 1
+        },
+        {
+          "label": "unknown P2034",
+          "exactPrimaryIdentity": true,
+          "releases": 1,
+          "rollbackQueries": 1,
+          "commits": 1
+        },
+        {
+          "label": "P2002",
+          "exactPrimaryIdentity": true,
+          "releases": 1,
+          "rollbackQueries": 1,
+          "commits": 1
+        },
+        {
+          "label": "message-only 40001",
+          "exactPrimaryIdentity": true,
+          "releases": 1,
+          "rollbackQueries": 1,
+          "commits": 1
+        },
+        {
+          "label": "unexpected",
+          "exactPrimaryIdentity": true,
+          "releases": 1,
+          "rollbackQueries": 1,
+          "commits": 1
+        },
+        {
+          "label": "secondary cleanup failure",
+          "exactPrimaryIdentity": true,
+          "primaryCauseUnchanged": true,
+          "stageOnlyReports": [
+            "rollback-query"
+          ],
+          "releases": 1,
+          "rollbackQueries": 1,
+          "commits": 1
+        },
+        {
+          "label": "secondary cleanup and release failure",
+          "exactPrimaryIdentity": true,
+          "primaryCauseUnchanged": true,
+          "stageOnlyReports": [
+            "rollback-query",
+            "transaction-release"
+          ],
+          "releases": 1,
+          "rollbackQueries": 1,
+          "commits": 1
+        },
+        {
+          "label": "20 concurrent independent synthetic completions",
+          "passed": 20
+        }
+      ]
+    },
+    "lifecycle": {
+      "lazy": true,
+      "configurationOwnedPoolDisposed": true,
+      "reconnectFreshPool": true,
+      "settings": {
+        "timezone": "Asia/Bangkok",
+        "readOnly": "on",
+        "ssl": false
+      }
+    },
+    "retention": {
+      "syntheticComponentOnly": true,
+      "strongErrorOrScopeArrays": 0,
+      "diagnosticGcAvailable": true,
+      "batches": [
+        {
+          "generated": 1000,
+          "weaklyObservedAliveAfterDiagnosticGc": 34,
+          "reclaimedObserved": 966,
+          "earlierBatchAlive": 0
+        },
+        {
+          "generated": 2000,
+          "weaklyObservedAliveAfterDiagnosticGc": 34,
+          "reclaimedObserved": 1966,
+          "earlierBatchAlive": 0
+        }
+      ],
+      "heapBytesOrProductionLeakRateMeasured": false
+    },
+    "rollbackControls": [
+      {
+        "kind": "callback",
+        "error": {
+          "code": null,
+          "state": null,
+          "kind": null
+        },
+        "realStagedWritesRolledBack": true,
+        "releases": 1,
+        "checkedOutConnections": 0
+      },
+      {
+        "kind": "unique",
+        "error": {
+          "code": "P2002",
+          "state": "23505",
+          "kind": "UniqueConstraintViolation"
+        },
+        "realStagedWritesRolledBack": true,
+        "releases": 1,
+        "checkedOutConnections": 0
+      }
+    ],
+    "acquisitionBudget": {
+      "observations": [
+        {
+          "label": "native5.22 control",
+          "defaultMaxWaitMs": 2000,
+          "defaultTimeoutMs": 5000,
+          "observationDeadlineMs": 2500,
+          "settledBeforeReleasingHeldConnection": true,
+          "callbackCalled": false,
+          "outcome": {
+            "ok": false,
+            "elapsedMs": 2012.665,
+            "code": "P2028"
+          }
+        },
+        {
+          "label": "candidate6.19.3 public release remedy",
+          "defaultMaxWaitMs": 2000,
+          "defaultTimeoutMs": 5000,
+          "observationDeadlineMs": 2500,
+          "settledBeforeReleasingHeldConnection": false,
+          "callbackCalled": false,
+          "outcome": {
+            "ok": false,
+            "elapsedMs": 2508.2213999999994,
+            "code": "P2028"
+          }
+        }
+      ],
+      "preservesDefaultAcquisitionDeadline": false,
+      "configuredConnectBudgetMs": 5000,
+      "configuredPoolWaitBudgetMs": 10000,
+      "noApplicationBudgetOverrides": true
+    },
+    "failure": {
+      "phase": "remaining-acquisition-budget-gate",
+      "classification": {
+        "code": null,
+        "state": null,
+        "kind": null
+      },
+      "assertion": "default maxWait must reject before releasing the held connection\n\nfalse !== true\n"
+    },
+    "cleanup": {
+      "checkedOutBeforeForcedCleanup": 0,
+      "destroyReleasedOnlyOwnedClients": 0,
+      "poolEnded": true
+    }
+  },
+  "cleanup": {
+    "schemasRemaining": 0,
+    "proofConnectionsRemaining": 0,
+    "nativeClientEnded": true,
+    "temporaryDirectoryRemoved": true
+  },
+  "database": {
+    "guard": true,
+    "liveIdentityMatches": true,
+    "distinctOperationalDatabase": true,
+    "postgresVersion": "PostgreSQL 18.6",
+    "otherNonIdleConnections": 0
+  },
+  "applicationSourceCopies": [
+    {
+      "path": "server/src/auth/eligibility-transaction.ts",
+      "sha256": "8142bee26facc105fd1749de8ff771fb5863484e87e08fd1c09d9346a0b1ba3c"
+    },
+    {
+      "path": "server/src/prisma.ts",
+      "sha256": "1f01de52f7cc1ccb09fbe84cc2b61167452b79afc3060aa6adcd9de6117d81d8"
+    },
+    {
+      "path": "server/src/testing/test-database.ts",
+      "sha256": "b6d0d470aace9b62f9e30e3f09b7288c7f82dae6184c8366c8528113e7deefe9"
+    }
+  ],
+  "commands": [
+    {
+      "phase": "install-exact-temporary-dependencies",
+      "exit": 0
+    },
+    {
+      "phase": "generate-temporary-client",
+      "exit": 0
+    },
+    {
+      "phase": "typecheck-public-adapter-and-application-callback",
+      "exit": 0
+    },
+    {
+      "phase": "bounded-client-engine-gates",
+      "exit": 1
+    }
+  ],
+  "versions": {
+    "prisma": "6.19.3",
+    "@prisma/client": "6.19.3",
+    "@prisma/adapter-pg": "6.19.3",
+    "@prisma/driver-adapter-utils": "6.19.3",
+    "pg": "8.23.0",
+    "typescript": "5.7.2",
+    "tsx": "4.19.2",
+    "@types/node": "22.10.2",
+    "@types/pg": "8.23.1"
+  },
+  "prismaCli": "6.19.3",
+  "packageRequirements": {
+    "prisma": {
+      "version": "6.19.3",
+      "engines": {
+        "node": ">=18.18"
+      },
+      "peerDependencies": {
+        "typescript": ">=5.1.0"
+      }
+    },
+    "@prisma/client": {
+      "version": "6.19.3",
+      "engines": {
+        "node": ">=18.18"
+      },
+      "peerDependencies": {
+        "prisma": "*",
+        "typescript": ">=5.1.0"
+      }
+    },
+    "@prisma/adapter-pg": {
+      "version": "6.19.3",
+      "engines": {},
+      "peerDependencies": {}
+    }
+  },
+  "temporaryLockSha256": "cacf2d3d42003f88cc5e7549b7a52c786ef8e4e18bf4203691bdf87c6f3757f5",
+  "migrationsApplied": 6,
+  "failure": {
+    "phase": "bounded-client-engine-gates",
+    "code": null,
+    "assertion": null
+  }
+}

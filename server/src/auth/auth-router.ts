@@ -1,3 +1,5 @@
+import { withCommandCoordination } from "../database/write-admission.js";
+import { commandRequest, resolvedCommandSession, validateCommandSession, CommandSessionError } from "./command-session.js";
 import { timingSafeEqual } from "node:crypto";
 import { Router, type Request, type Response } from "express";
 import type { AuthSession, User, UserRole } from "@prisma/client";
@@ -44,6 +46,9 @@ export type LiveSession = {
 };
 
 class ConcurrentPasswordChangeError extends Error {}
+class LoginStateChangedError extends Error {
+  constructor(readonly code: "INVALID_CREDENTIALS" | "ACCOUNT_INACTIVE") { super("Login state changed before session creation."); }
+}
 
 export function isAllowedDuringMandatoryPasswordChange(
   method: string,
@@ -172,13 +177,16 @@ export function requireOrigin(req: Request, res: Response): boolean {
   return false;
 }
 
-async function createSession(userId: number, successfulThrottleKey: string) {
+async function createSession(userId: number, successfulThrottleKey: string, verifiedHash: string, email: string) {
   const prisma = getPrisma();
   const now = new Date();
   const expiresAt = new Date(now.getTime() + ABSOLUTE_SESSION_MILLISECONDS);
   const sessionToken = createOpaqueToken();
   const csrfToken = createOpaqueToken();
-  const session = await prisma.$transaction(async (transaction) => {
+  const committed = await withCommandCoordination({ keys: [{ scope: 1, id: userId }] }, () => prisma.$transaction(async (transaction) => {
+    const [current] = await transaction.$queryRaw<User[]>`SELECT * FROM "User" WHERE id=${userId} FOR UPDATE`;
+    if (!current || current.passwordHash !== verifiedHash || current.email.toLowerCase() !== email) throw new LoginStateChangedError("INVALID_CREDENTIALS");
+    if (!current.isActive) throw new LoginStateChangedError("ACCOUNT_INACTIVE");
     const created = await transaction.authSession.create({
       data: {
         userId,
@@ -192,9 +200,9 @@ async function createSession(userId: number, successfulThrottleKey: string) {
     await transaction.loginThrottle.deleteMany({
       where: { keyHash: successfulThrottleKey },
     });
-    return created;
-  });
-  return { session, sessionToken, csrfToken };
+    return { session: created, user: current };
+  }, { isolationLevel: "ReadCommitted" }));
+  return { ...committed, sessionToken, csrfToken };
 }
 
 export async function resolveLiveSession(
@@ -224,6 +232,8 @@ export async function resolveLiveSession(
         data: { lastSeenAt: now },
       })
     : record;
+
+  resolvedCommandSession(record.userId, session);
 
   return {
     session,
@@ -377,6 +387,7 @@ async function recordFailedLogin(keyHash: string, now: Date) {
 }
 
 export const authRouter = Router();
+authRouter.use((_req, _res, next) => commandRequest(next));
 
 export async function authorizeRequest(
   req: Request,
@@ -473,7 +484,7 @@ authRouter.post("/api/auth/login", async (req, res) => {
       return;
     }
 
-    const created = await createSession(user.id, keyHash);
+    const created = await createSession(user.id, keyHash, user.passwordHash, body.email);
     setAuthenticationCookies(
       req,
       res,
@@ -481,8 +492,13 @@ authRouter.post("/api/auth/login", async (req, res) => {
       created.csrfToken,
       created.session.expiresAt,
     );
-    res.status(200).json(authenticationResponse(user, created.session.expiresAt));
-  } catch {
+    res.status(200).json(authenticationResponse(created.user, created.session.expiresAt));
+  } catch (error) {
+    if (error instanceof LoginStateChangedError) {
+      res.status(error.code === "ACCOUNT_INACTIVE" ? 403 : 401).json(errorBody(error.code,
+        error.code === "ACCOUNT_INACTIVE" ? "This account is inactive." : "Email or password is incorrect."));
+      return;
+    }
     res.status(503).json(
       errorBody("SERVICE_UNAVAILABLE", "Service is temporarily unavailable. Please try again."),
     );
@@ -570,7 +586,10 @@ authRouter.post("/api/auth/change-password", async (req, res) => {
     const csrfToken = createOpaqueToken();
     const now = new Date();
     const expiresAt = new Date(now.getTime() + ABSOLUTE_SESSION_MILLISECONDS);
-    const changed = await getPrisma().$transaction(async (transaction) => {
+    const changed = await withCommandCoordination({ keys: [{ scope: 1, id: live.user.id }] }, () => getPrisma().$transaction(async (transaction) => {
+      const [current] = await transaction.$queryRaw<User[]>`SELECT * FROM "User" WHERE id=${live.user.id} FOR UPDATE`;
+      if (!current?.isActive) throw new CommandSessionError("AUTHENTICATION_REQUIRED");
+      await validateCommandSession(transaction, current.id, true, current.mustChangePassword, [current.id], true);
       const update = await transaction.user.updateMany({
         where: {
           id: live.user.id,
@@ -601,11 +620,15 @@ authRouter.post("/api/auth/change-password", async (req, res) => {
         },
       });
       return user;
-    });
+    }));
 
     setAuthenticationCookies(req, res, sessionToken, csrfToken, expiresAt);
     res.status(200).json(authenticationResponse(changed, expiresAt));
   } catch (error) {
+    if (error instanceof CommandSessionError) {
+      res.status(error.code === "AUTHENTICATION_REQUIRED" ? 401 : 403).json(errorBody(error.code, "Current authentication is required."));
+      return;
+    }
     if (error instanceof ConcurrentPasswordChangeError) {
       res.status(409).json(
         errorBody("CONCURRENT_UPDATE", "The account changed. Please try again."),

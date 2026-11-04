@@ -1,11 +1,11 @@
 import { Prisma, type Action, type ActionHistoryEvent, type TicketStatus } from "@prisma/client";
-import { runSerializableMutation, type MutationGateKey } from "../auth/eligibility-transaction.js";
+import { runAdmittedSerializableMutation as runSerializableMutation, type MutationGateKey } from "../auth/eligibility-transaction.js";
 import { getPrisma } from "../prisma.js";
 import {
   currentActionAuthorization, eligibleActionUser, MAX_ACTION_DATABASE_ID,
   type ActionMutationAuthorization, type LockedActionUser,
 } from "./action-mutation-protocol.js";
-import { actionSelect, toActionDTO, toActionSnapshot } from "./action-projection.js";
+import { toActionDTO, toActionSnapshot } from "./action-projection.js";
 import { fingerprintActionPatch, isReceiptKeyConflict, storedActionResponse, type ActionPatchOperation } from "./action-receipt.js";
 import { recoverActionReceipt } from "./action-receipt-recovery.js";
 import {
@@ -128,8 +128,23 @@ export async function patchTicketAction(
       before: toActionSnapshot(before), after: toActionSnapshot(after), createdAt: instant,
     } });
     await transaction.ticket.update({ where: { id: ticketId }, data: { updatedAt: instant } });
-    const selected = await transaction.action.findUniqueOrThrow({ where: { id: actionId }, select: actionSelect });
-    const response = { action: toActionDTO(selected), ticketUpdatedAt: instant.toISOString() };
+    // UPDATE returned the authoritative scalars. Unlike CREATE, historical
+    // identities need not belong to the mutable User lock set. Read their
+    // current safe names together; do not reuse discovery/session identities.
+    const identities = await transaction.user.findMany({
+      where: { id: { in: [...new Set([after.createdById, after.assigneeId,
+        ...(after.performedById === null ? [] : [after.performedById])])] } },
+      select: { id: true, name: true },
+    });
+    const identity = (id: number) => {
+      const user = identities.find(candidate => candidate.id === id);
+      if (!user) throw new Error("Action identity unavailable.");
+      return user;
+    };
+    const response = { action: toActionDTO({ ...after,
+      createdBy: identity(after.createdById), assignee: identity(after.assigneeId),
+      performedBy: after.performedById === null ? null : identity(after.performedById),
+    }), ticketUpdatedAt: instant.toISOString() };
     // Receipt is the final domain write. A failure rolls back every earlier write.
     await transaction.mutationReceipt.create({ data: {
       actorId: context.actorId, clientMutationId: input.clientMutationId, operation, ticketId, actionId,

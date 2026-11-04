@@ -1,3 +1,5 @@
+import { observePendingAdmission } from "../lab-04/write-admission-test-helpers.js";
+import { configureTestDatabaseEnvironment } from "../../src/testing/test-database.js";
 import { randomUUID } from "node:crypto";
 import type { RequestedPriority, TicketStatus } from "@prisma/client";
 import { Client } from "pg";
@@ -85,34 +87,29 @@ export async function overlapOnMutationGate<T>(
   const blocker = new Client({ connectionString: process.env.DATABASE_URL, application_name: `issue33-blocker-${randomUUID()}` });
   const observer = new Client({ connectionString: process.env.DATABASE_URL, application_name: `issue33-observer-${randomUUID()}` });
   let transactionOpen = false;
+  const pending: Promise<T>[] = [];
+  const admission = observePendingAdmission(getPrisma());
   await Promise.all([blocker.connect(), observer.connect()]);
   try {
     await blocker.query("BEGIN");
     transactionOpen = true;
+    const identity = configureTestDatabaseEnvironment();
+    // Proposed D-12: hold the declared shared resource, not the removed global
+    // lane. Both live requests reach their public command boundary; an actual
+    // PostgreSQL waiter proves exclusion on the declared resource.
+    expect(identity.databaseName.toLowerCase()).toContain("test");
     await blocker.query("SELECT pg_advisory_xact_lock($1::integer, $2::integer)", [gate.scope, gate.id]);
-    const pending = operations.map((operation) => Promise.resolve(operation()));
-    const deadline = Date.now() + 5_000;
-    let blockedCount = 0;
-    while (Date.now() < deadline) {
-      const result = await observer.query<{ count: string }>(`
-        SELECT COUNT(*)::text AS count
-        FROM pg_locks waiting
-        WHERE waiting.locktype = 'advisory'
-          AND waiting.classid = $1::oid
-          AND waiting.objid = $2::oid
-          AND waiting.granted = false
-          AND cardinality(pg_blocking_pids(waiting.pid)) > 0
-      `, [gate.scope, gate.id]);
-      blockedCount = Number(result.rows[0]?.count ?? 0);
-      if (blockedCount >= operations.length) break;
-      await new Promise((resolve) => setTimeout(resolve, 10));
-    }
+    pending.push(...operations.map((operation) => Promise.resolve(operation())));
+    const blockedCount = await admission.wait(operations.length);
+    expect(await waitForBlockedAdvisoryCount(observer, gate, 1)).toBeGreaterThanOrEqual(1);
     expect(blockedCount).toBeGreaterThanOrEqual(operations.length);
     await blocker.query("COMMIT");
     transactionOpen = false;
     return { responses: await Promise.all(pending), blockedCount };
   } finally {
     if (transactionOpen) await blocker.query("ROLLBACK").catch(() => undefined);
+    await Promise.allSettled(pending);
+    admission.restore();
     await Promise.all([blocker.end(), observer.end()]);
   }
 }
@@ -157,6 +154,8 @@ export async function orderedOnMutationGate<T>(
   const blocker = new Client({ connectionString: process.env.DATABASE_URL, application_name: `issue35-ordered-blocker-${randomUUID()}` });
   const observer = new Client({ connectionString: process.env.DATABASE_URL, application_name: `issue35-ordered-observer-${randomUUID()}` });
   let transactionOpen = false;
+  const pending: Promise<T>[] = [];
+  const admission = observePendingAdmission(getPrisma());
   await Promise.all([blocker.connect(), observer.connect()]);
   try {
     await blocker.query("BEGIN");
@@ -164,7 +163,7 @@ export async function orderedOnMutationGate<T>(
     const blockerPid = (await blocker.query<{ pid: number }>("SELECT pg_backend_pid() AS pid")).rows[0]!.pid;
     await blocker.query('SELECT "id" FROM "User" WHERE "id" = $1 FOR UPDATE', [sharedGate.id]);
 
-    const firstPending = Promise.resolve(first());
+    const firstPending = Promise.resolve(first()); pending.push(firstPending);
     const blockDeadline = Date.now() + 5_000;
     let firstBlocked = 0;
     while (Date.now() < blockDeadline) {
@@ -179,8 +178,8 @@ export async function orderedOnMutationGate<T>(
     }
     expect(firstBlocked).toBeGreaterThanOrEqual(1);
 
-    const secondPending = Promise.resolve(second());
-    const secondBlocked = await waitForBlockedAdvisoryCount(observer, sharedGate, 1);
+    const secondPending = Promise.resolve(second()); pending.push(secondPending);
+    const secondBlocked = await admission.wait();
     expect(secondBlocked).toBeGreaterThanOrEqual(1);
 
     await blocker.query("COMMIT");
@@ -189,6 +188,8 @@ export async function orderedOnMutationGate<T>(
     return { firstResponse, secondResponse, blockedCounts: [firstBlocked, secondBlocked] };
   } finally {
     if (transactionOpen) await blocker.query("ROLLBACK").catch(() => undefined);
+    await Promise.allSettled(pending);
+    admission.restore();
     await Promise.all([blocker.end(), observer.end()]);
   }
 }

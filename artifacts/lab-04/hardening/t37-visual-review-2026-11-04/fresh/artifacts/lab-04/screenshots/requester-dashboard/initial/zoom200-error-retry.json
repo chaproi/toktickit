@@ -1,0 +1,24 @@
+{
+  "screenshot": "zoom200-error-retry.png",
+  "capturedAt": "2026-11-03T21:21:29.788Z",
+  "executionHead": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+  "pendingProductionFiles": [],
+  "browser": "Chrome/153.0.8010.12",
+  "configuredViewport": null,
+  "actualCSSViewport": {
+    "width": 712,
+    "height": 402,
+    "pinchScale": 1
+  },
+  "role": "REQUESTER",
+  "state": "One held then aborted browser transport read; single honest alert and keyboard Retry",
+  "zoomFactor": 2,
+  "zoomMethod": "chrome.tabs.setZoom/getZoom via unchanged genuineZoom extension helper",
+  "captureScope": "native viewport",
+  "syntheticDataOnly": true,
+  "visualInspection": "Pending visual inspection",
+  "sampledContrast": {
+    "error": 10.22,
+    "retry": 6.63
+  }
+}

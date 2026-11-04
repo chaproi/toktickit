@@ -1,0 +1,2473 @@
+{
+  "recordedDate": "2026-11-02",
+  "timezone": "Asia/Bangkok",
+  "rawArtifact": "t47-performance-2026-11-02-measurement-acdc02c8.json",
+  "rawArtifactSha256": "e9b09d97450ba838a2cb8058388c33eed16089f615485d2caa35ec2d37264274",
+  "executionHead": "36f86b8c7aba1f120e6e713c8def3e74e1b2e89e",
+  "command": {
+    "command": "npm.cmd test -- tests/lab-04/performance-smoke.integration.test.ts",
+    "cwd": "server/",
+    "executionHead": "36f86b8c7aba1f120e6e713c8def3e74e1b2e89e",
+    "startedAtUtc": "2026-11-02T15:55:41.4724850+00:00",
+    "endedAtUtc": "2026-11-02T15:56:45.7945925+00:00",
+    "wallMs": 64317.991500000004,
+    "exitCode": 1,
+    "validationOnlyUnsetForCommand": true,
+    "validationSettingRestored": true,
+    "previousValidationPresent": false
+  },
+  "preflight": {
+    "recordedAtUtc": "2026-11-02T15:54:55.535662+00:00",
+    "executionHead": "36f86b8c7aba1f120e6e713c8def3e74e1b2e89e",
+    "cleanTreeAndIndex": true,
+    "liveRemoteMatched": true,
+    "ahead": 0,
+    "behind": 0,
+    "dedicatedGuardPassed": true,
+    "liveDedicatedIdentityMatched": true,
+    "distinctOperationalDatabase": true,
+    "idleTransactions": 0,
+    "ownedSchemasBefore": 0,
+    "competingTestBuildSeedProcesses": 0,
+    "validationModeInitiallyPresent": false,
+    "validationModeInitiallyEnabled": false,
+    "originalMeasurement": "8053570",
+    "trackedFileHashes": 571,
+    "processProbeFirstAttempt": "CIM sandbox Access denied; not proof of zero processes",
+    "processProbeVerifiedAtUtc": "2026-11-02T15:55:10.313365+00:00"
+  },
+  "verdict": "FAILED",
+  "testCases": {
+    "collected": 1,
+    "executed": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0
+  },
+  "frameworkDurationMs": 63310,
+  "caseDurationMs": 58300,
+  "artifactCaseDurationMs": 58283.7399,
+  "artifactDerivedChecks": {
+    "sampleCountAndUniqueness": true,
+    "perUserSequencesAndLiteralOperationMix": true,
+    "sequentialWithinEveryUser": true,
+    "allResponseAndErrorSamplesRetained": true,
+    "nearestRankPercentilesRecalculated": true,
+    "phaseAndPerOperationSummariesMatch": true,
+    "peakConcurrencyReconstructed": true,
+    "throughputAndWeightedConcurrencyRecalculated": true,
+    "noHttpReplays": true,
+    "observedCountsMatchSuccessfulHttpMutationCounts": true,
+    "noFabricatedZeroErrorVerdict": true,
+    "allMethodsAndTemplateEndpointsVerified": true
+  },
+  "checksAreNotUnreachedInlineAssertions": true,
+  "phases": {
+    "warmup": {
+      "count": 5000,
+      "errors": 794,
+      "errorRate": 0.1588,
+      "p50Ms": 277.4406000000017,
+      "p95Ms": 643.9342000000033,
+      "maxMs": 1030.224900000001,
+      "elapsedMs": 32792.3289,
+      "throughputPerSecond": 152.4746844070596,
+      "peakHttpInFlight": 50,
+      "timeWeightedHttpInFlight": 46.56928534892805,
+      "finalHttpInFlight": 0,
+      "operations": {
+        "requester.ticket.detail": {
+          "count": 400,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 290.17179999999644,
+          "p95Ms": 407.9516000000003,
+          "maxMs": 1030.224900000001,
+          "p95Below500": true,
+          "statuses": {
+            "200": 400
+          }
+        },
+        "requester.dashboard": {
+          "count": 400,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 278.58959999999934,
+          "p95Ms": 360.12950000000274,
+          "maxMs": 662.4259999999995,
+          "p95Below500": true,
+          "statuses": {
+            "200": 400
+          }
+        },
+        "requester.tickets.list": {
+          "count": 200,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 316.0841999999975,
+          "p95Ms": 421.117000000002,
+          "maxMs": 652.3260999999984,
+          "p95Below500": true,
+          "statuses": {
+            "200": 200
+          }
+        },
+        "requester.tickets.filtered-list": {
+          "count": 200,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 311.4966000000022,
+          "p95Ms": 366.19430000000284,
+          "maxMs": 395.34500000000116,
+          "p95Below500": true,
+          "statuses": {
+            "200": 200
+          }
+        },
+        "comments.list": {
+          "count": 400,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 252.7190999999948,
+          "p95Ms": 346.09309999999823,
+          "maxMs": 530.1809999999969,
+          "p95Below500": true,
+          "statuses": {
+            "200": 400
+          }
+        },
+        "ticket.actions.list": {
+          "count": 200,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 223.04230000000098,
+          "p95Ms": 276.56989999999496,
+          "maxMs": 401.65999999999985,
+          "p95Below500": true,
+          "statuses": {
+            "200": 200
+          }
+        },
+        "comments.create": {
+          "count": 200,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 237.55909999999858,
+          "p95Ms": 306.3400000000038,
+          "maxMs": 342.8244999999988,
+          "p95Below500": true,
+          "statuses": {
+            "201": 200
+          }
+        },
+        "staff.ticket.detail": {
+          "count": 300,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 292.5394000000015,
+          "p95Ms": 360.84240000000136,
+          "maxMs": 460.5685000000012,
+          "p95Below500": true,
+          "statuses": {
+            "200": 300
+          }
+        },
+        "staff.dashboard": {
+          "count": 300,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 333.8345000000045,
+          "p95Ms": 445.10020000000077,
+          "maxMs": 663.7476999999999,
+          "p95Below500": true,
+          "statuses": {
+            "200": 300
+          }
+        },
+        "staff.tickets.list": {
+          "count": 300,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 251.71749999999884,
+          "p95Ms": 408.35269999999946,
+          "maxMs": 471.84820000000036,
+          "p95Below500": true,
+          "statuses": {
+            "200": 300
+          }
+        },
+        "staff.actions.list": {
+          "count": 300,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 245.21330000000307,
+          "p95Ms": 318.95580000000336,
+          "maxMs": 409.72710000000006,
+          "p95Below500": true,
+          "statuses": {
+            "200": 300
+          }
+        },
+        "action.create": {
+          "count": 300,
+          "errors": 119,
+          "errorRate": 0.39666666666666667,
+          "p50Ms": 516.2428,
+          "p95Ms": 773.9364999999998,
+          "maxMs": 860.0361000000012,
+          "p95Below500": false,
+          "statuses": {
+            "201": 181,
+            "409": 119
+          }
+        },
+        "action.detail": {
+          "count": 300,
+          "errors": 49,
+          "errorRate": 0.16333333333333333,
+          "p50Ms": 208.72810000000027,
+          "p95Ms": 266.77240000000165,
+          "maxMs": 358.47199999999793,
+          "p95Below500": true,
+          "statuses": {
+            "200": 251,
+            "400": 49
+          }
+        },
+        "action.edit": {
+          "count": 300,
+          "errors": 181,
+          "errorRate": 0.6033333333333334,
+          "p50Ms": 373.1803,
+          "p95Ms": 701.2635000000009,
+          "maxMs": 837.6388999999981,
+          "p95Below500": false,
+          "statuses": {
+            "400": 49,
+            "200": 119,
+            "409": 132
+          }
+        },
+        "action.start": {
+          "count": 300,
+          "errors": 190,
+          "errorRate": 0.6333333333333333,
+          "p50Ms": 430.4669999999969,
+          "p95Ms": 754.2442999999985,
+          "maxMs": 916.7589999999982,
+          "p95Below500": false,
+          "statuses": {
+            "400": 49,
+            "200": 110,
+            "409": 141
+          }
+        },
+        "action.complete": {
+          "count": 150,
+          "errors": 111,
+          "errorRate": 0.74,
+          "p50Ms": 351.42729999999574,
+          "p95Ms": 714.4143999999978,
+          "maxMs": 794.7125999999989,
+          "p95Below500": false,
+          "statuses": {
+            "400": 19,
+            "200": 39,
+            "409": 92
+          }
+        },
+        "action.cancel": {
+          "count": 150,
+          "errors": 95,
+          "errorRate": 0.6333333333333333,
+          "p50Ms": 358.47499999999854,
+          "p95Ms": 687.0744999999988,
+          "maxMs": 808.6493000000046,
+          "p95Below500": false,
+          "statuses": {
+            "400": 30,
+            "200": 55,
+            "409": 65
+          }
+        },
+        "action.history": {
+          "count": 300,
+          "errors": 49,
+          "errorRate": 0.16333333333333333,
+          "p50Ms": 197.23240000000078,
+          "p95Ms": 265.71229999999923,
+          "maxMs": 381.119999999999,
+          "p95Below500": true,
+          "statuses": {
+            "400": 49,
+            "200": 251
+          }
+        }
+      }
+    },
+    "measured": {
+      "count": 500,
+      "errors": 71,
+      "errorRate": 0.142,
+      "p50Ms": 235.3698000000004,
+      "p95Ms": 590.3031999999948,
+      "maxMs": 714.2935999999972,
+      "elapsedMs": 3018.9182999999975,
+      "throughputPerSecond": 165.62223628244607,
+      "peakHttpInFlight": 50,
+      "timeWeightedHttpInFlight": 44.78082315112672,
+      "finalHttpInFlight": 0,
+      "operations": {
+        "requester.ticket.detail": {
+          "count": 40,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 146.83200000000215,
+          "p95Ms": 388.450499999999,
+          "maxMs": 412.2057999999961,
+          "p95Below500": true,
+          "statuses": {
+            "200": 40
+          }
+        },
+        "requester.dashboard": {
+          "count": 40,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 255.4062000000049,
+          "p95Ms": 290.77120000000286,
+          "maxMs": 500.4235000000044,
+          "p95Below500": true,
+          "statuses": {
+            "200": 40
+          }
+        },
+        "requester.tickets.list": {
+          "count": 20,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 427.0969000000041,
+          "p95Ms": 464.47669999999925,
+          "maxMs": 473.12650000000576,
+          "p95Below500": true,
+          "statuses": {
+            "200": 20
+          }
+        },
+        "requester.tickets.filtered-list": {
+          "count": 20,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 281.0072,
+          "p95Ms": 293.31209999999555,
+          "maxMs": 296.72469999999885,
+          "p95Below500": true,
+          "statuses": {
+            "200": 20
+          }
+        },
+        "comments.list": {
+          "count": 40,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 198.86539999999513,
+          "p95Ms": 251.13380000000325,
+          "maxMs": 273.9135000000024,
+          "p95Below500": true,
+          "statuses": {
+            "200": 40
+          }
+        },
+        "ticket.actions.list": {
+          "count": 20,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 204.21059999999852,
+          "p95Ms": 258.1582000000053,
+          "maxMs": 269.28169999999955,
+          "p95Below500": true,
+          "statuses": {
+            "200": 20
+          }
+        },
+        "comments.create": {
+          "count": 20,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 222.72240000000602,
+          "p95Ms": 252.85000000000582,
+          "maxMs": 255.0668000000005,
+          "p95Below500": true,
+          "statuses": {
+            "201": 20
+          }
+        },
+        "staff.ticket.detail": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 128.2957000000024,
+          "p95Ms": 135.06319999999687,
+          "maxMs": 135.20270000000164,
+          "p95Below500": true,
+          "statuses": {
+            "200": 30
+          }
+        },
+        "staff.dashboard": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 419.42659999999887,
+          "p95Ms": 490.61469999999827,
+          "maxMs": 539.5072,
+          "p95Below500": true,
+          "statuses": {
+            "200": 30
+          }
+        },
+        "staff.tickets.list": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 230.11450000000332,
+          "p95Ms": 289.90000000000146,
+          "maxMs": 305.26720000000205,
+          "p95Below500": true,
+          "statuses": {
+            "200": 30
+          }
+        },
+        "staff.actions.list": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 175.69539999999688,
+          "p95Ms": 202.70980000000418,
+          "maxMs": 204.65170000000217,
+          "p95Below500": true,
+          "statuses": {
+            "200": 30
+          }
+        },
+        "action.create": {
+          "count": 30,
+          "errors": 15,
+          "errorRate": 0.5,
+          "p50Ms": 557.1604999999981,
+          "p95Ms": 710.9516999999978,
+          "maxMs": 714.2935999999972,
+          "p95Below500": false,
+          "statuses": {
+            "201": 15,
+            "409": 15
+          }
+        },
+        "action.detail": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 220.3689000000013,
+          "p95Ms": 290.59909999999945,
+          "maxMs": 296.5457000000024,
+          "p95Below500": true,
+          "statuses": {
+            "200": 30
+          }
+        },
+        "action.edit": {
+          "count": 30,
+          "errors": 14,
+          "errorRate": 0.4666666666666667,
+          "p50Ms": 339.9251000000004,
+          "p95Ms": 665.2974000000031,
+          "maxMs": 674.9078000000009,
+          "p95Below500": false,
+          "statuses": {
+            "200": 16,
+            "409": 14
+          }
+        },
+        "action.start": {
+          "count": 30,
+          "errors": 21,
+          "errorRate": 0.7,
+          "p50Ms": 374.3587000000043,
+          "p95Ms": 684.4326999999976,
+          "maxMs": 692.9184999999998,
+          "p95Below500": false,
+          "statuses": {
+            "409": 21,
+            "200": 9
+          }
+        },
+        "action.complete": {
+          "count": 15,
+          "errors": 12,
+          "errorRate": 0.8,
+          "p50Ms": 235.45249999999942,
+          "p95Ms": 536.9442999999956,
+          "maxMs": 536.9442999999956,
+          "p95Below500": false,
+          "statuses": {
+            "409": 12,
+            "200": 3
+          }
+        },
+        "action.cancel": {
+          "count": 15,
+          "errors": 9,
+          "errorRate": 0.6,
+          "p50Ms": 254.79389999999694,
+          "p95Ms": 486.5964000000022,
+          "maxMs": 486.5964000000022,
+          "p95Below500": true,
+          "statuses": {
+            "409": 9,
+            "200": 6
+          }
+        },
+        "action.history": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 65.0248999999967,
+          "p95Ms": 148.76860000000306,
+          "maxMs": 164.54899999999907,
+          "p95Below500": true,
+          "statuses": {
+            "200": 30
+          }
+        }
+      }
+    }
+  },
+  "users": [
+    {
+      "phase": "warmup",
+      "user": 0,
+      "role": "REQUESTER",
+      "requests": 100,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "warmup",
+      "user": 1,
+      "role": "REQUESTER",
+      "requests": 100,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "warmup",
+      "user": 2,
+      "role": "REQUESTER",
+      "requests": 100,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "warmup",
+      "user": 3,
+      "role": "REQUESTER",
+      "requests": 100,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "warmup",
+      "user": 4,
+      "role": "REQUESTER",
+      "requests": 100,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "warmup",
+      "user": 5,
+      "role": "REQUESTER",
+      "requests": 100,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "warmup",
+      "user": 6,
+      "role": "REQUESTER",
+      "requests": 100,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "warmup",
+      "user": 7,
+      "role": "REQUESTER",
+      "requests": 100,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "warmup",
+      "user": 8,
+      "role": "REQUESTER",
+      "requests": 100,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "warmup",
+      "user": 9,
+      "role": "REQUESTER",
+      "requests": 100,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "warmup",
+      "user": 10,
+      "role": "REQUESTER",
+      "requests": 100,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "warmup",
+      "user": 11,
+      "role": "REQUESTER",
+      "requests": 100,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "warmup",
+      "user": 12,
+      "role": "REQUESTER",
+      "requests": 100,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "warmup",
+      "user": 13,
+      "role": "REQUESTER",
+      "requests": 100,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "warmup",
+      "user": 14,
+      "role": "REQUESTER",
+      "requests": 100,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "warmup",
+      "user": 15,
+      "role": "REQUESTER",
+      "requests": 100,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "warmup",
+      "user": 16,
+      "role": "REQUESTER",
+      "requests": 100,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "warmup",
+      "user": 17,
+      "role": "REQUESTER",
+      "requests": 100,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "warmup",
+      "user": 18,
+      "role": "REQUESTER",
+      "requests": 100,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "warmup",
+      "user": 19,
+      "role": "REQUESTER",
+      "requests": 100,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "warmup",
+      "user": 20,
+      "role": "IT_STAFF",
+      "requests": 100,
+      "errors": 20,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 20,
+        "role": "IT_STAFF",
+        "sequence": 6,
+        "operation": "action.edit",
+        "method": "PATCH",
+        "endpoint": "/api/tickets/:ticketId/actions/:actionId",
+        "expectedStatus": 200,
+        "status": 409,
+        "startMs": 2339.9775999999983,
+        "durationMs": 655.1229999999996,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 21,
+      "role": "IT_STAFF",
+      "requests": 100,
+      "errors": 41,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 21,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1419.8518000000004,
+        "durationMs": 632.9945999999982,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 22,
+      "role": "IT_STAFF",
+      "requests": 100,
+      "errors": 15,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 22,
+        "role": "IT_STAFF",
+        "sequence": 17,
+        "operation": "action.start",
+        "method": "PATCH",
+        "endpoint": "/api/tickets/:ticketId/actions/:actionId/status",
+        "expectedStatus": 200,
+        "status": 409,
+        "startMs": 6437.557000000001,
+        "durationMs": 696.6434999999983,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 23,
+      "role": "IT_STAFF",
+      "requests": 100,
+      "errors": 29,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 23,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1451.427499999998,
+        "durationMs": 703.6932000000015,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 24,
+      "role": "IT_STAFF",
+      "requests": 100,
+      "errors": 33,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 24,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1418.6372999999985,
+        "durationMs": 614.3513999999996,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 25,
+      "role": "IT_STAFF",
+      "requests": 100,
+      "errors": 29,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 25,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1473.735099999998,
+        "durationMs": 687.7317000000003,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 26,
+      "role": "IT_STAFF",
+      "requests": 100,
+      "errors": 20,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 26,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1457.6479,
+        "durationMs": 575.143,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 27,
+      "role": "IT_STAFF",
+      "requests": 100,
+      "errors": 32,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 27,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1517.302599999999,
+        "durationMs": 760.4464000000007,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 28,
+      "role": "IT_STAFF",
+      "requests": 100,
+      "errors": 19,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 28,
+        "role": "IT_STAFF",
+        "sequence": 16,
+        "operation": "action.edit",
+        "method": "PATCH",
+        "endpoint": "/api/tickets/:ticketId/actions/:actionId",
+        "expectedStatus": 200,
+        "status": 409,
+        "startMs": 6178.138999999999,
+        "durationMs": 674.6509000000005,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 29,
+      "role": "IT_STAFF",
+      "requests": 100,
+      "errors": 19,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 29,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1475.7746000000006,
+        "durationMs": 681.1414000000004,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 30,
+      "role": "IT_STAFF",
+      "requests": 100,
+      "errors": 26,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 30,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1466.9061000000002,
+        "durationMs": 695.1237000000001,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 31,
+      "role": "IT_STAFF",
+      "requests": 100,
+      "errors": 25,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 31,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1380.6683999999987,
+        "durationMs": 651.8783000000003,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 32,
+      "role": "IT_STAFF",
+      "requests": 100,
+      "errors": 24,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 32,
+        "role": "IT_STAFF",
+        "sequence": 6,
+        "operation": "action.edit",
+        "method": "PATCH",
+        "endpoint": "/api/tickets/:ticketId/actions/:actionId",
+        "expectedStatus": 200,
+        "status": 409,
+        "startMs": 2373.4146,
+        "durationMs": 614.8646000000008,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 33,
+      "role": "IT_STAFF",
+      "requests": 100,
+      "errors": 39,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 33,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1486.8480999999992,
+        "durationMs": 700.3702000000012,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 34,
+      "role": "IT_STAFF",
+      "requests": 100,
+      "errors": 40,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 34,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1488.4424,
+        "durationMs": 673.2201999999997,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 35,
+      "role": "IT_STAFF",
+      "requests": 100,
+      "errors": 15,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 35,
+        "role": "IT_STAFF",
+        "sequence": 16,
+        "operation": "action.edit",
+        "method": "PATCH",
+        "endpoint": "/api/tickets/:ticketId/actions/:actionId",
+        "expectedStatus": 200,
+        "status": 409,
+        "startMs": 5913.209200000001,
+        "durationMs": 693.5084999999999,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 36,
+      "role": "IT_STAFF",
+      "requests": 100,
+      "errors": 26,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 36,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1504.7644,
+        "durationMs": 675.0331000000006,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 37,
+      "role": "IT_STAFF",
+      "requests": 100,
+      "errors": 32,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 37,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1556.7488000000012,
+        "durationMs": 723.0195999999996,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 38,
+      "role": "IT_STAFF",
+      "requests": 100,
+      "errors": 28,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 38,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1554.0838000000003,
+        "durationMs": 723.7802999999985,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 39,
+      "role": "IT_STAFF",
+      "requests": 100,
+      "errors": 27,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 39,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1601.8400000000001,
+        "durationMs": 822.2203000000009,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 40,
+      "role": "ADMINISTRATOR",
+      "requests": 100,
+      "errors": 26,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 40,
+        "role": "ADMINISTRATOR",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1548.0505000000012,
+        "durationMs": 731.0181999999986,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 41,
+      "role": "ADMINISTRATOR",
+      "requests": 100,
+      "errors": 19,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 41,
+        "role": "ADMINISTRATOR",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1548.8545999999988,
+        "durationMs": 728.7463000000025,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 42,
+      "role": "ADMINISTRATOR",
+      "requests": 100,
+      "errors": 39,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 42,
+        "role": "ADMINISTRATOR",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1565.7641000000003,
+        "durationMs": 851.015800000001,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 43,
+      "role": "ADMINISTRATOR",
+      "requests": 100,
+      "errors": 19,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 43,
+        "role": "ADMINISTRATOR",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1514.0987999999998,
+        "durationMs": 763.2705999999998,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 44,
+      "role": "ADMINISTRATOR",
+      "requests": 100,
+      "errors": 26,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 44,
+        "role": "ADMINISTRATOR",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1587.9978999999985,
+        "durationMs": 834.1746999999996,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 45,
+      "role": "ADMINISTRATOR",
+      "requests": 100,
+      "errors": 30,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 45,
+        "role": "ADMINISTRATOR",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1593.8076,
+        "durationMs": 828.0099000000009,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 46,
+      "role": "ADMINISTRATOR",
+      "requests": 100,
+      "errors": 25,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 46,
+        "role": "ADMINISTRATOR",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1563.8549999999996,
+        "durationMs": 860.0361000000012,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 47,
+      "role": "ADMINISTRATOR",
+      "requests": 100,
+      "errors": 30,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 47,
+        "role": "ADMINISTRATOR",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1595.5734999999986,
+        "durationMs": 826.4239000000016,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 48,
+      "role": "ADMINISTRATOR",
+      "requests": 100,
+      "errors": 14,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 48,
+        "role": "ADMINISTRATOR",
+        "sequence": 7,
+        "operation": "action.start",
+        "method": "PATCH",
+        "endpoint": "/api/tickets/:ticketId/actions/:actionId/status",
+        "expectedStatus": 200,
+        "status": 409,
+        "startMs": 3165.4746000000014,
+        "durationMs": 916.7589999999982,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "warmup",
+      "user": 49,
+      "role": "ADMINISTRATOR",
+      "requests": 100,
+      "errors": 27,
+      "firstUnexpected": {
+        "phase": "warmup",
+        "user": 49,
+        "role": "ADMINISTRATOR",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1554.706900000001,
+        "durationMs": 607.8303999999989,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 0,
+      "role": "REQUESTER",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 1,
+      "role": "REQUESTER",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 2,
+      "role": "REQUESTER",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 3,
+      "role": "REQUESTER",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 4,
+      "role": "REQUESTER",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 5,
+      "role": "REQUESTER",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 6,
+      "role": "REQUESTER",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 7,
+      "role": "REQUESTER",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 8,
+      "role": "REQUESTER",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 9,
+      "role": "REQUESTER",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 10,
+      "role": "REQUESTER",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 11,
+      "role": "REQUESTER",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 12,
+      "role": "REQUESTER",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 13,
+      "role": "REQUESTER",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 14,
+      "role": "REQUESTER",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 15,
+      "role": "REQUESTER",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 16,
+      "role": "REQUESTER",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 17,
+      "role": "REQUESTER",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 18,
+      "role": "REQUESTER",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 19,
+      "role": "REQUESTER",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 20,
+      "role": "IT_STAFF",
+      "requests": 10,
+      "errors": 2,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 20,
+        "role": "IT_STAFF",
+        "sequence": 7,
+        "operation": "action.start",
+        "method": "PATCH",
+        "endpoint": "/api/tickets/:ticketId/actions/:actionId/status",
+        "expectedStatus": 200,
+        "status": 409,
+        "startMs": 1630.0242999999973,
+        "durationMs": 684.4326999999976,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 21,
+      "role": "IT_STAFF",
+      "requests": 10,
+      "errors": 4,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 21,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 861.8825999999972,
+        "durationMs": 479.1970999999976,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 22,
+      "role": "IT_STAFF",
+      "requests": 10,
+      "errors": 1,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 22,
+        "role": "IT_STAFF",
+        "sequence": 8,
+        "operation": "action.complete",
+        "method": "PATCH",
+        "endpoint": "/api/tickets/:ticketId/actions/:actionId/status",
+        "expectedStatus": 200,
+        "status": 409,
+        "startMs": 2702.5028999999995,
+        "durationMs": 287.84999999999854,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 23,
+      "role": "IT_STAFF",
+      "requests": 10,
+      "errors": 4,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 23,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 855.5066999999981,
+        "durationMs": 507.93009999999776,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 24,
+      "role": "IT_STAFF",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 25,
+      "role": "IT_STAFF",
+      "requests": 10,
+      "errors": 2,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 25,
+        "role": "IT_STAFF",
+        "sequence": 6,
+        "operation": "action.edit",
+        "method": "PATCH",
+        "endpoint": "/api/tickets/:ticketId/actions/:actionId",
+        "expectedStatus": 200,
+        "status": 409,
+        "startMs": 1511.6405000000013,
+        "durationMs": 650.6131999999998,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 26,
+      "role": "IT_STAFF",
+      "requests": 10,
+      "errors": 3,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 26,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 833.2063999999955,
+        "durationMs": 605.8264000000054,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 27,
+      "role": "IT_STAFF",
+      "requests": 10,
+      "errors": 2,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 27,
+        "role": "IT_STAFF",
+        "sequence": 7,
+        "operation": "action.start",
+        "method": "PATCH",
+        "endpoint": "/api/tickets/:ticketId/actions/:actionId/status",
+        "expectedStatus": 200,
+        "status": 409,
+        "startMs": 2025.4040999999997,
+        "durationMs": 682.8465999999971,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 28,
+      "role": "IT_STAFF",
+      "requests": 10,
+      "errors": 4,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 28,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 901.5446999999986,
+        "durationMs": 558.9616999999998,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 29,
+      "role": "IT_STAFF",
+      "requests": 10,
+      "errors": 4,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 29,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 859.3634999999995,
+        "durationMs": 577.094299999997,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 30,
+      "role": "IT_STAFF",
+      "requests": 10,
+      "errors": 2,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 30,
+        "role": "IT_STAFF",
+        "sequence": 7,
+        "operation": "action.start",
+        "method": "PATCH",
+        "endpoint": "/api/tickets/:ticketId/actions/:actionId/status",
+        "expectedStatus": 200,
+        "status": 409,
+        "startMs": 1786.4902000000002,
+        "durationMs": 679.1068000000014,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 31,
+      "role": "IT_STAFF",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 32,
+      "role": "IT_STAFF",
+      "requests": 10,
+      "errors": 4,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 32,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 985.3395999999993,
+        "durationMs": 612.7085999999981,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 33,
+      "role": "IT_STAFF",
+      "requests": 10,
+      "errors": 2,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 33,
+        "role": "IT_STAFF",
+        "sequence": 7,
+        "operation": "action.start",
+        "method": "PATCH",
+        "endpoint": "/api/tickets/:ticketId/actions/:actionId/status",
+        "expectedStatus": 200,
+        "status": 409,
+        "startMs": 1840.6466999999975,
+        "durationMs": 627.3781000000017,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 34,
+      "role": "IT_STAFF",
+      "requests": 10,
+      "errors": 3,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 34,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 879.5319999999992,
+        "durationMs": 562.3744999999981,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 35,
+      "role": "IT_STAFF",
+      "requests": 10,
+      "errors": 4,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 35,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 902.8891000000003,
+        "durationMs": 557.1604999999981,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 36,
+      "role": "IT_STAFF",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 37,
+      "role": "IT_STAFF",
+      "requests": 10,
+      "errors": 2,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 37,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 993.2828999999983,
+        "durationMs": 638.4806000000026,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 38,
+      "role": "IT_STAFF",
+      "requests": 10,
+      "errors": 4,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 38,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 891.4279999999999,
+        "durationMs": 567.2212,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 39,
+      "role": "IT_STAFF",
+      "requests": 10,
+      "errors": 4,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 39,
+        "role": "IT_STAFF",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1006.6028000000006,
+        "durationMs": 714.2935999999972,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 40,
+      "role": "ADMINISTRATOR",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 41,
+      "role": "ADMINISTRATOR",
+      "requests": 10,
+      "errors": 1,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 41,
+        "role": "ADMINISTRATOR",
+        "sequence": 6,
+        "operation": "action.edit",
+        "method": "PATCH",
+        "endpoint": "/api/tickets/:ticketId/actions/:actionId",
+        "expectedStatus": 200,
+        "status": 409,
+        "startMs": 1759.6376999999993,
+        "durationMs": 594.3430999999982,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 42,
+      "role": "ADMINISTRATOR",
+      "requests": 10,
+      "errors": 4,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 42,
+        "role": "ADMINISTRATOR",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 998.7699999999968,
+        "durationMs": 710.9516999999978,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 43,
+      "role": "ADMINISTRATOR",
+      "requests": 10,
+      "errors": 4,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 43,
+        "role": "ADMINISTRATOR",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 1067.6078999999954,
+        "durationMs": 643.5054000000018,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 44,
+      "role": "ADMINISTRATOR",
+      "requests": 10,
+      "errors": 1,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 44,
+        "role": "ADMINISTRATOR",
+        "sequence": 8,
+        "operation": "action.complete",
+        "method": "PATCH",
+        "endpoint": "/api/tickets/:ticketId/actions/:actionId/status",
+        "expectedStatus": 200,
+        "status": 409,
+        "startMs": 2287.522499999999,
+        "durationMs": 536.9442999999956,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 45,
+      "role": "ADMINISTRATOR",
+      "requests": 10,
+      "errors": 1,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 45,
+        "role": "ADMINISTRATOR",
+        "sequence": 7,
+        "operation": "action.start",
+        "method": "PATCH",
+        "endpoint": "/api/tickets/:ticketId/actions/:actionId/status",
+        "expectedStatus": 200,
+        "status": 409,
+        "startMs": 2193.544900000001,
+        "durationMs": 549.6530999999959,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 46,
+      "role": "ADMINISTRATOR",
+      "requests": 10,
+      "errors": 4,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 46,
+        "role": "ADMINISTRATOR",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 941.5839999999953,
+        "durationMs": 598.0344000000041,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 47,
+      "role": "ADMINISTRATOR",
+      "requests": 10,
+      "errors": 0,
+      "firstUnexpected": null
+    },
+    {
+      "phase": "measured",
+      "user": 48,
+      "role": "ADMINISTRATOR",
+      "requests": 10,
+      "errors": 4,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 48,
+        "role": "ADMINISTRATOR",
+        "sequence": 4,
+        "operation": "action.create",
+        "method": "POST",
+        "endpoint": "/api/tickets/:ticketId/actions",
+        "expectedStatus": 201,
+        "status": 409,
+        "startMs": 989.556700000001,
+        "durationMs": 612.0062999999936,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    },
+    {
+      "phase": "measured",
+      "user": 49,
+      "role": "ADMINISTRATOR",
+      "requests": 10,
+      "errors": 1,
+      "firstUnexpected": {
+        "phase": "measured",
+        "user": 49,
+        "role": "ADMINISTRATOR",
+        "sequence": 8,
+        "operation": "action.cancel",
+        "method": "PATCH",
+        "endpoint": "/api/tickets/:ticketId/actions/:actionId/status",
+        "expectedStatus": 200,
+        "status": 409,
+        "startMs": 2407.055699999997,
+        "durationMs": 486.5964000000022,
+        "bytes": 106,
+        "errorCode": "CONCURRENT_UPDATE",
+        "transportError": null,
+        "semanticError": null,
+        "replayed": false
+      }
+    }
+  ],
+  "successfulOperations": {
+    "requester.ticket.detail": 440,
+    "staff.ticket.detail": 330,
+    "requester.dashboard": 440,
+    "staff.dashboard": 330,
+    "staff.tickets.list": 330,
+    "requester.tickets.list": 220,
+    "staff.actions.list": 330,
+    "comments.list": 440,
+    "ticket.actions.list": 220,
+    "action.create": 196,
+    "action.detail": 281,
+    "action.edit": 135,
+    "requester.tickets.filtered-list": 220,
+    "action.start": 119,
+    "comments.create": 220,
+    "action.complete": 42,
+    "action.history": 281,
+    "action.cancel": 61
+  },
+  "persistedExpected": {
+    "tickets": 2050,
+    "actions": 8330,
+    "actionHistory": 25320,
+    "ticketHistory": 3800,
+    "receipts": 1320,
+    "comments": 220,
+    "users": 50,
+    "sessions": 50
+  },
+  "persistedObserved": {
+    "tickets": 2050,
+    "actions": 8196,
+    "actionHistory": 24553,
+    "ticketHistory": 3800,
+    "receipts": 553,
+    "comments": 220,
+    "users": 50,
+    "sessions": 50
+  },
+  "missingActions": 134,
+  "missingActionHistoryAndReceipts": 767,
+  "transactionRejections": {
+    "count": 1654,
+    "confirmedSqlStateCounts": {
+      "40001": 1654
+    },
+    "observerCodeField": "unclassified means not a Pxxxx code; separate confirmedSqlStates retains40001",
+    "perRequestAttemptAttributionAvailable": false
+  },
+  "firstUnexpectedRequestByStart": {
+    "phase": "warmup",
+    "user": 31,
+    "role": "IT_STAFF",
+    "sequence": 4,
+    "operation": "action.create",
+    "method": "POST",
+    "endpoint": "/api/tickets/:ticketId/actions",
+    "expectedStatus": 201,
+    "status": 409,
+    "startMs": 1380.6683999999987,
+    "durationMs": 651.8783000000003,
+    "bytes": 106,
+    "errorCode": "CONCURRENT_UPDATE",
+    "transportError": null,
+    "semanticError": null,
+    "replayed": false
+  },
+  "inlineAssertions": {
+    "reachedAndPassed": [
+      "owned target/session/fixture/distribution preconditions",
+      "primaryFailure is null",
+      "cleanupFailure is null",
+      "all cleanup flags true"
+    ],
+    "firstFailed": "persistedCountsMatchExpected at performance-smoke.integration.test.ts:376",
+    "unreached": [
+      "receiptReplays zero",
+      "warmup/measured request counts",
+      "each-user warmup/measured counts",
+      "peakHttpInFlight 50",
+      "measured operation mix",
+      "warmup zero errors",
+      "measured zero errors",
+      "aggregate p95<500",
+      "all-operation p95<500"
+    ]
+  },
+  "barrierQualification": "Source awaits complete warmup before measurement; raw sample clocks are relative per phase and do not independently encode an absolute cross-phase barrier timestamp.",
+  "originalMeasurement": {
+    "artifact": "t47-performance-2026-11-01-measurement-1f0f9c94.json",
+    "sha256": "1e8b3ad78b9bf53da1b9e17cb82bcc34faf1f28a25b43f2a59e1c906400d0d2d",
+    "executionHead": "8053570a835a9b9c04f01a72cf9a5085f2b6e3b8",
+    "startedAt": "2026-11-01T13:24:45.914Z",
+    "prismaVersion": "5.22.0",
+    "warmup": {
+      "count": 5000,
+      "errors": 1245,
+      "errorRate": 0.249,
+      "p50Ms": 254.4925000000003,
+      "p95Ms": 516.3227000000043,
+      "elapsedMs": 28628.131400000002,
+      "throughputPerSecond": 174.65338307061143
+    },
+    "measured": {
+      "count": 500,
+      "errors": 112,
+      "errorRate": 0.224,
+      "p50Ms": 224.88600000000588,
+      "p95Ms": 749.0082000000039,
+      "elapsedMs": 2811.1057999999975,
+      "throughputPerSecond": 177.86594869534986
+    },
+    "hostBefore": {
+      "os": "win32",
+      "osRelease": "10.0.26200",
+      "architecture": "x64",
+      "node": "v24.14.0",
+      "cpuModels": [
+        "13th Gen Intel(R) Core(TM) i5-13420H"
+      ],
+      "logicalCpus": 12,
+      "availableParallelism": 12,
+      "totalRamBytes": 34049220608,
+      "availableRamBytes": 5725335552,
+      "processRssBytes": 106921984,
+      "runtime": "Vitest/Vite-transformed TypeScript source Express, NODE_ENV=test; not a production build; loopback HTTP without TLS"
+    }
+  },
+  "cleanup": {
+    "listenerClosed": true,
+    "prismaDisconnected": true,
+    "ownedSchemaRemoved": true,
+    "environmentRestored": true,
+    "transactionObserverRestored": true,
+    "independentOwnedSchemas": 0,
+    "independentLeakedBenchmarkUsers": 0,
+    "independentLeakedBenchmarkTickets": 0,
+    "independentIdleTransactions": 0,
+    "independentOtherActiveConnections": 0,
+    "competingWorkersAfter": 0,
+    "validationSettingRestored": true,
+    "independentOtherDedicatedConnections": 0,
+    "independentCandidateConnections": 0
+  },
+  "target": {
+    "overallP95Below500": false,
+    "allOperationsP95Below500": false,
+    "zeroMeasuredErrors": false,
+    "zeroWarmupErrors": false
+  },
+  "limits": [
+    "One local failed confirmation, not production capacity or a causal A/B measurement.",
+    "Accepted failed-start bookkeeping retention and untriaged dependency audit are not waived.",
+    "No production tuning, HTTP retry, repeated workload, compatibility proof or comprehensive regression rerun."
+  ],
+  "errorCodesAllSamples": {
+    "CONCURRENT_UPDATE": 417,
+    "INVALID_ACTION_ID": 245,
+    "INVALID_ACTION_TRANSITION": 61,
+    "ACTION_TERMINAL": 126,
+    "ACTION_STATUS_UNCHANGED": 16
+  },
+  "sourceUnchangedFromOriginal": {
+    "server/tests/lab-04/performance-smoke.integration.test.ts": "c9165e7e181562c5380f8d877d2bada26b82807bd99e860a2d567bffe3df77c4",
+    "server/tests/lab-04/performance-test-helpers.ts": "ff2f4fdf3c9a0cd7f28a8fe77338b88155ebe39927fbf889cf77cb7c738d35f0",
+    "artifacts/lab-04/hardening/t47-workload-plan-2026-11-01.md": "4a5a2669aab16f8c31cf5a8721807264c72ad70ea3779b8b7a3df973d3da4505"
+  },
+  "preEvidenceTrackedFilesByteIdentical": 571,
+  "warnings": [
+    "Inherited registered seed/reference/eligibility warnings",
+    "pg single-client queued-query deprecation",
+    "Known15 untriaged npm audit findings carried from adoption, not re-audited"
+  ],
+  "runtimeDependencies": {
+    "prisma": "6.19.3",
+    "generatedClient": "6.19.3",
+    "adapterPg": "6.19.3",
+    "driverAdapterUtils": "6.19.3",
+    "pg": "8.23.0",
+    "typescript": "5.9.3",
+    "tsx": "4.23.12",
+    "vitest": "2.1.9",
+    "dotenv": "16.6.1"
+  },
+  "measuredP95FailingOperations": [
+    "action.create",
+    "action.edit",
+    "action.start",
+    "action.complete"
+  ]
+}

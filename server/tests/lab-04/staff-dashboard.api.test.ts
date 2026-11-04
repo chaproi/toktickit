@@ -551,7 +551,8 @@ describe("Staff Dashboard coordinated snapshots", () => {
     await withStaffSnapshot("ticket-count", async (probe) => {
       const pending = probe.track(fixture.read("/api/dashboard/staff", cohort.params));
       const point = await probe.waitForRead();
-      expect(point.operation).toBe("ticket.count");
+      // Ticket metrics and Action bins now complete in one real SQL statement.
+      expect(point.operation).toBe("combined Dashboard aggregates");
       const write = await probe.track(fixture.write("patch", `/api/staff/tickets/${cohort.subject.id}/owner`, {
         ownerId: fixture.readerId(), expectedUpdatedAt: cohort.subject.updatedAt.toISOString(),
       }));
@@ -602,7 +603,7 @@ describe("Staff Dashboard coordinated snapshots", () => {
     expect(action.assigneeId).not.toBe(fixture.writerId());
     await withStaffSnapshot("action-bins", async (probe) => {
       const pending = probe.track(fixture.read("/api/dashboard/staff", cohort.params));
-      const point = await probe.waitForRead(); expect(point.operation).toBe("action.groupBy");
+      const point = await probe.waitForRead(); expect(point.operation).toBe("combined Dashboard aggregates");
       const write = await probe.track(fixture.write("patch", `/api/tickets/${parent.id}/actions/${action.id}/status`, {
         targetStatus: "COMPLETED", confirm: true, result: "Authoritative <script>completion</script>",
         expectedVersion: action.version, expectedTicketUpdatedAt: parent.updatedAt.toISOString(), clientMutationId: randomUUID(),

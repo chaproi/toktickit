@@ -1,0 +1,43 @@
+{
+  "mode": "minimal-SQL-mechanism-not-application-GREEN",
+  "variant": "receipt-index",
+  "startedAt": "2026-11-02T17:16:31.069Z",
+  "outcomes": [
+    {
+      "command": 0,
+      "committed": true
+    },
+    {
+      "command": 1,
+      "committed": false,
+      "sqlState": "40001",
+      "stage": "write"
+    }
+  ],
+  "predicateLocks": [
+    {
+      "backend": 13624,
+      "locktype": "page",
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": 4,
+      "tuple": null
+    },
+    {
+      "backend": 30508,
+      "locktype": "page",
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": 4,
+      "tuple": null
+    }
+  ],
+  "cleanup": {
+    "connectionsClosed": true
+  },
+  "fixtureScale": {
+    "tickets": 32,
+    "actions": 72,
+    "receipts": 3
+  },
+  "persistenceVerified": true,
+  "finishedAt": "2026-11-02T17:16:31.219Z"
+}

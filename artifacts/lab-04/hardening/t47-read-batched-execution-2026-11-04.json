@@ -1,0 +1,98 @@
+{
+  "date": "2026-11-04",
+  "timezone": "Asia/Bangkok",
+  "command": "npm.cmd test -- tests/lab-04/performance-smoke.integration.test.ts",
+  "executions": 1,
+  "executionHead": "69164d1dc57aeeee28447bd445df657e12354d77",
+  "greenSource": "56092ce94d0c400c4dcd465e5c01c4f2729bb6ca",
+  "cleanSourcePublishedBeforeRun": true,
+  "execution": {
+    "started": "2026-11-03T17:52:20.9627159Z",
+    "finished": "2026-11-03T17:53:17.6523791Z",
+    "exit": 1,
+    "seconds": 56.6879129,
+    "validationSettingRestored": true
+  },
+  "frameworkSeconds": 55.58,
+  "reportedCaseMs": 50632,
+  "files": {
+    "collected": 1,
+    "executed": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0
+  },
+  "cases": {
+    "collected": 1,
+    "executed": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0
+  },
+  "firstFailedInlineAssertion": {
+    "file": "server/tests/lab-04/performance-smoke.integration.test.ts",
+    "line": 391,
+    "message": "Reviewed T-47 aggregate p95 <500ms target: expected 500.67549999999756 to be less than 500"
+  },
+  "unreachedInlineAssertion": {
+    "line": 392,
+    "description": "Combined per-operation p95 assertion; artifact-derived evaluation separately false due action.start"
+  },
+  "precedingInlineAssertions": "All passed, including real persistence, per-user sample counts/mix,50peak HTTP concurrency,zero warm-up/measured errors and zero replays",
+  "independentCleanup": {
+    "at": "2026-11-03T17:54:05.494Z",
+    "guardLiveDedicatedTargetVerified": true,
+    "distinctOperationalTarget": true,
+    "ownedSchemas": 0,
+    "otherConnections": 0,
+    "idleTransactions": 0,
+    "advisoryLocks": 0,
+    "sessions": 0,
+    "faultResources": 0,
+    "ownedProcesses": 0
+  },
+  "historicalArtifactsHashChecked": 480,
+  "unchangedBenchmarkGitBlobs": [
+    "8b36d3393787b9f9cf645b285275855e8994642a",
+    "b6c121ff6a9c17d39b0392c31e228d0266f5e04f"
+  ],
+  "artifacts": {
+    "t47-performance-2026-11-04-measurement-2e8762bf.json": "1f1028dae7222fc6c1a320ddd7bef065c8b7e42f9e576c85f416ed80d8e3bb88",
+    "t47-read-batched-analysis-2026-11-04.json": "9f7a8a9961faff1bec48f890f8c0c4a900f160a5abb5f9076e7eb6baeb449a0b",
+    "analyze-t47-read-batched-2026-11-04.py": "f10fe3acc4cb6be4144c9bd72178a75a9e0babd8131b1a515b204e904566f56c"
+  },
+  "retainedTransactionFailures": [],
+  "P2028Observed": false,
+  "historicalUnknownP2028Subtypes": "unchanged; not retrospectively classified",
+  "status": "Failed aggregate and action.start measured p95 targets;three scoped read targets pass numerically;D-12 remains proposed",
+  "knownLimitationsUnchanged": [
+    "Lab-only failed-start bookkeeping retention until disconnect;no per-record cleanup/growth bound",
+    "15untriaged dependency findings",
+    "No human peer/adoption/deployment or whole Issue/DoD acceptance"
+  ],
+  "finalIndependentCleanup": {
+    "at": "2026-11-03T17:57:03.865Z",
+    "guardVerified": true,
+    "liveIdentityMatches": true,
+    "distinctOperationalDatabase": true,
+    "identityValuesWithheld": true,
+    "owned_schemas": 0,
+    "other_connections": 0,
+    "idle_transactions": 0,
+    "advisory_locks": 0,
+    "sessions": 0,
+    "read_and_benchmark_users": 0,
+    "owned_relations": 0,
+    "owned_functions": 0,
+    "owned_triggers": 0,
+    "owned_fixture_users": 0
+  },
+  "publicationValidation": {
+    "localLinks": 122,
+    "markdownTables": 9,
+    "historicalArtifactsHashPreserved": 480,
+    "analysisReproduced": true,
+    "protectedServerBytesUnchanged": true,
+    "originalProposalHashPreserved": true
+  }
+}

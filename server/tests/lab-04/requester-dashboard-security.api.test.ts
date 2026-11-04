@@ -292,6 +292,16 @@ describe.each(surfaces)("Requester $label safe business failures", (surface) => 
         return await original(async (tx) => {
           const observed = new Proxy(tx, { get(target, property) {
             const value = Reflect.get(target, property);
+            if (property === "$queryRaw") return async (...args: unknown[]) => {
+              const result: unknown = await Reflect.apply(value, target, args);
+              const sql = args[0] as { strings?: string[] };
+              if (!/dashboard-summary|requester-page/.test(sql?.strings?.join(" ") ?? "")) return result;
+              evidence.realCounts += 1;
+              const [settings] = await tx.$queryRaw<Array<{ isolation: string; readOnly: string }>>`
+                SELECT current_setting('transaction_isolation') AS isolation,current_setting('transaction_read_only') AS "readOnly"`;
+              safeEqual(settings, { isolation: "repeatable read", readOnly: "on" }, "Real business transaction controls");
+              evidence.faults += 1; throw fault;
+            };
             if (property !== "ticket") return typeof value === "function" ? value.bind(target) : value;
             return new Proxy(value, { get(delegate, method) {
               const call = Reflect.get(delegate, method);

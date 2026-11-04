@@ -1,0 +1,6 @@
+﻿{
+    "observedAtUtc":  "2026-11-03T21:04:22.4973381Z",
+    "stopwatchFrequency":  10000000,
+    "logicalProcessors":  12,
+    "scope":  "Same Windows host, sampled after the four workloads; used only to interpret retained monotonic tick intervals"
+}

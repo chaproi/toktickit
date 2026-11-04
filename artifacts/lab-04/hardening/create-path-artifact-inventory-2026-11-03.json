@@ -1,0 +1,145 @@
+{
+  "purpose": "Complete new diagnostic/regression outputs; historical artifacts remain unchanged",
+  "executionDate": "2026-11-03",
+  "files": [
+    {
+      "path": "artifacts/lab-04/hardening/analyze-create-path-2026-11-03.py",
+      "bytes": 7408,
+      "sha256": "a8cc345d1063a640749390da2de59c003728d91f1f603ff9f06b9ea252a6fab5"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/complete-phases-2026-11-03-9a98c16c.json",
+      "bytes": 579887,
+      "sha256": "04009a46e30896c9e1e07dd7b0dce6a84f9b7d53469a2861080a51946073283d"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-critical-path-2026-11-03-26b3a963.json",
+      "bytes": 2509108,
+      "sha256": "b7663a7112969ffbee205465cac5a4eef7e8a71c718b6552ff9552ca0c05c302"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-critical-path-2026-11-03-6af1f89b.json",
+      "bytes": 2557547,
+      "sha256": "7dca5049b81791ac4d68bee3b769afaf27e37057a3356d40030f9d3678970b79"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-critical-path-2026-11-03.md",
+      "bytes": 17646,
+      "sha256": "76ea3ce8cb2cc203f6a2abc4345622a51e09c22b02fa1c2f3db06ed558ac233e"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-path-analysis-2026-11-03.json",
+      "bytes": 545194,
+      "sha256": "9d0dc68bfbd5f555431e8a4a43c9dc68ab3875489cee369481c51ed0fa20b729"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-path-commands-2026-11-03.json",
+      "bytes": 13177,
+      "sha256": "7f80873c7e958d7cdc503a925f2ec9bd0a9239766c23a1c52ff0a0d9969719d3"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-path-full-request-analysis-2026-11-03.json",
+      "bytes": 568379,
+      "sha256": "4ee117b43db8add3739dc51fb8e1fed915f3293ec4cdd986b807419c09989b32"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-path-regression-analysis-2026-11-03.json",
+      "bytes": 497171,
+      "sha256": "0f13a499351b561681cd1b4e2482d7a515338deef80019a08a8767171c1984a0"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-predicate-2026-11-03-receipt-default-d473d409.json",
+      "bytes": 841,
+      "sha256": "e5c88c3b4d4cd7388df6b179a3aa9df7d8cc1d65d07e6cf6bb56799301933757"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-predicate-2026-11-03-receipt-index-bc3f098a.json",
+      "bytes": 882,
+      "sha256": "7b156057060d26a3ad86f35967be978bb14693431ad666485e61082fec7ad7d6"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-predicate-2026-11-03-receipt-no-negative-read-4efad194.json",
+      "bytes": 508,
+      "sha256": "74703069fad8d3594ca34e6cdd5a17c57e2df88ecd199972711d48d3058f6cb4"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-predicate-2026-11-03-ticket-default-81fe79bd.json",
+      "bytes": 822,
+      "sha256": "b118706ae3e5bd1507684ffa73f64022aef9543ce020dc8ad22971441b642cc6"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-predicate-2026-11-03-ticket-index-dce55b46.json",
+      "bytes": 1068,
+      "sha256": "2c42e786da13e72e91aa2de87603d1c9050aebf8c5cfd37b03a53b538729ed6d"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-projection-2026-11-03-47b48aaa.json",
+      "bytes": 637,
+      "sha256": "a3588f498d6e8ccbad2bf782de6e9a4f69d78ca234ba912e9ca1d7b44e851ed2"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-projection-2026-11-03-8f9c25bd.json",
+      "bytes": 637,
+      "sha256": "a3588f498d6e8ccbad2bf782de6e9a4f69d78ca234ba912e9ca1d7b44e851ed2"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-projection-2026-11-03-aaabae48.json",
+      "bytes": 637,
+      "sha256": "a3588f498d6e8ccbad2bf782de6e9a4f69d78ca234ba912e9ca1d7b44e851ed2"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-projection-2026-11-03-ef53b4ce.json",
+      "bytes": 837,
+      "sha256": "6bf917ac945f0c5b1f35d9de78df16b99b444457083cea6c25764653adb391d4"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/front-queue-resource-2026-11-03-2580ed27.json",
+      "bytes": 1320,
+      "sha256": "16bcaa9a92383273b67488afeebc65568e07ddc41b733a8192593af911bd4bb4"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/front-queue-resource-2026-11-03-51ad4389.json",
+      "bytes": 1319,
+      "sha256": "ba6cb60c027b2159675aad1051b24500841cc654904ea0a5f149f9ee360f2497"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/independent-create-red-2026-11-03-1469e86a.json",
+      "bytes": 921,
+      "sha256": "1844ce848da506a835039845073bf01a38205628feded52381c7b5824f1f3845"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/independent-create-red-2026-11-03-77b477cd.json",
+      "bytes": 921,
+      "sha256": "1844ce848da506a835039845073bf01a38205628feded52381c7b5824f1f3845"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/t47-create-contention-2026-11-03-e15ecfcf.json",
+      "bytes": 57470,
+      "sha256": "7d82238d47e937ef38f091523961c381876992a378b53f9e78b52a17f45e9ca8"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/t47-diagnostic-observations-2026-11-01-5c2f3de9.json",
+      "bytes": 146970,
+      "sha256": "5ed00ad4ecd8c001e2270c99ab68329f0a31b20ef91557cb870a8a8fab80dde5"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/write-admission-feasibility-2026-11-03-8fedbbc9.json",
+      "bytes": 2627,
+      "sha256": "d2e737e769ffec0cbedcbb7c44ab393a923ad65f199f65b399016136eba6d792"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/write-admission-feasibility-2026-11-03-b64ddc46.json",
+      "bytes": 2627,
+      "sha256": "9416a6a56a2af890f9938da59d888df8497307f42ad58715b71019fc24b144a5"
+    }
+  ],
+  "excludes": [
+    "This self-referential manifest",
+    "Private raw command logs with connection metadata; retained locally"
+  ],
+  "testArtifactExecutionSource": "28ab984 clean diagnosis,28ab984 unchanged production RED,14b4148 pending correction for remaining commands; see command ledger",
+  "limitations": [
+    "Intermediate and final offline path analyses both retained; final reproducer emits the full-request version.",
+    "Historical filenames containing2026-11-01 were generated2026-11-03 by unchanged inherited tests."
+  ]
+}

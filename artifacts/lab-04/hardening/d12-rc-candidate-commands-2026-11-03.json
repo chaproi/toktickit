@@ -1,0 +1,306 @@
+{
+  "date": "2026-11-03",
+  "status": "partial-candidate-not-accepted",
+  "branch": "feat/49-d12-rc-candidate",
+  "localHead": "c6775c00e8dabaa075efc0b913f6daedf375f3b7",
+  "attempts": [
+    {
+      "label": "01-red",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-04/command-coordination.integration.test.ts",
+        "tests/lab-04/command-replay-footprint.api.test.ts"
+      ],
+      "started": "2026-11-03T11:54:55.9637642Z",
+      "finished": "2026-11-03T11:55:16.4212749Z",
+      "exit": 1,
+      "seconds": 20.4605241,
+      "executionHead": "535a2e5426ffe263630e44b763779050a95ab436",
+      "sourceNote": "Execution includes then-pending files; not an exact-clean-HEAD claim. Final manifest below is NOT historical run-source hashing.",
+      "frameworkSeconds": 19.32
+    },
+    {
+      "label": "02-types",
+      "arguments": [
+        "exec",
+        "--",
+        "tsc",
+        "--noEmit"
+      ],
+      "started": "2026-11-03T11:56:50.2316643Z",
+      "finished": "2026-11-03T11:56:57.7465443Z",
+      "exit": 0,
+      "seconds": 7.517978599999999,
+      "executionHead": "fd2c33198b0b8b16fc90c1868a001d12daf7e7a2",
+      "sourceNote": "Execution includes then-pending files; not an exact-clean-HEAD claim. Final manifest below is NOT historical run-source hashing."
+    },
+    {
+      "label": "03-resource",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-04/command-coordination.integration.test.ts",
+        "tests/lab-04/command-replay-footprint.api.test.ts"
+      ],
+      "started": "2026-11-03T11:57:51.4201220Z",
+      "finished": "2026-11-03T11:58:19.1024051Z",
+      "exit": 1,
+      "seconds": 27.6842875,
+      "executionHead": "fd2c33198b0b8b16fc90c1868a001d12daf7e7a2",
+      "sourceNote": "Execution includes then-pending files; not an exact-clean-HEAD claim. Final manifest below is NOT historical run-source hashing.",
+      "frameworkSeconds": 26.64
+    },
+    {
+      "label": "04-observer",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-04/command-replay-footprint.api.test.ts",
+        "-t",
+        "revoked=false"
+      ],
+      "started": "2026-11-03T12:00:00.8209274Z",
+      "finished": "2026-11-03T12:00:12.0727249Z",
+      "exit": 0,
+      "seconds": 11.2548274,
+      "executionHead": "fd2c33198b0b8b16fc90c1868a001d12daf7e7a2",
+      "sourceNote": "Execution includes then-pending files; not an exact-clean-HEAD claim. Final manifest below is NOT historical run-source hashing.",
+      "frameworkSeconds": 10.2
+    },
+    {
+      "label": "05-resource-corrected",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-04/command-coordination.integration.test.ts",
+        "tests/lab-04/command-replay-footprint.api.test.ts"
+      ],
+      "started": "2026-11-03T12:01:10.6746711Z",
+      "finished": "2026-11-03T12:01:32.9392221Z",
+      "exit": 0,
+      "seconds": 22.2675733,
+      "executionHead": "fd2c33198b0b8b16fc90c1868a001d12daf7e7a2",
+      "sourceNote": "Execution includes then-pending files; not an exact-clean-HEAD claim. Final manifest below is NOT historical run-source hashing.",
+      "frameworkSeconds": 21.26
+    },
+    {
+      "label": "06-session-red",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-04/command-session.api.test.ts"
+      ],
+      "started": "2026-11-03T12:02:28.0646441Z",
+      "finished": "2026-11-03T12:02:41.6743153Z",
+      "exit": 1,
+      "seconds": 13.611675499999999,
+      "executionHead": "af21cb6c16f090ee18fe80db9622d1168d74f06a",
+      "sourceNote": "Execution includes then-pending files; not an exact-clean-HEAD claim. Final manifest below is NOT historical run-source hashing.",
+      "frameworkSeconds": 12.43
+    },
+    {
+      "label": "07-types",
+      "arguments": [
+        "exec",
+        "--",
+        "tsc",
+        "--noEmit"
+      ],
+      "started": "2026-11-03T12:04:19.5493764Z",
+      "finished": "2026-11-03T12:04:27.2629049Z",
+      "exit": 2,
+      "seconds": 7.7165463,
+      "executionHead": "c6775c00e8dabaa075efc0b913f6daedf375f3b7",
+      "sourceNote": "Execution includes then-pending files; not an exact-clean-HEAD claim. Final manifest below is NOT historical run-source hashing."
+    },
+    {
+      "label": "08-types",
+      "arguments": [
+        "exec",
+        "--",
+        "tsc",
+        "--noEmit"
+      ],
+      "started": "2026-11-03T12:04:44.9121814Z",
+      "finished": "2026-11-03T12:04:52.4179188Z",
+      "exit": 0,
+      "seconds": 7.5087354,
+      "executionHead": "c6775c00e8dabaa075efc0b913f6daedf375f3b7",
+      "sourceNote": "Execution includes then-pending files; not an exact-clean-HEAD claim. Final manifest below is NOT historical run-source hashing."
+    },
+    {
+      "label": "09-domain",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-04/command-session.api.test.ts",
+        "tests/lab-04/command-replay-footprint.api.test.ts",
+        "tests/lab-04/command-coordination.integration.test.ts",
+        "tests/lab-03/admin-concurrency.api.test.ts",
+        "tests/lab-03/password-change.api.test.ts",
+        "tests/lab-03/auth.api.test.ts"
+      ],
+      "started": "2026-11-03T12:04:52.9544785Z",
+      "finished": "2026-11-03T12:05:45.4919546Z",
+      "exit": 1,
+      "seconds": 52.5404756,
+      "executionHead": "c6775c00e8dabaa075efc0b913f6daedf375f3b7",
+      "sourceNote": "Execution includes then-pending files; not an exact-clean-HEAD claim. Final manifest below is NOT historical run-source hashing.",
+      "frameworkSeconds": 51.41
+    },
+    {
+      "label": "10-local-types",
+      "arguments": [
+        "exec",
+        "--",
+        "tsc",
+        "--noEmit"
+      ],
+      "started": "2026-11-03T12:11:21.1625295Z",
+      "finished": "2026-11-03T12:11:28.8147615Z",
+      "exit": 0,
+      "seconds": 7.654232599999999,
+      "executionHead": "c6775c00e8dabaa075efc0b913f6daedf375f3b7",
+      "sourceNote": "Execution includes then-pending files; not an exact-clean-HEAD claim. Final manifest below is NOT historical run-source hashing."
+    },
+    {
+      "label": "11-observer-types",
+      "arguments": [
+        "exec",
+        "--",
+        "tsc",
+        "--noEmit"
+      ],
+      "started": "2026-11-03T12:15:14.4047515Z",
+      "finished": "2026-11-03T12:15:23.0287193Z",
+      "exit": 0,
+      "seconds": 8.6275443,
+      "executionHead": "c6775c00e8dabaa075efc0b913f6daedf375f3b7",
+      "sourceNote": "Execution includes final pending source/test files; not an exact-clean-HEAD claim."
+    }
+  ],
+  "blocked": {
+    "databaseFollowupExecuted": false,
+    "reason": "Automatic approval review failed: authentication token could not refresh; account logged out or changed. Not a safety determination. No bypass or retry.",
+    "remotePublicationExecuted": false
+  },
+  "additionalNonNpmFailures": [
+    "Direct temporary PowerShell runner refused by Windows script execution policy; no npm command executed in that invocation.",
+    "Final unprivileged Win32_Process inventory returned Access denied; no final independent process/database-cleanliness claim."
+  ],
+  "manifestScope": "Final pending files after TypeScript11; not historical run-source hashes; excludes this self-referential record.",
+  "finalPendingManifest": [
+    {
+      "path": "artifacts/lab-04/hardening/d12-rc-candidate-2026-11-03.md",
+      "sha256": "c8d047b71d77287257da7973f16f17edd0a02381f2cda2415f35eb9ee69030e5"
+    },
+    {
+      "path": "docs/lab-04/d12-amendment-proposal.md",
+      "sha256": "8301b1a4ff7c419b86d2d1d2225b583df3004082fae65a2fcf89b1908f24e0b1"
+    },
+    {
+      "path": "docs/lab-04/hardening-audit.md",
+      "sha256": "077695ddb984a82208fc06a9c5aaa9d4da74da9b7260b6b6c1a3314ac60c5e61"
+    },
+    {
+      "path": "server/prisma/seed.ts",
+      "sha256": "2424057d7d17dd84e672daf29c871bfef87d2caf6fcc77ac9c5ea12023d9bcc9"
+    },
+    {
+      "path": "server/src/app.ts",
+      "sha256": "2488b4785ef09346ae289401ec21296f8a63c7090c809054ab0dda5a4a67fb8e"
+    },
+    {
+      "path": "server/src/auth/auth-router.ts",
+      "sha256": "301c1ebc2173001e38f1d60c9813b948f78f0d2fe2152a0a2a91b536af61087f"
+    },
+    {
+      "path": "server/src/auth/command-session.ts",
+      "sha256": "89399185ac1fd4a80c14a05793c8331458421e2005fb930ce37920b83c9de5c5"
+    },
+    {
+      "path": "server/src/auth/eligibility-transaction.ts",
+      "sha256": "942ca23e06c420f43fb3f6a359b798c880c6c96f38ac0e6b52c07c22c9223797"
+    },
+    {
+      "path": "server/src/database/write-admission.ts",
+      "sha256": "0e34243851d264d3eeae8255bfc6af172402db90e49f4cd30af3881cf94a4449"
+    },
+    {
+      "path": "server/src/tickets/staff-ticket-service.ts",
+      "sha256": "68d6c22be84e3426c5d6e8cf00f3abefb968270953a7a8c46d853d852bd9ee54"
+    },
+    {
+      "path": "server/src/tickets/ticket-service.ts",
+      "sha256": "7fa860ef718aad5a04dc14f3a40ca06eb006e5db0905f0c727a952e2fcf4d49e"
+    },
+    {
+      "path": "server/src/users/admin-user-service.ts",
+      "sha256": "c79aa64b66a11bbe912cdcbd486d23cf08c738755f7f1c7aab2d33dd382c2063"
+    },
+    {
+      "path": "server/tests/lab-03/admin-concurrency.api.test.ts",
+      "sha256": "638405cfc5bd92f0b8fb41281a11b14f4e7c356d31e78b8dd499861b170570d3"
+    },
+    {
+      "path": "server/tests/lab-04/action-commit-recovery.api.test.ts",
+      "sha256": "923aa04a538342b14e5c74055a150864671ad48b9033a82b6bbe33cf9b6fda6e"
+    },
+    {
+      "path": "server/tests/lab-04/action-create-contention.integration.test.ts",
+      "sha256": "293cdee7faefb7a6524cdf229cbe7311d4af4499cc67b44f891b477a5cd76d87"
+    },
+    {
+      "path": "server/tests/lab-04/action-retry-test-helpers.ts",
+      "sha256": "612798095ff254fd19618028d5d7259d995246d074b7343a00389f4c6ad0ae1a"
+    },
+    {
+      "path": "server/tests/lab-04/actions-concurrency.api.test.ts",
+      "sha256": "b46ee8a40b1ad2e7ea71ac8b456b9e606fad63c1f4f2093efe4366ddc77378e6"
+    },
+    {
+      "path": "server/tests/lab-04/command-session.api.test.ts",
+      "sha256": "e1acb5a9aaae8df3014deb175e43733bd5b1ba4ddcff9593e530d25492469cca"
+    },
+    {
+      "path": "server/tests/lab-04/independent-action-create.api.test.ts",
+      "sha256": "ca95238e84ad73b6b44b6333c891273f19c773e48a3b19857fe51f48cf34393d"
+    },
+    {
+      "path": "server/tests/lab-04/receipt-recovery-test-helpers.ts",
+      "sha256": "7459b94915de4a63faefe831ba42a0865f92e97231862acc961a4f6a475ba97b"
+    },
+    {
+      "path": "server/tests/lab-04/staff-snapshot-coordination-test-helper.ts",
+      "sha256": "dc38728157ff681e6cfd0b35adc0b93fe46ec5a85b73d0da1699549f5e802716"
+    },
+    {
+      "path": "server/tests/lab-04/t47-diagnosis.integration.test.ts",
+      "sha256": "ef1d7c96da3ca0cf35ce82da457add97092202f33bbb44bf6d676cdf7558491f"
+    },
+    {
+      "path": "server/tests/lab-04/t47-diagnostic-observer.ts",
+      "sha256": "f782974189cb63210b4feb126df020e3d6f3faafe73231c55a4a7a8c312162eb"
+    },
+    {
+      "path": "server/tests/lab-04/write-admission-test-helpers.ts",
+      "sha256": "54941f4188a26dee4c78308d45c179f089a3b07da2f2de3e93d97651c0f1e051"
+    }
+  ],
+  "t47Executed": false,
+  "buildExecuted": false,
+  "comprehensiveExecuted": false,
+  "localValidation": {
+    "utf8ChangedFilesSinceBase": 28,
+    "localLinksChecked": 23,
+    "pendingFileHashesChecked": 24,
+    "protectedSourceContractBenchmarkFilesChecked": 12,
+    "whitespaceExit": 0,
+    "stagedWhitespaceExit": 0,
+    "indexEmpty": true,
+    "lineEndingWarnings": "Existing Git autocrlf: LF will be replaced by CRLF; no whitespace error.",
+    "latestSourceTypeScriptExit": 0,
+    "latestSourceTypeScriptAttempt": "11-observer-types"
+  }
+}

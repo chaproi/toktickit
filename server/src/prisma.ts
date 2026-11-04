@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { createPrismaClient } from "./prisma-client.js";
 import { configureTestDatabaseEnvironment } from "./testing/test-database.js";
 
 // Lazy singleton: the client is created on first use, not at import time.
@@ -11,7 +12,7 @@ export function getPrisma(): PrismaClient {
     if (process.env.NODE_ENV === "test") {
       configureTestDatabaseEnvironment();
     }
-    client = new PrismaClient();
+    client = createPrismaClient();
   }
   return client;
 }

@@ -1,0 +1,18 @@
+{
+  "checkedAt": "2026-11-04T09:39:39.258Z",
+  "newEdgeProbeProfiles": 0,
+  "newEdgeCloseoutProfiles": 0,
+  "ownedEdgeContextsClosed": true,
+  "zoomRestored": true,
+  "routingRestored": true,
+  "preexistingListenerPorts": [
+    3100,
+    4173
+  ],
+  "preexistingListenerOwnerPreserved": 59344,
+  "preexistingSchemasPreserved": 2,
+  "newSchemasCreatedByThisBatch": 0,
+  "existingMinaSessionUnchangedByThisBatch": true,
+  "rootNodeModulesJunction": "Created only for module resolution; removed after checks; shared installation preserved",
+  "unrelatedBrowsersAndOperationalApplication": "Preserved"
+}

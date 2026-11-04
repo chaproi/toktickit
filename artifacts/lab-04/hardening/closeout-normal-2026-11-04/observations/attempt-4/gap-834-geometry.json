@@ -1,0 +1,140 @@
+{
+  "viewport": 834,
+  "rootWidth": 834,
+  "rootScrollWidth": 834,
+  "form": {
+    "left": 93,
+    "right": 741,
+    "width": 648,
+    "clientWidth": 648,
+    "scrollWidth": 656
+  },
+  "grid": {
+    "left": 85,
+    "right": 749,
+    "width": 664,
+    "marginLeft": "-8px",
+    "marginRight": "-8px"
+  },
+  "card": {
+    "left": 69,
+    "right": 765,
+    "width": 696
+  },
+  "controls": [
+    {
+      "tag": "LABEL",
+      "left": 93,
+      "right": 196.921875,
+      "width": 103.921875
+    },
+    {
+      "tag": "LABEL",
+      "left": 425,
+      "right": 503.921875,
+      "width": 78.921875
+    },
+    {
+      "tag": "LABEL",
+      "left": 93,
+      "right": 193.125,
+      "width": 100.125
+    },
+    {
+      "tag": "LABEL",
+      "left": 314.328125,
+      "right": 381.734375,
+      "width": 67.40625
+    },
+    {
+      "tag": "LABEL",
+      "left": 535.65625,
+      "right": 628.046875,
+      "width": 92.390625
+    },
+    {
+      "tag": "LABEL",
+      "left": 93,
+      "right": 168,
+      "width": 75
+    },
+    {
+      "tag": "SELECT",
+      "left": 93,
+      "right": 409,
+      "width": 316
+    },
+    {
+      "tag": "LABEL",
+      "left": 425,
+      "right": 543.28125,
+      "width": 118.28125
+    },
+    {
+      "tag": "SELECT",
+      "left": 425,
+      "right": 741,
+      "width": 316
+    },
+    {
+      "tag": "LABEL",
+      "left": 93,
+      "right": 154.4375,
+      "width": 61.4375
+    },
+    {
+      "tag": "SELECT",
+      "left": 93,
+      "right": 409,
+      "width": 316
+    },
+    {
+      "tag": "LABEL",
+      "left": 93,
+      "right": 170.625,
+      "width": 77.625
+    },
+    {
+      "tag": "INPUT",
+      "left": 93,
+      "right": 741,
+      "width": 648
+    },
+    {
+      "tag": "LABEL",
+      "left": 93,
+      "right": 184.40625,
+      "width": 91.40625
+    },
+    {
+      "tag": "TEXTAREA",
+      "left": 93,
+      "right": 741,
+      "width": 648
+    },
+    {
+      "tag": "LABEL",
+      "left": 93,
+      "right": 182.171875,
+      "width": 89.171875
+    },
+    {
+      "tag": "INPUT",
+      "left": 93,
+      "right": 741,
+      "width": 648
+    },
+    {
+      "tag": "BUTTON",
+      "left": 93,
+      "right": 210.546875,
+      "width": 117.546875
+    },
+    {
+      "tag": "BUTTON",
+      "left": 218.546875,
+      "right": 321.3125,
+      "width": 102.765625
+    }
+  ]
+}

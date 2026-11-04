@@ -1,0 +1,92 @@
+[
+  {
+    "path": "artifacts/lab-03/screenshots/mobile-390x844/login.png",
+    "sha256": "042e291b4f240c3f53bdcb273f5a3a5febbbc121782c4a8b8d44ad7528f3cc5f",
+    "referenceHead": "9b1c6eb9634aa46cb55fee3bdf48c7b45efd645b",
+    "lastArtifactCommit": "22eefa5a9ef41151d14af6d02d479ba08a703641",
+    "aiInspectedAt": "2026-11-04",
+    "observation": "Captured labels/text and controls readable; original scrolled Create modal regions remain partial; no clearly blocking captured-pixel defect. Not human acceptance.",
+    "captureProvenance": "Original artifact, unchanged; its historical sidecar where present remains authoritative. No new capture date inferred."
+  },
+  {
+    "path": "artifacts/lab-03/screenshots/mobile-390x844/change-password.png",
+    "sha256": "3b506fd082bf36053e576ed76eb88df58f85fc136f896e18588993a26e9bcb35",
+    "referenceHead": "9b1c6eb9634aa46cb55fee3bdf48c7b45efd645b",
+    "lastArtifactCommit": "22eefa5a9ef41151d14af6d02d479ba08a703641",
+    "aiInspectedAt": "2026-11-04",
+    "observation": "Captured labels/text and controls readable; original scrolled Create modal regions remain partial; no clearly blocking captured-pixel defect. Not human acceptance.",
+    "captureProvenance": "Original artifact, unchanged; its historical sidecar where present remains authoritative. No new capture date inferred."
+  },
+  {
+    "path": "artifacts/lab-03/screenshots/tablet-834x1112/login.png",
+    "sha256": "45f7cf79d85215a929f872278b430255fbf31726c58b2e44f3e9faab9090a3aa",
+    "referenceHead": "9b1c6eb9634aa46cb55fee3bdf48c7b45efd645b",
+    "lastArtifactCommit": "22eefa5a9ef41151d14af6d02d479ba08a703641",
+    "aiInspectedAt": "2026-11-04",
+    "observation": "Captured labels/text and controls readable; original scrolled Create modal regions remain partial; no clearly blocking captured-pixel defect. Not human acceptance.",
+    "captureProvenance": "Original artifact, unchanged; its historical sidecar where present remains authoritative. No new capture date inferred."
+  },
+  {
+    "path": "artifacts/lab-03/screenshots/tablet-834x1112/change-password.png",
+    "sha256": "815bb842c102472c2db8f19c897c6d58f9a4ac3c825fc7ba69e38f652259bf73",
+    "referenceHead": "9b1c6eb9634aa46cb55fee3bdf48c7b45efd645b",
+    "lastArtifactCommit": "22eefa5a9ef41151d14af6d02d479ba08a703641",
+    "aiInspectedAt": "2026-11-04",
+    "observation": "Captured labels/text and controls readable; original scrolled Create modal regions remain partial; no clearly blocking captured-pixel defect. Not human acceptance.",
+    "captureProvenance": "Original artifact, unchanged; its historical sidecar where present remains authoritative. No new capture date inferred."
+  },
+  {
+    "path": "artifacts/lab-03/screenshots/desktop-1440x900/login.png",
+    "sha256": "758b9b245f42ff3b61d5e8c7378e9c127e32d7de4d6cba4612a51176905ab1f2",
+    "referenceHead": "9b1c6eb9634aa46cb55fee3bdf48c7b45efd645b",
+    "lastArtifactCommit": "22eefa5a9ef41151d14af6d02d479ba08a703641",
+    "aiInspectedAt": "2026-11-04",
+    "observation": "Captured labels/text and controls readable; original scrolled Create modal regions remain partial; no clearly blocking captured-pixel defect. Not human acceptance.",
+    "captureProvenance": "Original artifact, unchanged; its historical sidecar where present remains authoritative. No new capture date inferred."
+  },
+  {
+    "path": "artifacts/lab-03/screenshots/desktop-1440x900/change-password.png",
+    "sha256": "1f5bacf9e1f7771657349fe4795c3f35c8e24cd2631c10483028a172f1780289",
+    "referenceHead": "9b1c6eb9634aa46cb55fee3bdf48c7b45efd645b",
+    "lastArtifactCommit": "22eefa5a9ef41151d14af6d02d479ba08a703641",
+    "aiInspectedAt": "2026-11-04",
+    "observation": "Captured labels/text and controls readable; original scrolled Create modal regions remain partial; no clearly blocking captured-pixel defect. Not human acceptance.",
+    "captureProvenance": "Original artifact, unchanged; its historical sidecar where present remains authoritative. No new capture date inferred."
+  },
+  {
+    "path": "artifacts/lab-04/screenshots/actions-taken/390x844-create.png",
+    "sha256": "b8e8836633454d8bbddb05e51650e263736771970efed71b4422032dc9da9df4",
+    "referenceHead": "9b1c6eb9634aa46cb55fee3bdf48c7b45efd645b",
+    "lastArtifactCommit": "9e81523ea7f0aaab0cd00bab911dd8a04f20b4bb",
+    "aiInspectedAt": "2026-11-04",
+    "observation": "Captured labels/text and controls readable; original scrolled Create modal regions remain partial; no clearly blocking captured-pixel defect. Not human acceptance.",
+    "captureProvenance": "Original artifact, unchanged; its historical sidecar where present remains authoritative. No new capture date inferred."
+  },
+  {
+    "path": "artifacts/lab-04/screenshots/actions-taken/834x1112-create.png",
+    "sha256": "44bcc45024360f7df3595e8bc386898eb0f2bed05604a68d8bcbb6a6add00e50",
+    "referenceHead": "9b1c6eb9634aa46cb55fee3bdf48c7b45efd645b",
+    "lastArtifactCommit": "9e81523ea7f0aaab0cd00bab911dd8a04f20b4bb",
+    "aiInspectedAt": "2026-11-04",
+    "observation": "Captured labels/text and controls readable; original scrolled Create modal regions remain partial; no clearly blocking captured-pixel defect. Not human acceptance.",
+    "captureProvenance": "Original artifact, unchanged; its historical sidecar where present remains authoritative. No new capture date inferred."
+  },
+  {
+    "path": "artifacts/lab-04/screenshots/actions-taken/1440x900-create.png",
+    "sha256": "ebfe3784c36aae56af0a7516ae3c26d94b55dfe6e81f2eefe0db530ec52a0aee",
+    "referenceHead": "9b1c6eb9634aa46cb55fee3bdf48c7b45efd645b",
+    "lastArtifactCommit": "9e81523ea7f0aaab0cd00bab911dd8a04f20b4bb",
+    "aiInspectedAt": "2026-11-04",
+    "observation": "Captured labels/text and controls readable; original scrolled Create modal regions remain partial; no clearly blocking captured-pixel defect. Not human acceptance.",
+    "captureProvenance": "Original artifact, unchanged; its historical sidecar where present remains authoritative. No new capture date inferred."
+  },
+  {
+    "path": "artifacts/lab-04/screenshots/actions-taken/390x844-clear-confirmation.png",
+    "sha256": "af60d0e2c7d890363e19198cee8e86c3c3cc7610a8f1fe1bd43af6467c831373",
+    "referenceHead": "9b1c6eb9634aa46cb55fee3bdf48c7b45efd645b",
+    "lastArtifactCommit": "9e81523ea7f0aaab0cd00bab911dd8a04f20b4bb",
+    "aiInspectedAt": "2026-11-04",
+    "observation": "Captured labels/text and controls readable; original scrolled Create modal regions remain partial; no clearly blocking captured-pixel defect. Not human acceptance.",
+    "captureProvenance": "Original artifact, unchanged; its historical sidecar where present remains authoritative. No new capture date inferred."
+  }
+]

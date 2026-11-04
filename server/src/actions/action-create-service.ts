@@ -1,7 +1,7 @@
 import { Prisma, type TicketStatus } from "@prisma/client";
-import { runSerializableMutation, type MutationGateKey } from "../auth/eligibility-transaction.js";
+import { runAdmittedSerializableMutation as runSerializableMutation, type MutationGateKey } from "../auth/eligibility-transaction.js";
 import { getPrisma } from "../prisma.js";
-import { actionSelect, toActionDTO, toActionSnapshot } from "./action-projection.js";
+import { toActionDTO, toActionSnapshot } from "./action-projection.js";
 import { fingerprintCreateAction, isReceiptKeyConflict, storedActionResponse } from "./action-receipt.js";
 import { recoverActionReceipt } from "./action-receipt-recovery.js";
 import type { CreateActionValidationData } from "./action-validation.js";
@@ -12,6 +12,7 @@ import {
 
 export type { ActionMutationAuthorization } from "./action-mutation-protocol.js";
 type LockedTicket = { id: number; currentStatus: TicketStatus; updatedAt: Date };
+type CreateIdentity = LockedUser & { name: string };
 
 export async function createTicketAction(context: ActionMutationAuthorization, ticketId: number, input: CreateActionValidationData) {
   // Preserve positive-safe-integer body validation. IDs unrepresentable in this database
@@ -28,8 +29,8 @@ export async function createTicketAction(context: ActionMutationAuthorization, t
   // Existing helper retries only positively confirmed 40001, maximum three fresh SERIALIZABLE attempts.
   // Receipt-specific recovery follows complete rollback, outside this retry loop.
   return runSerializableMutation(async (transaction) => {
-    const users = await transaction.$queryRaw<LockedUser[]>(Prisma.sql`
-      SELECT "id", "role", "isActive", "mustChangePassword" FROM "User"
+    const users = await transaction.$queryRaw<CreateIdentity[]>(Prisma.sql`
+      SELECT "id", "role", "isActive", "mustChangePassword", "name" FROM "User"
       WHERE "id" IN (${Prisma.join(userIds)}) ORDER BY "id" ASC FOR UPDATE`);
     const authorization = await currentAuthorization(transaction, context, users);
     if (authorization !== null) return { kind: authorization };
@@ -64,8 +65,13 @@ export async function createTicketAction(context: ActionMutationAuthorization, t
       before: Prisma.DbNull, after: toActionSnapshot(action), sourceTicketStatusHistoryId: null, createdAt: instant,
     } });
     await transaction.ticket.update({ where: { id: ticketId }, data: { updatedAt: instant } });
-    const selected = await transaction.action.findUniqueOrThrow({ where: { id: action.id }, select: actionSelect });
-    const response = { action: toActionDTO(selected), ticketUpdatedAt: instant.toISOString() };
+    // INSERT returned the authoritative scalars. Both identities are current
+    // rows already locked/validated in this same attempt; CREATE has no performer.
+    // Keep the shared safe projector and avoid four redundant projection reads.
+    const response = { action: toActionDTO({ ...action,
+      createdBy: users.find(user => user.id === context.actorId)!,
+      assignee: users.find(user => user.id === input.assigneeId)!, performedBy: null,
+    }), ticketUpdatedAt: instant.toISOString() };
     // Last domain write: failure here rolls back Action, history and parent together.
     await transaction.mutationReceipt.create({ data: {
       actorId: context.actorId, clientMutationId: input.clientMutationId, operation: "CREATE_ACTION",

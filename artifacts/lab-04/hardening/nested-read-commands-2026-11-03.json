@@ -1,0 +1,205 @@
+{
+  "startingHead": "3ef8ec2de4a5c0113de2809c8b29758355e270ba",
+  "testCorrectionCommit": "021a09960328139e7cd1b87ef6986ea811074e41",
+  "executionDate": "2026-11-03",
+  "commands": [
+    {
+      "label": "01-observe",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-04/write-admission-feasibility.integration.test.ts",
+        "-t",
+        "does not inherit writer admission"
+      ],
+      "started": "2026-11-03T11:00:35.9645684Z",
+      "finished": "2026-11-03T11:00:44.1297615Z",
+      "exit": 0,
+      "seconds": 8.169168899999999,
+      "command": "npm.cmd test -- tests/lab-04/write-admission-feasibility.integration.test.ts -t \"does not inherit writer admission\"",
+      "summaryLines": [
+        "Test Files  1 passed (1)",
+        "Tests  1 passed | 12 skipped (13)",
+        "Duration  7.21s (transform 224ms, setup 0ms, collect 182ms, tests 2.35s, environment 0ms, prepare 80ms)"
+      ],
+      "collected": 13,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 12,
+      "source": "HEAD3ef8ec2 plus pending test-only observation/corrections; production unchanged",
+      "reason": "Classify original150ms failure once,not reproduce until favourable"
+    },
+    {
+      "label": "02-types",
+      "arguments": [
+        "exec",
+        "--",
+        "tsc",
+        "--noEmit"
+      ],
+      "started": "2026-11-03T11:02:00.5912030Z",
+      "finished": "2026-11-03T11:02:08.7288244Z",
+      "exit": 0,
+      "seconds": 8.1419693,
+      "command": "npm.cmd exec -- tsc --noEmit",
+      "summaryLines": [],
+      "collected": null,
+      "executed": null,
+      "passed": null,
+      "failed": null,
+      "skipped": null,
+      "source": "HEAD3ef8ec2 plus pending test-only observation/corrections; production unchanged",
+      "reason": "Type-check new observer/separated proofs"
+    },
+    {
+      "label": "03-focused",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-04/write-admission-feasibility.integration.test.ts",
+        "-t",
+        "does not inherit writer admission|enforces nested read"
+      ],
+      "started": "2026-11-03T11:02:09.3013499Z",
+      "finished": "2026-11-03T11:02:17.7185539Z",
+      "exit": 0,
+      "seconds": 8.420211499999999,
+      "command": "npm.cmd test -- tests/lab-04/write-admission-feasibility.integration.test.ts -t \"does not inherit writer admission|enforces nested read\"",
+      "summaryLines": [
+        "Test Files  1 passed (1)",
+        "Tests  2 passed | 12 skipped (14)",
+        "Duration  7.53s (transform 258ms, setup 0ms, collect 261ms, tests 2.44s, environment 0ms, prepare 76ms)"
+      ],
+      "collected": 14,
+      "executed": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 12,
+      "source": "HEAD3ef8ec2 plus pending test-only observation/corrections; production unchanged",
+      "reason": "Validate observable independence and controlled150ms enforcement"
+    },
+    {
+      "label": "04-resource",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-04/write-admission-feasibility.integration.test.ts",
+        "tests/lab-04/write-admission-front-queue.integration.test.ts",
+        "tests/lab-04/prisma-client-lifecycle.integration.test.ts",
+        "tests/lab-04/action-commit-recovery.api.test.ts"
+      ],
+      "started": "2026-11-03T11:03:32.5598082Z",
+      "finished": "2026-11-03T11:04:01.4193133Z",
+      "exit": 1,
+      "seconds": 28.862504299999998,
+      "command": "npm.cmd test -- tests/lab-04/write-admission-feasibility.integration.test.ts tests/lab-04/write-admission-front-queue.integration.test.ts tests/lab-04/prisma-client-lifecycle.integration.test.ts tests/lab-04/action-commit-recovery.api.test.ts",
+      "summaryLines": [
+        "Test Files  1 failed | 3 passed (4)",
+        "Tests  2 failed | 24 passed (26)",
+        "Duration  27.87s (transform 666ms, setup 0ms, collect 3.24s, tests 20.29s, environment 0ms, prepare 300ms)"
+      ],
+      "collected": 26,
+      "executed": 26,
+      "passed": 24,
+      "failed": 2,
+      "skipped": 0,
+      "source": "HEAD3ef8ec2 plus pending test-only observation/corrections; production unchanged",
+      "reason": "Run complete affected resource files plus genuine application COMMIT recovery"
+    },
+    {
+      "label": "05-corrected",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-04/write-admission-feasibility.integration.test.ts",
+        "tests/lab-04/write-admission-front-queue.integration.test.ts",
+        "tests/lab-04/prisma-client-lifecycle.integration.test.ts",
+        "tests/lab-04/action-commit-recovery.api.test.ts"
+      ],
+      "started": "2026-11-03T11:04:15.9821553Z",
+      "finished": "2026-11-03T11:04:44.4357342Z",
+      "exit": 0,
+      "seconds": 28.4591681,
+      "command": "npm.cmd test -- tests/lab-04/write-admission-feasibility.integration.test.ts tests/lab-04/write-admission-front-queue.integration.test.ts tests/lab-04/prisma-client-lifecycle.integration.test.ts tests/lab-04/action-commit-recovery.api.test.ts",
+      "summaryLines": [
+        "Test Files  4 passed (4)",
+        "Tests  26 passed (26)",
+        "Duration  27.43s (transform 531ms, setup 0ms, collect 2.87s, tests 20.08s, environment 1ms, prepare 299ms)"
+      ],
+      "collected": 26,
+      "executed": 26,
+      "passed": 26,
+      "failed": 0,
+      "skipped": 0,
+      "source": "HEAD3ef8ec2 plus pending test-only observation/corrections; production unchanged",
+      "reason": "Confirm actual owned-probe/canary fixture corrections; no substantive relaxation"
+    },
+    {
+      "label": "06-types",
+      "arguments": [
+        "exec",
+        "--",
+        "tsc",
+        "--noEmit"
+      ],
+      "started": "2026-11-03T11:05:05.1735583Z",
+      "finished": "2026-11-03T11:05:12.1707988Z",
+      "exit": 0,
+      "seconds": 6.9992363,
+      "command": "npm.cmd exec -- tsc --noEmit",
+      "summaryLines": [],
+      "collected": null,
+      "executed": null,
+      "passed": null,
+      "failed": null,
+      "skipped": null,
+      "source": "HEAD3ef8ec2 plus pending test-only observation/corrections; production unchanged",
+      "reason": "Final TypeScript after cleanup/fixture changes"
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "server/tests/lab-04/nested-read-observer.ts",
+      "sha256": "d9e38fa03b5528ff21fed2ab68632ef449d2faabe16bf53e22f5fd7b71bbf9e2"
+    },
+    {
+      "path": "server/tests/lab-04/write-admission-feasibility.integration.test.ts",
+      "sha256": "8c61e4d93bb33c7f99ac8d31006c2c0c4a36f9a6acc3c4189ebb098696622af2"
+    }
+  ],
+  "finalSourceQualification": "Final05 and06 ran with pending test-only source subsequently committed unchanged; no exact post-commit execution claim.01 retains original150ms.03 adds direct checkout observation plus separated proofs.04/05 include primary-preserving cleanup and stronger assertions;05 corrects new fixture assumptions.",
+  "cleanup": {
+    "at": "2026-11-03T11:05:12.500Z",
+    "guardVerified": true,
+    "liveIdentityMatches": true,
+    "databaseDistinctFromOperational": true,
+    "identityValuesWithheld": true,
+    "owned_schemas": 0,
+    "other_connections": 0,
+    "idle_transactions": 0,
+    "advisory_locks": 0,
+    "sessions": 0,
+    "fault_functions": 0,
+    "owned_relations": 0,
+    "owned_functions": 0
+  },
+  "productionUnchanged": true,
+  "notExecuted": [
+    "Full server regression/build: no shared/production behavior changed; complete affected files andTypeScript suffice",
+    "T-47: no supported performance candidate implemented; unchanged benchmark retained"
+  ],
+  "preExecutionLauncherFailure": "One direct local .ps1 invocation was rejected by PowerShell execution policy before npm; supported child runner used,no test verdict fabricated",
+  "warnings": [
+    "Existing pg concurrent-query deprecation",
+    "Expected sanitized fault logging in existing resource checks"
+  ],
+  "limitations": [
+    "Historical startup timeout phases unknown",
+    "Public observer/ALS adds overhead",
+    "Actual recorded transaction-start meta is composition-provided,not engine subtype",
+    "Controlled pool occupation,not natural outage",
+    "26-case confirmation does not supersede prior failed comprehensive verdicts",
+    "Accepted Lab-only metadata retention anduntriaged dependency findings unchanged"
+  ]
+}

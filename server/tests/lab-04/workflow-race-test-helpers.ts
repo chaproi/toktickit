@@ -1,3 +1,5 @@
+import { observePendingAdmission } from "./write-admission-test-helpers.js";
+import { getPrisma } from "../../src/prisma.js";
 import { randomUUID } from "node:crypto";
 import type { Action } from "@prisma/client";
 import { Client } from "pg";
@@ -153,6 +155,7 @@ export async function orderedWorkflowRace(ticketId: number,
   const blocker = new Client({ connectionString: process.env.DATABASE_URL, application_name: `workflow46-race-blocker-${randomUUID()}` });
   const observer = new Client({ connectionString: process.env.DATABASE_URL, application_name: `workflow46-race-observer-${randomUUID()}` });
   const pending: Array<Promise<{ response: Response } | { failed: true }>> = [];
+  const admission = observePendingAdmission(getPrisma());
   let open = false;
   const launch = (call: () => PromiseLike<Response>) => {
     const result = Promise.resolve().then(call).then((response) => ({ response }), () => ({ failed: true as const }));
@@ -180,11 +183,9 @@ export async function orderedWorkflowRace(ticketId: number,
         SELECT 1 FROM pg_locks g WHERE g.pid=a.pid AND g.locktype='advisory'
           AND g.classid=2::oid AND g.objid=$2::oid AND g.objsubid=2 AND g.granted)`, [blockerPid, ticketId]);
     const secondPending = launch(second.call);
-    const secondPid = await observe(`SELECT g.pid FROM pg_locks g WHERE g.locktype='advisory'
-      AND g.classid=2::oid AND g.objid=$1::oid AND g.objsubid=2 AND NOT g.granted
-      AND $2::int=ANY(pg_blocking_pids(g.pid))`, [ticketId, firstPid]);
-    expect(firstPid).not.toBe(secondPid);
-    for (const [pid, expected] of [[firstPid, first.users], [secondPid, second.users]] as const) {
+    expect(await admission.wait(), "Second overlapping HTTP command has not entered its business callback").toBe(1);
+    expect(admission.calls.filter(call => call.entered)).toHaveLength(1);
+    for (const [pid, expected] of [[firstPid, first.users]] as const) {
       const gates = (await observer.query<{ id: number }>(`SELECT objid::int AS id FROM pg_locks
         WHERE pid=$1 AND locktype='advisory' AND classid=1::oid AND objsubid=2 AND granted ORDER BY objid`, [pid])).rows.map((row) => row.id);
       expect(gates).toEqual([...new Set(expected)].sort((a, b) => a - b));
@@ -193,13 +194,16 @@ export async function orderedWorkflowRace(ticketId: number,
     const [a, b] = await Promise.all([firstPending, secondPending]);
     if (!("response" in a) || !("response" in b)) throw new Error("Workflow race HTTP transport failure; details withheld.");
     const locks = await observer.query<{ count: number }>(`SELECT count(*)::int AS count FROM pg_locks
-      WHERE pid=ANY($1::int[]) AND locktype='advisory'`, [[firstPid, secondPid]]);
+      WHERE database=(SELECT oid FROM pg_database WHERE datname=current_database()) AND locktype='advisory' AND objsubid=2 AND (
+        (classid=1::oid AND objid=ANY($1::oid[])) OR (classid=2::oid AND objid=$2::oid)
+        OR (classid=3::oid AND objid IN (SELECT id::oid FROM "Action" WHERE "ticketId"=$2)))`, [[...first.users, ...second.users], ticketId]);
     expect(locks.rows[0].count, "Completed requests retain no transaction gates").toBe(0);
-    console.info(`Workflow race overlap: firstPid=${firstPid}; secondPid=${secondPid}; disjoint User gates observed; first holds Ticket gate/awaits owned row; second awaits first Ticket gate; released and drained.`);
+    console.info("Workflow race overlap: first User gates observed; first holds Ticket gate/awaits owned row; second HTTP command awaits resource admission without a business callback; released and drained.");
     return { first: a.response, second: b.response };
   } finally {
     if (open) await blocker.query("ROLLBACK").catch(() => undefined);
     await Promise.all(pending);
+    admission.restore();
     const closed = await Promise.allSettled([observer.end(), blocker.end()]);
     expect(closed.every((item) => item.status === "fulfilled"), "Owned workflow barrier clients disconnect after draining HTTP requests").toBe(true);
   }

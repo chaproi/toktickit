@@ -1,0 +1,1406 @@
+{
+  "mode": "public-interface-proof-not-application-GREEN",
+  "recordedAt": "2026-11-03T11:04:29.803Z",
+  "executionHead": "3ef8ec2de4a5c0113de2809c8b29758355e270ba",
+  "observations": [
+    {
+      "check": "cross-process",
+      "observedWaitingBeforeSecondCallback": true,
+      "secondSnapshotSawFirstCommit": true
+    },
+    {
+      "check": "deadline-server-teardown",
+      "waitingAfterLocalDrain": 0,
+      "serverTeardownObservedMs": 1.539400000000569,
+      "holderStillAcquired": true
+    },
+    {
+      "check": "default-and-per-call-deadlines",
+      "defaultElapsedMs": 2040.3507,
+      "concurrentExplicitMs": [
+        80,
+        130,
+        200
+      ],
+      "lateCallbacks": 0,
+      "checkedOut": 0
+    },
+    {
+      "check": "late-checkout-and-reconnect",
+      "lateCallbacks": 0,
+      "checkedOut": 0,
+      "freshPools": 2
+    },
+    {
+      "check": "execution-timeout",
+      "admissionHeldWhileExpiredCallbackUndrained": true,
+      "releasedAfterDrain": true
+    },
+    {
+      "check": "cumulative-startup",
+      "configuredMs": 400,
+      "observedMs": 411.5716000000002,
+      "extraAllowanceGranted": false
+    },
+    {
+      "check": "scope-and-budget-separation",
+      "readsAdmitted": false,
+      "anotherSchemaProceeds": true,
+      "executionMs": 150,
+      "maxWaitMs": 80,
+      "onePhysicalRelease": true
+    },
+    {
+      "check": "failure-cleanup",
+      "callbackPrimaryPreserved": true,
+      "uniquenessNot40001": true,
+      "syntheticCleanupFault": true,
+      "physicalReleasePerCheckout": 1
+    },
+    {
+      "check": "ownership-loss",
+      "actualBackendTerminated": true,
+      "originalTransactionAborted": true,
+      "lateWritePersisted": false,
+      "successReturned": false
+    },
+    {
+      "check": "constructor-and-ORM-raw",
+      "constructorMaxWaitMs": 100,
+      "overrideMs": 200,
+      "settingsRestoredBeforeBegin": true,
+      "sameTransactionAndBackend": true
+    },
+    {
+      "check": "genuine-COMMIT40001",
+      "nativeParticipantNotAdmitted": true,
+      "bothBodiesCompleted": true,
+      "loserRollbackExact": true,
+      "lockReleased": true
+    },
+    {
+      "check": "nested-unrelated-read",
+      "passed": true,
+      "primary": null,
+      "events": [
+        {
+          "atMs": 0.962599999998929,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "transaction-start"
+        },
+        {
+          "atMs": 1.0607999999992899,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "attempt-selected",
+          "maxWait": 2000
+        },
+        {
+          "atMs": 4.123399999998583,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "fifo-enqueue",
+          "queueLength": 1,
+          "activeHolder": null,
+          "effectiveDeadlineMs": 2003.8197
+        },
+        {
+          "atMs": 4.201999999999316,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "fifo-grant",
+          "queueLength": 0,
+          "activeHolder": "nested-writer:1"
+        },
+        {
+          "atMs": 4.296099999999569,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "pool-checkout-start",
+          "total": 0,
+          "idle": 0,
+          "waiting": 0
+        },
+        {
+          "atMs": 4.434599999998682,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "physical-connect-start"
+        },
+        {
+          "atMs": 44.61539999999877,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "physical-connect-result",
+          "error": null
+        },
+        {
+          "atMs": 44.75039999999899,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "pool-checkout-result",
+          "total": 1,
+          "idle": 0,
+          "waiting": 0,
+          "error": null
+        },
+        {
+          "atMs": 44.84059999999954,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q3",
+          "kind": "metadata",
+          "operation": "SHOW",
+          "inStage": "checkout"
+        },
+        {
+          "atMs": 45.33569999999963,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q3",
+          "kind": "metadata",
+          "operation": "SHOW",
+          "error": null
+        },
+        {
+          "atMs": 45.389499999999316,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q5",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "inStage": "checkout"
+        },
+        {
+          "atMs": 47.4393,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q5",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 47.51310000000012,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q6",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "inStage": "checkout"
+        },
+        {
+          "atMs": 47.83299999999872,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q6",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 47.86160000000018,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q7",
+          "kind": "admission",
+          "operation": "SELECT",
+          "inStage": "database-admission"
+        },
+        {
+          "atMs": 48.107599999999366,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q7",
+          "kind": "admission",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 48.11439999999857,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "admission-acquired"
+        },
+        {
+          "atMs": 48.17309999999998,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q8",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "inStage": "post-admission"
+        },
+        {
+          "atMs": 48.37259999999878,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q8",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 48.42959999999948,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q9",
+          "kind": "metadata",
+          "operation": "BEGIN",
+          "inStage": "post-admission"
+        },
+        {
+          "atMs": 48.51519999999982,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q9",
+          "kind": "metadata",
+          "operation": "BEGIN",
+          "error": null
+        },
+        {
+          "atMs": 48.55369999999857,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q10",
+          "kind": "metadata",
+          "operation": "SET",
+          "inStage": "post-admission"
+        },
+        {
+          "atMs": 48.70839999999953,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q10",
+          "kind": "metadata",
+          "operation": "SET",
+          "error": null
+        },
+        {
+          "atMs": 48.89480000000003,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "callback-entry"
+        },
+        {
+          "atMs": 49.274099999998725,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q11",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "inStage": "callback"
+        },
+        {
+          "atMs": 49.63799999999901,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q11",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 49.732099999999264,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q12",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "inStage": "callback"
+        },
+        {
+          "atMs": 50.26629999999932,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q12",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 50.41139999999905,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "transaction-start"
+        },
+        {
+          "atMs": 50.501399999999194,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "pool-checkout-start",
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        },
+        {
+          "atMs": 50.58729999999923,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "physical-connect-start"
+        },
+        {
+          "atMs": 88.65480000000025,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "physical-connect-result",
+          "error": null
+        },
+        {
+          "atMs": 88.70759999999973,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "pool-checkout-result",
+          "total": 2,
+          "idle": 0,
+          "waiting": 0,
+          "error": null
+        },
+        {
+          "atMs": 88.76689999999871,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q15",
+          "kind": "metadata",
+          "operation": "BEGIN",
+          "inStage": "transaction-call"
+        },
+        {
+          "atMs": 88.98300000000017,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q15",
+          "kind": "metadata",
+          "operation": "BEGIN",
+          "error": null
+        },
+        {
+          "atMs": 89.02689999999893,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q16",
+          "kind": "metadata",
+          "operation": "SET",
+          "inStage": "transaction-call"
+        },
+        {
+          "atMs": 89.21059999999852,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q16",
+          "kind": "metadata",
+          "operation": "SET",
+          "error": null
+        },
+        {
+          "atMs": 89.30090000000018,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "callback-entry"
+        },
+        {
+          "atMs": 89.64499999999862,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q18",
+          "kind": "metadata",
+          "operation": "SET",
+          "inStage": "callback"
+        },
+        {
+          "atMs": 89.79849999999897,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q18",
+          "kind": "metadata",
+          "operation": "SET",
+          "error": null
+        },
+        {
+          "atMs": 89.84469999999965,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q19",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "inStage": "callback"
+        },
+        {
+          "atMs": 90.20869999999923,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q19",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 90.27109999999993,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q20",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "inStage": "callback"
+        },
+        {
+          "atMs": 90.6273000000001,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q20",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 90.90549999999894,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q21",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "inStage": "callback"
+        },
+        {
+          "atMs": 92.78549999999996,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q21",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 92.85809999999947,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "callback-exit"
+        },
+        {
+          "atMs": 92.85909999999967,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "callback-drained"
+        },
+        {
+          "atMs": 92.91089999999895,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q22",
+          "kind": "commit",
+          "operation": "COMMIT",
+          "inStage": "commit"
+        },
+        {
+          "atMs": 93.12569999999869,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q22",
+          "kind": "commit",
+          "operation": "COMMIT",
+          "error": null
+        },
+        {
+          "atMs": 93.21339999999873,
+          "request": "nested-read",
+          "attempt": 1,
+          "stage": "transaction-result"
+        },
+        {
+          "atMs": 96.10899999999856,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "pool-checkout-start",
+          "total": 2,
+          "idle": 1,
+          "waiting": 0
+        },
+        {
+          "atMs": 96.17339999999967,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "pool-checkout-result",
+          "total": 2,
+          "idle": 0,
+          "waiting": 0,
+          "error": null
+        },
+        {
+          "atMs": 96.20249999999942,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q23",
+          "kind": "Category",
+          "operation": "SELECT",
+          "inStage": "callback"
+        },
+        {
+          "atMs": 98.83289999999943,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q23",
+          "kind": "Category",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 99.36989999999969,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "callback-exit"
+        },
+        {
+          "atMs": 99.375,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "callback-drained"
+        },
+        {
+          "atMs": 99.51429999999891,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q24",
+          "kind": "commit",
+          "operation": "COMMIT",
+          "inStage": "commit"
+        },
+        {
+          "atMs": 100.08529999999882,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q24",
+          "kind": "commit",
+          "operation": "COMMIT",
+          "error": null
+        },
+        {
+          "atMs": 100.23869999999988,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "finish-before-cleanup",
+          "observed": {
+            "stage": "commit",
+            "activeQuery": null
+          },
+          "hasPrimary": false,
+          "error": null
+        },
+        {
+          "atMs": 100.26209999999992,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q26",
+          "kind": "rollback",
+          "operation": "ROLLBACK",
+          "inStage": "cleanup"
+        },
+        {
+          "atMs": 100.79539999999906,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q26",
+          "kind": "rollback",
+          "operation": "ROLLBACK",
+          "error": null
+        },
+        {
+          "atMs": 100.83050000000003,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q27",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "inStage": "cleanup"
+        },
+        {
+          "atMs": 101.13559999999961,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q27",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 101.15469999999914,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q28",
+          "kind": "unlock",
+          "operation": "SELECT",
+          "inStage": "cleanup"
+        },
+        {
+          "atMs": 101.37129999999888,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q28",
+          "kind": "unlock",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 101.45399999999972,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "fifo-release-start",
+          "queueLength": 0,
+          "activeHolder": "nested-writer:1"
+        },
+        {
+          "atMs": 101.45960000000014,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "fifo-release-end",
+          "queueLength": 0,
+          "activeHolder": null
+        },
+        {
+          "atMs": 101.46159999999873,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "finish-drained"
+        },
+        {
+          "atMs": 101.46990000000005,
+          "request": "nested-writer",
+          "attempt": 1,
+          "stage": "transaction-result"
+        }
+      ],
+      "poolAndAdmissionSamples": [
+        {
+          "atMs": 17.959999999999127,
+          "total": 0,
+          "idle": 0,
+          "waiting": 0,
+          "waiters": 0,
+          "owners": 0,
+          "fronts": [
+            {
+              "queueLength": 0,
+              "activeHolder": "nested-writer:1"
+            }
+          ]
+        },
+        {
+          "atMs": 33.65529999999853,
+          "total": 0,
+          "idle": 0,
+          "waiting": 0,
+          "waiters": 0,
+          "owners": 0,
+          "fronts": [
+            {
+              "queueLength": 0,
+              "activeHolder": "nested-writer:1"
+            }
+          ]
+        },
+        {
+          "atMs": 45.07679999999891,
+          "total": 0,
+          "idle": 0,
+          "waiting": 0,
+          "waiters": 0,
+          "owners": 0,
+          "fronts": [
+            {
+              "queueLength": 0,
+              "activeHolder": "nested-writer:1"
+            }
+          ]
+        },
+        {
+          "atMs": 64.65599999999904,
+          "total": 0,
+          "idle": 0,
+          "waiting": 0,
+          "waiters": 0,
+          "owners": 1,
+          "fronts": [
+            {
+              "queueLength": 0,
+              "activeHolder": "nested-writer:1"
+            }
+          ]
+        },
+        {
+          "atMs": 79.60899999999856,
+          "total": 0,
+          "idle": 0,
+          "waiting": 0,
+          "waiters": 0,
+          "owners": 1,
+          "fronts": [
+            {
+              "queueLength": 0,
+              "activeHolder": "nested-writer:1"
+            }
+          ]
+        },
+        {
+          "atMs": 89.10289999999986,
+          "total": 0,
+          "idle": 0,
+          "waiting": 0,
+          "waiters": 0,
+          "owners": 1,
+          "fronts": [
+            {
+              "queueLength": 0,
+              "activeHolder": "nested-writer:1"
+            }
+          ]
+        },
+        {
+          "atMs": 99.73369999999886,
+          "total": 0,
+          "idle": 0,
+          "waiting": 0,
+          "waiters": 0,
+          "owners": 1,
+          "fronts": [
+            {
+              "queueLength": 0,
+              "activeHolder": "nested-writer:1"
+            }
+          ]
+        }
+      ],
+      "cleanupErrors": [],
+      "cleanup": {
+        "pending": 0,
+        "checkouts": 3,
+        "releases": 3,
+        "admissionOwners": 0,
+        "admissionWaiters": 0,
+        "checkedOut": 0
+      }
+    },
+    {
+      "check": "nested-read-explicit-deadline",
+      "controlledPoolOccupation": true,
+      "primary": {
+        "name": "TransactionStartDeadlineError",
+        "constructorName": "TransactionStartDeadlineError",
+        "code": "P2028",
+        "reportedMetaPhase": "transaction-start",
+        "reportedMaxWait": 150,
+        "reportedTimeout": null,
+        "reportedMetaCode": null,
+        "reportedCauseCode": null,
+        "ownedStartupComposition": true,
+        "engineProvidedSubtype": null
+      },
+      "failure": null,
+      "callbacks": 0,
+      "events": [
+        {
+          "atMs": 0.26600000000144064,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "transaction-start"
+        },
+        {
+          "atMs": 0.2828000000008615,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "attempt-selected",
+          "maxWait": 2000
+        },
+        {
+          "atMs": 2.690100000001621,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "fifo-enqueue",
+          "queueLength": 1,
+          "activeHolder": null,
+          "effectiveDeadlineMs": 2002.5957000000017
+        },
+        {
+          "atMs": 2.729800000000978,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "fifo-grant",
+          "queueLength": 0,
+          "activeHolder": "deadline-writer:1"
+        },
+        {
+          "atMs": 2.7644000000000233,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "pool-checkout-start",
+          "total": 0,
+          "idle": 0,
+          "waiting": 0
+        },
+        {
+          "atMs": 3.002100000001519,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "physical-connect-start"
+        },
+        {
+          "atMs": 40.548500000000786,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "physical-connect-result",
+          "error": null
+        },
+        {
+          "atMs": 40.62580000000162,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "pool-checkout-result",
+          "total": 1,
+          "idle": 0,
+          "waiting": 0,
+          "error": null
+        },
+        {
+          "atMs": 40.66900000000169,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q1",
+          "kind": "metadata",
+          "operation": "SHOW",
+          "inStage": "checkout"
+        },
+        {
+          "atMs": 41.02280000000064,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q1",
+          "kind": "metadata",
+          "operation": "SHOW",
+          "error": null
+        },
+        {
+          "atMs": 41.04600000000028,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q2",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "inStage": "checkout"
+        },
+        {
+          "atMs": 43.886500000000524,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q2",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 44.242300000001705,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q3",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "inStage": "checkout"
+        },
+        {
+          "atMs": 44.58100000000013,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q3",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 44.60080000000016,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q4",
+          "kind": "admission",
+          "operation": "SELECT",
+          "inStage": "database-admission"
+        },
+        {
+          "atMs": 44.87410000000091,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q4",
+          "kind": "admission",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 44.87910000000011,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "admission-acquired"
+        },
+        {
+          "atMs": 44.89670000000115,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q5",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "inStage": "post-admission"
+        },
+        {
+          "atMs": 45.071100000001024,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q5",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 45.143300000001545,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q6",
+          "kind": "metadata",
+          "operation": "BEGIN",
+          "inStage": "post-admission"
+        },
+        {
+          "atMs": 45.400800000001254,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q6",
+          "kind": "metadata",
+          "operation": "BEGIN",
+          "error": null
+        },
+        {
+          "atMs": 45.461700000001656,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q7",
+          "kind": "metadata",
+          "operation": "SET",
+          "inStage": "post-admission"
+        },
+        {
+          "atMs": 45.66560000000027,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q7",
+          "kind": "metadata",
+          "operation": "SET",
+          "error": null
+        },
+        {
+          "atMs": 45.82330000000002,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "callback-entry"
+        },
+        {
+          "atMs": 46.48700000000099,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q8",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "inStage": "callback"
+        },
+        {
+          "atMs": 46.924700000001394,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q8",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 47.309400000000096,
+          "request": "deadline-read",
+          "attempt": 1,
+          "stage": "transaction-start"
+        },
+        {
+          "atMs": 47.50010000000111,
+          "request": "deadline-read",
+          "attempt": 1,
+          "stage": "pool-checkout-start",
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        },
+        {
+          "atMs": 67.57630000000063,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q9",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "inStage": "callback"
+        },
+        {
+          "atMs": 68.37830000000031,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q9",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 68.50800000000163,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q10",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "inStage": "callback"
+        },
+        {
+          "atMs": 69.03060000000005,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q10",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 210.64600000000064,
+          "request": "deadline-read",
+          "attempt": 1,
+          "stage": "transaction-error-before-test-cleanup",
+          "observed": {
+            "stage": "transaction-call",
+            "activeQuery": null
+          },
+          "error": {
+            "name": "TransactionStartDeadlineError",
+            "constructorName": "TransactionStartDeadlineError",
+            "code": "P2028",
+            "reportedMetaPhase": "transaction-start",
+            "reportedMaxWait": 150,
+            "reportedTimeout": null,
+            "reportedMetaCode": null,
+            "reportedCauseCode": null,
+            "ownedStartupComposition": true,
+            "engineProvidedSubtype": null
+          }
+        },
+        {
+          "atMs": 211.07590000000164,
+          "request": "deadline-read",
+          "attempt": 1,
+          "stage": "observed-deadline-while-checkout-pending",
+          "error": {
+            "name": "TransactionStartDeadlineError",
+            "constructorName": "TransactionStartDeadlineError",
+            "code": "P2028",
+            "reportedMetaPhase": "transaction-start",
+            "reportedMaxWait": 150,
+            "reportedTimeout": null,
+            "reportedMetaCode": null,
+            "reportedCauseCode": null,
+            "ownedStartupComposition": true,
+            "engineProvidedSubtype": null
+          },
+          "observedActiveStage": "pool-checkout",
+          "poolWaiting": 1
+        },
+        {
+          "atMs": 211.08130000000165,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "callback-exit"
+        },
+        {
+          "atMs": 211.08200000000033,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "callback-drained"
+        },
+        {
+          "atMs": 211.1820000000007,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q11",
+          "kind": "commit",
+          "operation": "COMMIT",
+          "inStage": "commit"
+        },
+        {
+          "atMs": 211.47670000000107,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q11",
+          "kind": "commit",
+          "operation": "COMMIT",
+          "error": null
+        },
+        {
+          "atMs": 211.52800000000025,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "finish-before-cleanup",
+          "observed": {
+            "stage": "commit",
+            "activeQuery": null
+          },
+          "hasPrimary": false,
+          "error": null
+        },
+        {
+          "atMs": 211.54330000000118,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q12",
+          "kind": "rollback",
+          "operation": "ROLLBACK",
+          "inStage": "cleanup"
+        },
+        {
+          "atMs": 211.96590000000106,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q12",
+          "kind": "rollback",
+          "operation": "ROLLBACK",
+          "error": null
+        },
+        {
+          "atMs": 211.9869000000017,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q13",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "inStage": "cleanup"
+        },
+        {
+          "atMs": 212.21060000000034,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q13",
+          "kind": "metadata",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 212.22520000000077,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q14",
+          "kind": "unlock",
+          "operation": "SELECT",
+          "inStage": "cleanup"
+        },
+        {
+          "atMs": 212.7518,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q14",
+          "kind": "unlock",
+          "operation": "SELECT",
+          "error": null
+        },
+        {
+          "atMs": 212.9279000000006,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "fifo-release-start",
+          "queueLength": 0,
+          "activeHolder": "deadline-writer:1"
+        },
+        {
+          "atMs": 212.94190000000162,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "fifo-release-end",
+          "queueLength": 0,
+          "activeHolder": null
+        },
+        {
+          "atMs": 212.95260000000053,
+          "request": "deadline-read",
+          "attempt": 1,
+          "stage": "pool-checkout-result",
+          "total": 1,
+          "idle": 0,
+          "waiting": 0,
+          "error": null
+        },
+        {
+          "atMs": 212.95640000000094,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "finish-drained"
+        },
+        {
+          "atMs": 213.01460000000043,
+          "request": "deadline-read",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q15",
+          "kind": "metadata",
+          "operation": "BEGIN",
+          "inStage": "transaction-call"
+        },
+        {
+          "atMs": 213.14630000000034,
+          "request": "deadline-writer",
+          "attempt": 1,
+          "stage": "transaction-result"
+        },
+        {
+          "atMs": 213.25310000000172,
+          "request": "deadline-read",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q15",
+          "kind": "metadata",
+          "operation": "BEGIN",
+          "error": null
+        },
+        {
+          "atMs": 213.28800000000047,
+          "request": "deadline-read",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q16",
+          "kind": "metadata",
+          "operation": "SET",
+          "inStage": "transaction-call"
+        },
+        {
+          "atMs": 213.40400000000045,
+          "request": "deadline-read",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q16",
+          "kind": "metadata",
+          "operation": "SET",
+          "error": null
+        },
+        {
+          "atMs": 213.45650000000023,
+          "request": "deadline-read",
+          "attempt": 1,
+          "stage": "query-start",
+          "queryId": "q17",
+          "kind": "rollback",
+          "operation": "ROLLBACK",
+          "inStage": "transaction-call"
+        },
+        {
+          "atMs": 213.53230000000076,
+          "request": "deadline-read",
+          "attempt": 1,
+          "stage": "query-end",
+          "queryId": "q17",
+          "kind": "rollback",
+          "operation": "ROLLBACK",
+          "error": null
+        }
+      ],
+      "poolAndAdmissionSamples": [],
+      "cleanupErrors": [],
+      "cleanup": {
+        "pending": 0,
+        "checkouts": 3,
+        "releases": 3,
+        "admissionOwners": 0,
+        "admissionWaiters": 0,
+        "checkedOut": 0
+      }
+    },
+    {
+      "check": "acquisition-failure-settings",
+      "syntheticFault": "40P01",
+      "noBusinessEntry": true,
+      "sessionBudgetRestored": true
+    },
+    {
+      "check": "public-query-observer-boundary",
+      "callbackAfterDeadline": false,
+      "observationRetained": true
+    }
+  ],
+  "cleanup": {
+    "childrenExited": true,
+    "poolsDisconnected": true,
+    "grantedOrWaitingAdmissionLocks": 0,
+    "taggedConnections": 0,
+    "ownedSchemasRemoved": true
+  }
+}

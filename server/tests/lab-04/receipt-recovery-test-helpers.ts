@@ -1,3 +1,6 @@
+// D-12 candidate: observe selected READ COMMITTED commands; retain all business assertions.
+import { currentCommandPlan } from "../../src/database/write-admission.js";
+import { createPrismaClient } from "../../src/prisma-client.js";
 import { randomUUID } from "node:crypto";
 import { Prisma, PrismaClient, type MutationReceipt } from "@prisma/client";
 import { expect, vi } from "vitest";
@@ -37,7 +40,7 @@ export async function withReceiptCollision(
   if (!operational || decodeURIComponent(new URL(operational).pathname.slice(1)) === identity.databaseName) {
     throw new Error("A distinct dedicated test database is required.");
   }
-  const observer = new PrismaClient({ datasources: { db: { url: process.env.DATABASE_URL } } });
+  const observer = createPrismaClient({ datasources: { db: { url: process.env.DATABASE_URL } } });
   const evidence: RecoveryEvidence = { mutationTransactions: 0, recoveryTransactions: 0, recoveryReceiptReads: 0,
     recoveryWrites: 0, recoveryIsolation: [], transactionIds: [], readOnlyControls: 0, businessReadModes: [],
     independentObserver: false, rolledBack: false, staged: false };
@@ -59,7 +62,7 @@ export async function withReceiptCollision(
     const before = await ownedReceiptState(observer, input.ticketIds);
     spy = vi.spyOn(application, "$transaction").mockImplementation((async (operation: unknown, options?: Options) => {
       if (typeof operation !== "function") throw new Error("Receipt harness requires real interactive transactions.");
-      if (options?.isolationLevel === Prisma.TransactionIsolationLevel.Serializable) {
+      if (options?.isolationLevel === Prisma.TransactionIsolationLevel.ReadCommitted && currentCommandPlan()) {
         evidence.mutationTransactions += 1;
         // Only the first transaction receives the controlled fault. A forbidden
         // mutation re-execution remains observable instead of being hidden.

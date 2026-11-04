@@ -1,3 +1,5 @@
+// D-12 candidate: observe selected READ COMMITTED commands; retain all business assertions.
+import { currentCommandPlan } from "../../src/database/write-admission.js";
 import { Prisma } from "@prisma/client";
 import { expect, vi } from "vitest";
 import { getPrisma } from "../../src/prisma.js";
@@ -8,7 +10,7 @@ type Seam = "ticket-count" | "action-bins" | "list-count";
 export function assertStaffSnapshotEvidence(reads: Observation[], commits: Observation[], point: Observation) {
   expect(commits).toHaveLength(1);
   expect(commits[0]!.pid).not.toBe(point.pid);
-  expect(commits[0]!.isolation).toBe("serializable"); expect(commits[0]!.readOnly).toBe("off");
+  expect(commits[0]!.isolation).toBe("read committed"); expect(commits[0]!.readOnly).toBe("off");
   const original = reads.filter(({ transaction }) => transaction === point.transaction);
   expect(original.length).toBeGreaterThan(1);
   expect(original.at(-1)).not.toBe(point);
@@ -54,6 +56,7 @@ export async function withStaffSnapshot<T>(seam: Seam, work: (probe: {
   const spy = vi.spyOn(application, "$transaction").mockImplementation((async (operation: unknown, options?: Options) => {
     if (typeof operation !== "function") return original(operation as Operation, options);
     const id = ++transaction;
+    const selectedCommand = currentCommandPlan() !== undefined;
     let writer: Observation | undefined;
     const result = await original(async (tx) => {
       async function observe(operationName: string): Promise<Observation> {
@@ -62,7 +65,7 @@ export async function withStaffSnapshot<T>(seam: Seam, work: (probe: {
             current_setting('transaction_read_only') AS "readOnly"`;
         return { ...actual, operation: operationName, transaction: id };
       }
-      if (options?.isolationLevel === Prisma.TransactionIsolationLevel.Serializable) {
+      if (options?.isolationLevel === Prisma.TransactionIsolationLevel.ReadCommitted && selectedCommand) {
         writer = await observe("application writer");
         return (operation as Operation)(tx);
       }
@@ -83,7 +86,11 @@ export async function withStaffSnapshot<T>(seam: Seam, work: (probe: {
           const sql = args[0] as { strings?: string[] } | undefined;
           if (sql?.strings !== undefined) {
             const count = sql.strings.join(" ").includes("SELECT COUNT(*) FILTER");
-            await completed(count ? "raw list count" : "raw list rows", seam === "list-count" && count);
+            const summary = sql.strings.join(" ").includes("dashboard-summary");
+            await completed(summary ? "combined Dashboard aggregates" : count ? "raw list count" : "raw list rows",
+              (seam === "list-count" && count) || (summary && (seam === "ticket-count" || seam === "action-bins")));
+          } else if (Array.isArray(args[0]) && args[0].join(" ").includes('CURRENT_TIMESTAMP AS "asOf"')) {
+            await completed("snapshot clock", false);
           }
           return result;
         };
@@ -100,7 +107,9 @@ export async function withStaffSnapshot<T>(seam: Seam, work: (probe: {
         } });
         return typeof value === "function" ? value.bind(target) : value;
       } });
-      return (operation as Operation)(wrapped);
+      const value = await (operation as Operation)(wrapped);
+      await completed("snapshot callback completed", false);
+      return value;
     }, options);
     if (writer !== undefined) commits.push(writer); // Only after real COMMIT acknowledgement.
     return result;

@@ -1,0 +1,13 @@
+# Single-version Prisma 6.19.3 evaluation - 2026-11-02
+
+Baseline ed5cecaf2f8a6a2fa9ca2383dda1eb15e3b3471a. Evaluate only matching prisma/@prisma/client/@prisma/adapter-pg 6.19.3 with public engineType="client". No 5.22 singleton adoption, client rotation, other version, production change or benchmark rerun.
+
+Use version-tagged official source first, then exact registry metadata/install in one marker-owned ignored dependency directory. Other direct experimental pins remain pg 8.23.0, TypeScript 5.7.2, tsx 4.19.2 and existing matching type packages. Record Node/TS requirements and actual versions; do not infer a future support SLA or application compatibility from GA status.
+
+Reuse the existing complete application schema, six committed migrations and the earlier write-skew coordinator: two SERIALIZABLE callbacks finish reads/distinct writes before first release; await winner COMMIT, then release loser. Reuse the coordinator code rather than inventing raised40001 or direct-pg-only evidence. Copy byte-identical application actor-lock/client/guard sources into the single-client sandbox for typing and same-connection ORM/raw checks.
+
+Before those transactions: verify dedicated guard/live target, local schema/timezone/TLS settings and public configuration-owned factory lazy/disconnect/reconnect/drain behavior. Separately exercise a bounded 2 x 1,000 synthetic connect-error component probe with WeakRefs and explicit diagnostic GC, recording reclamation counts rather than claiming heap safety. The active client architecture must not require the blocked Rust-bridge error registry; no private property mutation/access or Scope-error arrays in that component probe.
+
+Then run at most the control and two opposite-winner real COMMIT pairs, stopping at the first essential failure. Observe actual native code, transaction-local backend identity and application error shape, independent loser rollback/winner persistence, public transaction release calls and checked-out connections. No private leak workaround is permitted. Always drain callback promises before destroy-release of an owned leak for cleanup; record that intervention distinctly from a passing lifecycle assertion.
+
+If transport/resource gates pass, remaining classification/budget/configuration gates and application RED/GREEN are still required before adoption. If any essential gate fails, stop and publish the blocker; do not proceed to production or another version. Type/setup defects may be corrected transparently without weakening a requirement. Finite install/generation/type/proof process limits and existing transaction budgets remain unchanged.

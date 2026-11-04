@@ -1,0 +1,103 @@
+{
+  "files": [
+    {
+      "path": "attempt-1/edge-admin-history-200.json",
+      "bytes": 1096,
+      "sha256": "7a63b9034e33ae907dc80c7a56eae6fd07e30875636a8d7b12062d036b50453a"
+    },
+    {
+      "path": "attempt-1/edge-admin-history-200.png",
+      "bytes": 44632,
+      "sha256": "07a5dcf854bd65018675271f27ce22972d9abf474a2879206902e0b183d3c03d"
+    },
+    {
+      "path": "attempt-1/edge-admin-navigation-200.json",
+      "bytes": 1133,
+      "sha256": "fdcd73d56cf0cf05c5945152fc5e395e26a5e0a1523de34d893dc7641ba56b79"
+    },
+    {
+      "path": "attempt-1/edge-admin-navigation-200.png",
+      "bytes": 62609,
+      "sha256": "7e1274fd99516ee131de687637008e0664efec63ba06aeaf9fab4a7f794c547c"
+    },
+    {
+      "path": "attempt-1/edge-zoom.json",
+      "bytes": 360,
+      "sha256": "f8a2f5fc9df50d985aef28745f5357e092ae6a18c88255ecd63476673ce58d96"
+    },
+    {
+      "path": "attempt-1/staff-actions-focus-handoff.json",
+      "bytes": 1083,
+      "sha256": "2b7459f3d11287cc9213781e9bfd23d208d43e524e166660b26cb3ff1e820535"
+    },
+    {
+      "path": "attempt-1/staff-actions-focus-handoff.png",
+      "bytes": 58733,
+      "sha256": "b3e02d808128810183f2cf8c316e600d9205fae994f4a19e1c18b4f3389ed3cf"
+    },
+    {
+      "path": "attempt-1/staff-history-controlled-error.json",
+      "bytes": 1058,
+      "sha256": "66fd3cca73bb2ffed4f0412c95250fb23cb86718a77f9b9b64a100772c18f5f0"
+    },
+    {
+      "path": "attempt-1/staff-history-controlled-error.png",
+      "bytes": 82369,
+      "sha256": "de1c44fe2a0ceef5a3c8b1257407bc4466d687645ced1c5efda78a20e303219c"
+    },
+    {
+      "path": "attempt-1/staff-history-recovered.json",
+      "bytes": 1057,
+      "sha256": "f4f98821b5766c4e77b37a29b090da640dfbd0a58e45ffa131fdf8456c6a28d5"
+    },
+    {
+      "path": "attempt-1/staff-history-recovered.png",
+      "bytes": 104840,
+      "sha256": "79abca3d3e483bfe09cc921e3ffb3a50ebae6c4e9e821a028798c24e9d4db359"
+    },
+    {
+      "path": "attempt-1/staff-real-workflow-blocker.json",
+      "bytes": 1080,
+      "sha256": "891071bbf2bf93671170a53f8cc69a3885d1f04c4f2b243406f09294549ee19b"
+    },
+    {
+      "path": "attempt-1/staff-real-workflow-blocker.png",
+      "bytes": 89890,
+      "sha256": "1a22ede533edd59cd40eb42fd42747c02630afe4772dc59f521e2eb8d5d7719a"
+    },
+    {
+      "path": "commands.json",
+      "bytes": 2072,
+      "sha256": "a371b4604e7236900ca1c0a1f6c238f3a2fcd6b3ba6e2fd5320c727a66b0e600"
+    },
+    {
+      "path": "database-cleanup.json",
+      "bytes": 744,
+      "sha256": "ad6ede2ae0a4906c6f0589f551105c2285d01084519bec5de62e8f7a11acdbb6"
+    },
+    {
+      "path": "executed-runtime-runner.mjs",
+      "bytes": 3870,
+      "sha256": "5133e01dd42d15db0d03025521e8efe6a1cc8faa30cd1dad92db70e11d87812c"
+    },
+    {
+      "path": "playwright-output.txt",
+      "bytes": 1316,
+      "sha256": "08c71f93e549818af6bcac2852aac04e9744ec5fd821c8333a2789457031cd68"
+    },
+    {
+      "path": "preservation.json",
+      "bytes": 466,
+      "sha256": "a6fb8b4440c9f1da16a3acd0e1d22e76dacb8a92232f742eb87b5e5f14e3d349"
+    },
+    {
+      "path": "resource-cleanup.json",
+      "bytes": 618,
+      "sha256": "0356f27fe37efd178054d687befcb4e4135025b019df4bcbceca53df9e295298"
+    }
+  ],
+  "count": 19,
+  "newScreenshots": 6,
+  "sourceHead": "57f04bd5313c443ffcf00ec6abc16da149753d20",
+  "historicalArtifactsModified": 0
+}

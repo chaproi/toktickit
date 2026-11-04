@@ -1,0 +1,204 @@
+{
+  "implementationPrBase": "lab4-staging",
+  "focusedRcComparisonOnly": "feat/49-final-hardening",
+  "scopes": {
+    "staging": {
+      "base": "dd8eafb9a101625d07e4ce164fcc856402ecaed5",
+      "sourceHead": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "commitCount": 82,
+      "totalChangedPaths": 440,
+      "codeConfigBrowserPaths": [
+        {
+          "status": "M",
+          "path": "e2e/lab-04/actions-taken-flow.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/package-lock.json"
+        },
+        {
+          "status": "M",
+          "path": "server/package.json"
+        },
+        {
+          "status": "M",
+          "path": "server/prisma/schema.prisma"
+        },
+        {
+          "status": "M",
+          "path": "server/prisma/seed.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/actions/action-create-service.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/actions/action-patch-service.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/app.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/auth/auth-router.ts"
+        },
+        {
+          "status": "A",
+          "path": "server/src/auth/command-session.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/auth/eligibility-transaction.ts"
+        },
+        {
+          "status": "A",
+          "path": "server/src/dashboards/dashboard-read-sql.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/dashboards/requester-dashboard-service.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/dashboards/staff-dashboard-service.ts"
+        },
+        {
+          "status": "A",
+          "path": "server/src/database/connection-configuration.ts"
+        },
+        {
+          "status": "A",
+          "path": "server/src/database/driver-errors.ts"
+        },
+        {
+          "status": "A",
+          "path": "server/src/database/environment.ts"
+        },
+        {
+          "status": "A",
+          "path": "server/src/database/transaction-deadline.ts"
+        },
+        {
+          "status": "A",
+          "path": "server/src/database/transaction-release.ts"
+        },
+        {
+          "status": "A",
+          "path": "server/src/database/utc-parameters.ts"
+        },
+        {
+          "status": "A",
+          "path": "server/src/database/write-admission.ts"
+        },
+        {
+          "status": "A",
+          "path": "server/src/prisma-client.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/prisma.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/testing/prepare-issue27-test-database.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/testing/prepare-test-database.ts"
+        },
+        {
+          "status": "A",
+          "path": "server/src/tickets/requester-ticket-page.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/tickets/resolution-indication-service.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/tickets/staff-queue-service.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/tickets/staff-ticket-service.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/tickets/ticket-service.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/users/admin-user-service.ts"
+        }
+      ]
+    },
+    "parent": {
+      "base": "535a2e5426ffe263630e44b763779050a95ab436",
+      "sourceHead": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "commitCount": 20,
+      "totalChangedPaths": 186,
+      "codeConfigBrowserPaths": [
+        {
+          "status": "M",
+          "path": "server/prisma/seed.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/actions/action-patch-service.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/app.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/auth/auth-router.ts"
+        },
+        {
+          "status": "A",
+          "path": "server/src/auth/command-session.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/auth/eligibility-transaction.ts"
+        },
+        {
+          "status": "A",
+          "path": "server/src/dashboards/dashboard-read-sql.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/dashboards/requester-dashboard-service.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/dashboards/staff-dashboard-service.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/database/write-admission.ts"
+        },
+        {
+          "status": "A",
+          "path": "server/src/tickets/requester-ticket-page.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/tickets/staff-ticket-service.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/tickets/ticket-service.ts"
+        },
+        {
+          "status": "M",
+          "path": "server/src/users/admin-user-service.ts"
+        }
+      ]
+    }
+  },
+  "pendingPublicationScope": "Review documentation/evidence only; application source remains2671b3a",
+  "historicalMigrationsUnchanged": true
+}

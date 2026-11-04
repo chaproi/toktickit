@@ -205,7 +205,8 @@ describe("T-42 confirmed serialization retry boundaries", () => {
     expect(new Set(attempts.map((attempt) => attempt.transactionId)).size).toBe(attempts.length);
     for (const attempt of attempts) {
       expect(/^\d+$/u.test(attempt.transactionId)).toBe(true);
-      expect(attempt.isolation).toBe("serializable");
+      // Proposed D-12 changes command isolation, not fault/retry or rollback assertions.
+      expect(attempt.isolation).toBe("read committed");
     }
   }
   function authorizedReads(attempt: AttemptEvidence, before: Awaited<ReturnType<typeof retryState>>) {

@@ -1,0 +1,61 @@
+{
+  "executionHead": "9f8523e97072ae827e0cbf55d95bedae7ee7e3b1",
+  "recordedAt": "2026-11-03T05:19:04.255Z",
+  "observations": [
+    {
+      "check": "read-under-admission-pressure",
+      "read": 7,
+      "readElapsedMs": 41.20939999999996,
+      "settledBeforeExternalUnlock": [],
+      "callbacksBeforeExternalUnlock": [],
+      "checkedOut": 1,
+      "actualAdmissionWaiters": 1
+    },
+    {
+      "check": "single-queue-plus-database-startup-allowance",
+      "configuredMs": 400,
+      "elapsedMs": 416.71799999999996,
+      "lateCallbacks": 0
+    },
+    {
+      "check": "queued-deadlines",
+      "configuredMs": [
+        120,
+        70,
+        190
+      ],
+      "elapsedMs": [
+        134.5744000000002,
+        71.68339999999989,
+        197.59950000000003
+      ],
+      "extraPhysicalCheckouts": 0,
+      "callbacks": []
+    },
+    {
+      "check": "FIFO-with-cancelled-middle",
+      "order": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "check": "execution-expired-callback-undrained",
+      "extraCheckouts": 0,
+      "callbacks": 0,
+      "admissionOwners": 1
+    },
+    {
+      "check": "shutdown-reconnect",
+      "pools": 2,
+      "lateCallbacks": 0,
+      "unhandled": 0
+    }
+  ],
+  "cleanup": {
+    "poolsDisconnected": true,
+    "admissionLocks": 0,
+    "ownedSchemaRemoved": true
+  }
+}

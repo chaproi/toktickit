@@ -1,0 +1,125 @@
+{
+  "date": "2026-11-04",
+  "timezone": "Asia/Bangkok",
+  "candidateBranch": "feat/49-d12-rc-candidate",
+  "testedCleanHead": "8e0ba3e3b2bc8736b8d77bcd1111e305cfb1a78f",
+  "publicationChanges": "Evidence only; no application execution attributed to publication commit",
+  "command": "npm.cmd test -- tests/lab-04/performance-smoke.integration.test.ts",
+  "executions": 1,
+  "directory": "server/",
+  "execution": {
+    "started": "2026-11-03T17:12:51.3452899Z",
+    "finished": "2026-11-03T17:14:14.8228928Z",
+    "exit": 1,
+    "seconds": 83.4759782,
+    "validationSettingRestored": true
+  },
+  "frameworkSeconds": 78.6,
+  "caseReportedMs": 57229,
+  "files": {
+    "collected": 1,
+    "executed": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0
+  },
+  "cases": {
+    "collected": 1,
+    "executed": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0
+  },
+  "failedAssertion": {
+    "path": "server/tests/lab-04/performance-smoke.integration.test.ts",
+    "line": 392,
+    "message": "Per-operation p95 target evaluated separately; no slow endpoint excluded: expected false to be true",
+    "priorInlineAssertions": "All preceding non-validation branch assertions passed",
+    "unreachedInlineAssertions": "None after this final assertion; validation-only branch intentionally not selected"
+  },
+  "preflight": {
+    "repositoryIdentityVerified": true,
+    "localUpstreamLiveSameBeforeRun": true,
+    "cleanTreeIndex": true,
+    "competingOwnedWorkloads": 0,
+    "guardLiveTargetVerified": true,
+    "operationalTargetDistinct": true,
+    "validationVariablePreviouslyPresent": false,
+    "priorValidationModeEnabled": false,
+    "trackedFilesSnapshot": 775,
+    "historicalArtifactsSnapshot": 452,
+    "allTrackedBytesUnchangedAfterExecutionBeforeEvidence": true,
+    "benchmarkMatches535a2e5": {
+      "server/tests/lab-04/performance-smoke.integration.test.ts": "8b36d3393787b9f9cf645b285275855e8994642a",
+      "server/tests/lab-04/performance-test-helpers.ts": "b6c121ff6a9c17d39b0392c31e228d0266f5e04f"
+    }
+  },
+  "installed": {
+    "prisma": "6.19.3",
+    "client": "6.19.3",
+    "adapterPg": "6.19.3",
+    "generatedEngineType": "client",
+    "node": "v24.14.0"
+  },
+  "hostCores": {
+    "physicalCores": 8,
+    "logicalProcessors": 12,
+    "at": "2026-11-03T17:15:46.7438413Z"
+  },
+  "poolMapping": {
+    "physicalCores": 8,
+    "inheritedMaximum": 17,
+    "connectTimeoutMs": 5000,
+    "poolTimeoutMs": 10000,
+    "maxWaitMs": 2000,
+    "executionTimeoutMs": 5000,
+    "overridesAdded": false,
+    "basis": "Unchanged connection-configuration.ts and transaction-deadline.ts defaults; artifact records URL options unset,18 database connections after warm-up includes fixture connection"
+  },
+  "independentCleanup": {
+    "at": "2026-11-03T17:15:45.536Z",
+    "guardVerified": true,
+    "liveIdentityMatches": true,
+    "distinctOperationalDatabase": true,
+    "identityValuesWithheld": true,
+    "owned_schemas": 0,
+    "other_connections": 0,
+    "idle_transactions": 0,
+    "advisory_locks": 0,
+    "sessions": 0,
+    "owned_relations": 0,
+    "owned_functions": 0,
+    "owned_triggers": 0,
+    "owned_fixture_users": 0
+  },
+  "processCheck": {
+    "at": "2026-11-03T17:14:38.2922479Z",
+    "ownedApplicationOrWorkloadProcesses": 0
+  },
+  "warnings": [
+    "Prisma package.json#prisma deprecation",
+    "pg queued client.query deprecation"
+  ],
+  "retainedTransactionFailures": 0,
+  "P2028Observed": false,
+  "unknownHistoricalP2028ClassificationUnchanged": true,
+  "redactedArtifacts": {
+    "t47-performance-2026-11-04-measurement-45614b96.json": "b11235cd4bbe7954901bb15c4c9f662ed0a87112100b18b8c902216645e1630b",
+    "t47-rc-independent-analysis-2026-11-04.json": "03a6eb34f5ada7f6e676e84ed4f3be679c1e845cdfd1d84a255b3a264803c29a",
+    "analyze-t47-rc-measurement-2026-11-04.py": "19f901fa5285e1e2ad82e1e6be398c3013040be4ee2b691eec8e03dfcbf2e412"
+  },
+  "originalBranch": {
+    "head": "535a2e5426ffe263630e44b763779050a95ab436",
+    "proposalSha256": "e3bd394edae0c677a301e43f02b04ec6363907bf27972b302fa19647aee7790d",
+    "unchanged": true
+  },
+  "noAcceptancePromotion": true,
+  "publicationValidation": {
+    "localLinks": 113,
+    "markdownTables": 10,
+    "sampleObjectsInspected": 5500,
+    "newFilesCanonicalUTF8LF": 5,
+    "unchangedAuditPrefix": true,
+    "stagingNormalizationCorrectedBeforeCommit": true
+  }
+}

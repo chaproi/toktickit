@@ -1,0 +1,70 @@
+{
+  "observedAtUtc": "2026-11-03T21:19:19.764Z",
+  "remote": {
+    "candidate": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+    "candidateParent": "535a2e5426ffe263630e44b763779050a95ab436",
+    "staging": "dd8eafb9a101625d07e4ce164fcc856402ecaed5"
+  },
+  "candidatePrSearch": {
+    "query": "repo:chaproi/toktickit head:feat/49-d12-rc-candidate",
+    "results": []
+  },
+  "parentPrSearch": {
+    "query": "repo:chaproi/toktickit head:feat/49-final-hardening",
+    "results": []
+  },
+  "predecessor": {
+    "number": 57,
+    "url": "https://github.com/chaproi/toktickit/pull/57",
+    "state": "closed",
+    "merged": true,
+    "base": "lab4-staging",
+    "baseSha": "559f1b0dcbf37621ff5e92de8ad8484b9ff1e0c8",
+    "head": "feat/53-dashboard-navigation",
+    "headSha": "b6642c9e76ff01ebf874ec323f140e3c609f0e6f",
+    "mergeSha": "dd8eafb9a101625d07e4ce164fcc856402ecaed5",
+    "mergedAt": "2026-10-31T06:17:41Z"
+  },
+  "reviews": [
+    {
+      "state": "CHANGES_REQUESTED",
+      "author": "cottonlnwza",
+      "submittedAt": "2026-10-30T14:40:33Z"
+    },
+    {
+      "state": "CHANGES_REQUESTED",
+      "author": "Tanaboonnnnn",
+      "submittedAt": "2026-10-31T05:47:26Z"
+    },
+    {
+      "state": "APPROVED",
+      "author": "Chxtamos",
+      "submittedAt": "2026-10-31T06:16:11Z"
+    }
+  ],
+  "issues": [
+    {
+      "number": 45,
+      "state": "open",
+      "title": "Lab 4: Implement Actions Taken UI",
+      "url": "https://github.com/chaproi/toktickit/issues/45"
+    },
+    {
+      "number": 48,
+      "state": "open",
+      "title": "Lab 4: Implement IT Staff Dashboard",
+      "url": "https://github.com/chaproi/toktickit/issues/48"
+    },
+    {
+      "number": 53,
+      "state": "open",
+      "title": "Lab 4: Integrate Dashboard role navigation and Actions return flow",
+      "url": "https://github.com/chaproi/toktickit/issues/53"
+    }
+  ],
+  "proposedCandidateBase": "lab4-staging",
+  "ultimateIssue49Base": "lab4-staging",
+  "githubMetadataMutations": false,
+  "focusedComparisonBase": "feat/49-final-hardening",
+  "baseRationale": "Live Issue49 feature-PR DoD targets lab4-staging; original branch retained as focused comparison."
+}

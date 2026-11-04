@@ -1,0 +1,14 @@
+{
+  "startedAt": "2026-11-03T04:16:32.566Z",
+  "executionHead": "7e6acaf337e782b2f45f60f41ccb601cd4adf06e",
+  "mode": "bounded-natural-COMPLETE-cohort-not-T47",
+  "responses": [],
+  "cleanup": {
+    "listenerClosed": true,
+    "checkedOut": 0
+  },
+  "isolationVerified": true,
+  "finishedAt": "2026-11-03T04:16:51.646Z",
+  "events": [],
+  "poolAndDatabaseSamples": []
+}

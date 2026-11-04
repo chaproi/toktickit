@@ -1,0 +1,25 @@
+{
+  "executionHead": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+  "pendingSourcePaths": [],
+  "screenshot": "zoom200-preview.png",
+  "browser": "Chrome/153.0.8010.12",
+  "date": "2026-11-04 04:22:22",
+  "timezone": "Asia/Bangkok",
+  "state": "Native tab zoom 2.0: long literal summaries and historical owners",
+  "role": "IT_STAFF",
+  "configuredViewport": null,
+  "nativeWindow": {
+    "width": 1440,
+    "height": 900
+  },
+  "cssViewport": {
+    "width": 712,
+    "height": 402,
+    "pinchScale": 1,
+    "devicePixelRatio": 2
+  },
+  "zoomFactor": 2,
+  "zoomMethod": "chrome.tabs.setZoom/getZoom; unchanged genuineZoom extension helper; native CDP capture",
+  "visualInspection": "Pending",
+  "syntheticDataOnly": true
+}

@@ -1,3 +1,4 @@
+import { createPrismaClient } from "../prisma-client.js";
 import { randomBytes, randomUUID } from "node:crypto";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
@@ -99,7 +100,7 @@ export async function prepareIssue27TestDatabase(
       ),
     );
 
-    const prisma = new PrismaClient({
+    const prisma = createPrismaClient({
       datasources: { db: { url: fixture.databaseUrl } },
     });
     try {

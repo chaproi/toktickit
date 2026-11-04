@@ -1,0 +1,351 @@
+{
+  "baselineHead": "a5e1ab4d78d24125050a3cb5be9ed0ccdcf75033",
+  "executionHead": "61be356757e1619425666d8aab2e20fc98586a23",
+  "startedAt": "2026-11-02T04:00:04.960Z",
+  "sourceDigests": {
+    "deadline.ts": "a857d9ac6248103ef4909ac92ddf5a6fee4089acbf50316f1cc768914b25a81c",
+    "deadlines.ts": "fb5cb77336e3fd6f0a0a3765969a25969fa42d59ab2dab928df9c386d32a849f",
+    "configuration.ts": "f3b21a5ad7bebd9d4354737528e32896b00e198c50602d4c9865e41dc6a099e6",
+    "diagnostic.ts": "3a26a22e07cbc7e3be276e6fea03fd4afc4364587e107287a19fabba9780bdb9",
+    "evaluate.ts": "bbfd452fb16f604f1cce5b2ce56367f73fb8151bdca096d328bbe84dc2d55766",
+    "run.mjs": "c8bbc46def89872c8e36d2460296007fc69afba8c7f9f514133c95a1e20fbd3e",
+    "checklist.md": "bd4ee68958642204cb8372f84a55224078b1baf37d15275c08e5fe6907efd2e9"
+  },
+  "executedSourceState": "recorded execution HEAD plus any source bytes identified by sourceDigests; application unchanged",
+  "node": "v24.14.0",
+  "platform": "win32",
+  "stages": [
+    {
+      "phase": "live-target-verification",
+      "elapsedMs": 69.86360000000002,
+      "passed": true
+    },
+    {
+      "phase": "prepare-owned-directory-and-client-schema",
+      "elapsedMs": 28.017300000000034,
+      "passed": true
+    },
+    {
+      "phase": "install-exact-temporary-dependencies",
+      "elapsedMs": 7422.3953,
+      "passed": true
+    },
+    {
+      "phase": "generate-temporary-client",
+      "elapsedMs": 2032.2943999999989,
+      "passed": true
+    },
+    {
+      "phase": "typecheck-public-adapter-and-application-callback",
+      "elapsedMs": 1591.2530000000006,
+      "passed": true
+    },
+    {
+      "phase": "owned-schema-and-committed-migrations",
+      "elapsedMs": 357.4332000000013,
+      "passed": true
+    },
+    {
+      "phase": "bounded-client-engine-gates",
+      "elapsedMs": 16580.384599999998,
+      "passed": true
+    }
+  ],
+  "evaluatedPrismaVersion": "6.19.3",
+  "proof": {
+    "pairs": [
+      {
+        "label": "remedy-first",
+        "winner": 0,
+        "callbacksCompleted": [
+          true,
+          true
+        ],
+        "distinctBackendsAndTransactions": true,
+        "sameConnectionOrmRawAndInheritedLock": true,
+        "nativeCommitState": [
+          "40001"
+        ],
+        "applicationError": {
+          "code": null,
+          "state": "40001",
+          "kind": "TransactionWriteConflict"
+        },
+        "exactAdapterErrorObjectReachesAttempt": true,
+        "loserBackendAndXidAttributed": true,
+        "winnerReleaseCalls": 1,
+        "loserReleaseCalls": 1,
+        "checkedOutConnections": 0,
+        "idleTransactions": 0,
+        "independentExactState": true
+      },
+      {
+        "label": "remedy-reversed",
+        "winner": 1,
+        "callbacksCompleted": [
+          true,
+          true
+        ],
+        "distinctBackendsAndTransactions": true,
+        "sameConnectionOrmRawAndInheritedLock": true,
+        "nativeCommitState": [
+          "40001"
+        ],
+        "applicationError": {
+          "code": null,
+          "state": "40001",
+          "kind": "TransactionWriteConflict"
+        },
+        "exactAdapterErrorObjectReachesAttempt": true,
+        "loserBackendAndXidAttributed": true,
+        "winnerReleaseCalls": 1,
+        "loserReleaseCalls": 1,
+        "checkedOutConnections": 0,
+        "idleTransactions": 0,
+        "independentExactState": true
+      }
+    ],
+    "configuration": {
+      "budgets": {
+        "max": 17,
+        "connectTimeoutMs": 5000,
+        "poolTimeoutMs": 10000,
+        "idleTimeoutMs": 300000,
+        "maxLifetimeSeconds": 0
+      },
+      "schema": "owned disposable schema",
+      "settings": {
+        "timezone": "Asia/Bangkok",
+        "readOnly": "on",
+        "ssl": false
+      },
+      "actualLocalDefaultCoreCount": 8,
+      "explicitDecodedFields": true,
+      "lazy": true,
+      "disconnectReconnect": true,
+      "publicPassThroughInstrumentation": true,
+      "scalarChecks": [
+        "int",
+        "bigint",
+        "numeric",
+        "timestamp",
+        "json",
+        "enum",
+        "bytes"
+      ],
+      "unsupportedOptionsRejected": [
+        "unknown",
+        "repeated",
+        "remote implicit SSL",
+        "unmapped TLS",
+        "non-simple schema"
+      ]
+    },
+    "deadlines": {
+      "observations": [
+        {
+          "label": "inherited-default",
+          "maxWaitMs": 2000,
+          "elapsedMs": 2009.3550999999998,
+          "code": "P2028",
+          "rejectedWhileHolderAcquired": true,
+          "callbackCalls": 0,
+          "lateResultDrained": true,
+          "latePoolRejection": false,
+          "releases": 1
+        },
+        {
+          "label": "explicit-override",
+          "maxWaitMs": 70,
+          "elapsedMs": 73.13599999999951,
+          "code": "P2028",
+          "rejectedWhileHolderAcquired": true,
+          "callbackCalls": 0,
+          "lateResultDrained": true,
+          "latePoolRejection": false,
+          "releases": 1
+        },
+        {
+          "label": "late-pool-rejection",
+          "maxWaitMs": 80,
+          "elapsedMs": 93.73190000000068,
+          "code": "P2028",
+          "rejectedWhileHolderAcquired": true,
+          "callbackCalls": 0,
+          "lateResultDrained": true,
+          "latePoolRejection": true,
+          "releases": 0
+        },
+        {
+          "label": "successful-start-long-callback",
+          "maxWaitMs": 60,
+          "elapsedMs": 185.2541999999994,
+          "succeeded": true,
+          "callbackTimeoutMs": 5000
+        },
+        {
+          "label": "concurrent-deadlines",
+          "deadlines": [
+            {
+              "maxWaitMs": 60,
+              "elapsedMs": 75.49339999999938,
+              "callbackCalls": 0
+            },
+            {
+              "maxWaitMs": 120,
+              "elapsedMs": 135.63819999999942,
+              "callbackCalls": 0
+            },
+            {
+              "maxWaitMs": 180,
+              "elapsedMs": 183.3136999999988,
+              "callbackCalls": 0
+            }
+          ],
+          "lateResultsDrained": 3
+        },
+        {
+          "label": "shutdown-drain",
+          "waitedForLateResult": true,
+          "callbackCalls": 0,
+          "reconnect": true
+        },
+        {
+          "label": "constructor-default-and-call-precedence",
+          "maxWaitMs": 180,
+          "elapsedMs": 191.9974000000002
+        },
+        {
+          "label": "constructor-default-and-call-precedence",
+          "maxWaitMs": 50,
+          "elapsedMs": 62.84280000000035
+        }
+      ],
+      "statistics": {
+        "started": 8,
+        "expired": 7,
+        "callbackEntered": 1,
+        "lateResolved": 0,
+        "lateRejected": 7
+      },
+      "unhandledRejections": 0,
+      "pending": 0,
+      "checkedOutConnections": 0,
+      "allObservedReleasesExactlyOnce": true
+    },
+    "rollbackControls": [
+      {
+        "kind": "callback",
+        "error": {
+          "code": null,
+          "state": null,
+          "kind": null
+        },
+        "realStagedWritesRolledBack": true,
+        "releases": 1,
+        "checkedOutConnections": 0
+      },
+      {
+        "kind": "unique",
+        "error": {
+          "code": "P2002",
+          "state": "23505",
+          "kind": "UniqueConstraintViolation"
+        },
+        "realStagedWritesRolledBack": true,
+        "releases": 1,
+        "checkedOutConnections": 0
+      }
+    ],
+    "cleanup": {
+      "checkedOutBeforeForcedCleanup": 0,
+      "destroyReleasedOnlyOwnedClients": 0,
+      "poolEnded": true
+    }
+  },
+  "cleanup": {
+    "schemasRemaining": 0,
+    "proofConnectionsRemaining": 0,
+    "nativeClientEnded": true,
+    "temporaryDirectoryRemoved": true
+  },
+  "database": {
+    "guard": true,
+    "liveIdentityMatches": true,
+    "distinctOperationalDatabase": true,
+    "postgresVersion": "PostgreSQL 18.6",
+    "otherNonIdleConnections": 0
+  },
+  "applicationSourceCopies": [
+    {
+      "path": "server/src/auth/eligibility-transaction.ts",
+      "sha256": "8142bee26facc105fd1749de8ff771fb5863484e87e08fd1c09d9346a0b1ba3c"
+    },
+    {
+      "path": "server/src/prisma.ts",
+      "sha256": "1f01de52f7cc1ccb09fbe84cc2b61167452b79afc3060aa6adcd9de6117d81d8"
+    },
+    {
+      "path": "server/src/testing/test-database.ts",
+      "sha256": "b6d0d470aace9b62f9e30e3f09b7288c7f82dae6184c8366c8528113e7deefe9"
+    }
+  ],
+  "commands": [
+    {
+      "phase": "install-exact-temporary-dependencies",
+      "exit": 0
+    },
+    {
+      "phase": "generate-temporary-client",
+      "exit": 0
+    },
+    {
+      "phase": "typecheck-public-adapter-and-application-callback",
+      "exit": 0
+    },
+    {
+      "phase": "bounded-client-engine-gates",
+      "exit": 0
+    }
+  ],
+  "versions": {
+    "prisma": "6.19.3",
+    "@prisma/client": "6.19.3",
+    "@prisma/adapter-pg": "6.19.3",
+    "@prisma/driver-adapter-utils": "6.19.3",
+    "pg": "8.23.0",
+    "typescript": "5.7.2",
+    "tsx": "4.19.2",
+    "@types/node": "22.10.2",
+    "@types/pg": "8.23.1"
+  },
+  "prismaCli": "6.19.3",
+  "packageRequirements": {
+    "prisma": {
+      "version": "6.19.3",
+      "engines": {
+        "node": ">=18.18"
+      },
+      "peerDependencies": {
+        "typescript": ">=5.1.0"
+      }
+    },
+    "@prisma/client": {
+      "version": "6.19.3",
+      "engines": {
+        "node": ">=18.18"
+      },
+      "peerDependencies": {
+        "prisma": "*",
+        "typescript": ">=5.1.0"
+      }
+    },
+    "@prisma/adapter-pg": {
+      "version": "6.19.3",
+      "engines": {},
+      "peerDependencies": {}
+    }
+  },
+  "temporaryLockSha256": "0ab4f56efa203d5295a35d28275cfdd38d49e1b217eb184dcba3c1a34c397485",
+  "migrationsApplied": 6
+}

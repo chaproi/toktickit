@@ -1,0 +1,3332 @@
+{
+  "mode": "bounded-create-diagnosis-not-T47",
+  "startedAt": "2026-11-03T20:18:12.979Z",
+  "executionHead": "8e80cd458517baf0c270cafec0bd91edddd623c7",
+  "node": "v24.14.0",
+  "commands": [
+    {
+      "label": "concurrent-1",
+      "phase": "concurrent",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 2.795400000000882
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 1.42870000000039
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 0.45650000000023283
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 1.219199999999546
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 8.854600000000573
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 3.959600000000137
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 4.41530000000057
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 23332,
+          "xid": "615578",
+          "isolation": "read committed",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "concurrent-2",
+      "phase": "concurrent",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 2.425600000000486
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 1.5416999999997643
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 2.1195999999999913
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 0.61620000000039
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 9.759400000000824
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 7.477200000001176
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 19.272799999998824
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 50388,
+          "xid": "615579",
+          "isolation": "read committed",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "concurrent-3",
+      "phase": "concurrent",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 1.3989000000001397
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 2.5393000000003667
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 1.4653999999991356
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 3.2179999999989377
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 1.862199999999575
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 4.026299999999537
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 6.002700000000914
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 6.922800000000279
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 7.918099999998958
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 10.697599999999511
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 11.70050000000083
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 7.178099999999176
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 2.730600000000777
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 3.1381000000001222
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 2.6090000000003783
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 40880,
+          "xid": "615577",
+          "isolation": "read committed",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "concurrent-4",
+      "phase": "concurrent",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 1.826100000000224
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 1.3151999999990949
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 0.8143000000000029
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 2.25879999999961
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 4.966300000000047
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 1.470499999999447
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 3.470100000000457
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 49204,
+          "xid": "615580",
+          "isolation": "read committed",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "concurrent-5",
+      "phase": "concurrent",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 0.5472000000008848
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 0.5126000000000204
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 11.484599999999773
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 2.3947000000007392
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 13.90940000000046
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 5.5283999999992375
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 4.113600000000588
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 51012,
+          "xid": "615584",
+          "isolation": "read committed",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "concurrent-6",
+      "phase": "concurrent",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 0.7399000000004889
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 1.8011999999998807
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 8.215899999999237
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 3.137699999999313
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 9.967199999999139
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 10.193300000000818
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 5.050999999999476
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 28068,
+          "xid": "615581",
+          "isolation": "read committed",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "concurrent-7",
+      "phase": "concurrent",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 0.9048999999995431
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 0.9778000000005704
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 9.21809999999823
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 2.5756000000001222
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 9.372800000001007
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 9.893500000000131
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 3.709899999999834
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 15628,
+          "xid": "615583",
+          "isolation": "read committed",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "concurrent-8",
+      "phase": "concurrent",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 2.4481999999989057
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 0.8878000000004249
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 7.25630000000092
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 2.4092000000000553
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 9.384799999999814
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 9.619399999999587
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 3.3810000000012224
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 16436,
+          "xid": "615582",
+          "isolation": "read committed",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "serial-1",
+      "phase": "serial",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 0.657999999999447
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 0.4894000000003871
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 7.192600000000311
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 0.5215000000007421
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 2.165999999999258
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 4.201399999999921
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 1.0455000000001746
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 1.3698000000003958
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 20104,
+          "xid": "615585",
+          "isolation": "read committed",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "serial-2",
+      "phase": "serial",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 1.0788999999986117
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 0.7493000000013126
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 1.1983000000000175
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 5.848199999998542
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 3.017699999998513
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 2.676500000001397
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 1.2380000000011933
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 1.520200000000841
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 13600,
+          "xid": "615586",
+          "isolation": "read committed",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "serial-3",
+      "phase": "serial",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 0.43590000000040163
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 0.4568999999992229
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 0.3397000000004482
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 0.4447999999993044
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 0.9161999999996624
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 0.622799999999188
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 0.8464999999996508
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 0.7475000000013097
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 20104,
+          "xid": "615587",
+          "isolation": "read committed",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "serial-4",
+      "phase": "serial",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 0.3291000000008353
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 0.39940000000024156
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 0.33799999999973807
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 0.7296000000005733
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 0.809400000000096
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 0.993399999999383
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 0.7988999999997759
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 0.9930000000003929
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 13600,
+          "xid": "615588",
+          "isolation": "read committed",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "serial-5",
+      "phase": "serial",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 0.7780000000002474
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 0.7628000000004249
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 0.6085999999995693
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 0.8473999999987427
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 0.7640000000010332
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 1.1427000000003318
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 0.6846000000005006
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 1.2366999999994732
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 20104,
+          "xid": "615589",
+          "isolation": "read committed",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "serial-6",
+      "phase": "serial",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 0.8942999999999302
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 0.34619999999995343
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 0.29130000000077416
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 0.43620000000009895
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 1.69590000000062
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 0.9143000000003667
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 1.879800000000614
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 1.310699999999997
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 27240,
+          "xid": "615590",
+          "isolation": "read committed",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "serial-7",
+      "phase": "serial",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 0.5445999999992637
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 0.6046000000005733
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 0.693199999999706
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 0.5593000000008033
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 1.023299999998926
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 0.7121999999999389
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 0.7246999999988475
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 0.794899999998961
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 13600,
+          "xid": "615591",
+          "isolation": "read committed",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "serial-8",
+      "phase": "serial",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 0.461699999999837
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 0.47659999999996217
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 0.5197000000007392
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 0.4135999999998603
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 1.772399999999834
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 3.679100000001199
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 1.8778999999994994
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 2.515900000000329
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 20104,
+          "xid": "615592",
+          "isolation": "read committed",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    }
+  ],
+  "cleanup": {
+    "operationsDrained": true,
+    "transactionObserverRestored": true,
+    "ownedFixturesRemoved": true,
+    "applicationDisconnected": true,
+    "idleTransactions": 0,
+    "observerDisconnected": true
+  },
+  "businessRequestsPlanned": 16,
+  "postgresVersionNumber": "180006",
+  "queryPlans": [
+    {
+      "operation": "User.SELECT.lock",
+      "plannerIntervention": false,
+      "sqlShape": "8312bffeb5806e8363e82c60a8197a9bbae6981a09974a8f3584fa027d010f96",
+      "plan": {
+        "node": "LockRows",
+        "index": null,
+        "rows": 1,
+        "children": [
+          {
+            "node": "Seq Scan",
+            "index": null,
+            "rows": 1,
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "operation": "AuthSession.SELECT",
+      "plannerIntervention": false,
+      "sqlShape": "fbfc143e6ee7c68ca995b075407283a4de5f6bb804decea145092b955d304407",
+      "plan": {
+        "node": "LockRows",
+        "index": null,
+        "rows": 1,
+        "children": [
+          {
+            "node": "Seq Scan",
+            "index": null,
+            "rows": 1,
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "operation": "Ticket.SELECT.lock",
+      "plannerIntervention": false,
+      "sqlShape": "4022fa8ec87f966923ab45ad0a0bc49755cadead4277e677d9e349cd860bf192",
+      "plan": {
+        "node": "LockRows",
+        "index": null,
+        "rows": 1,
+        "children": [
+          {
+            "node": "Seq Scan",
+            "index": null,
+            "rows": 1,
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "operation": "MutationReceipt.SELECT",
+      "plannerIntervention": false,
+      "sqlShape": "e18d45e751de23843eb641d34cfc41c44cd5b3dc10c325b42948e6c59d5c8c46",
+      "plan": {
+        "node": "Limit",
+        "index": null,
+        "rows": 1,
+        "children": [
+          {
+            "node": "Seq Scan",
+            "index": null,
+            "rows": 1,
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "operation": "Action.INSERT",
+      "plannerIntervention": false,
+      "sqlShape": "df700a23287e3ede34df33a278a05bbee8565b46d586b4a7b21df757b0688571",
+      "plan": {
+        "node": "ModifyTable",
+        "index": null,
+        "rows": 1,
+        "children": [
+          {
+            "node": "Result",
+            "index": null,
+            "rows": 1,
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "operation": "ActionHistory.INSERT",
+      "plannerIntervention": false,
+      "sqlShape": "60ae00acbbef2e456e7186d3ff5a8799bc73c0fa0e481a5efa737585fe1b679c",
+      "plan": {
+        "node": "ModifyTable",
+        "index": null,
+        "rows": 1,
+        "children": [
+          {
+            "node": "Result",
+            "index": null,
+            "rows": 1,
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "operation": "Ticket.UPDATE",
+      "plannerIntervention": false,
+      "sqlShape": "c054a23b5b2bc8250f87ab3e02b448bcfde87eaa470f74d1208ddb257b0906c4",
+      "plan": {
+        "node": "ModifyTable",
+        "index": null,
+        "rows": 1,
+        "children": [
+          {
+            "node": "Seq Scan",
+            "index": null,
+            "rows": 1,
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "operation": "MutationReceipt.INSERT",
+      "plannerIntervention": false,
+      "sqlShape": "480df35ad148a90496f8a9d24653c866a99c98cd4f8de754cbbe1e1df832536b",
+      "plan": {
+        "node": "ModifyTable",
+        "index": null,
+        "rows": 1,
+        "children": [
+          {
+            "node": "Result",
+            "index": null,
+            "rows": 1,
+            "children": []
+          }
+        ]
+      }
+    }
+  ],
+  "operationLocks": [
+    {
+      "command": "concurrent-2",
+      "operation": "Ticket.SELECT.lock",
+      "locks": []
+    },
+    {
+      "command": "concurrent-3",
+      "operation": "Ticket.SELECT.lock",
+      "locks": []
+    },
+    {
+      "command": "concurrent-4",
+      "operation": "Ticket.SELECT.lock",
+      "locks": []
+    },
+    {
+      "command": "concurrent-1",
+      "operation": "Ticket.SELECT.lock",
+      "locks": []
+    },
+    {
+      "command": "concurrent-3",
+      "operation": "MutationReceipt.SELECT",
+      "locks": []
+    },
+    {
+      "command": "concurrent-4",
+      "operation": "MutationReceipt.SELECT",
+      "locks": []
+    },
+    {
+      "command": "concurrent-1",
+      "operation": "MutationReceipt.SELECT",
+      "locks": []
+    },
+    {
+      "command": "concurrent-2",
+      "operation": "MutationReceipt.SELECT",
+      "locks": []
+    },
+    {
+      "command": "concurrent-6",
+      "operation": "Ticket.SELECT.lock",
+      "locks": []
+    },
+    {
+      "command": "concurrent-8",
+      "operation": "Ticket.SELECT.lock",
+      "locks": []
+    },
+    {
+      "command": "concurrent-7",
+      "operation": "Ticket.SELECT.lock",
+      "locks": []
+    },
+    {
+      "command": "concurrent-6",
+      "operation": "MutationReceipt.SELECT",
+      "locks": []
+    },
+    {
+      "command": "concurrent-8",
+      "operation": "MutationReceipt.SELECT",
+      "locks": []
+    },
+    {
+      "command": "concurrent-7",
+      "operation": "MutationReceipt.SELECT",
+      "locks": []
+    },
+    {
+      "command": "concurrent-5",
+      "operation": "Ticket.SELECT.lock",
+      "locks": []
+    },
+    {
+      "command": "concurrent-5",
+      "operation": "MutationReceipt.SELECT",
+      "locks": []
+    },
+    {
+      "command": "serial-1",
+      "operation": "Ticket.SELECT.lock",
+      "locks": []
+    },
+    {
+      "command": "serial-1",
+      "operation": "MutationReceipt.SELECT",
+      "locks": []
+    },
+    {
+      "command": "serial-2",
+      "operation": "Ticket.SELECT.lock",
+      "locks": []
+    },
+    {
+      "command": "serial-2",
+      "operation": "MutationReceipt.SELECT",
+      "locks": []
+    },
+    {
+      "command": "serial-3",
+      "operation": "Ticket.SELECT.lock",
+      "locks": []
+    },
+    {
+      "command": "serial-3",
+      "operation": "MutationReceipt.SELECT",
+      "locks": []
+    },
+    {
+      "command": "serial-4",
+      "operation": "Ticket.SELECT.lock",
+      "locks": []
+    },
+    {
+      "command": "serial-4",
+      "operation": "MutationReceipt.SELECT",
+      "locks": []
+    },
+    {
+      "command": "serial-5",
+      "operation": "Ticket.SELECT.lock",
+      "locks": []
+    },
+    {
+      "command": "serial-5",
+      "operation": "MutationReceipt.SELECT",
+      "locks": []
+    },
+    {
+      "command": "serial-6",
+      "operation": "Ticket.SELECT.lock",
+      "locks": []
+    },
+    {
+      "command": "serial-6",
+      "operation": "MutationReceipt.SELECT",
+      "locks": []
+    },
+    {
+      "command": "serial-7",
+      "operation": "Ticket.SELECT.lock",
+      "locks": []
+    },
+    {
+      "command": "serial-7",
+      "operation": "MutationReceipt.SELECT",
+      "locks": []
+    },
+    {
+      "command": "serial-8",
+      "operation": "Ticket.SELECT.lock",
+      "locks": []
+    },
+    {
+      "command": "serial-8",
+      "operation": "MutationReceipt.SELECT",
+      "locks": []
+    }
+  ],
+  "plannerMode": "default",
+  "fixtureScale": {
+    "tickets": 40,
+    "receipts": 2,
+    "users": 28,
+    "sessions": 17
+  },
+  "independentActorAssigneeTicketKeysVerified": true,
+  "observedPublicAttempts": 8,
+  "locksAtMissingReceiptBarrier": [
+    {
+      "backend": 15628,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "advisory",
+      "mode": "ShareLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_expiresAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_tokenHash_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_userId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_categoryId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_itPriority_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ownerId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_relatedSystemId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requestedPriority_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_clientSubmissionId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ticketNumber_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_updatedAt_id_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_email_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_role_isActive_name_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "transactionid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 15628,
+      "locktype": "virtualxid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "advisory",
+      "mode": "ShareLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_expiresAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_tokenHash_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_userId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_categoryId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_itPriority_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ownerId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_relatedSystemId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requestedPriority_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_clientSubmissionId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ticketNumber_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_updatedAt_id_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_email_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_role_isActive_name_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "transactionid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 16436,
+      "locktype": "virtualxid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "advisory",
+      "mode": "ShareLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_expiresAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_tokenHash_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_userId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_categoryId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_itPriority_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ownerId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_relatedSystemId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requestedPriority_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_clientSubmissionId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ticketNumber_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_updatedAt_id_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_email_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_role_isActive_name_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "transactionid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 23332,
+      "locktype": "virtualxid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "advisory",
+      "mode": "ShareLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_expiresAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_tokenHash_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_userId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_categoryId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_itPriority_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ownerId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_relatedSystemId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requestedPriority_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_clientSubmissionId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ticketNumber_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_updatedAt_id_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_email_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_role_isActive_name_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "transactionid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 28068,
+      "locktype": "virtualxid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "advisory",
+      "mode": "ShareLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_expiresAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_tokenHash_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_userId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_categoryId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_itPriority_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ownerId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_relatedSystemId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requestedPriority_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_clientSubmissionId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ticketNumber_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_updatedAt_id_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_email_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_role_isActive_name_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "transactionid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 40880,
+      "locktype": "virtualxid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "advisory",
+      "mode": "ShareLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_expiresAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_tokenHash_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_userId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_categoryId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_itPriority_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ownerId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_relatedSystemId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requestedPriority_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_clientSubmissionId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ticketNumber_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_updatedAt_id_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_email_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_role_isActive_name_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "transactionid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 49204,
+      "locktype": "virtualxid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "advisory",
+      "mode": "ShareLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_expiresAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_tokenHash_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_userId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_categoryId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_itPriority_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ownerId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_relatedSystemId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requestedPriority_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_clientSubmissionId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ticketNumber_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_updatedAt_id_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_email_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_role_isActive_name_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "transactionid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 50388,
+      "locktype": "virtualxid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "advisory",
+      "mode": "ShareLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_expiresAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_tokenHash_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_userId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_categoryId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_itPriority_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ownerId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_relatedSystemId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requestedPriority_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_clientSubmissionId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ticketNumber_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_updatedAt_id_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_email_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_role_isActive_name_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "transactionid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 51012,
+      "locktype": "virtualxid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    }
+  ],
+  "observationCompleted": true,
+  "concurrentExhaustions": 0,
+  "finishedAt": "2026-11-03T20:18:21.394Z"
+}

@@ -1,7 +1,7 @@
 import type { TicketStatus } from "@prisma/client";
 import {
   lockCurrentActor,
-  runSerializableMutation,
+  runAdmittedSerializableMutation as runSerializableMutation,
 } from "../auth/eligibility-transaction.js";
 
 const ELIGIBLE = new Set<TicketStatus>([
