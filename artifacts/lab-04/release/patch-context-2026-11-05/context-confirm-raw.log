@@ -1,0 +1,116 @@
+
+> toktickit-server@1.0.0 test
+> vitest run tests/lab-04/attachment-cold-upload.integration.test.ts tests/lab-04/action-patch-projection.integration.test.ts --config vitest.patch-context.config.ts --reporter=default --reporter=json --outputFile=<private-context-directory>\context-confirm-vitest.json
+
+
+ RUN  v2.1.9 <review-worktree>/server
+
+warn The configuration property `package.json#prisma` is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file (e.g., `prisma.config.ts`).
+For more information, see: https://pris.ly/prisma-config
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+Datasource: guarded dedicated target; connection identity withheld
+
+6 migrations found in prisma/migrations
+
+
+No pending migrations to apply.
+Seed skipped Emily Carter: legacy identity is ambiguous or lacks durable evidence; no original-email account guessed; review required.
+Seed skipped Noah Williams: legacy identity is ambiguous or lacks durable evidence; no original-email account guessed; review required.
+Seed skipped Sofia Garcia: legacy identity is ambiguous or lacks durable evidence; no original-email account guessed; review required.
+Seed skipped Inactive Support: legacy identity is ambiguous or lacks durable evidence; no original-email account guessed; review required.
+Seed skipped Avery Chen: legacy identity is ambiguous or lacks durable evidence; no original-email account guessed; review required.
+Seed skipped Empty Dashboard Requester: legacy identity is ambiguous or lacks durable evidence; no original-email account guessed; review required.
+Seed skipped lab3:categoryId:Account and Access: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:categoryId:Software: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:categoryId:Network: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:relatedSystemId:Email: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:relatedSystemId:Campus Wi-Fi: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:relatedSystemId:VPN: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:relatedSystemId:LEB2 App: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:relatedSystemId:Grade Submission App: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:relatedSystemId:Printer: legacy reference requires verified identity mapping; review required.
+Seed skipped lab4:action:202 on TKT-2026-00167: frozen parent or ineligible worker (mina.patel@example.com, noah.williams@example.com); review required.
+Seed skipped lab4:action:203 on TKT-2026-00167: frozen parent or ineligible worker (noah.williams@example.com, mina.patel@example.com); review required.
+Seed skipped lab4:action:204 on TKT-2026-00169: frozen parent or ineligible worker (mina.patel@example.com, noah.williams@example.com); review required.
+Seed skipped lab4:action:205 on TKT-2026-00170: frozen parent or ineligible worker (noah.williams@example.com, mina.patel@example.com); review required.
+Seed skipped lab4:action:206 on TKT-2026-00171: frozen parent or ineligible worker (mina.patel@example.com, noah.williams@example.com); review required.
+Seed skipped lab4:action:207 on TKT-2026-00172: frozen parent or ineligible worker (mina.patel@example.com, mina.patel@example.com); review required.
+Seeded create-only registered Lab 3/4 fixtures; operational records preserved.
+stdout | tests/lab-04/attachment-cold-upload.integration.test.ts > classifies one natural cold upload and verifies the observed contract outcome without requiring unconditional success
+Production migration path: 4 historical; 2 later.
+
+stderr | tests/lab-04/attachment-cold-upload.integration.test.ts > classifies one natural cold upload and verifies the observed contract outcome without requiring unconditional success
+Database error while uploading an Attachment.
+
+stdout | tests/lab-04/attachment-cold-upload.integration.test.ts > classifies one natural cold upload and verifies the observed contract outcome without requiring unconditional success
+Natural cold upload classification {"status":500,"attempts":1,"failure":{"code":"P2028","expired":true,"timeoutMs":5000,"engineElapsedMs":8289,"elapsedMs":8422},"storeMs":8252,"putSucceeded":true,"storageFailed":false,"removals":1,"expiryObservedInDatabase":false,"gatesHeld":true}
+
+stderr | tests/lab-04/attachment-cold-upload.integration.test.ts > controlled expiry after real persistent PUT returns the inherited safe error with rollback, compensation and released gates
+Database error while uploading an Attachment.
+
+stdout | tests/lab-04/attachment-cold-upload.integration.test.ts > controlled expiry after real persistent PUT returns the inherited safe error with rollback, compensation and released gates
+Controlled expiry classification (not a natural cold race) {"status":500,"attempts":1,"failure":{"code":"P2028","expired":true,"timeoutMs":5000,"engineElapsedMs":5060,"elapsedMs":5065},"storeMs":7,"putSucceeded":true,"storageFailed":false,"removals":1,"expiryObservedInDatabase":true,"gatesHeld":true}
+
+stdout | tests/lab-04/attachment-cold-upload.integration.test.ts
+Lab 4 recovery fixture: owned schema created and removed; remaining=0.
+
+stdout | tests/lab-04/attachment-cold-upload.integration.test.ts
+Cold upload cleanup: owned schema/bucket/objects/process/directory removed; clients/settings restored.
+
+ ✓ tests/lab-04/attachment-cold-upload.integration.test.ts (2 tests) 22056ms
+   ✓ classifies one natural cold upload and verifies the observed contract outcome without requiring unconditional success 16334ms
+   ✓ controlled expiry after real persistent PUT returns the inherited safe error with rollback, compensation and released gates 5203ms
+stdout | tests/lab-04/action-patch-projection.integration.test.ts > preserves PATCH identities and bounds projection reads during one EDIT-START-terminal cohort
+Production migration path: 4 historical; 2 later.
+
+stderr | tests/lab-04/action-patch-projection.integration.test.ts > preserves PATCH identities and bounds projection reads during one EDIT-START-terminal cohort
+Database error while changing an Action.
+
+stderr | tests/lab-04/action-patch-projection.integration.test.ts > preserves PATCH identities and bounds projection reads during one EDIT-START-terminal cohort
+Database error while changing an Action.
+Database error while changing an Action.
+Database error while changing an Action.
+
+stderr | tests/lab-04/action-patch-projection.integration.test.ts > preserves PATCH identities and bounds projection reads during one EDIT-START-terminal cohort
+Database error while changing an Action.
+
+stdout | tests/lab-04/action-patch-projection.integration.test.ts > preserves PATCH identities and bounds projection reads during one EDIT-START-terminal cohort
+Lab 4 indexes fixture: owned schema created and removed; remaining=0.
+PATCH chain phase artifact: patch-chain-phases-2026-11-04-66d7593f.json
+
+ ❯ tests/lab-04/action-patch-projection.integration.test.ts (1 test | 1 failed) 51844ms
+   × preserves PATCH identities and bounds projection reads during one EDIT-START-terminal cohort 51594ms
+     → expected 500 to be 200 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/lab-04/action-patch-projection.integration.test.ts > preserves PATCH identities and bounds projection reads during one EDIT-START-terminal cohort
+AssertionError: expected 500 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 500
+
+ ❯ tests/lab-04/action-patch-projection.integration.test.ts:122:37
+    120|               : { ...headers(), targetStatus: "CANCELLED", confirm: tr…
+    121|             const response = await send(actor, `${operation}-${i}`, "P…
+    122|             expect(response.status).toBe(200);
+       |                                     ^
+    123|             const value = object(response.body), action = object(value…
+    124|             expect(action.createdBy).toEqual({ id: actors[0].id, name:…
+ ❯ tests/lab-04/action-patch-projection.integration.test.ts:141:36
+ ❯ Module.withDisposableSchema tests/lab-04/migration-test-fixtures.ts:91:5
+ ❯ tests/lab-04/action-patch-projection.integration.test.ts:32:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 2 passed (3)
+   Start at  03:18:27
+   Duration  81.46s (transform 1.33s, setup 296ms, collect 1.45s, tests 73.90s, environment 0ms, prepare 284ms)
+
+JSON report written to C:/Users/ACER/AppData/Local/Temp/toktickit61-patch-context-20261105/context-confirm-vitest.json

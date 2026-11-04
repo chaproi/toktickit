@@ -1,0 +1,37 @@
+{
+  "operations": {
+    "requester0": {
+      "200": 19
+    },
+    "edit": {
+      "200": 25,
+      "500": 5
+    },
+    "requester1": {
+      "200": 19
+    },
+    "requester2": {
+      "200": 19
+    },
+    "start": {
+      "200": 25
+    },
+    "cancel": {
+      "200": 13
+    },
+    "complete": {
+      "200": 12
+    }
+  },
+  "failedCallbackEntries": [],
+  "phase": "observed-overlap",
+  "cleanup": {
+    "listenerClosed": true,
+    "checkedOut": 0
+  },
+  "truncation": {
+    "truncatedQueries": false,
+    "truncatedSamples": false
+  },
+  "sampleCount": 88
+}

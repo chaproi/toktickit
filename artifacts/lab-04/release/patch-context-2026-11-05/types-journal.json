@@ -1,0 +1,89 @@
+{
+  "command": "npm.cmd exec -- tsc --noEmit",
+  "head": "57cdda549b33e29a864974f0b9ce518e1ce5ce21",
+  "source": "unchanged production plus temporary context sequencer/boundary/PID instrumentation; accepted legacy harness retained",
+  "startedAt": "2026-11-04T20:16:38.408828+00:00",
+  "runnerPid": 16116,
+  "events": [
+    {
+      "event": "start",
+      "atMs": 0.0035999983083456755
+    },
+    {
+      "event": "spawn",
+      "atMs": 20.0652000203263
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 3021.172300010221,
+      "logBytes": 0
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 6025.606500013964,
+      "logBytes": 0
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 9040.49230000237,
+      "logBytes": 0
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 12045.610100001795,
+      "logBytes": 0
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 15053.460299997823,
+      "logBytes": 0
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 18057.987800013507,
+      "logBytes": 0
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 21064.06030000653,
+      "logBytes": 0
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 24076.18730000104,
+      "logBytes": 0
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 27082.708900008583,
+      "logBytes": 0
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 30090.399900014745,
+      "logBytes": 0
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 33092.78540001833,
+      "logBytes": 0
+    },
+    {
+      "event": "exit",
+      "atMs": 33094.505999994,
+      "code": 0
+    },
+    {
+      "event": "finished",
+      "atMs": 33095.49989999505
+    }
+  ],
+  "signals": [],
+  "outerSafetySeconds": 300,
+  "outputMode": "direct binary logfile, no maxBuffer",
+  "childPid": 37196,
+  "exitCode": 0,
+  "elapsedSeconds": 33.0954488000134,
+  "finishedAt": "2026-11-04T20:17:11.504427+00:00",
+  "childStillRunning": false
+}

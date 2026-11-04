@@ -1,0 +1,5427 @@
+{
+  "sourceArtifact": "patch-chain-phases-2026-11-04-66d7593f.json",
+  "sha256": "9a7646607b7146080c0cc7652307f51ec72835d7ee5357413131f05aff9d391e",
+  "failedHttp": [
+    {
+      "id": "edit-28",
+      "operation": "edit",
+      "status": 500,
+      "error": "INTERNAL_ERROR",
+      "elapsedMs": 2772.2404000000024
+    },
+    {
+      "id": "edit-17",
+      "operation": "edit",
+      "status": 500,
+      "error": "INTERNAL_ERROR",
+      "elapsedMs": 2827.748400000004
+    },
+    {
+      "id": "edit-18",
+      "operation": "edit",
+      "status": 500,
+      "error": "INTERNAL_ERROR",
+      "elapsedMs": 2829.3248999999996
+    },
+    {
+      "id": "edit-19",
+      "operation": "edit",
+      "status": 500,
+      "error": "INTERNAL_ERROR",
+      "elapsedMs": 2831.751000000004
+    },
+    {
+      "id": "edit-16",
+      "operation": "edit",
+      "status": 500,
+      "error": "INTERNAL_ERROR",
+      "elapsedMs": 3234.578300000001
+    }
+  ],
+  "responseCount": 137,
+  "cleanup": {
+    "listenerClosed": true,
+    "checkedOut": 0
+  },
+  "sampleCount": 88,
+  "sampleErrors": [],
+  "failures": [
+    {
+      "request": "edit-28",
+      "deadline": {
+        "atMs": 48518.0914,
+        "request": "edit-28",
+        "attempt": 1,
+        "stage": "deadline-before-cleanup",
+        "observed": {
+          "stage": "database-resource",
+          "activeQuery": "q3984",
+          "deadlineStage": "database-resource",
+          "deadlineQuery": "q3984"
+        },
+        "queue": []
+      },
+      "timeline": [
+        {
+          "atMs": 46517.095799999996,
+          "stage": "transaction-start"
+        },
+        {
+          "atMs": 46517.145599999996,
+          "stage": "attempt-selected"
+        },
+        {
+          "atMs": 46517.41789999999,
+          "stage": "checkout-start"
+        },
+        {
+          "atMs": 46654.0095,
+          "stage": "checkout-result"
+        },
+        {
+          "atMs": 48518.0914,
+          "stage": "deadline-before-cleanup",
+          "observed": {
+            "stage": "database-resource",
+            "activeQuery": "q3984",
+            "deadlineStage": "database-resource",
+            "deadlineQuery": "q3984"
+          }
+        },
+        {
+          "atMs": 48520.675599999995,
+          "stage": "physical-release"
+        },
+        {
+          "atMs": 48523.3998,
+          "stage": "transaction-error-before-test-cleanup",
+          "observed": {
+            "stage": "database-resource",
+            "activeQuery": "q3984",
+            "deadlineStage": "database-resource",
+            "deadlineQuery": "q3984"
+          },
+          "error": {
+            "name": "TransactionStartDeadlineError",
+            "constructorName": "TransactionStartDeadlineError",
+            "code": "P2028",
+            "reportedMetaPhase": "transaction-start",
+            "reportedMaxWait": 2000,
+            "reportedTimeout": null,
+            "reportedMetaCode": null,
+            "reportedCauseCode": null,
+            "ownedStartupComposition": true,
+            "engineProvidedSubtype": null
+          }
+        },
+        {
+          "atMs": 48537.52849999999,
+          "stage": "deadline-before-cleanup",
+          "observed": {
+            "stage": "database-resource",
+            "activeQuery": null,
+            "deadlineStage": "database-resource",
+            "deadlineQuery": "q3984"
+          }
+        },
+        {
+          "atMs": 48538.548899999994,
+          "stage": "finish-before-cleanup",
+          "observed": {
+            "stage": "database-resource",
+            "activeQuery": null,
+            "deadlineStage": "database-resource",
+            "deadlineQuery": "q3984"
+          },
+          "hasPrimary": true,
+          "error": {
+            "name": "TransactionStartDeadlineError",
+            "constructorName": "TransactionStartDeadlineError",
+            "code": "P2028",
+            "reportedMetaPhase": "transaction-start",
+            "reportedMaxWait": 2000,
+            "reportedTimeout": null,
+            "reportedMetaCode": null,
+            "reportedCauseCode": null,
+            "ownedStartupComposition": true,
+            "engineProvidedSubtype": null
+          }
+        },
+        {
+          "atMs": 48538.5894,
+          "stage": "finish-drained"
+        }
+      ],
+      "waits": [
+        {
+          "query": {
+            "atMs": 46732.5432,
+            "stage": "query-start",
+            "request": "edit-28",
+            "attempt": 1,
+            "sequence": 336,
+            "client": 11,
+            "kind": "coordination-1",
+            "operation": "SELECT",
+            "resource": {
+              "scope": 1,
+              "key": 21,
+              "shared": false
+            },
+            "tagApplied": true
+          },
+          "end": 48354.94439999999,
+          "elapsedMs": 1622.401199999993,
+          "observations": [
+            {
+              "atMs": 46755.6081,
+              "pid": 46888,
+              "holder": {
+                "pid": 6064,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  1652
+                ],
+                "tag": [
+                  "edit-0",
+                  "1",
+                  "324"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 6064,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 46755.6081,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  6064
+                ],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "334"
+                ]
+              },
+              "matchingGranted": []
+            },
+            {
+              "atMs": 46785.9646,
+              "pid": 46888,
+              "holder": {
+                "pid": 6064,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  1652
+                ],
+                "tag": [
+                  "edit-0",
+                  "1",
+                  "324"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 6064,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 46785.9646,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  6064
+                ],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "334"
+                ]
+              },
+              "matchingGranted": []
+            },
+            {
+              "atMs": 46839.6256,
+              "pid": 46888,
+              "holder": {
+                "pid": 6064,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  1652
+                ],
+                "tag": [
+                  "edit-0",
+                  "1",
+                  "324"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 6064,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 46839.6256,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  6064
+                ],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "334"
+                ]
+              },
+              "matchingGranted": []
+            },
+            {
+              "atMs": 46887.2432,
+              "pid": 46888,
+              "holder": {
+                "pid": 6064,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  1652
+                ],
+                "tag": [
+                  "edit-0",
+                  "1",
+                  "324"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 6064,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 46887.2432,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  6064
+                ],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "334"
+                ]
+              },
+              "matchingGranted": []
+            },
+            {
+              "atMs": 46944.287299999996,
+              "pid": 46888,
+              "holder": {
+                "pid": 6064,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  1652
+                ],
+                "tag": [
+                  "edit-0",
+                  "1",
+                  "324"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 6064,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 46944.287299999996,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  6064
+                ],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "334"
+                ]
+              },
+              "matchingGranted": []
+            },
+            {
+              "atMs": 47019.808999999994,
+              "pid": 46888,
+              "holder": {
+                "pid": 6064,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  1652
+                ],
+                "tag": [
+                  "edit-0",
+                  "1",
+                  "324"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 6064,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47019.808999999994,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  6064
+                ],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "334"
+                ]
+              },
+              "matchingGranted": []
+            },
+            {
+              "atMs": 47055.078499999996,
+              "pid": 46888,
+              "holder": {
+                "pid": 6064,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  1652
+                ],
+                "tag": [
+                  "edit-0",
+                  "1",
+                  "324"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 6064,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47055.078499999996,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  6064
+                ],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "334"
+                ]
+              },
+              "matchingGranted": []
+            },
+            {
+              "atMs": 47086.954,
+              "pid": 46888,
+              "holder": {
+                "pid": 6064,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  1652
+                ],
+                "tag": [
+                  "edit-0",
+                  "1",
+                  "324"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 6064,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47086.954,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  6064
+                ],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "334"
+                ]
+              },
+              "matchingGranted": []
+            },
+            {
+              "atMs": 47135.898799999995,
+              "pid": 46888,
+              "holder": {
+                "pid": 6064,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  1652
+                ],
+                "tag": [
+                  "edit-0",
+                  "1",
+                  "324"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 6064,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47135.898799999995,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  6064
+                ],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "334"
+                ]
+              },
+              "matchingGranted": []
+            },
+            {
+              "atMs": 47191.089199999995,
+              "pid": 46888,
+              "holder": {
+                "pid": 6064,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  1652
+                ],
+                "tag": [
+                  "edit-0",
+                  "1",
+                  "324"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 6064,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47191.089199999995,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  6064
+                ],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "334"
+                ]
+              },
+              "matchingGranted": []
+            },
+            {
+              "atMs": 47233.2541,
+              "pid": 46888,
+              "holder": {
+                "pid": 6064,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  1652
+                ],
+                "tag": [
+                  "edit-0",
+                  "1",
+                  "324"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 6064,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47233.2541,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  6064
+                ],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "334"
+                ]
+              },
+              "matchingGranted": []
+            },
+            {
+              "atMs": 47275.6718,
+              "pid": 46888,
+              "holder": {
+                "pid": 6064,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  1652
+                ],
+                "tag": [
+                  "edit-0",
+                  "1",
+                  "324"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 6064,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47275.6718,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  6064
+                ],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "334"
+                ]
+              },
+              "matchingGranted": []
+            },
+            {
+              "atMs": 47309.304099999994,
+              "pid": 46888,
+              "holder": {
+                "pid": 6064,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  1652
+                ],
+                "tag": [
+                  "edit-0",
+                  "1",
+                  "324"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 6064,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47309.304099999994,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  6064
+                ],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "334"
+                ]
+              },
+              "matchingGranted": []
+            },
+            {
+              "atMs": 47356.586599999995,
+              "pid": 46888,
+              "holder": {
+                "pid": 6064,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  1652
+                ],
+                "tag": [
+                  "edit-0",
+                  "1",
+                  "324"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 6064,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47356.586599999995,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  6064
+                ],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "334"
+                ]
+              },
+              "matchingGranted": []
+            },
+            {
+              "atMs": 47398.9177,
+              "pid": 46888,
+              "holder": {
+                "pid": 6064,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  1652
+                ],
+                "tag": [
+                  "edit-0",
+                  "1",
+                  "324"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 6064,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47398.9177,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  6064
+                ],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "334"
+                ]
+              },
+              "matchingGranted": []
+            },
+            {
+              "atMs": 47451.7115,
+              "pid": 46888,
+              "holder": {
+                "pid": 6064,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  1652
+                ],
+                "tag": [
+                  "edit-0",
+                  "1",
+                  "324"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 6064,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47451.7115,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  6064
+                ],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "334"
+                ]
+              },
+              "matchingGranted": []
+            },
+            {
+              "atMs": 47501.8733,
+              "pid": 46888,
+              "holder": {
+                "pid": 6064,
+                "state": "idle",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "edit-0",
+                  "1",
+                  "885"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 6064,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47501.8733,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  6064
+                ],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "334"
+                ]
+              },
+              "matchingGranted": []
+            },
+            {
+              "atMs": 47553.69669999999,
+              "pid": 46888,
+              "holder": {
+                "pid": 6064,
+                "state": "idle",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "edit-0",
+                  "1",
+                  "914"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 6064,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47553.69669999999,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  6064
+                ],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "334"
+                ]
+              },
+              "matchingGranted": []
+            },
+            {
+              "atMs": 47595.5591,
+              "pid": 46888,
+              "holder": {
+                "pid": 6064,
+                "state": "active",
+                "waitType": null,
+                "waitEvent": null,
+                "blockers": [],
+                "tag": [
+                  "edit-0",
+                  "1",
+                  "957"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 6064,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47595.5591,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  6064
+                ],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "334"
+                ]
+              },
+              "matchingGranted": []
+            },
+            {
+              "atMs": 47636.037,
+              "pid": 46888,
+              "holder": {
+                "pid": 6064,
+                "state": "idle in transaction",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "edit-0",
+                  "1",
+                  "987"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 6064,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47636.037,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  6064
+                ],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "334"
+                ]
+              },
+              "matchingGranted": []
+            },
+            {
+              "atMs": 47687.460699999996,
+              "pid": 46888,
+              "holder": {
+                "pid": 6064,
+                "state": "idle in transaction",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": null
+              },
+              "matchingGranted": [
+                {
+                  "pid": 6064,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47687.460699999996,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  6064
+                ],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "334"
+                ]
+              },
+              "matchingGranted": []
+            },
+            {
+              "atMs": 47723.259999999995,
+              "pid": 46888,
+              "holder": {
+                "pid": 6064,
+                "state": "idle",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "edit-0",
+                  "1",
+                  "1032"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 6064,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47723.259999999995,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  6064
+                ],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "334"
+                ]
+              },
+              "matchingGranted": []
+            },
+            {
+              "atMs": 47769.3492,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "idle",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "1087"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 63136,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47818.5053,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "idle",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "1125"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 63136,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47877.45589999999,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "idle",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "1152"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 63136,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47969.0871,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "idle in transaction",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "1184"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 63136,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48032.669799999996,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "idle in transaction",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": null
+              },
+              "matchingGranted": [
+                {
+                  "pid": 63136,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48139.428499999995,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "idle in transaction",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "1258"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 63136,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48237.4044,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "idle",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "1310"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 63136,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48328.65089999999,
+              "pid": 46888,
+              "holder": {
+                "pid": 63136,
+                "state": "idle",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "edit-29",
+                  "1",
+                  "1370"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 63136,
+                  "scope": "1",
+                  "key": "21",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "query": {
+            "atMs": 48372.6213,
+            "stage": "query-start",
+            "request": "edit-28",
+            "attempt": 1,
+            "sequence": 1426,
+            "client": 11,
+            "kind": "coordination-1",
+            "operation": "SELECT",
+            "resource": {
+              "scope": 1,
+              "key": 50,
+              "shared": false
+            },
+            "tagApplied": true
+          },
+          "end": 48537.4529,
+          "elapsedMs": 164.8315999999977,
+          "observations": [
+            {
+              "atMs": 48374.7325,
+              "pid": 46888,
+              "holder": {
+                "pid": 26816,
+                "state": "idle",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "start-27",
+                  "1",
+                  "1436"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 26816,
+                  "scope": "1",
+                  "key": "50",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48414.9624,
+              "pid": 46888,
+              "holder": {
+                "pid": 26816,
+                "state": "idle in transaction",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "start-27",
+                  "1",
+                  "1473"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 26816,
+                  "scope": "1",
+                  "key": "50",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48457.6853,
+              "pid": 46888,
+              "holder": {
+                "pid": 26816,
+                "state": "idle in transaction",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": null
+              },
+              "matchingGranted": [
+                {
+                  "pid": 26816,
+                  "scope": "1",
+                  "key": "50",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48508.437999999995,
+              "pid": 46888,
+              "holder": {
+                "pid": 26816,
+                "state": "active",
+                "waitType": "IO",
+                "waitEvent": "WalWrite",
+                "blockers": [],
+                "tag": [
+                  "start-27",
+                  "1",
+                  "1519"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 26816,
+                  "scope": "1",
+                  "key": "50",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "request": "edit-17",
+      "deadline": {
+        "atMs": 48569.244,
+        "request": "edit-17",
+        "attempt": 1,
+        "stage": "deadline-before-cleanup",
+        "observed": {
+          "stage": "database-resource",
+          "activeQuery": "q2778",
+          "deadlineStage": "database-resource",
+          "deadlineQuery": "q2778"
+        },
+        "queue": []
+      },
+      "timeline": [
+        {
+          "atMs": 46557.189,
+          "stage": "transaction-start"
+        },
+        {
+          "atMs": 46557.257699999995,
+          "stage": "attempt-selected"
+        },
+        {
+          "atMs": 46557.4591,
+          "stage": "checkout-start"
+        },
+        {
+          "atMs": 46673.0623,
+          "stage": "checkout-result"
+        },
+        {
+          "atMs": 48569.244,
+          "stage": "deadline-before-cleanup",
+          "observed": {
+            "stage": "database-resource",
+            "activeQuery": "q2778",
+            "deadlineStage": "database-resource",
+            "deadlineQuery": "q2778"
+          }
+        },
+        {
+          "atMs": 48569.432199999996,
+          "stage": "physical-release"
+        },
+        {
+          "atMs": 48569.84789999999,
+          "stage": "transaction-error-before-test-cleanup",
+          "observed": {
+            "stage": "database-resource",
+            "activeQuery": "q2778",
+            "deadlineStage": "database-resource",
+            "deadlineQuery": "q2778"
+          },
+          "error": {
+            "name": "TransactionStartDeadlineError",
+            "constructorName": "TransactionStartDeadlineError",
+            "code": "P2028",
+            "reportedMetaPhase": "transaction-start",
+            "reportedMaxWait": 2000,
+            "reportedTimeout": null,
+            "reportedMetaCode": null,
+            "reportedCauseCode": null,
+            "ownedStartupComposition": true,
+            "engineProvidedSubtype": null
+          }
+        },
+        {
+          "atMs": 48592.422099999996,
+          "stage": "deadline-before-cleanup",
+          "observed": {
+            "stage": "database-resource",
+            "activeQuery": null,
+            "deadlineStage": "database-resource",
+            "deadlineQuery": "q2778"
+          }
+        },
+        {
+          "atMs": 48592.7881,
+          "stage": "finish-before-cleanup",
+          "observed": {
+            "stage": "database-resource",
+            "activeQuery": null,
+            "deadlineStage": "database-resource",
+            "deadlineQuery": "q2778"
+          },
+          "hasPrimary": true,
+          "error": {
+            "name": "TransactionStartDeadlineError",
+            "constructorName": "TransactionStartDeadlineError",
+            "code": "P2028",
+            "reportedMetaPhase": "transaction-start",
+            "reportedMaxWait": 2000,
+            "reportedTimeout": null,
+            "reportedMetaCode": null,
+            "reportedCauseCode": null,
+            "ownedStartupComposition": true,
+            "engineProvidedSubtype": null
+          }
+        },
+        {
+          "atMs": 48592.822199999995,
+          "stage": "finish-drained"
+        }
+      ],
+      "waits": [
+        {
+          "query": {
+            "atMs": 46754.0237,
+            "stage": "query-start",
+            "request": "edit-17",
+            "attempt": 1,
+            "sequence": 376,
+            "client": 12,
+            "kind": "coordination-1",
+            "operation": "SELECT",
+            "resource": {
+              "scope": 1,
+              "key": 39,
+              "shared": false
+            },
+            "tagApplied": true
+          },
+          "end": 48592.3872,
+          "elapsedMs": 1838.3634999999995,
+          "observations": [
+            {
+              "atMs": 46755.6081,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 46785.9646,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 46839.6256,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 46887.2432,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 46944.287299999996,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47019.808999999994,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47055.078499999996,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47086.954,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47135.898799999995,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47191.089199999995,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47233.2541,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47275.6718,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47309.304099999994,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47356.586599999995,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47398.9177,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47451.7115,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47501.8733,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47553.69669999999,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47595.5591,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47636.037,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47687.460699999996,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47723.259999999995,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47769.3492,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47818.5053,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47877.45589999999,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47969.0871,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48032.669799999996,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48139.428499999995,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48237.4044,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48328.65089999999,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48374.7325,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48414.9624,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48457.6853,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48508.437999999995,
+              "pid": 47860,
+              "holder": {
+                "pid": 32268,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  22984
+                ],
+                "tag": [
+                  "edit-18",
+                  "1",
+                  "372"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 32268,
+                  "scope": "1",
+                  "key": "39",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "request": "edit-18",
+      "deadline": {
+        "atMs": 48572.2435,
+        "request": "edit-18",
+        "attempt": 1,
+        "stage": "deadline-before-cleanup",
+        "observed": {
+          "stage": "database-resource",
+          "activeQuery": "q2774",
+          "deadlineStage": "database-resource",
+          "deadlineQuery": "q2774"
+        },
+        "queue": []
+      },
+      "timeline": [
+        {
+          "atMs": 46558.558,
+          "stage": "transaction-start"
+        },
+        {
+          "atMs": 46558.6234,
+          "stage": "attempt-selected"
+        },
+        {
+          "atMs": 46558.869199999994,
+          "stage": "checkout-start"
+        },
+        {
+          "atMs": 46673.8728,
+          "stage": "checkout-result"
+        },
+        {
+          "atMs": 48572.2435,
+          "stage": "deadline-before-cleanup",
+          "observed": {
+            "stage": "database-resource",
+            "activeQuery": "q2774",
+            "deadlineStage": "database-resource",
+            "deadlineQuery": "q2774"
+          }
+        },
+        {
+          "atMs": 48572.6253,
+          "stage": "physical-release"
+        },
+        {
+          "atMs": 48573.229,
+          "stage": "transaction-error-before-test-cleanup",
+          "observed": {
+            "stage": "database-resource",
+            "activeQuery": "q2774",
+            "deadlineStage": "database-resource",
+            "deadlineQuery": "q2774"
+          },
+          "error": {
+            "name": "TransactionStartDeadlineError",
+            "constructorName": "TransactionStartDeadlineError",
+            "code": "P2028",
+            "reportedMetaPhase": "transaction-start",
+            "reportedMaxWait": 2000,
+            "reportedTimeout": null,
+            "reportedMetaCode": null,
+            "reportedCauseCode": null,
+            "ownedStartupComposition": true,
+            "engineProvidedSubtype": null
+          }
+        },
+        {
+          "atMs": 48593.7199,
+          "stage": "deadline-before-cleanup",
+          "observed": {
+            "stage": "database-resource",
+            "activeQuery": null,
+            "deadlineStage": "database-resource",
+            "deadlineQuery": "q2774"
+          }
+        },
+        {
+          "atMs": 48594.05009999999,
+          "stage": "finish-before-cleanup",
+          "observed": {
+            "stage": "database-resource",
+            "activeQuery": null,
+            "deadlineStage": "database-resource",
+            "deadlineQuery": "q2774"
+          },
+          "hasPrimary": true,
+          "error": {
+            "name": "TransactionStartDeadlineError",
+            "constructorName": "TransactionStartDeadlineError",
+            "code": "P2028",
+            "reportedMetaPhase": "transaction-start",
+            "reportedMaxWait": 2000,
+            "reportedTimeout": null,
+            "reportedMetaCode": null,
+            "reportedCauseCode": null,
+            "ownedStartupComposition": true,
+            "engineProvidedSubtype": null
+          }
+        },
+        {
+          "atMs": 48594.07859999999,
+          "stage": "finish-drained"
+        }
+      ],
+      "waits": [
+        {
+          "query": {
+            "atMs": 46752.99449999999,
+            "stage": "query-start",
+            "request": "edit-18",
+            "attempt": 1,
+            "sequence": 372,
+            "client": 14,
+            "kind": "coordination-1",
+            "operation": "SELECT",
+            "resource": {
+              "scope": 1,
+              "key": 40,
+              "shared": false
+            },
+            "tagApplied": true
+          },
+          "end": 48593.668099999995,
+          "elapsedMs": 1840.673600000002,
+          "observations": [
+            {
+              "atMs": 46755.6081,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "idle",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "381"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 46785.9646,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 46839.6256,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 46887.2432,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 46944.287299999996,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47019.808999999994,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47055.078499999996,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47086.954,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47135.898799999995,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47191.089199999995,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47233.2541,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47275.6718,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47309.304099999994,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47356.586599999995,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47398.9177,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47451.7115,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47501.8733,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47553.69669999999,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47595.5591,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47636.037,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47687.460699999996,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47723.259999999995,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47769.3492,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47818.5053,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47877.45589999999,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47969.0871,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48032.669799999996,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48139.428499999995,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48237.4044,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48328.65089999999,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48374.7325,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48414.9624,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48457.6853,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48508.437999999995,
+              "pid": 32268,
+              "holder": {
+                "pid": 22984,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  53116
+                ],
+                "tag": [
+                  "edit-19",
+                  "1",
+                  "386"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22984,
+                  "scope": "1",
+                  "key": "40",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "request": "edit-19",
+      "deadline": {
+        "atMs": 48574.2769,
+        "request": "edit-19",
+        "attempt": 1,
+        "stage": "deadline-before-cleanup",
+        "observed": {
+          "stage": "database-resource",
+          "activeQuery": "q2791",
+          "deadlineStage": "database-resource",
+          "deadlineQuery": "q2791"
+        },
+        "queue": []
+      },
+      "timeline": [
+        {
+          "atMs": 46559.89339999999,
+          "stage": "transaction-start"
+        },
+        {
+          "atMs": 46559.945799999994,
+          "stage": "attempt-selected"
+        },
+        {
+          "atMs": 46560.1104,
+          "stage": "checkout-start"
+        },
+        {
+          "atMs": 46699.3808,
+          "stage": "checkout-result"
+        },
+        {
+          "atMs": 48574.2769,
+          "stage": "deadline-before-cleanup",
+          "observed": {
+            "stage": "database-resource",
+            "activeQuery": "q2791",
+            "deadlineStage": "database-resource",
+            "deadlineQuery": "q2791"
+          }
+        },
+        {
+          "atMs": 48574.4381,
+          "stage": "physical-release"
+        },
+        {
+          "atMs": 48575.0127,
+          "stage": "transaction-error-before-test-cleanup",
+          "observed": {
+            "stage": "database-resource",
+            "activeQuery": "q2791",
+            "deadlineStage": "database-resource",
+            "deadlineQuery": "q2791"
+          },
+          "error": {
+            "name": "TransactionStartDeadlineError",
+            "constructorName": "TransactionStartDeadlineError",
+            "code": "P2028",
+            "reportedMetaPhase": "transaction-start",
+            "reportedMaxWait": 2000,
+            "reportedTimeout": null,
+            "reportedMetaCode": null,
+            "reportedCauseCode": null,
+            "ownedStartupComposition": true,
+            "engineProvidedSubtype": null
+          }
+        },
+        {
+          "atMs": 48595.237799999995,
+          "stage": "deadline-before-cleanup",
+          "observed": {
+            "stage": "database-resource",
+            "activeQuery": null,
+            "deadlineStage": "database-resource",
+            "deadlineQuery": "q2791"
+          }
+        },
+        {
+          "atMs": 48595.4845,
+          "stage": "finish-before-cleanup",
+          "observed": {
+            "stage": "database-resource",
+            "activeQuery": null,
+            "deadlineStage": "database-resource",
+            "deadlineQuery": "q2791"
+          },
+          "hasPrimary": true,
+          "error": {
+            "name": "TransactionStartDeadlineError",
+            "constructorName": "TransactionStartDeadlineError",
+            "code": "P2028",
+            "reportedMetaPhase": "transaction-start",
+            "reportedMaxWait": 2000,
+            "reportedTimeout": null,
+            "reportedMetaCode": null,
+            "reportedCauseCode": null,
+            "ownedStartupComposition": true,
+            "engineProvidedSubtype": null
+          }
+        },
+        {
+          "atMs": 48595.5076,
+          "stage": "finish-drained"
+        }
+      ],
+      "waits": [
+        {
+          "query": {
+            "atMs": 46757.459899999994,
+            "stage": "query-start",
+            "request": "edit-19",
+            "attempt": 1,
+            "sequence": 386,
+            "client": 13,
+            "kind": "coordination-1",
+            "operation": "SELECT",
+            "resource": {
+              "scope": 1,
+              "key": 42,
+              "shared": false
+            },
+            "tagApplied": true
+          },
+          "end": 48595.19929999999,
+          "elapsedMs": 1837.7393999999986,
+          "observations": [
+            {
+              "atMs": 46785.9646,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 46839.6256,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 46887.2432,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 46944.287299999996,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47019.808999999994,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47055.078499999996,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47086.954,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47135.898799999995,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47191.089199999995,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47233.2541,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47275.6718,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47309.304099999994,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47356.586599999995,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47398.9177,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47451.7115,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47501.8733,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47553.69669999999,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47595.5591,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47636.037,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47687.460699999996,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47723.259999999995,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47769.3492,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47818.5053,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47877.45589999999,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47969.0871,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48032.669799999996,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48139.428499999995,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  62936
+                ],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48237.4044,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "idle",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "374"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48328.65089999999,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "idle",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "1367"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48374.7325,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "idle in transaction",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "1434"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48414.9624,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "idle in transaction",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": null
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48457.6853,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "idle in transaction",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": null
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48508.437999999995,
+              "pid": 22984,
+              "holder": {
+                "pid": 53116,
+                "state": "idle",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "edit-21",
+                  "1",
+                  "1517"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 53116,
+                  "scope": "1",
+                  "key": "42",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "request": "edit-16",
+      "deadline": {
+        "atMs": 48975.7913,
+        "request": "edit-16",
+        "attempt": 1,
+        "stage": "deadline-before-cleanup",
+        "observed": {
+          "stage": "database-resource",
+          "activeQuery": "q4421",
+          "deadlineStage": "database-resource",
+          "deadlineQuery": "q4421"
+        },
+        "queue": []
+      },
+      "timeline": [
+        {
+          "atMs": 46967.0822,
+          "stage": "transaction-start"
+        },
+        {
+          "atMs": 46967.106,
+          "stage": "attempt-selected"
+        },
+        {
+          "atMs": 46967.210199999994,
+          "stage": "checkout-start"
+        },
+        {
+          "atMs": 47580.48529999999,
+          "stage": "checkout-result"
+        },
+        {
+          "atMs": 48975.7913,
+          "stage": "deadline-before-cleanup",
+          "observed": {
+            "stage": "database-resource",
+            "activeQuery": "q4421",
+            "deadlineStage": "database-resource",
+            "deadlineQuery": "q4421"
+          }
+        },
+        {
+          "atMs": 48975.924499999994,
+          "stage": "physical-release"
+        },
+        {
+          "atMs": 48976.343499999995,
+          "stage": "transaction-error-before-test-cleanup",
+          "observed": {
+            "stage": "database-resource",
+            "activeQuery": "q4421",
+            "deadlineStage": "database-resource",
+            "deadlineQuery": "q4421"
+          },
+          "error": {
+            "name": "TransactionStartDeadlineError",
+            "constructorName": "TransactionStartDeadlineError",
+            "code": "P2028",
+            "reportedMetaPhase": "transaction-start",
+            "reportedMaxWait": 2000,
+            "reportedTimeout": null,
+            "reportedMetaCode": null,
+            "reportedCauseCode": null,
+            "ownedStartupComposition": true,
+            "engineProvidedSubtype": null
+          }
+        },
+        {
+          "atMs": 48995.936299999994,
+          "stage": "deadline-before-cleanup",
+          "observed": {
+            "stage": "database-resource",
+            "activeQuery": null,
+            "deadlineStage": "database-resource",
+            "deadlineQuery": "q4421"
+          }
+        },
+        {
+          "atMs": 48996.1328,
+          "stage": "finish-before-cleanup",
+          "observed": {
+            "stage": "database-resource",
+            "activeQuery": null,
+            "deadlineStage": "database-resource",
+            "deadlineQuery": "q4421"
+          },
+          "hasPrimary": true,
+          "error": {
+            "name": "TransactionStartDeadlineError",
+            "constructorName": "TransactionStartDeadlineError",
+            "code": "P2028",
+            "reportedMetaPhase": "transaction-start",
+            "reportedMaxWait": 2000,
+            "reportedTimeout": null,
+            "reportedMetaCode": null,
+            "reportedCauseCode": null,
+            "ownedStartupComposition": true,
+            "engineProvidedSubtype": null
+          }
+        },
+        {
+          "atMs": 48996.143899999995,
+          "stage": "finish-drained"
+        }
+      ],
+      "waits": [
+        {
+          "query": {
+            "atMs": 47614.899999999994,
+            "stage": "query-start",
+            "request": "edit-16",
+            "attempt": 1,
+            "sequence": 972,
+            "client": 16,
+            "kind": "coordination-1",
+            "operation": "SELECT",
+            "resource": {
+              "scope": 1,
+              "key": 37,
+              "shared": false
+            },
+            "tagApplied": true
+          },
+          "end": 48879.7786,
+          "elapsedMs": 1264.8786000000036,
+          "observations": [
+            {
+              "atMs": 47636.037,
+              "pid": 58480,
+              "holder": {
+                "pid": 22752,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  47860
+                ],
+                "tag": [
+                  "edit-15",
+                  "1",
+                  "953"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22752,
+                  "scope": "1",
+                  "key": "37",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47687.460699999996,
+              "pid": 58480,
+              "holder": {
+                "pid": 22752,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  47860
+                ],
+                "tag": [
+                  "edit-15",
+                  "1",
+                  "953"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22752,
+                  "scope": "1",
+                  "key": "37",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47723.259999999995,
+              "pid": 58480,
+              "holder": {
+                "pid": 22752,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  47860
+                ],
+                "tag": [
+                  "edit-15",
+                  "1",
+                  "953"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22752,
+                  "scope": "1",
+                  "key": "37",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47769.3492,
+              "pid": 58480,
+              "holder": {
+                "pid": 22752,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  47860
+                ],
+                "tag": [
+                  "edit-15",
+                  "1",
+                  "953"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22752,
+                  "scope": "1",
+                  "key": "37",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47818.5053,
+              "pid": 58480,
+              "holder": {
+                "pid": 22752,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  47860
+                ],
+                "tag": [
+                  "edit-15",
+                  "1",
+                  "953"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22752,
+                  "scope": "1",
+                  "key": "37",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47877.45589999999,
+              "pid": 58480,
+              "holder": {
+                "pid": 22752,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  47860
+                ],
+                "tag": [
+                  "edit-15",
+                  "1",
+                  "953"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22752,
+                  "scope": "1",
+                  "key": "37",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 47969.0871,
+              "pid": 58480,
+              "holder": {
+                "pid": 22752,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  47860
+                ],
+                "tag": [
+                  "edit-15",
+                  "1",
+                  "953"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22752,
+                  "scope": "1",
+                  "key": "37",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48032.669799999996,
+              "pid": 58480,
+              "holder": {
+                "pid": 22752,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  47860
+                ],
+                "tag": [
+                  "edit-15",
+                  "1",
+                  "953"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22752,
+                  "scope": "1",
+                  "key": "37",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48139.428499999995,
+              "pid": 58480,
+              "holder": {
+                "pid": 22752,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  47860
+                ],
+                "tag": [
+                  "edit-15",
+                  "1",
+                  "953"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22752,
+                  "scope": "1",
+                  "key": "37",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48237.4044,
+              "pid": 58480,
+              "holder": {
+                "pid": 22752,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  47860
+                ],
+                "tag": [
+                  "edit-15",
+                  "1",
+                  "953"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22752,
+                  "scope": "1",
+                  "key": "37",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48328.65089999999,
+              "pid": 58480,
+              "holder": {
+                "pid": 22752,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  47860
+                ],
+                "tag": [
+                  "edit-15",
+                  "1",
+                  "953"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22752,
+                  "scope": "1",
+                  "key": "37",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48374.7325,
+              "pid": 58480,
+              "holder": {
+                "pid": 22752,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  47860
+                ],
+                "tag": [
+                  "edit-15",
+                  "1",
+                  "953"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22752,
+                  "scope": "1",
+                  "key": "37",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48414.9624,
+              "pid": 58480,
+              "holder": {
+                "pid": 22752,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  47860
+                ],
+                "tag": [
+                  "edit-15",
+                  "1",
+                  "953"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22752,
+                  "scope": "1",
+                  "key": "37",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48457.6853,
+              "pid": 58480,
+              "holder": {
+                "pid": 22752,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  47860
+                ],
+                "tag": [
+                  "edit-15",
+                  "1",
+                  "953"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22752,
+                  "scope": "1",
+                  "key": "37",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48508.437999999995,
+              "pid": 58480,
+              "holder": {
+                "pid": 22752,
+                "state": "active",
+                "waitType": "Lock",
+                "waitEvent": "advisory",
+                "blockers": [
+                  47860
+                ],
+                "tag": [
+                  "edit-15",
+                  "1",
+                  "953"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22752,
+                  "scope": "1",
+                  "key": "37",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48575.932799999995,
+              "pid": 58480,
+              "holder": {
+                "pid": 22752,
+                "state": "idle",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "edit-15",
+                  "1",
+                  "953"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22752,
+                  "scope": "1",
+                  "key": "37",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48630.8877,
+              "pid": 58480,
+              "holder": {
+                "pid": 22752,
+                "state": "idle",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "edit-15",
+                  "1",
+                  "1586"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22752,
+                  "scope": "1",
+                  "key": "37",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48692.568,
+              "pid": 58480,
+              "holder": {
+                "pid": 22752,
+                "state": "idle in transaction",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "edit-15",
+                  "1",
+                  "1633"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22752,
+                  "scope": "1",
+                  "key": "37",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48753.1904,
+              "pid": 58480,
+              "holder": {
+                "pid": 22752,
+                "state": "idle in transaction",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": null
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22752,
+                  "scope": "1",
+                  "key": "37",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48799.5113,
+              "pid": 58480,
+              "holder": {
+                "pid": 22752,
+                "state": "idle",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "edit-15",
+                  "1",
+                  "1701"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22752,
+                  "scope": "1",
+                  "key": "37",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            },
+            {
+              "atMs": 48857.106199999995,
+              "pid": 58480,
+              "holder": {
+                "pid": 22752,
+                "state": "idle",
+                "waitType": "Client",
+                "waitEvent": "ClientRead",
+                "blockers": [],
+                "tag": [
+                  "edit-15",
+                  "1",
+                  "1751"
+                ]
+              },
+              "matchingGranted": [
+                {
+                  "pid": 22752,
+                  "scope": "1",
+                  "key": "37",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

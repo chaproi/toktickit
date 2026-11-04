@@ -1,0 +1,14 @@
+{
+  "declaredAt": "2026-11-04T20:14:58.979774+00:00",
+  "executionHead": "57cdda549b33e29a864974f0b9ce518e1ce5ce21",
+  "question": "Does the immediately preceding real cold-upload file leave async/pool/lock/module/environment state that changes the PATCH cohort, or is observed contention internal to PATCH?",
+  "history": "Full JSON exact filenames show cold-upload completion immediately before PATCH; no overlapping file interval. Prior events have no holder identity.",
+  "execution": "Exactly one ordered two-file context experiment: unchanged cold-upload(2 cases), then unchanged PATCH assertions/cohort(1 case), with normal global setup and temporary test-only boundary/PID observers. Not standalone PATCH, T47 or full suite.",
+  "orderMechanism": "Public Vitest sequencer only; fileParallelism/isolation/default budgets unchanged.",
+  "boundaries": "Capture file worker PID, hash-only environment equality, public pool occupancy, public database activity and exact granted advisory resource facts before/after each file. No SQL/private text retained.",
+  "constraints": "No production/concurrency/fixture/pool/budget/retry/assertion changes. No interpretation of final cleanup as historical holder proof.",
+  "originalTestHashes": {
+    "server/tests/lab-04/action-patch-projection.integration.test.ts": "1f205416c31ad182065c6544d11425afd71df5ffe79759d9b43bd15c260731c2",
+    "server/tests/lab-04/attachment-cold-upload.integration.test.ts": "edb64e56e241b98ebde9693d22f41f59d1b9025d802d94b241141d2756871781"
+  }
+}

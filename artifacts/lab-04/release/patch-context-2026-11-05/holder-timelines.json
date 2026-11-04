@@ -1,0 +1,3162 @@
+{
+  "sampleChain": {
+    "atMs": 46755.6081,
+    "chain": {
+      "pid": 46888,
+      "state": "active",
+      "waitType": "Lock",
+      "waitEvent": "advisory",
+      "blockers": [
+        6064,
+        63136
+      ],
+      "tag": [
+        "edit-28",
+        "1",
+        "336"
+      ],
+      "holds": [],
+      "chain": [
+        {
+          "pid": 6064,
+          "state": "active",
+          "waitType": "Lock",
+          "waitEvent": "advisory",
+          "blockers": [
+            1652
+          ],
+          "tag": [
+            "edit-0",
+            "1",
+            "324"
+          ],
+          "holds": [
+            {
+              "pid": 6064,
+              "scope": "1",
+              "key": "21",
+              "objsubid": 2,
+              "mode": "ExclusiveLock",
+              "granted": true
+            }
+          ],
+          "chain": [
+            {
+              "pid": 1652,
+              "state": "active",
+              "waitType": "Lock",
+              "waitEvent": "advisory",
+              "blockers": [
+                31864
+              ],
+              "tag": [
+                "edit-1",
+                "1",
+                "317"
+              ],
+              "holds": [
+                {
+                  "pid": 1652,
+                  "scope": "1",
+                  "key": "22",
+                  "objsubid": 2,
+                  "mode": "ExclusiveLock",
+                  "granted": true
+                }
+              ],
+              "chain": [
+                {
+                  "pid": 31864,
+                  "state": "active",
+                  "waitType": "Lock",
+                  "waitEvent": "advisory",
+                  "blockers": [
+                    58480
+                  ],
+                  "tag": [
+                    "edit-2",
+                    "1",
+                    "330"
+                  ],
+                  "holds": [
+                    {
+                      "pid": 31864,
+                      "scope": "1",
+                      "key": "23",
+                      "objsubid": 2,
+                      "mode": "ExclusiveLock",
+                      "granted": true
+                    }
+                  ],
+                  "chain": [
+                    {
+                      "pid": 58480,
+                      "state": "active",
+                      "waitType": "Lock",
+                      "waitEvent": "advisory",
+                      "blockers": [
+                        40880
+                      ],
+                      "tag": [
+                        "edit-3",
+                        "1",
+                        "339"
+                      ],
+                      "holds": [
+                        {
+                          "pid": 58480,
+                          "scope": "1",
+                          "key": "24",
+                          "objsubid": 2,
+                          "mode": "ExclusiveLock",
+                          "granted": true
+                        }
+                      ],
+                      "chain": [
+                        {
+                          "pid": 40880,
+                          "state": "idle",
+                          "waitType": "Client",
+                          "waitEvent": "ClientRead",
+                          "blockers": [],
+                          "tag": [
+                            "edit-4",
+                            "1",
+                            "380"
+                          ],
+                          "holds": [
+                            {
+                              "pid": 40880,
+                              "scope": "1",
+                              "key": "25",
+                              "objsubid": 2,
+                              "mode": "ExclusiveLock",
+                              "granted": true
+                            },
+                            {
+                              "pid": 40880,
+                              "scope": "1",
+                              "key": "27",
+                              "objsubid": 2,
+                              "mode": "ExclusiveLock",
+                              "granted": true
+                            },
+                            {
+                              "pid": 40880,
+                              "scope": "1",
+                              "key": "26",
+                              "objsubid": 2,
+                              "mode": "ExclusiveLock",
+                              "granted": true
+                            }
+                          ],
+                          "chain": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "pid": 63136,
+          "state": "active",
+          "waitType": "Lock",
+          "waitEvent": "advisory",
+          "blockers": [
+            6064
+          ],
+          "tag": [
+            "edit-29",
+            "1",
+            "334"
+          ],
+          "holds": [],
+          "chain": [
+            {
+              "pid": 6064,
+              "referenceToPreviouslyShownPid": true
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "holders": [
+    {
+      "request": "edit-0",
+      "events": [
+        {
+          "atMs": 46318.21309999999,
+          "request": "edit-0",
+          "attempt": 1,
+          "stage": "attempt-selected",
+          "maxWait": 2000
+        },
+        {
+          "atMs": 46318.4326,
+          "request": "edit-0",
+          "attempt": 1,
+          "stage": "checkout-start",
+          "total": 17,
+          "idle": 0,
+          "waiting": 31
+        },
+        {
+          "atMs": 46557.8039,
+          "request": "edit-0",
+          "attempt": 1,
+          "stage": "checkout-result",
+          "total": 17,
+          "idle": 0,
+          "waiting": 31
+        },
+        {
+          "atMs": 47570.5401,
+          "request": "edit-0",
+          "attempt": 1,
+          "stage": "callback-entry"
+        },
+        {
+          "atMs": 47710.3676,
+          "request": "edit-0",
+          "attempt": 1,
+          "stage": "callback-exit"
+        },
+        {
+          "atMs": 47716.308399999994,
+          "request": "edit-0",
+          "attempt": 1,
+          "stage": "finish-before-cleanup",
+          "observed": {
+            "stage": "commit",
+            "activeQuery": null
+          },
+          "hasPrimary": false,
+          "error": null
+        },
+        {
+          "atMs": 47778.371,
+          "request": "edit-0",
+          "attempt": 1,
+          "stage": "physical-release",
+          "total": 17,
+          "idle": 0,
+          "waiting": 32
+        },
+        {
+          "atMs": 47778.71309999999,
+          "request": "edit-0",
+          "attempt": 1,
+          "stage": "finish-drained"
+        },
+        {
+          "atMs": 47778.740099999995,
+          "request": "edit-0",
+          "attempt": 1,
+          "stage": "transaction-result"
+        }
+      ],
+      "coordinationQueries": [
+        {
+          "stage": "query-start",
+          "atMs": 46635.623999999996,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46659.980899999995,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46683.200999999994,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 21,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46701.192299999995,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 21,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46728.491599999994,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 22,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47510.5827,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 22,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47519.280699999996,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 23,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47526.2475,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 23,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47536.1046,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2021,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47541.3777,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2021,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47554.0447,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8001,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47558.94639999999,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8001,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47563.209899999994,
+          "kind": "metadata",
+          "operation": "BEGIN"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47567.3776,
+          "kind": "metadata",
+          "operation": "BEGIN"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47710.4307,
+          "kind": "metadata",
+          "operation": "COMMIT"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47716.223999999995,
+          "kind": "metadata",
+          "operation": "COMMIT"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47716.343199999996,
+          "kind": "metadata",
+          "operation": "ROLLBACK"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47723.4825,
+          "kind": "metadata",
+          "operation": "ROLLBACK"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47729.595199999996,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8001,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47731.7869,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8001,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47731.81219999999,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2021,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47736.4252,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2021,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47736.4424,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 23,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47746.1515,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 23,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47746.175299999995,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 22,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47756.5098,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 22,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47756.535899999995,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 21,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47770.36749999999,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 21,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47770.391299999996,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47778.331999999995,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        }
+      ]
+    },
+    {
+      "request": "edit-1",
+      "events": [
+        {
+          "atMs": 46319.43459999999,
+          "request": "edit-1",
+          "attempt": 1,
+          "stage": "attempt-selected",
+          "maxWait": 2000
+        },
+        {
+          "atMs": 46319.6121,
+          "request": "edit-1",
+          "attempt": 1,
+          "stage": "checkout-start",
+          "total": 17,
+          "idle": 0,
+          "waiting": 31
+        },
+        {
+          "atMs": 46559.2656,
+          "request": "edit-1",
+          "attempt": 1,
+          "stage": "checkout-result",
+          "total": 17,
+          "idle": 0,
+          "waiting": 31
+        },
+        {
+          "atMs": 47295.480899999995,
+          "request": "edit-1",
+          "attempt": 1,
+          "stage": "callback-entry"
+        },
+        {
+          "atMs": 47441.674999999996,
+          "request": "edit-1",
+          "attempt": 1,
+          "stage": "callback-exit"
+        },
+        {
+          "atMs": 47452.0634,
+          "request": "edit-1",
+          "attempt": 1,
+          "stage": "finish-before-cleanup",
+          "observed": {
+            "stage": "commit",
+            "activeQuery": null
+          },
+          "hasPrimary": false,
+          "error": null
+        },
+        {
+          "atMs": 47515.2178,
+          "request": "edit-1",
+          "attempt": 1,
+          "stage": "physical-release",
+          "total": 17,
+          "idle": 0,
+          "waiting": 31
+        },
+        {
+          "atMs": 47515.29749999999,
+          "request": "edit-1",
+          "attempt": 1,
+          "stage": "finish-drained"
+        },
+        {
+          "atMs": 47515.586599999995,
+          "request": "edit-1",
+          "attempt": 1,
+          "stage": "transaction-result"
+        }
+      ],
+      "coordinationQueries": [
+        {
+          "stage": "query-start",
+          "atMs": 46636.0974,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46660.4503,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46675.8152,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 22,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46696.948,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 22,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46724.986899999996,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 23,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47251.810999999994,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 23,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47259.726899999994,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 24,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47265.3235,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 24,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47271.998999999996,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2022,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47273.8051,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2022,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47276.2812,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8002,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47281.349799999996,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8002,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47285.4695,
+          "kind": "metadata",
+          "operation": "BEGIN"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47289.5223,
+          "kind": "metadata",
+          "operation": "BEGIN"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47441.8517,
+          "kind": "metadata",
+          "operation": "COMMIT"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47451.955599999994,
+          "kind": "metadata",
+          "operation": "COMMIT"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47452.09789999999,
+          "kind": "metadata",
+          "operation": "ROLLBACK"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47460.104199999994,
+          "kind": "metadata",
+          "operation": "ROLLBACK"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47469.5551,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8002,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47477.9701,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8002,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47478.0072,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2022,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47483.3295,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2022,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47483.3612,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 24,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47491.81449999999,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 24,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47491.853299999995,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 23,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47498.670999999995,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 23,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47498.689699999995,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 22,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47509.977,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 22,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47510.0133,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47515.1784,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        }
+      ]
+    },
+    {
+      "request": "edit-2",
+      "events": [
+        {
+          "atMs": 46320.795699999995,
+          "request": "edit-2",
+          "attempt": 1,
+          "stage": "attempt-selected",
+          "maxWait": 2000
+        },
+        {
+          "atMs": 46320.979199999994,
+          "request": "edit-2",
+          "attempt": 1,
+          "stage": "checkout-start",
+          "total": 17,
+          "idle": 0,
+          "waiting": 31
+        },
+        {
+          "atMs": 46561.969099999995,
+          "request": "edit-2",
+          "attempt": 1,
+          "stage": "checkout-result",
+          "total": 17,
+          "idle": 0,
+          "waiting": 31
+        },
+        {
+          "atMs": 47076.48009999999,
+          "request": "edit-2",
+          "attempt": 1,
+          "stage": "callback-entry"
+        },
+        {
+          "atMs": 47182.576499999996,
+          "request": "edit-2",
+          "attempt": 1,
+          "stage": "callback-exit"
+        },
+        {
+          "atMs": 47192.2313,
+          "request": "edit-2",
+          "attempt": 1,
+          "stage": "finish-before-cleanup",
+          "observed": {
+            "stage": "commit",
+            "activeQuery": null
+          },
+          "hasPrimary": false,
+          "error": null
+        },
+        {
+          "atMs": 47258.6674,
+          "request": "edit-2",
+          "attempt": 1,
+          "stage": "physical-release",
+          "total": 17,
+          "idle": 0,
+          "waiting": 32
+        },
+        {
+          "atMs": 47258.752799999995,
+          "request": "edit-2",
+          "attempt": 1,
+          "stage": "finish-drained"
+        },
+        {
+          "atMs": 47259.0231,
+          "request": "edit-2",
+          "attempt": 1,
+          "stage": "transaction-result"
+        }
+      ],
+      "coordinationQueries": [
+        {
+          "stage": "query-start",
+          "atMs": 46645.4617,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46670.16559999999,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46690.2437,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 23,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46709.878399999994,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 23,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46730.933999999994,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 24,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47048.2958,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 24,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47055.21079999999,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 25,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47058.482099999994,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 25,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47063.219999999994,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2023,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47065.09299999999,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2023,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47067.301,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8003,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47069.8342,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8003,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47071.0179,
+          "kind": "metadata",
+          "operation": "BEGIN"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47073.581399999995,
+          "kind": "metadata",
+          "operation": "BEGIN"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47182.674399999996,
+          "kind": "metadata",
+          "operation": "COMMIT"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47192.178799999994,
+          "kind": "metadata",
+          "operation": "COMMIT"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47192.2639,
+          "kind": "metadata",
+          "operation": "ROLLBACK"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47199.1948,
+          "kind": "metadata",
+          "operation": "ROLLBACK"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47203.616599999994,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8003,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47212.455799999996,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8003,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47212.496,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2023,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47221.5511,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2023,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47221.7654,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 25,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47232.758799999996,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 25,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47232.807499999995,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 24,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47246.4666,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 24,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47246.520599999996,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 23,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47250.944899999995,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 23,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47251.001099999994,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47258.627799999995,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        }
+      ]
+    },
+    {
+      "request": "edit-3",
+      "events": [
+        {
+          "atMs": 46321.6637,
+          "request": "edit-3",
+          "attempt": 1,
+          "stage": "attempt-selected",
+          "maxWait": 2000
+        },
+        {
+          "atMs": 46321.830299999994,
+          "request": "edit-3",
+          "attempt": 1,
+          "stage": "checkout-start",
+          "total": 17,
+          "idle": 0,
+          "waiting": 31
+        },
+        {
+          "atMs": 46564.504199999996,
+          "request": "edit-3",
+          "attempt": 1,
+          "stage": "checkout-result",
+          "total": 17,
+          "idle": 0,
+          "waiting": 30
+        },
+        {
+          "atMs": 46926.508799999996,
+          "request": "edit-3",
+          "attempt": 1,
+          "stage": "callback-entry"
+        },
+        {
+          "atMs": 47037.143,
+          "request": "edit-3",
+          "attempt": 1,
+          "stage": "callback-exit"
+        },
+        {
+          "atMs": 47038.9825,
+          "request": "edit-3",
+          "attempt": 1,
+          "stage": "finish-before-cleanup",
+          "observed": {
+            "stage": "commit",
+            "activeQuery": null
+          },
+          "hasPrimary": false,
+          "error": null
+        },
+        {
+          "atMs": 47050.2149,
+          "request": "edit-3",
+          "attempt": 1,
+          "stage": "physical-release",
+          "total": 17,
+          "idle": 0,
+          "waiting": 32
+        },
+        {
+          "atMs": 47050.279899999994,
+          "request": "edit-3",
+          "attempt": 1,
+          "stage": "finish-drained"
+        },
+        {
+          "atMs": 47050.492399999996,
+          "request": "edit-3",
+          "attempt": 1,
+          "stage": "transaction-result"
+        }
+      ],
+      "coordinationQueries": [
+        {
+          "stage": "query-start",
+          "atMs": 46659.439099999996,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46682.0677,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46700.8203,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 24,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46728.05699999999,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 24,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46736.612799999995,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 25,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46848.4655,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 25,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46872.5833,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 26,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46887.525499999996,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 26,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46893.0102,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2024,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46914.395899999996,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2024,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46917.7019,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8004,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46919.4295,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8004,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46922.7014,
+          "kind": "metadata",
+          "operation": "BEGIN"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46923.981799999994,
+          "kind": "metadata",
+          "operation": "BEGIN"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47037.1815,
+          "kind": "metadata",
+          "operation": "COMMIT"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47038.9226,
+          "kind": "metadata",
+          "operation": "COMMIT"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47038.9995,
+          "kind": "metadata",
+          "operation": "ROLLBACK"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47039.56189999999,
+          "kind": "metadata",
+          "operation": "ROLLBACK"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47039.9816,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8004,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47040.792199999996,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8004,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47040.814999999995,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2024,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47043.933399999994,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2024,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47043.953199999996,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 26,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47044.488,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 26,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47044.5156,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 25,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47047.3549,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 25,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47047.38,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 24,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47048.0295,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 24,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47048.0424,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47050.18429999999,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        }
+      ]
+    },
+    {
+      "request": "edit-29",
+      "events": [
+        {
+          "atMs": 46521.2838,
+          "request": "edit-29",
+          "attempt": 1,
+          "stage": "attempt-selected",
+          "maxWait": 2000
+        },
+        {
+          "atMs": 46521.4013,
+          "request": "edit-29",
+          "attempt": 1,
+          "stage": "checkout-start",
+          "total": 17,
+          "idle": 0,
+          "waiting": 31
+        },
+        {
+          "atMs": 46654.7437,
+          "request": "edit-29",
+          "attempt": 1,
+          "stage": "checkout-result",
+          "total": 17,
+          "idle": 0,
+          "waiting": 27
+        },
+        {
+          "atMs": 47939.3737,
+          "request": "edit-29",
+          "attempt": 1,
+          "stage": "callback-entry"
+        },
+        {
+          "atMs": 48162.337999999996,
+          "request": "edit-29",
+          "attempt": 1,
+          "stage": "callback-exit"
+        },
+        {
+          "atMs": 48192.493599999994,
+          "request": "edit-29",
+          "attempt": 1,
+          "stage": "finish-before-cleanup",
+          "observed": {
+            "stage": "commit",
+            "activeQuery": null
+          },
+          "hasPrimary": false,
+          "error": null
+        },
+        {
+          "atMs": 48359.051999999996,
+          "request": "edit-29",
+          "attempt": 1,
+          "stage": "physical-release",
+          "total": 17,
+          "idle": 0,
+          "waiting": 40
+        },
+        {
+          "atMs": 48359.122299999995,
+          "request": "edit-29",
+          "attempt": 1,
+          "stage": "finish-drained"
+        },
+        {
+          "atMs": 48359.364799999996,
+          "request": "edit-29",
+          "attempt": 1,
+          "stage": "transaction-result"
+        }
+      ],
+      "coordinationQueries": [
+        {
+          "stage": "query-start",
+          "atMs": 46697.96599999999,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46725.6737,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46732.155099999996,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 21,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47770.7595,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 21,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47779.4958,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 22,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47794.5542,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 22,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47806.8881,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 50,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47820.599299999994,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 50,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47828.3846,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2050,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47841.528699999995,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2050,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47865.4638,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8030,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47883.251,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8030,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 47900.7415,
+          "kind": "metadata",
+          "operation": "BEGIN"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 47920.1245,
+          "kind": "metadata",
+          "operation": "BEGIN"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48162.41269999999,
+          "kind": "metadata",
+          "operation": "COMMIT"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48192.3693,
+          "kind": "metadata",
+          "operation": "COMMIT"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48192.5249,
+          "kind": "metadata",
+          "operation": "ROLLBACK"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48243.76639999999,
+          "kind": "metadata",
+          "operation": "ROLLBACK"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48263.488099999995,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8030,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48290.0939,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8030,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48290.1089,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2050,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48332.2207,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2050,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48332.23499999999,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 50,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48339.5923,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 50,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48339.607599999996,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 22,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48348.544299999994,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 22,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48348.5836,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 21,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48354.758599999994,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 21,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48354.778699999995,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48359.0176,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        }
+      ]
+    },
+    {
+      "request": "edit-27",
+      "events": [
+        {
+          "atMs": 46533.3143,
+          "request": "edit-27",
+          "attempt": 1,
+          "stage": "attempt-selected",
+          "maxWait": 2000
+        },
+        {
+          "atMs": 46533.502499999995,
+          "request": "edit-27",
+          "attempt": 1,
+          "stage": "checkout-start",
+          "total": 17,
+          "idle": 0,
+          "waiting": 31
+        },
+        {
+          "atMs": 46671.4617,
+          "request": "edit-27",
+          "attempt": 1,
+          "stage": "checkout-result",
+          "total": 17,
+          "idle": 0,
+          "waiting": 27
+        },
+        {
+          "atMs": 46770.0444,
+          "request": "edit-27",
+          "attempt": 1,
+          "stage": "callback-entry"
+        },
+        {
+          "atMs": 46849.0841,
+          "request": "edit-27",
+          "attempt": 1,
+          "stage": "callback-exit"
+        },
+        {
+          "atMs": 46877.5681,
+          "request": "edit-27",
+          "attempt": 1,
+          "stage": "finish-before-cleanup",
+          "observed": {
+            "stage": "commit",
+            "activeQuery": null
+          },
+          "hasPrimary": false,
+          "error": null
+        },
+        {
+          "atMs": 46928.121999999996,
+          "request": "edit-27",
+          "attempt": 1,
+          "stage": "physical-release",
+          "total": 17,
+          "idle": 0,
+          "waiting": 32
+        },
+        {
+          "atMs": 46928.4194,
+          "request": "edit-27",
+          "attempt": 1,
+          "stage": "finish-drained"
+        },
+        {
+          "atMs": 46928.4381,
+          "request": "edit-27",
+          "attempt": 1,
+          "stage": "transaction-result"
+        }
+      ],
+      "coordinationQueries": [
+        {
+          "stage": "query-start",
+          "atMs": 46730.583399999996,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46739.5707,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46744.370599999995,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 48,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46750.407499999994,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 48,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46753.715,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 49,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46755.373999999996,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 49,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46756.483799999995,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 50,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46757.217899999996,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 50,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46757.9347,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2048,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46759.7308,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2048,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46763.378099999994,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8028,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46765.60969999999,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8028,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46768.0096,
+          "kind": "metadata",
+          "operation": "BEGIN"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46769.175299999995,
+          "kind": "metadata",
+          "operation": "BEGIN"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46849.1951,
+          "kind": "metadata",
+          "operation": "COMMIT"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46877.448399999994,
+          "kind": "metadata",
+          "operation": "COMMIT"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46877.6118,
+          "kind": "metadata",
+          "operation": "ROLLBACK"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46891.1044,
+          "kind": "metadata",
+          "operation": "ROLLBACK"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46893.500499999995,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8028,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46914.845799999996,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8028,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46914.876899999996,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2048,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46918.061799999996,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2048,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46918.08839999999,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 50,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46919.8203,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 50,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46919.8483,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 49,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46923.015199999994,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 49,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46923.0421,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 48,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46924.2233,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 48,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46924.2397,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46928.089499999995,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        }
+      ]
+    },
+    {
+      "request": "start-27",
+      "events": [
+        {
+          "atMs": 48199.618899999994,
+          "request": "start-27",
+          "attempt": 1,
+          "stage": "attempt-selected",
+          "maxWait": 2000
+        },
+        {
+          "atMs": 48200.044599999994,
+          "request": "start-27",
+          "attempt": 1,
+          "stage": "checkout-start",
+          "total": 17,
+          "idle": 0,
+          "waiting": 30
+        },
+        {
+          "atMs": 48274.3745,
+          "request": "start-27",
+          "attempt": 1,
+          "stage": "checkout-result",
+          "total": 17,
+          "idle": 0,
+          "waiting": 34
+        },
+        {
+          "atMs": 48402.7921,
+          "request": "start-27",
+          "attempt": 1,
+          "stage": "callback-entry"
+        },
+        {
+          "atMs": 48516.601299999995,
+          "request": "start-27",
+          "attempt": 1,
+          "stage": "callback-exit"
+        },
+        {
+          "atMs": 48530.304299999996,
+          "request": "start-27",
+          "attempt": 1,
+          "stage": "finish-before-cleanup",
+          "observed": {
+            "stage": "commit",
+            "activeQuery": null
+          },
+          "hasPrimary": false,
+          "error": null
+        },
+        {
+          "atMs": 48625.864799999996,
+          "request": "start-27",
+          "attempt": 1,
+          "stage": "physical-release",
+          "total": 17,
+          "idle": 0,
+          "waiting": 33
+        },
+        {
+          "atMs": 48625.923899999994,
+          "request": "start-27",
+          "attempt": 1,
+          "stage": "finish-drained"
+        },
+        {
+          "atMs": 48626.131199999996,
+          "request": "start-27",
+          "attempt": 1,
+          "stage": "transaction-result"
+        }
+      ],
+      "coordinationQueries": [
+        {
+          "stage": "query-start",
+          "atMs": 48332.7287,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48340.376599999996,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48349.686499999996,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 48,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48355.5805,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 48,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48360.637899999994,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 50,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48366.5565,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 50,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48373.670999999995,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2048,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48379.643299999996,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2048,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48384.505399999995,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8028,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48391.1954,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8028,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48395.5222,
+          "kind": "metadata",
+          "operation": "BEGIN"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48398.8561,
+          "kind": "metadata",
+          "operation": "BEGIN"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48516.707299999995,
+          "kind": "metadata",
+          "operation": "COMMIT"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48530.182199999996,
+          "kind": "metadata",
+          "operation": "COMMIT"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48530.374299999996,
+          "kind": "metadata",
+          "operation": "ROLLBACK"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48545.1761,
+          "kind": "metadata",
+          "operation": "ROLLBACK"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48553.332599999994,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8028,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48559.95619999999,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8028,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48559.983499999995,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2048,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48584.737199999996,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2048,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48584.7601,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 50,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48605.07169999999,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 50,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48605.111899999996,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 48,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48613.4641,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 48,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48613.495899999994,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48625.839799999994,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        }
+      ]
+    },
+    {
+      "request": "edit-21",
+      "events": [
+        {
+          "atMs": 46555.7198,
+          "request": "edit-21",
+          "attempt": 1,
+          "stage": "attempt-selected",
+          "maxWait": 2000
+        },
+        {
+          "atMs": 46556.046299999995,
+          "request": "edit-21",
+          "attempt": 1,
+          "stage": "checkout-start",
+          "total": 17,
+          "idle": 0,
+          "waiting": 31
+        },
+        {
+          "atMs": 46672.108199999995,
+          "request": "edit-21",
+          "attempt": 1,
+          "stage": "checkout-result",
+          "total": 17,
+          "idle": 0,
+          "waiting": 26
+        },
+        {
+          "atMs": 48376.711299999995,
+          "request": "edit-21",
+          "attempt": 1,
+          "stage": "callback-entry"
+        },
+        {
+          "atMs": 48491.1012,
+          "request": "edit-21",
+          "attempt": 1,
+          "stage": "callback-exit"
+        },
+        {
+          "atMs": 48500.0311,
+          "request": "edit-21",
+          "attempt": 1,
+          "stage": "finish-before-cleanup",
+          "observed": {
+            "stage": "commit",
+            "activeQuery": null
+          },
+          "hasPrimary": false,
+          "error": null
+        },
+        {
+          "atMs": 48596.084599999995,
+          "request": "edit-21",
+          "attempt": 1,
+          "stage": "physical-release",
+          "total": 17,
+          "idle": 0,
+          "waiting": 32
+        },
+        {
+          "atMs": 48596.1585,
+          "request": "edit-21",
+          "attempt": 1,
+          "stage": "finish-drained"
+        },
+        {
+          "atMs": 48596.5018,
+          "request": "edit-21",
+          "attempt": 1,
+          "stage": "transaction-result"
+        }
+      ],
+      "coordinationQueries": [
+        {
+          "stage": "query-start",
+          "atMs": 46729.8097,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46738.513499999994,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46743.984899999996,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 42,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 46750.0314,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 42,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 46753.454399999995,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 43,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48262.6875,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 43,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48289.571099999994,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 44,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48330.5185,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 44,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48338.1011,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2042,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48343.4102,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2042,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48353.8097,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8022,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48357.967399999994,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8022,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48362.4088,
+          "kind": "metadata",
+          "operation": "BEGIN"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48368.5942,
+          "kind": "metadata",
+          "operation": "BEGIN"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48491.219999999994,
+          "kind": "metadata",
+          "operation": "COMMIT"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48499.96599999999,
+          "kind": "metadata",
+          "operation": "COMMIT"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48500.059499999996,
+          "kind": "metadata",
+          "operation": "ROLLBACK"
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48508.7483,
+          "kind": "metadata",
+          "operation": "ROLLBACK"
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48515.969999999994,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8022,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48528.2241,
+          "kind": "coordination-3",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 3,
+            "key": 8022,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48528.256299999994,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2042,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48541.6677,
+          "kind": "coordination-2",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 2,
+            "key": 2042,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48541.7017,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 44,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48549.921899999994,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 44,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48549.953199999996,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 43,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48555.6245,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 43,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48555.6573,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 42,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48578.779299999995,
+          "kind": "coordination-1",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1,
+            "key": 42,
+            "shared": false
+          }
+        },
+        {
+          "stage": "query-start",
+          "atMs": 48578.8229,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        },
+        {
+          "stage": "query-end",
+          "atMs": 48596.046599999994,
+          "kind": "coordination-1001",
+          "operation": "SELECT",
+          "resource": {
+            "scope": 1001,
+            "key": 1714352,
+            "shared": true
+          }
+        }
+      ]
+    }
+  ],
+  "graphQualification": "Repeated PID subgraphs reference an earlier node; this marker is not evidence of a directed deadlock cycle."
+}

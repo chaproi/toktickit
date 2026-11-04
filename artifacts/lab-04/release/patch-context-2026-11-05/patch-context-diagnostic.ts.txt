@@ -1,0 +1,69 @@
+import { beforeAll, afterAll, expect } from "vitest";
+import { Client, type Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { createHash, randomUUID } from "node:crypto";
+import { writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { verifiedTestTarget } from "./migration-test-fixtures.js";
+
+const directory = process.env.TOKTICKIT_PATCH_CONTEXT_DIRECTORY!;
+if (!directory) throw new Error("Diagnostic output ownership missing.");
+const id = randomUUID(), epoch = performance.now(), entry = { ...process.env };
+const keys = ["DATABASE_URL", "TEST_DATABASE_URL", "TOKTICKIT_DEVELOPMENT_DATABASE_URL", "NODE_ENV",
+  "SEAWEEDFS_S3_ENDPOINT", "SEAWEEDFS_BUCKET", "SEAWEEDFS_ACCESS_KEY", "SEAWEEDFS_SECRET_KEY"];
+const digest = (value: unknown) => createHash("sha256").update(JSON.stringify(value)).digest("hex");
+const report: Record<string, any> = { workerPid: process.pid, workerId: process.env.VITEST_WORKER_ID,
+  events: [], pools: [], environmentRestored: null, file: null };
+const pools: Pool[] = [];
+const original = PrismaPg.prototype.connect;
+const safe = (e: any) => ({ name: typeof e?.name === "string" && /^[A-Za-z0-9_]{1,80}$/.test(e.name) ? e.name : null,
+  code: typeof e?.code === "string" && /^(P\d{4}|[A-Z0-9]{5})$/.test(e.code) ? e.code : null });
+const record = (stage: string, extra: Record<string, unknown> = {}) => report.events.push({ atMs: performance.now() - epoch, stage, ...extra });
+const occupancy = () => pools.map((p, i) => ({ id: i + 1, total: p.totalCount, idle: p.idleCount, waiting: p.waitingCount }));
+const wrapped = async function(this: PrismaPg) {
+  const adapter = await original.call(this), pool = adapter.underlyingDriver();
+  pools.push(pool); const number = pools.length;
+  for (const stage of ["connect", "acquire", "release", "remove", "error"] as const) {
+    pool.on(stage as "connect", (...args: unknown[]) => record("pool-" + stage, { pool: number, occupancy: occupancy(),
+      ...(stage === "error" ? { error: safe(args[0]) } : {}) }));
+  }
+  return adapter;
+};
+PrismaPg.prototype.connect = wrapped;
+
+async function boundary(stage: string) {
+  const target = verifiedTestTarget(), native = new Client({ connectionString: target.databaseUrl });
+  try {
+    await native.connect();
+    const live = (await native.query("SELECT current_database() AS database,current_schema() AS schema")).rows[0];
+    expect(live.database === target.identity.databaseName && live.schema === target.identity.schema, "Guarded live boundary; values withheld").toBe(true);
+    const activity = (await native.query(`SELECT pid,state,wait_event_type AS "waitType",wait_event AS "waitEvent",
+      pg_blocking_pids(pid) AS blockers FROM pg_stat_activity WHERE datname=current_database() AND pid<>pg_backend_pid()`)).rows;
+    const locks = (await native.query(`SELECT pid,classid::bigint::text AS scope,objid::bigint::text AS key,mode,granted
+      FROM pg_locks WHERE locktype='advisory' AND database=(SELECT oid FROM pg_database WHERE datname=current_database())`)).rows;
+    record(stage, { activity, locks, occupancy: occupancy(), guardMatched: true });
+    return { activity, locks };
+  } finally { await native.end(); }
+}
+beforeAll(async () => {
+  report.file = expect.getState().testPath?.split(/[\\/]/).at(-1);
+  report.startedAt = new Date().toISOString();
+  await boundary("file-before");
+});
+afterAll(async () => {
+  try {
+    const observed = await boundary("file-after");
+    report.environmentRestored = keys.every(k => process.env[k] === entry[k]);
+    report.environmentDigestEqual = digest(keys.map(k => process.env[k])) === digest(keys.map(k => entry[k]));
+    report.pools = occupancy();
+    expect(report.environmentRestored, "Original per-file scoped environment restored").toBe(true);
+    expect(observed.activity, "No surviving connection at file boundary").toEqual([]);
+    expect(observed.locks, "No surviving database advisory lock at file boundary").toEqual([]);
+    expect(report.pools.every((p: any) => p.total === 0 && p.waiting === 0), "Public pools ended/drained").toBe(true);
+  } finally {
+    report.finishedAt = new Date().toISOString();
+    if (PrismaPg.prototype.connect === wrapped) PrismaPg.prototype.connect = original;
+    report.prototypeRestored = PrismaPg.prototype.connect === original;
+    writeFileSync(join(directory, "boundary-" + id + ".json"), JSON.stringify(report, null, 2) + "\n", { flag: "wx" });
+  }
+});

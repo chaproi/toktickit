@@ -1,0 +1,49 @@
+{
+  "command": "npm.cmd test -- tests/lab-04/attachment-cold-upload.integration.test.ts tests/lab-04/action-patch-projection.integration.test.ts --config vitest.patch-context.config.ts --reporter=default --reporter=json --outputFile=<private-context-directory>\\context-vitest.json",
+  "head": "57cdda549b33e29a864974f0b9ce518e1ce5ce21",
+  "source": "unchanged production plus temporary context sequencer/boundary/PID instrumentation; accepted legacy harness retained",
+  "startedAt": "2026-11-04T20:17:39.508324+00:00",
+  "runnerPid": 23072,
+  "events": [
+    {
+      "event": "start",
+      "atMs": 0.002700020559132099
+    },
+    {
+      "event": "spawn",
+      "atMs": 13.659400021424517
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 3014.4697000214364,
+      "logBytes": 480
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 6016.813299997011,
+      "logBytes": 958
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 9019.192000007024,
+      "logBytes": 6755
+    },
+    {
+      "event": "exit",
+      "atMs": 9020.340300019598,
+      "code": 1
+    },
+    {
+      "event": "finished",
+      "atMs": 9021.673700015526
+    }
+  ],
+  "signals": [],
+  "outerSafetySeconds": 300,
+  "outputMode": "direct binary logfile, no maxBuffer",
+  "childPid": 44908,
+  "exitCode": 1,
+  "elapsedSeconds": 9.021642800013069,
+  "finishedAt": "2026-11-04T20:17:48.530025+00:00",
+  "childStillRunning": false
+}

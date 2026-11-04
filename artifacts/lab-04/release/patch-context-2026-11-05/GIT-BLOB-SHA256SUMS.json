@@ -1,0 +1,129 @@
+{
+  "scope": "Canonical staged Git blobs; separate SHA256SUMS.json preserves capture/export bytes before Git CRLF normalization. Self excluded.",
+  "files": [
+    {
+      "path": "SHA256SUMS.json",
+      "gitBlobSha256": "fc0c5748954d1b92162682a0d4442983d8518694f20a9ae7902dcc2e9be6a5ea"
+    },
+    {
+      "path": "after-server-isolation-cleanup.json",
+      "gitBlobSha256": "fa0c888c897e0ffaeb017c815f9bcd25148d4501701530ef043ab971ec3091f0"
+    },
+    {
+      "path": "after-setup-only-isolation-cleanup.json",
+      "gitBlobSha256": "c0c1420544e76b6b93d0e0aeb86e9cc2bd2f7874aedb6575aa06e4fac1e5c067"
+    },
+    {
+      "path": "analysis.json",
+      "gitBlobSha256": "c54a1b50d2fcc3567efbdb901465b79eca54062287d164b05e300ebb4a3c3fc5"
+    },
+    {
+      "path": "before-isolation-cleanup.json",
+      "gitBlobSha256": "23fa8985f47190fc9e5581fe80c53d483739519d16376672c5c22d5582130537"
+    },
+    {
+      "path": "boundary-06951823-02b0-41b2-aefc-67578b3f5c7d.json",
+      "gitBlobSha256": "d9bc1e17d5a23c1b929cd4d7f940b75235ae33f62177cb6f982cd1b2ae4dcd39"
+    },
+    {
+      "path": "boundary-e44ff8da-aa25-4d56-80b4-9f2ce4b482fa.json",
+      "gitBlobSha256": "73e450ce01b2e91d67a4343f77784524826bb38d59228ec31255fdfdf49b68f7"
+    },
+    {
+      "path": "context-confirm-journal.json",
+      "gitBlobSha256": "6964ca4940b00699bddf3ec436b7088b7e47608b3a7749683a1a016151f961fb"
+    },
+    {
+      "path": "context-confirm-raw.log",
+      "gitBlobSha256": "be50a9fb1018b88c65132f5c53270b24f28d05cc5eb92cc05361ef98608389e4"
+    },
+    {
+      "path": "context-confirm-result.json",
+      "gitBlobSha256": "6964ca4940b00699bddf3ec436b7088b7e47608b3a7749683a1a016151f961fb"
+    },
+    {
+      "path": "context-confirm-vitest.json",
+      "gitBlobSha256": "4553186d740351ca0e312591b6afe669b62b004360916d9fa6e3e671cb81936f"
+    },
+    {
+      "path": "context-journal.json",
+      "gitBlobSha256": "44fefe2be41d12cb61889bbacfd44b371faf57aaa6bc1e3693c4f1ff93039964"
+    },
+    {
+      "path": "context-raw.log",
+      "gitBlobSha256": "635875054303d1603914e57685f6e2ab3ffde2388ca59268e4d98c3c3e15ecc2"
+    },
+    {
+      "path": "context-result.json",
+      "gitBlobSha256": "44fefe2be41d12cb61889bbacfd44b371faf57aaa6bc1e3693c4f1ff93039964"
+    },
+    {
+      "path": "context-vitest.json",
+      "gitBlobSha256": "f05e053d1b094139736937a03f16b44b39766554f4ea031dc66cae999c180173"
+    },
+    {
+      "path": "counts.json",
+      "gitBlobSha256": "702ed00b10128e115b715fa483fb8fdc42ecd1fde4225086775ca0719203ef89"
+    },
+    {
+      "path": "evidence.md",
+      "gitBlobSha256": "378e7b2db65757735b2ed9a4a2b8ddbcaa2311c8e2efdefd8379c7f4a991ef97"
+    },
+    {
+      "path": "holder-timelines.json",
+      "gitBlobSha256": "b5a7da07824b8440c82f1c26e35d68e453962510482c9a1921afbe74ba014d62"
+    },
+    {
+      "path": "patch-blocking-diagnostic.ts.txt",
+      "gitBlobSha256": "ec483fc0936f41f9ffd1db55473358312e4f29d4bc80909d8f69912bae053b65"
+    },
+    {
+      "path": "patch-chain-phases-2026-11-04-66d7593f.json",
+      "gitBlobSha256": "9a7646607b7146080c0cc7652307f51ec72835d7ee5357413131f05aff9d391e"
+    },
+    {
+      "path": "patch-context-diagnostic.ts.txt",
+      "gitBlobSha256": "8a18e48eac814dd7bcc1cf40b796af13ae5bc11ab4e17c2b2c2157180d41203f"
+    },
+    {
+      "path": "patch-context-sequencer.ts.txt",
+      "gitBlobSha256": "b90da9facfbf0a74c4e24a6399c5f04802bfec848e0465e02d14a3c4b5a3c8ef"
+    },
+    {
+      "path": "prospective-plan.json",
+      "gitBlobSha256": "d74d026a8f09f03ca36a3a68202828fe707af9bca23ba10b4cd342bb849948ce"
+    },
+    {
+      "path": "runner.py.txt",
+      "gitBlobSha256": "05456bb4a19c225c76a1b96227e54b4299ac8e272b206e26cda2325e4e6185c4"
+    },
+    {
+      "path": "storage-prerequisite.json",
+      "gitBlobSha256": "3540a3bfaa2ca22143d0b172e402b8ae36ca146d39f8c34511d9f0da6944315c"
+    },
+    {
+      "path": "test-only-delta.patch",
+      "gitBlobSha256": "f895ea6a7877daf5f7aec9af17886c585fed58df8ad2ec7e6dbf8b67f58221b2"
+    },
+    {
+      "path": "types-journal.json",
+      "gitBlobSha256": "52b10e6180875e0bfda85b2a74c98734a0782b3aafa692c4824c886747569e4e"
+    },
+    {
+      "path": "types-raw.log",
+      "gitBlobSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "types-result.json",
+      "gitBlobSha256": "52b10e6180875e0bfda85b2a74c98734a0782b3aafa692c4824c886747569e4e"
+    },
+    {
+      "path": "validation.json",
+      "gitBlobSha256": "c5589a15d9635786288a7f8a46d1163663c26da938f1a167d73b371bf484fed4"
+    },
+    {
+      "path": "vitest.patch-context.config.ts.txt",
+      "gitBlobSha256": "70f9fd2acfd88fa3fbe4b0bf1284532375eb55e749efb194bf3fe99e18e87dfb"
+    }
+  ]
+}

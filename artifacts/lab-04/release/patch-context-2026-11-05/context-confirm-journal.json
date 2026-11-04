@@ -1,0 +1,174 @@
+{
+  "command": "npm.cmd test -- tests/lab-04/attachment-cold-upload.integration.test.ts tests/lab-04/action-patch-projection.integration.test.ts --config vitest.patch-context.config.ts --reporter=default --reporter=json --outputFile=<private-context-directory>\\context-confirm-vitest.json",
+  "head": "57cdda549b33e29a864974f0b9ce518e1ce5ce21",
+  "source": "unchanged production plus temporary context sequencer/boundary/PID instrumentation; accepted legacy harness retained",
+  "startedAt": "2026-11-04T20:18:26.091276+00:00",
+  "runnerPid": 30192,
+  "events": [
+    {
+      "event": "start",
+      "atMs": 0.0028999929782003164
+    },
+    {
+      "event": "spawn",
+      "atMs": 22.218899975996464
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 3023.409499990521,
+      "logBytes": 488
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 6025.571899983333,
+      "logBytes": 966
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 9027.700399979949,
+      "logBytes": 3813
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 12029.563899995992,
+      "logBytes": 3813
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 15031.290399987483,
+      "logBytes": 4049
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 18033.699399995385,
+      "logBytes": 4049
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 21035.413799982052,
+      "logBytes": 4049
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 24037.333499989472,
+      "logBytes": 4281
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 27038.994699978502,
+      "logBytes": 4749
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 30040.527599980123,
+      "logBytes": 6137
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 33042.16599999927,
+      "logBytes": 6137
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 36044.754299975466,
+      "logBytes": 6349
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 39046.38799998793,
+      "logBytes": 6349
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 42047.718299989356,
+      "logBytes": 6349
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 45049.34389999835,
+      "logBytes": 6349
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 48050.79399998067,
+      "logBytes": 6349
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 51053.5447000002,
+      "logBytes": 6349
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 54057.75099998573,
+      "logBytes": 6349
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 57061.87659999705,
+      "logBytes": 6349
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 60072.47549999738,
+      "logBytes": 6349
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 63078.2835999853,
+      "logBytes": 6349
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 66086.6155999829,
+      "logBytes": 6349
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 69088.47389998846,
+      "logBytes": 6349
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 72092.1296000015,
+      "logBytes": 6349
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 75094.73769998294,
+      "logBytes": 6349
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 78097.81279999879,
+      "logBytes": 6349
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 81100.3407999815,
+      "logBytes": 7040
+    },
+    {
+      "event": "heartbeat",
+      "atMs": 84103.34380000131,
+      "logBytes": 9042
+    },
+    {
+      "event": "exit",
+      "atMs": 84105.41160000139,
+      "code": 1
+    },
+    {
+      "event": "finished",
+      "atMs": 84107.18140000245
+    }
+  ],
+  "signals": [],
+  "outerSafetySeconds": 300,
+  "outputMode": "direct binary logfile, no maxBuffer",
+  "childPid": 63148,
+  "exitCode": 1,
+  "elapsedSeconds": 84.10711929999525,
+  "finishedAt": "2026-11-04T20:19:50.198710+00:00",
+  "childStillRunning": false
+}

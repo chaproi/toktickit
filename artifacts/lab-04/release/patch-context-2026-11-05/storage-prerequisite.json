@@ -1,0 +1,8 @@
+{
+  "version": "4.51",
+  "asset": "windows_amd64.zip",
+  "archiveSha256": "08866a53e1bdd5378ee9880f8ee30d981d1bbb6ae22ee1897deb17ff87f8d2fb",
+  "officialDigestMatches": true,
+  "exeSha256": "f3a9522f4900408d8e230f98516cd9c75fa90da3cfc96dc0fd9fbed380fc8001",
+  "reason": "Restore unchanged preceding-file persistent-storage prerequisite; no application change"
+}

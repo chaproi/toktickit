@@ -1,0 +1,7 @@
+import { defineConfig } from "vitest/config";
+import base from "./vitest.config.js";
+import PatchContextSequencer from "./tests/lab-04/patch-context-sequencer.js";
+export default defineConfig({ ...base, test: { ...base.test,
+  setupFiles: ["./tests/lab-04/patch-context-diagnostic.ts"],
+  sequence: { sequencer: PatchContextSequencer },
+} });

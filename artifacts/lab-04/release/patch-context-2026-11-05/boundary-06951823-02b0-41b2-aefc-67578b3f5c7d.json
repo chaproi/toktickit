@@ -1,0 +1,615 @@
+{
+  "workerPid": 3812,
+  "workerId": "1",
+  "events": [
+    {
+      "atMs": 629.0763999999999,
+      "stage": "file-before",
+      "activity": [],
+      "locks": [],
+      "occupancy": [],
+      "guardMatched": true
+    },
+    {
+      "atMs": 5889.7173,
+      "stage": "pool-connect",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 5889.7443,
+      "stage": "pool-acquire",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 5891.491800000001,
+      "stage": "pool-release",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 7550.731500000001,
+      "stage": "pool-acquire",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 7560.0078,
+      "stage": "pool-release",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 7640.4186,
+      "stage": "pool-acquire",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 7645.0774,
+      "stage": "pool-release",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 7649.604700000001,
+      "stage": "pool-acquire",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 7652.684200000001,
+      "stage": "pool-release",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 7969.1663,
+      "stage": "pool-acquire",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 8020.3049,
+      "stage": "pool-release",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 8033.9207,
+      "stage": "pool-acquire",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 8036.4726,
+      "stage": "pool-release",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 8038.2584,
+      "stage": "pool-acquire",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 8043.9929,
+      "stage": "pool-release",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 8051.330500000001,
+      "stage": "pool-acquire",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 8061.1933,
+      "stage": "pool-release",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 8242.6904,
+      "stage": "pool-acquire",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 8244.2141,
+      "stage": "pool-release",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 8245.3408,
+      "stage": "pool-acquire",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 8245.895499999999,
+      "stage": "pool-release",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 8266.444,
+      "stage": "pool-acquire",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 16686.897800000002,
+      "stage": "pool-release",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 16755.2161,
+      "stage": "pool-acquire",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 16755.959700000003,
+      "stage": "pool-release",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 16769.346700000002,
+      "stage": "pool-acquire",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 16770.5685,
+      "stage": "pool-release",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 16770.7156,
+      "stage": "pool-acquire",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 16771.0993,
+      "stage": "pool-release",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 16773.8548,
+      "stage": "pool-acquire",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 16816.1231,
+      "stage": "pool-release",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 16825.979000000003,
+      "stage": "pool-acquire",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 16826.970500000003,
+      "stage": "pool-release",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 16974.1116,
+      "stage": "pool-acquire",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 16976.319,
+      "stage": "pool-release",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 17087.145200000003,
+      "stage": "pool-acquire",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 17087.9002,
+      "stage": "pool-release",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 17088.038800000002,
+      "stage": "pool-acquire",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 17088.5105,
+      "stage": "pool-release",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 17089.937700000002,
+      "stage": "pool-acquire",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 22153.965,
+      "stage": "pool-release",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 22170.125600000003,
+      "stage": "pool-acquire",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 22170.6967,
+      "stage": "pool-release",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 1,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 22175.360800000002,
+      "stage": "pool-remove",
+      "pool": 1,
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 0,
+          "idle": 0,
+          "waiting": 0
+        }
+      ]
+    },
+    {
+      "atMs": 22499.7691,
+      "stage": "file-after",
+      "activity": [],
+      "locks": [],
+      "occupancy": [
+        {
+          "id": 1,
+          "total": 0,
+          "idle": 0,
+          "waiting": 0
+        }
+      ],
+      "guardMatched": true
+    }
+  ],
+  "pools": [
+    {
+      "id": 1,
+      "total": 0,
+      "idle": 0,
+      "waiting": 0
+    }
+  ],
+  "environmentRestored": true,
+  "file": "attachment-cold-upload.integration.test.ts",
+  "startedAt": "2026-11-04T20:18:33.601Z",
+  "environmentDigestEqual": true,
+  "finishedAt": "2026-11-04T20:18:55.656Z",
+  "prototypeRestored": true
+}

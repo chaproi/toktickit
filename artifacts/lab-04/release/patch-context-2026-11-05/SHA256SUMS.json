@@ -1,0 +1,147 @@
+[
+  {
+    "path": "after-server-isolation-cleanup.json",
+    "sha256": "fa0c888c897e0ffaeb017c815f9bcd25148d4501701530ef043ab971ec3091f0",
+    "bytes": 477
+  },
+  {
+    "path": "after-setup-only-isolation-cleanup.json",
+    "sha256": "c0c1420544e76b6b93d0e0aeb86e9cc2bd2f7874aedb6575aa06e4fac1e5c067",
+    "bytes": 477
+  },
+  {
+    "path": "analysis.json",
+    "sha256": "c54a1b50d2fcc3567efbdb901465b79eca54062287d164b05e300ebb4a3c3fc5",
+    "bytes": 149135
+  },
+  {
+    "path": "before-isolation-cleanup.json",
+    "sha256": "23fa8985f47190fc9e5581fe80c53d483739519d16376672c5c22d5582130537",
+    "bytes": 398
+  },
+  {
+    "path": "boundary-06951823-02b0-41b2-aefc-67578b3f5c7d.json",
+    "sha256": "d9bc1e17d5a23c1b929cd4d7f940b75235ae33f62177cb6f982cd1b2ae4dcd39",
+    "bytes": 10661
+  },
+  {
+    "path": "boundary-e44ff8da-aa25-4d56-80b4-9f2ce4b482fa.json",
+    "sha256": "73e450ce01b2e91d67a4343f77784524826bb38d59228ec31255fdfdf49b68f7",
+    "bytes": 594016
+  },
+  {
+    "path": "context-confirm-journal.json",
+    "sha256": "6964ca4940b00699bddf3ec436b7088b7e47608b3a7749683a1a016151f961fb",
+    "bytes": 3848
+  },
+  {
+    "path": "context-confirm-raw.log",
+    "sha256": "be50a9fb1018b88c65132f5c53270b24f28d05cc5eb92cc05361ef98608389e4",
+    "bytes": 8872
+  },
+  {
+    "path": "context-confirm-result.json",
+    "sha256": "6964ca4940b00699bddf3ec436b7088b7e47608b3a7749683a1a016151f961fb",
+    "bytes": 3848
+  },
+  {
+    "path": "context-confirm-vitest.json",
+    "sha256": "4553186d740351ca0e312591b6afe669b62b004360916d9fa6e3e671cb81936f",
+    "bytes": 3509
+  },
+  {
+    "path": "context-journal.json",
+    "sha256": "44fefe2be41d12cb61889bbacfd44b371faf57aaa6bc1e3693c4f1ff93039964",
+    "bytes": 1411
+  },
+  {
+    "path": "context-raw.log",
+    "sha256": "635875054303d1603914e57685f6e2ab3ffde2388ca59268e4d98c3c3e15ecc2",
+    "bytes": 6585
+  },
+  {
+    "path": "context-result.json",
+    "sha256": "44fefe2be41d12cb61889bbacfd44b371faf57aaa6bc1e3693c4f1ff93039964",
+    "bytes": 1411
+  },
+  {
+    "path": "context-vitest.json",
+    "sha256": "f05e053d1b094139736937a03f16b44b39766554f4ea031dc66cae999c180173",
+    "bytes": 482
+  },
+  {
+    "path": "counts.json",
+    "sha256": "702ed00b10128e115b715fa483fb8fdc42ecd1fde4225086775ca0719203ef89",
+    "bytes": 560
+  },
+  {
+    "path": "evidence.md",
+    "sha256": "378e7b2db65757735b2ed9a4a2b8ddbcaa2311c8e2efdefd8379c7f4a991ef97",
+    "bytes": 12643
+  },
+  {
+    "path": "holder-timelines.json",
+    "sha256": "b5a7da07824b8440c82f1c26e35d68e453962510482c9a1921afbe74ba014d62",
+    "bytes": 78030
+  },
+  {
+    "path": "patch-blocking-diagnostic.ts.txt",
+    "sha256": "ef94f42d0543722a793523867012c977d4ee85796e1f6a1eb5dcf1ae0ddebdec",
+    "bytes": 6466
+  },
+  {
+    "path": "patch-chain-phases-2026-11-04-66d7593f.json",
+    "sha256": "9a7646607b7146080c0cc7652307f51ec72835d7ee5357413131f05aff9d391e",
+    "bytes": 5459516
+  },
+  {
+    "path": "patch-context-diagnostic.ts.txt",
+    "sha256": "28fbcbea767824e04c9d1043e8b6473d94c003a4046e99a58963c4e5a0a6e1eb",
+    "bytes": 4498
+  },
+  {
+    "path": "patch-context-sequencer.ts.txt",
+    "sha256": "a0c30506b207fbf3f97b14da696ee0e9f3887d06d7bcc51e3756ef423af484e5",
+    "bytes": 355
+  },
+  {
+    "path": "prospective-plan.json",
+    "sha256": "d74d026a8f09f03ca36a3a68202828fe707af9bca23ba10b4cd342bb849948ce",
+    "bytes": 1523
+  },
+  {
+    "path": "runner.py.txt",
+    "sha256": "7fe6b3ab7ca9919d5faaec524860ea41d51058571c32579b31acb009194f2e73",
+    "bytes": 2708
+  },
+  {
+    "path": "storage-prerequisite.json",
+    "sha256": "3540a3bfaa2ca22143d0b172e402b8ae36ca146d39f8c34511d9f0da6944315c",
+    "bytes": 362
+  },
+  {
+    "path": "test-only-delta.patch",
+    "sha256": "f895ea6a7877daf5f7aec9af17886c585fed58df8ad2ec7e6dbf8b67f58221b2",
+    "bytes": 4691
+  },
+  {
+    "path": "types-journal.json",
+    "sha256": "52b10e6180875e0bfda85b2a74c98734a0782b3aafa692c4824c886747569e4e",
+    "bytes": 1918
+  },
+  {
+    "path": "types-raw.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  {
+    "path": "types-result.json",
+    "sha256": "52b10e6180875e0bfda85b2a74c98734a0782b3aafa692c4824c886747569e4e",
+    "bytes": 1918
+  },
+  {
+    "path": "vitest.patch-context.config.ts.txt",
+    "sha256": "7a3e6d0d5ceea9f44d6757241279af09b6696c44070e1b8a12f0abbfbff62276",
+    "bytes": 350
+  }
+]

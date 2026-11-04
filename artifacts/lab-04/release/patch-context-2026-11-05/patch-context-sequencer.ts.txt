@@ -1,0 +1,7 @@
+import { BaseSequencer, type WorkspaceSpec } from "vitest/node";
+export default class PatchContextSequencer extends BaseSequencer {
+  async sort(files: WorkspaceSpec[]) {
+    const rank = (file: WorkspaceSpec) => file[1].endsWith("attachment-cold-upload.integration.test.ts") ? 0 : 1;
+    return [...files].sort((a, b) => rank(a) - rank(b));
+  }
+}

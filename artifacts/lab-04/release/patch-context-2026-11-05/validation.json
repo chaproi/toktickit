@@ -1,0 +1,18 @@
+{
+  "branchHead": "57cdda549b33e29a864974f0b9ce518e1ce5ce21",
+  "originalPatchBytesRestored": true,
+  "coldUploadBytesPreserved": true,
+  "allApplicationTestHelperAndSettingsDiffsEmpty": true,
+  "temporaryExecutableFilesRemoved": 4,
+  "reflectionReportPdfUnchanged": [
+    "docs/lab-04/submission-report-draft.md",
+    "output/pdf/toktickit-lab4-parts-1-9-draft.pdf",
+    "artifacts/lab-04/release/report-draft-2026-11-05/provenance.json",
+    "artifacts/lab-04/release/report-draft-2026-11-05/document-checks.json"
+  ],
+  "independentCleanup": "after-server-isolation-cleanup.json",
+  "applicationCorrectionMade": false,
+  "fullSuiteRerun": false,
+  "benchmarkRun": false,
+  "sourceArchiveFiles": 29
+}
