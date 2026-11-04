@@ -2,7 +2,7 @@
 
 Date: 4 November 2026 (Asia/Bangkok). Reviewed candidate: `bb16551fdf4588ad86d3782106f53b3947cde838`, PR58.
 
-**Status: proposed verification/disposition plan, not an accepted contract amendment or a passing result.** The student requested a more convenient, faster route, allowing scope adjustment: “มีวิธีที่สะดวกและเร็วกว่านี้มั้ย หรือปรับขอบเขตงานก็ได้ ขอแค่ lab4 จบ”. This authorizes preparing a concrete plan; it is not an exact student/peer acceptance of the performance or observation dispositions below.
+**Current status (2026-11-04): student accepted only Chrome/Chromium + Edge scope and the limited T-47 disposition for peer review; peer/final acceptance remains Pending.** The original proposal below is retained as history, not an accepted contract amendment or a new passing result. [Actual scoped decision](t37-t38-decision-checklist.md#7-actual-student-decision--2026-11-04). The student requested a more convenient, faster route, allowing scope adjustment: “มีวิธีที่สะดวกและเร็วกว่านี้มั้ย หรือปรับขอบเขตงานก็ได้ ขอแค่ lab4 จบ”. This authorizes preparing a concrete plan; it is not an exact student/peer acceptance of the performance or observation dispositions below.
 
 ## 1. Preserve the required product
 
@@ -61,3 +61,7 @@ Once actual decisions exist, update the specification/API/test/reviewer traceabi
 The old worklist above is historical. [The current checklist](t37-t38-decision-checklist.md) supersedes only its remaining-work inventory: ten supposed missing originals were located, four genuine mobile/tablet form/list gaps captured, Staff History error/Retry and Ticket blocker automated, and real Edge Admin navigation/History/200% verified. [Normal E2E confirmation](closeout-normal-e2e-2026-11-04.md) passes16files/77cases at finalized65f4bb1 while retaining the prior74/77failure and every diagnostic. No additional benchmark or repeated reported Requester traversal was used for evidence collection; the explicitly requested comprehensive command naturally includes inherited routes.
 
 This does not accept the proposed method/browser/T-47 disposition. Specific visual/spacing, remaining speech, browser-scope, mixed-performance and actual peer-review decisions are listed as V/S/B/P/R entries for one consolidated response. Student-reported Create/clear/Start/History and Requester observations are carried, not requested again. No Pending state becomes Accepted here.
+
+## Subsequent scoped student acceptance — 2026-11-04
+
+After publication of `db852ac`, the student explicitly replied **“ยอมรับ”** to Chrome/Chromium + Edge as the Lab verification scope and the section4 limited T-47 disposition, both for peer review. This supersedes the earlier “not yet recorded” statements **only for those two student decisions**, not the complete proposed plan. [B-1/P-1 and exact decision context](t37-t38-decision-checklist.md#7-actual-student-decision--2026-11-04) distinguish student adoption from Pending peer acceptance. Other engines remain untested; B3/A4 remain failed; the unchanged <500ms target is not waived. No additional visual/speech report, full scenario acceptance, implementation approval, merge, Issue closure or Product DoD completion is inferred. No application check or benchmark was repeated.
