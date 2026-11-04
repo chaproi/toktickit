@@ -1,5 +1,7 @@
 # Issue #49 closeout: current evidence and all 55 scenarios
 
+**Latest peer disposition — 2026-11-04:** [cottonlnwza review5768109333](https://github.com/chaproi/toktickit/pull/58#pullrequestreview-5768109333) at `d76d0839ed26a067a9fa4634c9b47992d0da677e` accepts B-1 Chrome/Chromium + Edge scope and the existing limited P-1/T-47 disposition. B2 is one complete pass; B3/A4 remain failures; the <500ms threshold and all samples/limitations are unchanged. These decisions are no longer blockers and no benchmark rerun is requested. The peer found no new D-12/D-13 correctness blocker but submitted **CHANGES_REQUESTED** for required human visual/speech evidence, documentation synchronization and exact updated-HEAD re-review. [Current checklist](t37-t38-decision-checklist.md#8-actual-peer-decision--2026-11-04). Earlier Pending statements below retain their dated historical scope; this does not grant whole-scenario, Issue49/Product DoD or release acceptance. No suite or benchmark ran for this documentation update.
+
 Reviewed source: `a7eb4ecef595824ca374c5d4dd1e3287bdcfd511`, `feat/49-d12-rc-candidate`, **4 November 2026 (Asia/Bangkok)**. This is the evidence delta after student adoption at `a7eb4ec`, responding to the supplied requested-changes feedback. **Human amendment/implementation review, T-47 acceptance and whole-product acceptance remain Pending.**
 
 ## 1. Method and actual execution provenance

@@ -2,7 +2,7 @@
 
 Date: 4 November 2026 (Asia/Bangkok). Reviewed candidate: `bb16551fdf4588ad86d3782106f53b3947cde838`, PR58.
 
-**Current status (2026-11-04): student accepted only Chrome/Chromium + Edge scope and the limited T-47 disposition for peer review; peer/final acceptance remains Pending.** The original proposal below is retained as history, not an accepted contract amendment or a new passing result. [Actual scoped decision](t37-t38-decision-checklist.md#7-actual-student-decision--2026-11-04). The student requested a more convenient, faster route, allowing scope adjustment: “มีวิธีที่สะดวกและเร็วกว่านี้มั้ย หรือปรับขอบเขตงานก็ได้ ขอแค่ lab4 จบ”. This authorizes preparing a concrete plan; it is not an exact student/peer acceptance of the performance or observation dispositions below.
+**Current status (2026-11-04): the student and cottonlnwza have accepted Chrome/Chromium + Edge scope and the limited T-47 disposition. Overall PR review is CHANGES_REQUESTED for evidence/docs closure and exact updated-HEAD re-review.** The original proposal below is retained as history, not an accepted contract amendment or a new passing result. [Actual scoped decision](t37-t38-decision-checklist.md#7-actual-student-decision--2026-11-04). The student requested a more convenient, faster route, allowing scope adjustment: “มีวิธีที่สะดวกและเร็วกว่านี้มั้ย หรือปรับขอบเขตงานก็ได้ ขอแค่ lab4 จบ”. This authorizes preparing a concrete plan; it is not an exact student/peer acceptance of the performance or observation dispositions below.
 
 ## 1. Preserve the required product
 
@@ -65,3 +65,7 @@ This does not accept the proposed method/browser/T-47 disposition. Specific visu
 ## Subsequent scoped student acceptance — 2026-11-04
 
 After publication of `db852ac`, the student explicitly replied **“ยอมรับ”** to Chrome/Chromium + Edge as the Lab verification scope and the section4 limited T-47 disposition, both for peer review. This supersedes the earlier “not yet recorded” statements **only for those two student decisions**, not the complete proposed plan. [B-1/P-1 and exact decision context](t37-t38-decision-checklist.md#7-actual-student-decision--2026-11-04) distinguish student adoption from Pending peer acceptance. Other engines remain untested; B3/A4 remain failed; the unchanged <500ms target is not waived. No additional visual/speech report, full scenario acceptance, implementation approval, merge, Issue closure or Product DoD completion is inferred. No application check or benchmark was repeated.
+
+## Subsequent actual peer disposition — 2026-11-04
+
+[cottonlnwza's review](https://github.com/chaproi/toktickit/pull/58#pullrequestreview-5768109333) against `d76d0839ed26a067a9fa4634c9b47992d0da677e` accepts the browser scope and the existing section4 limited T-47 disposition. B-1/P-1 are no longer blockers; no benchmark rerun is required. This supersedes earlier peer-Pending statements **only for those decisions**. B2 remains one complete pass, B3/A4 remain failures, and the <500ms threshold is unchanged. [Current checklist and exact peer record](t37-t38-decision-checklist.md#8-actual-peer-decision--2026-11-04) retain visual/speech gaps and the overall CHANGES_REQUESTED result. Actual evidence/docs closure and exact updated-HEAD re-review are still required before merge; no full T-37/T-38, Issue49 or Product DoD acceptance is inferred.
