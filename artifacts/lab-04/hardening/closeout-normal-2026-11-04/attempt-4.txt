@@ -1,0 +1,101 @@
+
+Running 5 tests using 1 worker
+
+
+
+[1/5] e2e\lab-04\review-closeout.spec.ts:54:1 › T-38 Staff History controlled read failure and real Retry with keyboard focus
+e2e\lab-04\review-closeout.spec.ts:54:1 › T-38 Staff History controlled read failure and real Retry with keyboard focus
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[2/5] e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844
+e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+  1) e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('cell', { name: 'Issue45-412c0d34 literal summary <script>inert</script> UnbrokenReferenceUnbrokenReferenceUnbrokenReferenceUnbrokenReference', exact: true })
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('cell', { name: 'Issue45-412c0d34 literal summary <script>inert</script> UnbrokenReferenceUnbrokenReferenceUnbrokenReferenceUnbrokenReference', exact: true }) with timeout 10000ms
+      - waiting for getByRole('cell', { name: 'Issue45-412c0d34 literal summary <script>inert</script> UnbrokenReferenceUnbrokenReferenceUnbrokenReferenceUnbrokenReference', exact: true })
+
+
+      125 |     await page.goto(`/tickets?search=${encodeURIComponent(f.marker)}`);
+      126 |     await expect(page.getByRole("link", { name: f.ticket.ticketNumber, exact: true })).toBeVisible();
+    > 127 |     await expect(page.getByRole("cell", { name: summary, exact: true })).toBeVisible();
+          |                                                                          ^
+      128 |     const rootSize = await page.evaluate(() => ({ width: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth }));
+      129 |     expect(rootSize.scroll).toBeLessThanOrEqual(rootSize.width + 1);
+      130 |     const table = page.getByRole("region", { name: "Scrollable My Tickets table", exact: true });
+        at <candidate-worktree>\e2e\lab-04\review-closeout.spec.ts:127:74
+
+    Error Context: <private-run-directory>\attempt-4-results\lab-04-review-closeout-T-3-a7abd-wned-list-pixels-at-390x844\error-context.md
+
+
+
+
+[3/5] e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
+e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
+Safe control geometry: {"visible":false,"unobscured":true,"clips":[],"debug":{"target":"TEXTAREA","hit":"TEXTAREA","width":834,"height":1112,"box":{"left":93,"top":955.4375,"right":741,"bottom":1113.4375},"scale":1,"offsetLeft":0,"offsetTop":0}}
+
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+  2) e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112 
+
+    Error: Control is reachable and unobscured
+
+    expect(received).toMatchObject(expected)
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "clips": Array [],
+        "unobscured": true,
+    -   "visible": true,
+    +   "visible": false,
+      }
+
+       at lab-04\action-layout-helpers.ts:84
+
+      82 |   });
+      83 |   if (!result.visible || !result.unobscured || result.clips.length) console.info(`Safe control geometry: ${JSON.stringify(result)}`);
+    > 84 |   expect(result, "Control is reachable and unobscured").toMatchObject({ visible: true, unobscured: true, clips: [] });
+         |                                                         ^
+      85 | }
+      86 |
+      87 | export async function keyboardFocus(page: Page, target: Locator) {
+        at reachable (<candidate-worktree>\e2e\lab-04\action-layout-helpers.ts:84:57)
+        at <candidate-worktree>\e2e\lab-04\review-closeout.spec.ts:122:49
+
+    Error Context: <private-run-directory>\attempt-4-results\lab-04-review-closeout-T-3-ca4dc-ned-list-pixels-at-834x1112\error-context.md
+
+
+
+
+[4/5] e2e\lab-04\review-closeout.spec.ts:139:1 › T-38 real In Progress Ticket blocker and keyboard View Actions Taken handoff
+e2e\lab-04\review-closeout.spec.ts:139:1 › T-38 real In Progress Ticket blocker and keyboard View Actions Taken handoff
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[5/5] e2e\lab-04\review-closeout.spec.ts:179:1 › T-37/T-38 real Microsoft Edge Admin navigation and History at genuine 200% tab zoom
+e2e\lab-04\review-closeout.spec.ts:179:1 › T-37/T-38 real Microsoft Edge Admin navigation and History at genuine 200% tab zoom
+Owned Edge context closed, zoom restored and profile removed.
+
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+  2 failed
+    e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844 
+    e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112 
+  3 passed (40.1s)
+
+(node:46532) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34580) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38640) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

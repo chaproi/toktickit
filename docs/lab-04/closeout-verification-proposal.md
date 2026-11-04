@@ -55,3 +55,9 @@ This proposal adds one reviewable document. It changes no normative requirement,
 Student exact-plan decision: **not yet recorded**. Human review of method/browser scope/T-47 disposition: **Pending**. T-37/T-38/T-47 acceptance, PR58 approval, Issue49 completion and Lab4 release/submission: **Pending**.
 
 Once actual decisions exist, update the specification/API/test/reviewer traceability only to the extent required by what was accepted, and preserve the original wording/results. The fastest supported route is a finite evidence closeout and explicit review decision; it is not an automatic promise of approval or a declaration that the Lab is already complete.
+
+## Subsequent completion of automation and concrete decision worksheet - 2026-11-04
+
+The old worklist above is historical. [The current checklist](t37-t38-decision-checklist.md) supersedes only its remaining-work inventory: ten supposed missing originals were located, four genuine mobile/tablet form/list gaps captured, Staff History error/Retry and Ticket blocker automated, and real Edge Admin navigation/History/200% verified. [Normal E2E confirmation](closeout-normal-e2e-2026-11-04.md) passes16files/77cases at finalized65f4bb1 while retaining the prior74/77failure and every diagnostic. No additional benchmark or repeated reported Requester traversal was used for evidence collection; the explicitly requested comprehensive command naturally includes inherited routes.
+
+This does not accept the proposed method/browser/T-47 disposition. Specific visual/spacing, remaining speech, browser-scope, mixed-performance and actual peer-review decisions are listed as V/S/B/P/R entries for one consolidated response. Student-reported Create/clear/Start/History and Requester observations are carried, not requested again. No Pending state becomes Accepted here.

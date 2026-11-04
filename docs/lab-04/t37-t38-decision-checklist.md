@@ -1,0 +1,64 @@
+# T-37/T-38 evidence closeout and one-session decision checklist
+
+Date: 4 November 2026, Asia/Bangkok. PR58 stays **Draft**. This worksheet records evidence and decisions separately; every decision below is **Pending**, not a changed scenario or Product DoD checkbox.
+
+## 1. Requirements actually being checked
+
+The governing requirements are [AC-37/AC-38 and BR-40](specification.md), [T-37/T-38](tests.md), [UI sections 1 and 6](ui-spec.md), and inherited [Lab3 UI sections 3 and 14](../lab-03/ui-spec.md). They require:
+
+- Zen Green, readable long content, usable forms/cards/tables and no unintended page overflow at **390×844, 834×1112 and 1440×900**, covering new and earlier major screens.
+- Labels/required-invalid/error associations, meaningful names/status text, non-color information, keyboard operation, visible focus, dialog containment/inert background and appropriate entry/return; actual screen-reader semantics/announcements.
+- A **separate genuine 200% tab-zoom** pass; resizing, CSS zoom or pinch scaling is insufficient.
+- The inherited six-screen screenshot matrix. Additional loading/error/success/conflict states may be evidenced by **named automated assertions**; the inherited contract does not demand another screenshot of every state at every viewport. No new combinatorial screenshot mandate is imposed here.
+
+## 2. Already available — do not repeat these tasks solely for evidence
+
+| Required surface/behavior | Existing exact evidence | Remaining qualification |
+| --- | --- | --- |
+| Login and mandatory password change, all three viewports | [Six original PNGs](../../artifacts/lab-03/screenshots/); [RESP-01/02 named assertions](../../e2e/lab-03/responsive.spec.ts). Originals independently located, hashed and AI inspected on 4 November; they were missing from the supplied archive, not missing from Git. | Original pixels retain their historical provenance. No invented current capture date or human inspection. |
+| Requester/Staff detail, Staff Queue and Admin management, all three viewports | Same inherited matrix; [V16–V27](../../artifacts/lab-04/hardening/t37-visual-review-2026-11-04/gallery.md); RESP-01/02 geometry, bounded table scrolling and genuine zoom. | Scrolled/partial viewport images do not show all content at once; independent reachability assertions and human disposition remain distinct. |
+| Requester/Staff Dashboards, Actions/My Actions, workflow reasons/dialogs | [92-image gallery](../../artifacts/lab-04/hardening/t37-visual-review-2026-11-04/gallery.md), [domain source map](hardening-closeout-2026-11-04.md), and domain evidence files linked in UI-spec. | Do not relabel historical captures as latest-HEAD executions. |
+| Three normal-zoom Create Action drafts and mobile clear confirmation | The four [original Action PNGs/sidecars](../../artifacts/lab-04/screenshots/actions-taken/) exist. All four originals were separately AI inspected in this closeout. | The supplied fresh archive still lacks these four files. Original 2026-10-10 metadata remains unchanged; this reconciles availability without rewriting the archive. Mobile/desktop Create images are scrolled modal regions; ordinary scrolling/reachability is separately asserted. |
+| Staff History fault/Retry and Ticket blocker/focus handoff | [Three-case browser contribution](browser-closeout-2026-11-04.md): real responses, state preservation, keyboard entry/Tab/Shift+Tab/inertness/close/return. History fault is a controlled browser transport abort. | No actual backend outage or Narrator speech is inferred. |
+| Installed Edge Admin navigation and History at 200% | Same contribution: real Edge156, all four Admin destinations/active state; extension factors1→2→1, CSS width1416→708→1416, pinch scale1. | Additional Chromium browser evidence, not a different rendering engine or every route/state. |
+| Existing spoken observations | [Student report](student-requester-observations-2026-11-04.md): Login field/button/Show-password names; successful password change; Requester Dashboard/drill-down/detail reading and Chrome/Edge200%; subsequent complete reading of Create validation, nested clear-note, Start and History. | Consolidated reports, not exact transcripts of every state. The Requester route and those reported dialog-reading tasks are not assigned again. |
+
+The existing style and component suites plus the real browser assertions supply automated semantics, textual status/identity and sampled contrast evidence. Passing totals alone do not establish screen-reader speech or every pixel combination.
+
+## 3. Exact image gap work
+
+The only newly captured combinations are **Create Ticket and populated My Tickets at 390×844 and 834×1112**. The earlier gallery already contains desktop images; no additional Dashboard/detail route or Ticket-submission workflow is added. Two cases in [review-closeout.spec.ts](../../e2e/lab-04/review-closeout.spec.ts) use the unchanged owned fixture: valid literal text in a partial form draft, no submission, then the fixture's authorized list with keyboard-accessible table focus/Ticket link and pagination. Four application-only full-page PNGs are retained with viewport/source/dirty-state metadata. [Final images and actual comprehensive result](closeout-normal-e2e-2026-11-04.md#required-image-availability-and-actual-inspection) retain their real execution provenance. The tablet capture shows the left window of a contained table; exhaustive right-column keyboard reading is not inferred.
+
+Missing-from-archive images and the Login/password matrix were recovered by reference to existing originals rather than needless recapture. Other preexisting captures regenerated by the comprehensive suite are archived and restored byte-for-byte; they are not promoted as another inspected gallery.
+
+## 4. One consolidated human checklist
+
+Complete this once, with the observer's name, date, browser/Windows/Narrator version and actual observations. A short consolidated recording/report is sufficient where it identifies the task and actual result; do not include passwords or unrelated personal UI. **AI and Playwright have not heard Narrator.** A result may be “not observed”; silence, uncertainty or an ARIA assertion is not a spoken pass.
+
+| ID | Exact remaining observation or decision | Already supplied; do not repeat | Decision/result now |
+| --- | --- | --- | --- |
+| V-1 | Human disposition of only the still-unconfirmed screen/viewport combinations: recovered Login/password and Action matrix, new mobile/tablet Create/list images, Staff/Admin gallery and six closeout images. Check readable long content, clipping/overlap, focus and bounded-table right-column scrolling. A grouped gallery review covers these together; it need not re-review the exact Requester views already reported readable. | AI inspection, automated geometry and reported Requester Chrome/Edge200% views are carried. No new automated traversal of those reported routes is requested. | Pending |
+| V-2 | Decide the recorded **OBS-01** History `eventsHistory` spacing observation: acceptable/readable with stated limitation, or an actual defect needing correction. Record which image/state was inspected. | [Original V48 observation](t37-visual-review-2026-11-04.md); no blocked control demonstrated. | Pending |
+| S-1 | Login blank-submit validation summary/required-error announcement and Show-password **state change** speech, only where not actually confirmed already. | Email/Password/Sign-in/Show-password names and successful login/change are reported. Exact earlier approximate speech remains uncertain. | Not yet observed precisely |
+| S-2 | Staff/Admin navigation and Staff Dashboard → My assigned Actions: spoken active destination, metric values/textual status, filter/page labels and distinct loading/error/Retry announcement pattern. Record actual words or a meaningful summary, focus result and failure. | Requester route and reported dialog speech are already retained; they do not prove the distinct Staff/Admin components. Automated Staff/Edge navigation and state/keyboard checks exist. | No actual speech report |
+| S-3 | New controlled History read-error/Retry plus real unfinished-Action blocker: audible error/title/count/link, then focus/handoff understanding; representative Admin History if not included in the prior report. This can be one grouped session. | Ordinary Staff History reading, Start/Create validation and nested clear-note reading were reported. New automated fault/recovery/blocker/focus assertions pass. | No actual speech report for these error states/Admin context |
+| S-4 | Remaining distinct Edit/Reassign/Complete/Cancel and Ticket reason/confirmation semantics, including pending/busy feedback where relevant: record actual speech only for controls/states not covered by the consolidated student report. Group shared dialog mechanics; do not assume a different dialog proves a unique field. | Focus traps/inertness/return/busy protection, labels/invalid fields and no premature success are automated; Create/clear/Start/ordinary History speech is reported. | Exact remaining distinct-field/busy speech unreported |
+| B-1 | Confirm the intended supported-browser scope for the Lab, or name the additional browser/engine/task required before acceptance. | Bundled Chromium153 and real Edge156 checks; student Chrome/Edge route report. Both are Chromium. No explicit Firefox/WebKit minimum was found in the read contract; absence of a named minimum is not certification. | Scope/disposition Pending; Firefox/WebKit and other OS/AT combinations untested |
+| P-1 | Decide the existing proposed **limited T-47 disposition** below, or reject it and state the required next evidence. | Complete B2 pass and all failed samples remain available. No benchmark rerun is proposed. | Pending |
+| R-1 | Actual human review of the student-adopted D-12/D-13 candidate, resource/security/retention/dependency limitations, and this evidence delta; decide staging integration only through the existing review process. | Student adoption and automated correctness are recorded; neither constitutes human peer approval. | Pending; PR58 Draft |
+
+No S-row is a new implementation requirement or an automatic demand to repeat every existing test. It identifies precisely which actual speech observations are absent under AC-38. If a reviewer considers a shared-component report sufficient, record that scope explicitly; do not silently convert an unheard task into Passed. V/S/B decisions do not waive accepted behavior, contrast requirements or release obligations.
+
+## 5. Existing T-47 decision wording — not accepted by this worksheet
+
+Use the [existing proposal](closeout-verification-proposal.md#4-proposed-t-47-disposition-for-explicit-review), without new thresholds or a four-of-four rule:
+
+> Accept B2 as evidence of one complete passing T-47 observation on the current application bytes in the recorded local Lab configuration. Retain B3's CREATE p95=506.970ms and A4's aggregate p95=963.614ms as failed observations and an explicit repeatability limitation. Do not claim all ABBA runs passed, stable capacity, a consistent code-caused gain, production readiness or that failed observations meet the unchanged <500ms target.
+
+B2 aggregate p95=401.518ms, all18 operation targets and every inline assertion pass. A1 also passes; B3/A4 fail. All22000 ABBA samples, exact persistence, zero request errors, telemetry limits and unknown causes remain preserved. **Decision Pending**. If an assessment requirement would be relaxed, obtain the proper reviewer/instructor decision; no silent waiver is made here.
+
+## 6. Single-response record template
+
+Record together: observer/name/date; actual browser/Windows/AT versions; V-1/V-2 observations and disposition; S-1–S-4 actual heard/not-observed/failure results (carry existing reports without repetition); B-1 accepted scope or concrete additional task; P-1 accept/reject proposed limited disposition with reason; R-1 peer finding/approval reference when one actually exists. Unanswered entries remain Pending/unobserved. A consolidated response updates only what it supports, never Product DoD or whole-scenario acceptance by inference.
+
+The [latest normal-setup comprehensive confirmation](closeout-normal-e2e-2026-11-04.md) passes **16 files/77 cases** at committed finalized test HEAD65f4bb1, with0failed/skipped. Its earlier74/77 failed full run and every diagnostic attempt remain preserved. It neither supplies Narrator speech nor decides V/B/P/R. No benchmark or threshold change occurred. #50 still owns reviewed main integration, final-main verification and release/submission.

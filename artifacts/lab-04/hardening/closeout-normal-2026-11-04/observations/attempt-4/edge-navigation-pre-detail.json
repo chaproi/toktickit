@@ -1,0 +1,72 @@
+[
+  {
+    "at": 824.8000000119209,
+    "width": 708,
+    "navHidden": true,
+    "expanded": "false",
+    "toggleHidden": false
+  },
+  {
+    "at": 923.8000000119209,
+    "width": 708,
+    "navHidden": false,
+    "expanded": "true",
+    "toggleHidden": false
+  },
+  {
+    "at": 1072.300000011921,
+    "width": 708,
+    "navHidden": true,
+    "expanded": "false",
+    "toggleHidden": false
+  },
+  {
+    "at": 1126.9000000059605,
+    "width": 708,
+    "navHidden": false,
+    "expanded": "true",
+    "toggleHidden": false
+  },
+  {
+    "at": 1264.9000000059605,
+    "width": 708,
+    "navHidden": true,
+    "expanded": "false",
+    "toggleHidden": false
+  },
+  {
+    "at": 1380.9000000059605,
+    "width": 708,
+    "navHidden": false,
+    "expanded": "true",
+    "toggleHidden": false
+  },
+  {
+    "at": 1500.300000011921,
+    "width": 708,
+    "navHidden": true,
+    "expanded": "false",
+    "toggleHidden": false
+  },
+  {
+    "at": 1547.800000011921,
+    "width": 708,
+    "navHidden": false,
+    "expanded": "true",
+    "toggleHidden": false
+  },
+  {
+    "at": 1660.9000000059605,
+    "width": 708,
+    "navHidden": true,
+    "expanded": "false",
+    "toggleHidden": false
+  },
+  {
+    "at": 1720.800000011921,
+    "width": 708,
+    "navHidden": false,
+    "expanded": "true",
+    "toggleHidden": false
+  }
+]

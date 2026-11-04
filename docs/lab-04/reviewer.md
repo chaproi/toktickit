@@ -431,3 +431,11 @@ PR58 remains Draft,Issue49 open,human amendment/implementation review Pending. P
 ## Student Requester observation supplement, 4 November 2026
 
 [Actual student-operated Login/Requester/Narrator and Chrome/Edge 200% observations](student-requester-observations-2026-11-04.md), with [reported-versus-visible evidence and supplied-file hashes](../../artifacts/lab-04/hardening/student-requester-observations-2026-11-04.json), now partially address T-37/T-38. Source/version/focus qualifications and unobserved Staff/Action/dialog/error patterns remain explicit. The earlier Chrome screenshot is not misclassified as Edge. No full T-37/T-38 acceptance, T-47 disposition, peer approval, Issue/DoD closure or fresh suite result is inferred; historical records above retain their original dates and provenance. PR58 remains Draft.
+
+## T-37/T-38 evidence delta and exact review decisions - 2026-11-04
+
+PR58 remains **Draft** and actual human amendment/implementation review remains Pending. Student D-12/D-13 adoption is preserved; this evidence publication does not ask for that same adoption again or manufacture peer acceptance.
+
+[Normal comprehensive execution](closeout-normal-e2e-2026-11-04.md) records N1 failed74/77, all bounded diagnostics and concrete test-harness corrections, then N2 **16files/77passed/0failed/skipped** at finalized test65f4bb1 (449.896s; normal setup/teardown; workers1/retries0). No production change, weakened shared assertion, budget/threshold change or benchmark repetition. Four previously missing mobile/tablet form/list images were AI inspected; ten existing original images were recovered and inspected without relabelling their capture dates. Independent cleanup/preservation passes and borrowed review data remain intact.
+
+The reviewer can make one consolidated response using [V-1/V-2,S-1-S-4,B-1,P-1,R-1](t37-t38-decision-checklist.md): remaining visual/table-scroll/spacing disposition, exact still-unreported speech, browser scope, existing B2-pass/B3-A4-fail limited T-47 proposal and actual candidate review. Existing student reports are carried; AI/Playwright did not hear Narrator. All decisions remain Pending/unobserved until actual evidence/decision arrives. No Issue closure, scenario or Product DoD promotion, merge or deployment occurs.
