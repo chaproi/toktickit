@@ -1,6 +1,6 @@
 # TokTickIT
 
-TokTickIT is a full-stack IT service desk application started for CPE334 Lab 01 and extended with the Requester ticketing workflow in Lab 2.
+TokTickIT is a full-stack IT service desk application developed through CPE334 Labs 1–4, including Requester ticketing, role-based authentication/administration, Actions Taken, Ticket workflow and role dashboards.
 
 ## Technology Stack
 
@@ -177,3 +177,13 @@ Passing E2E runs retain review screenshots under `artifacts/lab-02/screenshots/`
 ## Security
 
 The `.env` file and `node_modules` directories must never be committed to Git.
+
+## Lab 4 release and evidence
+
+The reviewed Lab4 hardening increment is integrated into lab4-staging through [PR58](https://github.com/chaproi/toktickit/pull/58). [Release handoff](docs/lab-04/release-handoff-2026-11-04.md) distinguishes accepted staging evidence from still-pending final-main verification,report and submission. [Report draft](docs/lab-04/submission-report-draft.md) follows Answer Part1–9 and is not a final submitted PDF.
+
+For an existing populated database, inspect `npx prisma migrate status` from server first. If the Lab3 authentication migration is pending, use the guarded `npm run prisma:migrate:lab3` path above with complete private runtime mappings. After that prerequisite succeeds, apply committed pending Lab4 migrations with `npx prisma migrate deploy`, regenerate the client with `npx prisma generate`, then run `npm run prisma:seed`. Verify actual command results; do not reset a populated database or mark an unapplied migration as applied. Conservative seed skips for ambiguous legacy identities require review; they are not permission to overwrite passwords,guess identity mappings or promote roles. These are operating instructions, not a claim that this preparation executed migrations.
+
+Run the app with the existing client/server scripts. Outside NODE_ENV=test the configured normal Attachment storage is still required. Keep runtime credentials and .env private. Test/E2E setup continues to require the guarded dedicated TEST_DATABASE_URL target; normal E2E uses ports3100/4173 and now includes installed Microsoft Edge. Close only a known owned manual-review launcher before running normal setup on those ports.
+
+For final-main correctness/build/E2E verification, use the [finite release command plan](docs/lab-04/release-handoff-2026-11-04.md#exact-final-main-check-plan--not-executed-here). T-47 retains its reviewed limited disposition and failed observations; ordinary server `npm test` includes that smoke test, so the release correctness command explicitly excludes that one file rather than silently launching another benchmark. No performance threshold is weakened.
