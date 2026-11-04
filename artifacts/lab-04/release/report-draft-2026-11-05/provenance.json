@@ -1,0 +1,135 @@
+{
+  "pages": 13,
+  "parts": 9,
+  "rubricPoints": 60,
+  "pdfSha256": "007666125231d6f4f3ef29f53dc8e4085f9ce3d21bc89750a438e7a4d72a698e",
+  "linkAnnotations": 33,
+  "historicalFigures": [
+    {
+      "id": "F1",
+      "part": 5,
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/dashboard-1440.png",
+      "metadata": "artifacts/lab-04/screenshots/staff-dashboard/dashboard-1440.json",
+      "caption": "Historical Staff Dashboard, IT_STAFF, 1440 x 900; Chromium 153.0.8010.12; execution e67436c with pending browser tests and unchanged production, 27 October 2026 Bangkok. Not a final-main capture.",
+      "sha256": "15772091e1776d5c259b098895e00024aa19df64cdb87da7e85387d2a19b42cd",
+      "sourceUrl": "https://github.com/chaproi/toktickit/blob/040e13b78893ab8155bac89758334adf1a045b01/artifacts/lab-04/screenshots/staff-dashboard/dashboard-1440.png",
+      "metadataUrl": "https://github.com/chaproi/toktickit/blob/040e13b78893ab8155bac89758334adf1a045b01/artifacts/lab-04/screenshots/staff-dashboard/dashboard-1440.json",
+      "pixelDimensions": [
+        1440,
+        4329
+      ],
+      "displayRegion": "Configured viewport excerpt from original top-left; full original is linked"
+    },
+    {
+      "id": "F2",
+      "part": 6,
+      "path": "artifacts/lab-04/screenshots/actions-taken/1440x900-create.png",
+      "metadata": "artifacts/lab-04/screenshots/actions-taken/1440x900-create.json",
+      "caption": "Historical Create Action dialog, 1440 x 900, 10 October 2026 Bangkok; execution 5e77f1b with pending production corrections later committed unchanged as edb378d. Not a post-commit/final-main capture.",
+      "sha256": "ebfe3784c36aae56af0a7516ae3c26d94b55dfe6e81f2eefe0db530ec52a0aee",
+      "sourceUrl": "https://github.com/chaproi/toktickit/blob/040e13b78893ab8155bac89758334adf1a045b01/artifacts/lab-04/screenshots/actions-taken/1440x900-create.png",
+      "metadataUrl": "https://github.com/chaproi/toktickit/blob/040e13b78893ab8155bac89758334adf1a045b01/artifacts/lab-04/screenshots/actions-taken/1440x900-create.json",
+      "pixelDimensions": [
+        1440,
+        900
+      ],
+      "displayRegion": "Entire original image"
+    },
+    {
+      "id": "F3",
+      "part": 7,
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/final/1440x900-cancellation.png",
+      "metadata": "artifacts/lab-04/screenshots/ticket-workflow/final/1440x900-cancellation.json",
+      "caption": "Historical Ticket cancellation dialog, 1440 x 900; execution 430a019, 22 October 2026 UTC/23 October Bangkok; no pending production files. Not a final-main capture.",
+      "sha256": "51197f041b781416a0f192ca7de7901b59599c7dababf1b6cc9e7563061a91f0",
+      "sourceUrl": "https://github.com/chaproi/toktickit/blob/040e13b78893ab8155bac89758334adf1a045b01/artifacts/lab-04/screenshots/ticket-workflow/final/1440x900-cancellation.png",
+      "metadataUrl": "https://github.com/chaproi/toktickit/blob/040e13b78893ab8155bac89758334adf1a045b01/artifacts/lab-04/screenshots/ticket-workflow/final/1440x900-cancellation.json",
+      "pixelDimensions": [
+        1440,
+        900
+      ],
+      "displayRegion": "Entire original image"
+    },
+    {
+      "id": "F4",
+      "part": 8,
+      "path": "artifacts/lab-04/screenshots/dashboard-navigation/requester-desktop.png",
+      "metadata": "artifacts/lab-04/screenshots/dashboard-navigation/requester-desktop.json",
+      "caption": "Historical Requester role Dashboard, 1440 x 900, 29 October 2026 Bangkok; execution f81da7f with pending test/harness/artifact files and no pending production. Not a final-main capture.",
+      "sha256": "dad6af88430df5a2dc47f39727cd9ac575f2b59921ad2ddaeec4cd476fcb439b",
+      "sourceUrl": "https://github.com/chaproi/toktickit/blob/040e13b78893ab8155bac89758334adf1a045b01/artifacts/lab-04/screenshots/dashboard-navigation/requester-desktop.png",
+      "metadataUrl": "https://github.com/chaproi/toktickit/blob/040e13b78893ab8155bac89758334adf1a045b01/artifacts/lab-04/screenshots/dashboard-navigation/requester-desktop.json",
+      "pixelDimensions": [
+        1440,
+        900
+      ],
+      "displayRegion": "Entire original image"
+    },
+    {
+      "id": "F5",
+      "part": 9,
+      "path": "artifacts/lab-04/screenshots/actions-taken/390x844-my-actions.png",
+      "metadata": "artifacts/lab-04/screenshots/actions-taken/390x844-my-actions.json",
+      "caption": "Historical mobile My Actions, 390 x 844, 10 October 2026 Bangkok; execution 5e77f1b plus corrections later edb378d. Normal 100%zoom; this picture is not itself 200%zoom evidence.",
+      "sha256": "377d68493b41aabaabb2dbbc29513baf20aaf2bbbddfd53aefdbe824ed324f1b",
+      "sourceUrl": "https://github.com/chaproi/toktickit/blob/040e13b78893ab8155bac89758334adf1a045b01/artifacts/lab-04/screenshots/actions-taken/390x844-my-actions.png",
+      "metadataUrl": "https://github.com/chaproi/toktickit/blob/040e13b78893ab8155bac89758334adf1a045b01/artifacts/lab-04/screenshots/actions-taken/390x844-my-actions.json",
+      "pixelDimensions": [
+        390,
+        844
+      ],
+      "displayRegion": "Entire original image"
+    }
+  ],
+  "reflection": "AI-assisted reflection accepted by the student on 5 November 2026; not independently student-authored; whole-report approval remains pending.",
+  "sourceMain": "040e13b78893ab8155bac89758334adf1a045b01",
+  "evidenceArchive": "458ffd72354e878e87d5d4b2498a7c24a17ee154",
+  "applicationCommandsExecuted": 0,
+  "status": "draft; student accepted reflection only; scoped peer disposition and final report approval remain pending; not submitted",
+  "inspection": "Reflection update: rendered and visually inspected changed pages 1, 5, 10 and 13; nine other pages are pixel-identical to the previous PDF. All five embedded historical images are unchanged. All 33 links remain. Thai font shaping and copy/search Unicode mappings checked. No application execution.",
+  "authoringAttempts": [
+    "Initial command stopped before PDF creation due to path-text decoding; explicit UTF-8 corrected.",
+    "First rendered layout had orphan evidence links; image limits and line leading corrected.",
+    "Final typography preserved commit hashes and error identifiers; 13 pages retained.",
+    "Initial Git staged check treated ASCII85 PDF as text; regenerated using native binary compressed PDF streams, with no repository attribute/config change. No semantic/report layout change."
+  ],
+  "limits": [
+    "Historical images are not final-main captures.",
+    "Viewport excerpt is a derived PDF display crop; original image bytes are unchanged.",
+    "PDF generation checks are not application tests.",
+    "Scoped peer decision, final report approval and submission remain open."
+  ],
+  "pdfPath": "output/pdf/toktickit-lab4-parts-1-9-draft.pdf",
+  "binarySerialization": "Native compressed PDF streams; binary marker within first 8 KiB; preserves PDF offsets and avoids Git text line-ending conversion.",
+  "previousPublication": {
+    "pdfSha256": "241b60396221fc10e493293d8945a188858d05f4cde749617f82b50c1f5e48b0",
+    "reflection": "Three student response fields left blank",
+    "status": "draft; all 13 rendered pages visually inspected",
+    "inspection": "Page layout, headings, captions, page numbers, reflection blanks and absence of clipping checked on rendered pages; final contact sheet and detailed pages checked after typography corrections. No application UI or audio recapture."
+  },
+  "reflectionUpdate": {
+    "dateBangkok": "2026-11-05",
+    "previousCommit": "77cbf05f207532843f6f0901330a9221c1756249",
+    "modifiedPdfPages": [
+      1,
+      5,
+      10,
+      13
+    ],
+    "unchangedPdfPages": [
+      2,
+      3,
+      4,
+      6,
+      7,
+      8,
+      9,
+      11,
+      12
+    ],
+    "applicationCommandsExecuted": 0,
+    "thaiFont": "Noto Sans Thai Regular, SIL Open Font License 1.1, google/fonts",
+    "thaiFontSource": "https://github.com/google/fonts/tree/main/ofl/notosansthai",
+    "reviewOrSubmissionAccepted": false
+  }
+}

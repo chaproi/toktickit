@@ -1,0 +1,51 @@
+{
+  "sourceMain": "040e13b78893ab8155bac89758334adf1a045b01",
+  "staging": "a3575a2810d3762107fc387dc641f444c0bcfa38",
+  "matchingMainStagingTrees": true,
+  "unchangedExpectLines": 38,
+  "unchangedTestDeclarations": 4,
+  "pinnedBlobLinksVerified": 25,
+  "localLinksVerified": 10,
+  "pdfLinkAnnotations": 33,
+  "parts": 9,
+  "rubricAvailablePoints": 60,
+  "pdfPages": 13,
+  "studentReflectionFieldsBlank": 3,
+  "productionConfigSchemaDependenciesUnchanged": true,
+  "temporaryExecutableInstrumentationIncluded": false,
+  "applicationTestsBuildsBenchmarksExecuted": 0,
+  "whitespaceCheck": "passed",
+  "encoding": "UTF-8; no BOM/replacement characters in new Markdown",
+  "manualAnchorVerified": [
+    [
+      "docs/lab-04/t37-t38-decision-checklist.md",
+      "10-final-peer-disposition-and-staging-integration--2026-11-04"
+    ]
+  ],
+  "stagedWhitespaceCheck": "passed including binary PDF",
+  "reviewScopeFiles": 6,
+  "reflectionUpdate": {
+    "pages": 13,
+    "linkAnnotations": 33,
+    "parts": 9,
+    "studentReflectionAccepted": true,
+    "peerDecision": "Pending",
+    "finalReportApproval": "Pending",
+    "submission": "Not performed",
+    "unchangedPagePixels": [
+      2,
+      3,
+      4,
+      6,
+      7,
+      8,
+      9,
+      11,
+      12
+    ],
+    "allFiveHistoricalImagesUnchanged": true,
+    "applicationCommandsExecuted": 0,
+    "thaiUnicodeCopySearch": "Checked",
+    "visualInspection": "Pages 1, 5, 10 and 13 inspected; no clipping or overlap"
+  }
+}
