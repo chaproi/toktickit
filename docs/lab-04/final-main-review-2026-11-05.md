@@ -1,5 +1,7 @@
 # Narrow release correction review - 5 November 2026
 
+**Current status after requested changes:** [cottonlnwza's exact-57cdda5 review](https://github.com/chaproi/toktickit/pull/61#pullrequestreview-5775027525) accepts the legacy harness but rejects treating the server failure as a qualified release pass. [The bounded preceding-file/PATCH experiment](pr61-patch-context-2026-11-05.md) reproduced 2 passes / 1 failure, captured real same-cohort User-resource blocker chains and found clean file boundaries. No supported minimum correction or new comprehensive execution is claimed. The original scoped-decision request below is retained as history, not an accepted limitation. Reflection/report/PDF content remains unchanged pending student-authored wording.
+
 Addresses #50. Base: `lab4-staging`. Main `040e13b` and fetched staging `a3575a2` share reviewed tree `e26e54a2f9ddf795eeed039ebd12c6485ddd15c0`. Only one test file changes. Production, schema, migrations, seed, dependencies, configuration, timeouts, pool settings, retries and business assertions are unchanged.
 
 ## Source change to review
