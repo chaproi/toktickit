@@ -1,0 +1,22 @@
+{
+  "declaredAt": "2026-11-04T18:20:28.495675+00:00",
+  "executionHead": "040e13b78893ab8155bac89758334adf1a045b01",
+  "selection": "First qualifying failure in retained chronological log order",
+  "selected": {
+    "ordinal": 4,
+    "file": "server/tests/lab-04/legacy-actions.integration.test.ts",
+    "testName": "T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows > resolves a migrated active zero-Action Ticket with its eligible historical owner",
+    "firstRetainedError": "Test timed out in 5000ms.",
+    "errorFingerprint": "TEST_TIMEOUT_5000",
+    "expected": "Complete test within unchanged 5000 ms budget",
+    "actual": "Test timed out in 5000ms.",
+    "originalRuntimeStack": null,
+    "stackAvailability": "Original interrupted output has immediate error text only; Vitest final detailed-stack section and JSON reporter were not retained. Source locations are not invented runtime stacks.",
+    "laterBusinessAssertions": "Unreached or unproven after first error; no passing claim."
+  },
+  "representativeCommand": "npm.cmd test -- tests/lab-04/legacy-actions.integration.test.ts --reporter=default --reporter=json --outputFile=<private>/legacy-vitest.json",
+  "executionLimit": "One representative execution. Do not chase remaining files if it passes. A single full server run excluding only unchanged T47 may follow only after recorded evidence/justification that suite sequence is necessary.",
+  "deltaScope": "Only legacy test and one new dedicated test-only observer. Preserve every existing assertion, all original5s case budgets and10s hooks, production source/settings.",
+  "instrumentation": "Monotonic phase journal + observation-only5s boundary snapshot; transparent public coordination/Prisma/pg observation, safe error class/code/stack frames; overlapping spans not summed.",
+  "fullRunCountThisBatch": 0
+}

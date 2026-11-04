@@ -1,0 +1,21 @@
+{
+  "at": "2026-11-04T18:53:54.686190+00:00",
+  "guardAndLiveDedicatedIdentityVerifiedBeforeWritesAndAfter": true,
+  "operationalDatabaseTouched": false,
+  "preexistingSchemasAndRowChecksumsPreserved": true,
+  "otherConnections": 0,
+  "idleTransactions": 0,
+  "advisoryLocks": 0,
+  "newDisposableSchemas": 0,
+  "newOwnedTemporaryDirectories": [],
+  "ownedTestPythonNodeStorageDumpRestoreProcessesRemaining": 0,
+  "listeners3100And4173": 0,
+  "fixtureUsersSessionsAndCascadeFaultObjects": 0,
+  "settings": "Only child process owned evidence/storage-path variables; no persistent environment/pool/retry/budget changes",
+  "privateEnvironmentCopy": "Removed after export; original untouched",
+  "ownedDownloadedStorageTools": "Removed after process absence check; digest provenance retained",
+  "ignoredDependenciesAndBuildOutputs": "Preexisting isolated worktree outputs retained; no new application build",
+  "primaryFullFailurePreserved": true,
+  "privateEnvironmentCopyRemoved": true,
+  "ownedDownloadedToolDirectoryRemoved": true
+}

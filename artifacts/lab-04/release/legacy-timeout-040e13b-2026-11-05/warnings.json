@@ -1,0 +1,11 @@
+{
+  "legacy": {
+    "pgConcurrentQueryDeprecation": 0
+  },
+  "legacy-confirm": {
+    "pgConcurrentQueryDeprecation": 0
+  },
+  "full": {
+    "pgConcurrentQueryDeprecation": 24
+  }
+}

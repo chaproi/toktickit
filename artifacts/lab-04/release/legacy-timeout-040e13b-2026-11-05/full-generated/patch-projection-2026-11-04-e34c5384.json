@@ -1,0 +1,55 @@
+{
+  "executionHead": "040e13b78893ab8155bac89758334adf1a045b01",
+  "observations": [
+    {
+      "label": "edit",
+      "currentHistoricalCreator": true,
+      "nullableOrActualPerformer": true,
+      "exactDTOHistoryReceiptParentChecksPassed": true,
+      "projectionSelects": [
+        "User"
+      ]
+    },
+    {
+      "label": "reassign",
+      "currentHistoricalCreator": true,
+      "nullableOrActualPerformer": true,
+      "exactDTOHistoryReceiptParentChecksPassed": true,
+      "projectionSelects": [
+        "User"
+      ]
+    },
+    {
+      "label": "start",
+      "currentHistoricalCreator": true,
+      "nullableOrActualPerformer": true,
+      "exactDTOHistoryReceiptParentChecksPassed": true,
+      "projectionSelects": [
+        "User"
+      ]
+    },
+    {
+      "label": "complete",
+      "currentHistoricalCreator": true,
+      "nullableOrActualPerformer": true,
+      "exactDTOHistoryReceiptParentChecksPassed": true,
+      "projectionSelects": [
+        "User"
+      ]
+    },
+    {
+      "label": "cancel",
+      "currentHistoricalCreator": true,
+      "nullableOrActualPerformer": true,
+      "exactDTOHistoryReceiptParentChecksPassed": true,
+      "projectionSelects": [
+        "User"
+      ]
+    }
+  ],
+  "cleanup": {
+    "ownedRecordsRemoved": true,
+    "disconnected": true,
+    "observerRestored": true
+  }
+}

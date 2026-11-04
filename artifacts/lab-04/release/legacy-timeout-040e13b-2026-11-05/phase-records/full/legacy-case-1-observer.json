@@ -1,0 +1,1295 @@
+{
+  "caseId": 1,
+  "name": "T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows > resolves a migrated active zero-Action Ticket with its eligible historical owner",
+  "observerOffsetMs": 2425.5762,
+  "events": [
+    {
+      "atMs": 129.46590000000015,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 0,
+      "stage": "checkout-start",
+      "total": 1,
+      "idle": 1,
+      "waiting": 0
+    },
+    {
+      "atMs": 129.58159999999998,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 0,
+      "stage": "checkout-result",
+      "total": 1,
+      "idle": 0,
+      "waiting": 0
+    },
+    {
+      "atMs": 129.7188000000001,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 0,
+      "stage": "query-start",
+      "queryId": "q2",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "inStage": "pre-transaction"
+    },
+    {
+      "atMs": 131.76229999999987,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 0,
+      "stage": "query-end",
+      "queryId": "q2",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 131.83269999999993,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 0,
+      "stage": "physical-release",
+      "total": 1,
+      "idle": 0,
+      "waiting": 0
+    },
+    {
+      "atMs": 134.9708999999998,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 0,
+      "stage": "checkout-start",
+      "total": 1,
+      "idle": 1,
+      "waiting": 0
+    },
+    {
+      "atMs": 135.0549000000001,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 0,
+      "stage": "checkout-result",
+      "total": 1,
+      "idle": 0,
+      "waiting": 0
+    },
+    {
+      "atMs": 135.1185999999998,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 0,
+      "stage": "query-start",
+      "queryId": "q3",
+      "kind": "User",
+      "operation": "SELECT",
+      "inStage": "pre-transaction"
+    },
+    {
+      "atMs": 140.07670000000007,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 0,
+      "stage": "query-end",
+      "queryId": "q3",
+      "kind": "User",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 140.11709999999994,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 0,
+      "stage": "physical-release",
+      "total": 1,
+      "idle": 0,
+      "waiting": 0
+    },
+    {
+      "atMs": 247.5279999999998,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "transaction-start"
+    },
+    {
+      "atMs": 248.04799999999977,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "attempt-selected",
+      "maxWait": 2000
+    },
+    {
+      "atMs": 248.89319999999998,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "checkout-start",
+      "total": 1,
+      "idle": 1,
+      "waiting": 0
+    },
+    {
+      "atMs": 248.96349999999984,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "checkout-result",
+      "total": 1,
+      "idle": 0,
+      "waiting": 0
+    },
+    {
+      "atMs": 249.16060000000016,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q4",
+      "kind": "metadata",
+      "operation": "SHOW",
+      "inStage": "admission-setup"
+    },
+    {
+      "atMs": 249.5684000000001,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q4",
+      "kind": "metadata",
+      "operation": "SHOW",
+      "error": null
+    },
+    {
+      "atMs": 249.60120000000006,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q5",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "inStage": "admission-setup"
+    },
+    {
+      "atMs": 251.33050000000003,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q5",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 251.46770000000015,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q6",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "inStage": "admission-setup"
+    },
+    {
+      "atMs": 251.8184000000001,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q6",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 251.84310000000005,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q7",
+      "kind": "maintenance-shared",
+      "operation": "SELECT",
+      "inStage": "admission-setup"
+    },
+    {
+      "atMs": 253.28229999999985,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q7",
+      "kind": "maintenance-shared",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 253.29239999999982,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "admission-acquired",
+      "kind": "maintenance-shared"
+    },
+    {
+      "atMs": 253.38250000000016,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q8",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "inStage": "post-admission"
+    },
+    {
+      "atMs": 253.61479999999983,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q8",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 253.64679999999998,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q9",
+      "kind": "resource-1",
+      "operation": "SELECT",
+      "inStage": "database-resource"
+    },
+    {
+      "atMs": 253.9027000000001,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q9",
+      "kind": "resource-1",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 253.90769999999975,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "admission-acquired",
+      "kind": "resource-1"
+    },
+    {
+      "atMs": 253.9758999999999,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q10",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "inStage": "post-admission"
+    },
+    {
+      "atMs": 254.1628999999998,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q10",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 254.24670000000015,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "begin-start"
+    },
+    {
+      "atMs": 254.4112,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q11",
+      "kind": "metadata",
+      "operation": "BEGIN",
+      "inStage": "begin"
+    },
+    {
+      "atMs": 254.60239999999976,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q11",
+      "kind": "metadata",
+      "operation": "BEGIN",
+      "error": null
+    },
+    {
+      "atMs": 254.66010000000006,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q12",
+      "kind": "metadata",
+      "operation": "SET",
+      "inStage": "begin"
+    },
+    {
+      "atMs": 254.77549999999974,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q12",
+      "kind": "metadata",
+      "operation": "SET",
+      "error": null
+    },
+    {
+      "atMs": 254.79379999999992,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "begin-result"
+    },
+    {
+      "atMs": 255.70769999999993,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "callback-entry"
+    },
+    {
+      "atMs": 256.7374999999997,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q13",
+      "kind": "User",
+      "operation": "SELECT",
+      "inStage": "begin"
+    },
+    {
+      "atMs": 257.16190000000006,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q13",
+      "kind": "User",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 261.96439999999984,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q14",
+      "kind": "AuthSession",
+      "operation": "INSERT",
+      "inStage": "begin"
+    },
+    {
+      "atMs": 265.5066999999999,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q14",
+      "kind": "AuthSession",
+      "operation": "INSERT",
+      "error": null
+    },
+    {
+      "atMs": 267.0643,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q15",
+      "kind": "metadata",
+      "operation": "DELETE",
+      "inStage": "begin"
+    },
+    {
+      "atMs": 267.55549999999994,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q15",
+      "kind": "metadata",
+      "operation": "DELETE",
+      "error": null
+    },
+    {
+      "atMs": 267.6343999999999,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "callback-exit"
+    },
+    {
+      "atMs": 268.1797999999999,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q16",
+      "kind": "commit",
+      "operation": "COMMIT",
+      "inStage": "commit"
+    },
+    {
+      "atMs": 268.9924000000001,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q16",
+      "kind": "commit",
+      "operation": "COMMIT",
+      "error": null
+    },
+    {
+      "atMs": 269.24789999999985,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "finish-before-cleanup",
+      "observed": {
+        "stage": "commit",
+        "activeQuery": null
+      },
+      "hasPrimary": false,
+      "error": null
+    },
+    {
+      "atMs": 269.35609999999997,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q17",
+      "kind": "rollback",
+      "operation": "ROLLBACK",
+      "inStage": "cleanup"
+    },
+    {
+      "atMs": 269.89649999999983,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q17",
+      "kind": "rollback",
+      "operation": "ROLLBACK",
+      "error": null
+    },
+    {
+      "atMs": 269.92029999999977,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q18",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "inStage": "cleanup"
+    },
+    {
+      "atMs": 270.16939999999977,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q18",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 270.18629999999985,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q19",
+      "kind": "unlock",
+      "operation": "SELECT",
+      "inStage": "cleanup"
+    },
+    {
+      "atMs": 270.40340000000015,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q19",
+      "kind": "unlock",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 270.4169999999999,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q20",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "inStage": "cleanup"
+    },
+    {
+      "atMs": 270.5776999999998,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q20",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 270.6295,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "physical-release",
+      "total": 1,
+      "idle": 0,
+      "waiting": 0
+    },
+    {
+      "atMs": 270.65549999999985,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "finish-drained"
+    },
+    {
+      "atMs": 270.68759999999975,
+      "request": "legacy-1-auth-real-login",
+      "attempt": 1,
+      "stage": "transaction-result"
+    },
+    {
+      "atMs": 313.87570000000005,
+      "request": "legacy-1-http-patch",
+      "attempt": 0,
+      "stage": "checkout-start",
+      "total": 1,
+      "idle": 1,
+      "waiting": 0
+    },
+    {
+      "atMs": 313.9227000000001,
+      "request": "legacy-1-http-patch",
+      "attempt": 0,
+      "stage": "checkout-result",
+      "total": 1,
+      "idle": 0,
+      "waiting": 0
+    },
+    {
+      "atMs": 313.95019999999977,
+      "request": "legacy-1-http-patch",
+      "attempt": 0,
+      "stage": "query-start",
+      "queryId": "q31",
+      "kind": "AuthSession",
+      "operation": "SELECT",
+      "inStage": "pre-transaction"
+    },
+    {
+      "atMs": 314.4241999999999,
+      "request": "legacy-1-http-patch",
+      "attempt": 0,
+      "stage": "query-end",
+      "queryId": "q31",
+      "kind": "AuthSession",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 314.4434000000001,
+      "request": "legacy-1-http-patch",
+      "attempt": 0,
+      "stage": "physical-release",
+      "total": 1,
+      "idle": 0,
+      "waiting": 0
+    },
+    {
+      "atMs": 314.65700000000015,
+      "request": "legacy-1-http-patch",
+      "attempt": 0,
+      "stage": "checkout-start",
+      "total": 1,
+      "idle": 1,
+      "waiting": 0
+    },
+    {
+      "atMs": 314.68219999999974,
+      "request": "legacy-1-http-patch",
+      "attempt": 0,
+      "stage": "checkout-result",
+      "total": 1,
+      "idle": 0,
+      "waiting": 0
+    },
+    {
+      "atMs": 314.7031999999999,
+      "request": "legacy-1-http-patch",
+      "attempt": 0,
+      "stage": "query-start",
+      "queryId": "q32",
+      "kind": "User",
+      "operation": "SELECT",
+      "inStage": "pre-transaction"
+    },
+    {
+      "atMs": 315.0261999999998,
+      "request": "legacy-1-http-patch",
+      "attempt": 0,
+      "stage": "query-end",
+      "queryId": "q32",
+      "kind": "User",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 315.05459999999994,
+      "request": "legacy-1-http-patch",
+      "attempt": 0,
+      "stage": "physical-release",
+      "total": 1,
+      "idle": 0,
+      "waiting": 0
+    },
+    {
+      "atMs": 316.74940000000015,
+      "request": "legacy-1-http-patch",
+      "attempt": 0,
+      "stage": "checkout-start",
+      "total": 1,
+      "idle": 1,
+      "waiting": 0
+    },
+    {
+      "atMs": 316.77959999999985,
+      "request": "legacy-1-http-patch",
+      "attempt": 0,
+      "stage": "checkout-result",
+      "total": 1,
+      "idle": 0,
+      "waiting": 0
+    },
+    {
+      "atMs": 316.7973999999999,
+      "request": "legacy-1-http-patch",
+      "attempt": 0,
+      "stage": "query-start",
+      "queryId": "q33",
+      "kind": "Ticket",
+      "operation": "SELECT",
+      "inStage": "pre-transaction"
+    },
+    {
+      "atMs": 317.2325000000001,
+      "request": "legacy-1-http-patch",
+      "attempt": 0,
+      "stage": "query-end",
+      "queryId": "q33",
+      "kind": "Ticket",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 317.2455,
+      "request": "legacy-1-http-patch",
+      "attempt": 0,
+      "stage": "physical-release",
+      "total": 1,
+      "idle": 0,
+      "waiting": 0
+    },
+    {
+      "atMs": 317.9335000000001,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "transaction-start"
+    },
+    {
+      "atMs": 318.1907000000001,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "attempt-selected",
+      "maxWait": 2000
+    },
+    {
+      "atMs": 318.5538999999999,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "checkout-start",
+      "total": 1,
+      "idle": 1,
+      "waiting": 0
+    },
+    {
+      "atMs": 318.6014,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "checkout-result",
+      "total": 1,
+      "idle": 0,
+      "waiting": 0
+    },
+    {
+      "atMs": 318.6201000000001,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q34",
+      "kind": "metadata",
+      "operation": "SHOW",
+      "inStage": "admission-setup"
+    },
+    {
+      "atMs": 319.04349999999977,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q34",
+      "kind": "metadata",
+      "operation": "SHOW",
+      "error": null
+    },
+    {
+      "atMs": 319.0650999999998,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q35",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "inStage": "admission-setup"
+    },
+    {
+      "atMs": 319.4000000000001,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q35",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 319.45780000000013,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q36",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "inStage": "admission-setup"
+    },
+    {
+      "atMs": 319.8384000000001,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q36",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 319.8606999999997,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q37",
+      "kind": "maintenance-shared",
+      "operation": "SELECT",
+      "inStage": "admission-setup"
+    },
+    {
+      "atMs": 320.0965000000001,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q37",
+      "kind": "maintenance-shared",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 320.1055000000001,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "admission-acquired",
+      "kind": "maintenance-shared"
+    },
+    {
+      "atMs": 320.15250000000015,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q38",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "inStage": "post-admission"
+    },
+    {
+      "atMs": 320.3932,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q38",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 320.4258,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q39",
+      "kind": "resource-1",
+      "operation": "SELECT",
+      "inStage": "database-resource"
+    },
+    {
+      "atMs": 320.65380000000005,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q39",
+      "kind": "resource-1",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 320.66449999999986,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "admission-acquired",
+      "kind": "resource-1"
+    },
+    {
+      "atMs": 320.7006000000001,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q40",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "inStage": "post-admission"
+    },
+    {
+      "atMs": 320.8971999999999,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q40",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 320.91449999999986,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q41",
+      "kind": "resource-2",
+      "operation": "SELECT",
+      "inStage": "database-resource"
+    },
+    {
+      "atMs": 321.0857000000001,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q41",
+      "kind": "resource-2",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 321.08989999999994,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "admission-acquired",
+      "kind": "resource-2"
+    },
+    {
+      "atMs": 321.11990000000014,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q42",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "inStage": "post-admission"
+    },
+    {
+      "atMs": 321.2350999999999,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q42",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 321.25189999999975,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "begin-start"
+    },
+    {
+      "atMs": 321.2963,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q43",
+      "kind": "metadata",
+      "operation": "BEGIN",
+      "inStage": "begin"
+    },
+    {
+      "atMs": 321.4002999999998,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q43",
+      "kind": "metadata",
+      "operation": "BEGIN",
+      "error": null
+    },
+    {
+      "atMs": 321.4425000000001,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q44",
+      "kind": "metadata",
+      "operation": "SET",
+      "inStage": "begin"
+    },
+    {
+      "atMs": 321.5470999999998,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q44",
+      "kind": "metadata",
+      "operation": "SET",
+      "error": null
+    },
+    {
+      "atMs": 321.55499999999984,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "begin-result"
+    },
+    {
+      "atMs": 322.0216999999998,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "callback-entry"
+    },
+    {
+      "atMs": 322.8087999999998,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q45",
+      "kind": "User",
+      "operation": "SELECT",
+      "inStage": "begin"
+    },
+    {
+      "atMs": 323.2305000000001,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q45",
+      "kind": "User",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 323.8143,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q46",
+      "kind": "AuthSession",
+      "operation": "SELECT",
+      "inStage": "begin"
+    },
+    {
+      "atMs": 324.3598999999999,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q46",
+      "kind": "AuthSession",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 324.96489999999994,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q47",
+      "kind": "Ticket",
+      "operation": "SELECT",
+      "inStage": "begin"
+    },
+    {
+      "atMs": 325.5009,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q47",
+      "kind": "Ticket",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 328.11259999999993,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q48",
+      "kind": "Action",
+      "operation": "SELECT",
+      "inStage": "begin"
+    },
+    {
+      "atMs": 328.8897999999999,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q48",
+      "kind": "Action",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 330.86709999999994,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q49",
+      "kind": "Ticket",
+      "operation": "UPDATE",
+      "inStage": "begin"
+    },
+    {
+      "atMs": 331.64840000000004,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q49",
+      "kind": "Ticket",
+      "operation": "UPDATE",
+      "error": null
+    },
+    {
+      "atMs": 332.4474,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q50",
+      "kind": "metadata",
+      "operation": "INSERT",
+      "inStage": "begin"
+    },
+    {
+      "atMs": 333.24659999999994,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q50",
+      "kind": "metadata",
+      "operation": "INSERT",
+      "error": null
+    },
+    {
+      "atMs": 334.1226999999999,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q51",
+      "kind": "Ticket",
+      "operation": "SELECT",
+      "inStage": "begin"
+    },
+    {
+      "atMs": 334.47519999999986,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q51",
+      "kind": "Ticket",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 334.5585000000001,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q52",
+      "kind": "User",
+      "operation": "SELECT",
+      "inStage": "begin"
+    },
+    {
+      "atMs": 334.7840000000001,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q52",
+      "kind": "User",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 334.8692000000001,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "callback-exit"
+    },
+    {
+      "atMs": 335.2611999999999,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q53",
+      "kind": "commit",
+      "operation": "COMMIT",
+      "inStage": "commit"
+    },
+    {
+      "atMs": 335.85570000000007,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q53",
+      "kind": "commit",
+      "operation": "COMMIT",
+      "error": null
+    },
+    {
+      "atMs": 335.9292999999998,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "finish-before-cleanup",
+      "observed": {
+        "stage": "commit",
+        "activeQuery": null
+      },
+      "hasPrimary": false,
+      "error": null
+    },
+    {
+      "atMs": 335.94709999999986,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q54",
+      "kind": "rollback",
+      "operation": "ROLLBACK",
+      "inStage": "cleanup"
+    },
+    {
+      "atMs": 336.24519999999984,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q54",
+      "kind": "rollback",
+      "operation": "ROLLBACK",
+      "error": null
+    },
+    {
+      "atMs": 336.2653999999998,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q55",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "inStage": "cleanup"
+    },
+    {
+      "atMs": 336.5133000000001,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q55",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 336.53060000000005,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q56",
+      "kind": "unlock",
+      "operation": "SELECT",
+      "inStage": "cleanup"
+    },
+    {
+      "atMs": 336.8276999999998,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q56",
+      "kind": "unlock",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 336.84789999999975,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q57",
+      "kind": "unlock",
+      "operation": "SELECT",
+      "inStage": "cleanup"
+    },
+    {
+      "atMs": 337.0320999999999,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q57",
+      "kind": "unlock",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 337.0486999999998,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q58",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "inStage": "cleanup"
+    },
+    {
+      "atMs": 337.18489999999974,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q58",
+      "kind": "metadata",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 337.19799999999987,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "physical-release",
+      "total": 1,
+      "idle": 0,
+      "waiting": 0
+    },
+    {
+      "atMs": 337.2401,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "finish-drained"
+    },
+    {
+      "atMs": 337.2599,
+      "request": "legacy-1-http-patch",
+      "attempt": 1,
+      "stage": "transaction-result"
+    }
+  ],
+  "journalWriteCount": 53,
+  "journalWriteMs": 17.322399999999504
+}

@@ -1,0 +1,121 @@
+{
+  "newGeneratedArtifacts": [
+    {
+      "originalPath": "artifacts/lab-04/hardening/command-hot-resource-2026-11-03-279ed979.json",
+      "exportPath": "full-generated/command-hot-resource-2026-11-03-279ed979.json",
+      "originalSha256": "153f2c825a3d061b26a56ada7d31b269ec9e39616a822c73664c16a606d3f026",
+      "exportSha256": "153f2c825a3d061b26a56ada7d31b269ec9e39616a822c73664c16a606d3f026"
+    },
+    {
+      "originalPath": "artifacts/lab-04/hardening/complete-phases-2026-11-04-930c99dd.json",
+      "exportPath": "full-generated/complete-phases-2026-11-04-930c99dd.json",
+      "originalSha256": "304af31f46922d98729cc2712c8f25be443f5007b6587de5736255f016f69544",
+      "exportSha256": "304af31f46922d98729cc2712c8f25be443f5007b6587de5736255f016f69544"
+    },
+    {
+      "originalPath": "artifacts/lab-04/hardening/create-critical-path-2026-11-04-9cf8983a.json",
+      "exportPath": "full-generated/create-critical-path-2026-11-04-9cf8983a.json",
+      "originalSha256": "9d2cac2acab47edab62fbfe303671b3473bd2a4410e3abca5875d7cc7c0910cc",
+      "exportSha256": "9d2cac2acab47edab62fbfe303671b3473bd2a4410e3abca5875d7cc7c0910cc"
+    },
+    {
+      "originalPath": "artifacts/lab-04/hardening/create-predicate-2026-11-04-receipt-default-81381a03.json",
+      "exportPath": "full-generated/create-predicate-2026-11-04-receipt-default-81381a03.json",
+      "originalSha256": "998297ff37b41d32b8f3afa080b4006e30a9f67c4b1599fcdec10522b2312d27",
+      "exportSha256": "998297ff37b41d32b8f3afa080b4006e30a9f67c4b1599fcdec10522b2312d27"
+    },
+    {
+      "originalPath": "artifacts/lab-04/hardening/create-predicate-2026-11-04-receipt-index-979727bb.json",
+      "exportPath": "full-generated/create-predicate-2026-11-04-receipt-index-979727bb.json",
+      "originalSha256": "161d97bb013d9b0fdbf7c5471e8eb7089dba1c3fc6c66a5983e9f5d442a188bc",
+      "exportSha256": "161d97bb013d9b0fdbf7c5471e8eb7089dba1c3fc6c66a5983e9f5d442a188bc"
+    },
+    {
+      "originalPath": "artifacts/lab-04/hardening/create-predicate-2026-11-04-receipt-no-negative-read-7c9d8d44.json",
+      "exportPath": "full-generated/create-predicate-2026-11-04-receipt-no-negative-read-7c9d8d44.json",
+      "originalSha256": "fd4effbdeaca7d759c85d25f2e0d96e782601f9ed4ce8d40f484a71321e96df4",
+      "exportSha256": "fd4effbdeaca7d759c85d25f2e0d96e782601f9ed4ce8d40f484a71321e96df4"
+    },
+    {
+      "originalPath": "artifacts/lab-04/hardening/create-predicate-2026-11-04-ticket-default-e09d529e.json",
+      "exportPath": "full-generated/create-predicate-2026-11-04-ticket-default-e09d529e.json",
+      "originalSha256": "8972d4b342a3bb7f9e84ab2dee81f463c8ff2f779386a32847520c2a678ff657",
+      "exportSha256": "8972d4b342a3bb7f9e84ab2dee81f463c8ff2f779386a32847520c2a678ff657"
+    },
+    {
+      "originalPath": "artifacts/lab-04/hardening/create-predicate-2026-11-04-ticket-index-2b598ecf.json",
+      "exportPath": "full-generated/create-predicate-2026-11-04-ticket-index-2b598ecf.json",
+      "originalSha256": "d192183624c3366968826e5c3dd54dfaf5842022fd9d44db58665f420d52d3a3",
+      "exportSha256": "d192183624c3366968826e5c3dd54dfaf5842022fd9d44db58665f420d52d3a3"
+    },
+    {
+      "originalPath": "artifacts/lab-04/hardening/create-projection-2026-11-04-c95e0c48.json",
+      "exportPath": "full-generated/create-projection-2026-11-04-c95e0c48.json",
+      "originalSha256": "2281338fb046562a5f40c481e349564f00fb09447d67617efba2e072d319e19a",
+      "exportSha256": "2281338fb046562a5f40c481e349564f00fb09447d67617efba2e072d319e19a"
+    },
+    {
+      "originalPath": "artifacts/lab-04/hardening/front-queue-resource-2026-11-04-8120271a.json",
+      "exportPath": "full-generated/front-queue-resource-2026-11-04-8120271a.json",
+      "originalSha256": "a2aa3f6b168a690e4a6df863af5007bf43ca883b209e6a2865c4b29cda737e64",
+      "exportSha256": "a2aa3f6b168a690e4a6df863af5007bf43ca883b209e6a2865c4b29cda737e64"
+    },
+    {
+      "originalPath": "artifacts/lab-04/hardening/independent-create-red-2026-11-04-4e2e987f.json",
+      "exportPath": "full-generated/independent-create-red-2026-11-04-4e2e987f.json",
+      "originalSha256": "0d3f4d812036558120b72483cd5ed1f5e0c5481bb71248d9d39bf2607647c122",
+      "exportSha256": "0d3f4d812036558120b72483cd5ed1f5e0c5481bb71248d9d39bf2607647c122"
+    },
+    {
+      "originalPath": "artifacts/lab-04/hardening/independent-create-red-2026-11-04-9b7c2e8d.json",
+      "exportPath": "full-generated/independent-create-red-2026-11-04-9b7c2e8d.json",
+      "originalSha256": "d30e65256a849303397f856b3ecabb414194c635951bf9c224ef55123327919c",
+      "exportSha256": "d30e65256a849303397f856b3ecabb414194c635951bf9c224ef55123327919c"
+    },
+    {
+      "originalPath": "artifacts/lab-04/hardening/patch-chain-phases-2026-11-04-239a92c6.json",
+      "exportPath": "full-generated/patch-chain-phases-2026-11-04-239a92c6.json",
+      "originalSha256": "5faf8d73e31c96143912fb6c181b3d4f89a2d7134d6bce82b1613ac723b52d50",
+      "exportSha256": "5faf8d73e31c96143912fb6c181b3d4f89a2d7134d6bce82b1613ac723b52d50"
+    },
+    {
+      "originalPath": "artifacts/lab-04/hardening/patch-projection-2026-11-04-e34c5384.json",
+      "exportPath": "full-generated/patch-projection-2026-11-04-e34c5384.json",
+      "originalSha256": "d913bf665f6a27889fbf9aa2aca7c5688c05fafc6d892a15c12cdc68447ffd38",
+      "exportSha256": "d913bf665f6a27889fbf9aa2aca7c5688c05fafc6d892a15c12cdc68447ffd38"
+    },
+    {
+      "originalPath": "artifacts/lab-04/hardening/read-batching-2026-11-04-4cf2d067.json",
+      "exportPath": "full-generated/read-batching-2026-11-04-4cf2d067.json",
+      "originalSha256": "0eea9ca6d02c9b5395265d78f792bf96a8f4e93f4a33ba843fac42ae8aac8523",
+      "exportSha256": "0eea9ca6d02c9b5395265d78f792bf96a8f4e93f4a33ba843fac42ae8aac8523"
+    },
+    {
+      "originalPath": "artifacts/lab-04/hardening/t47-create-contention-2026-11-04-ddf3a35a.json",
+      "exportPath": "full-generated/t47-create-contention-2026-11-04-ddf3a35a.json",
+      "originalSha256": "f0c77d3a1665d86f25e6fcbc9f0ed406c43cb0ea3acf2f7d09be2ed0bc431228",
+      "exportSha256": "f0c77d3a1665d86f25e6fcbc9f0ed406c43cb0ea3acf2f7d09be2ed0bc431228"
+    },
+    {
+      "originalPath": "artifacts/lab-04/hardening/t47-diagnostic-observations-2026-11-01-ae83dd93.json",
+      "exportPath": "full-generated/t47-diagnostic-observations-2026-11-01-ae83dd93.json",
+      "originalSha256": "8ecd350da58d2c5f7f398e87a013950d3dc5b7ec2d45e78d9bda6a71c9d8f808",
+      "exportSha256": "8ecd350da58d2c5f7f398e87a013950d3dc5b7ec2d45e78d9bda6a71c9d8f808"
+    },
+    {
+      "originalPath": "artifacts/lab-04/hardening/write-admission-feasibility-2026-11-04-360632d9.json",
+      "exportPath": "full-generated/write-admission-feasibility-2026-11-04-360632d9.json",
+      "originalSha256": "ec452f806e2fd43b278ac0bd0844dde464ed08ea02aff1fa4035bfa22e34bfb3",
+      "exportSha256": "ec452f806e2fd43b278ac0bd0844dde464ed08ea02aff1fa4035bfa22e34bfb3"
+    }
+  ],
+  "preexistingArtifactFilesChecked": 1047,
+  "preexistingByteMismatches": 0,
+  "trackedFilesChecked": 1120,
+  "onlyAuthorizedTrackedDelta": [
+    "server/tests/lab-04/legacy-actions.integration.test.ts"
+  ],
+  "newDedicatedHelper": "server/tests/lab-04/legacy-phase-diagnostic.ts",
+  "productionFilesUnchanged": true,
+  "priorEvidencePackagesUnchanged": true
+}

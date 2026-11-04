@@ -1,0 +1,174 @@
+{
+  "failedTests": [
+    {
+      "file": "server/tests/lab-04/action-patch-projection.integration.test.ts",
+      "test": "preserves PATCH identities and bounds projection reads during one EDIT-START-terminal cohort",
+      "expected": 200,
+      "actual": 500,
+      "safeStackFrames": [
+        "action-patch-projection.integration.test.ts:120:37",
+        "Promise.all(index19)",
+        "action-patch-projection.integration.test.ts:139:36",
+        "migration-test-fixtures.ts:91:5",
+        "action-patch-projection.integration.test.ts:30:5"
+      ],
+      "firstError": "AssertionError: expected500 to be200"
+    }
+  ],
+  "failedHttpResponses": [
+    {
+      "id": "edit-19",
+      "operation": "edit",
+      "status": 500,
+      "error": "INTERNAL_ERROR",
+      "elapsedMs": 2715.5950999999986
+    },
+    {
+      "id": "edit-17",
+      "operation": "edit",
+      "status": 500,
+      "error": "INTERNAL_ERROR",
+      "elapsedMs": 2757.219299999997
+    },
+    {
+      "id": "edit-18",
+      "operation": "edit",
+      "status": 500,
+      "error": "INTERNAL_ERROR",
+      "elapsedMs": 2758.8199999999997
+    },
+    {
+      "id": "edit-16",
+      "operation": "edit",
+      "status": 500,
+      "error": "INTERNAL_ERROR",
+      "elapsedMs": 3180.5409
+    },
+    {
+      "id": "edit-14",
+      "operation": "edit",
+      "status": 500,
+      "error": "INTERNAL_ERROR",
+      "elapsedMs": 3231.0135999999984
+    }
+  ],
+  "safeInternalErrors": [
+    {
+      "request": "edit-19",
+      "attempt": 1,
+      "error": {
+        "name": "TransactionStartDeadlineError",
+        "constructorName": "TransactionStartDeadlineError",
+        "code": "P2028",
+        "reportedMetaPhase": "transaction-start",
+        "reportedMaxWait": 2000,
+        "reportedTimeout": null,
+        "reportedMetaCode": null,
+        "reportedCauseCode": null,
+        "ownedStartupComposition": true,
+        "engineProvidedSubtype": null
+      },
+      "observed": {
+        "stage": "database-resource",
+        "activeQuery": "q2754",
+        "deadlineStage": "database-resource",
+        "deadlineQuery": "q2754"
+      }
+    },
+    {
+      "request": "edit-17",
+      "attempt": 1,
+      "error": {
+        "name": "TransactionStartDeadlineError",
+        "constructorName": "TransactionStartDeadlineError",
+        "code": "P2028",
+        "reportedMetaPhase": "transaction-start",
+        "reportedMaxWait": 2000,
+        "reportedTimeout": null,
+        "reportedMetaCode": null,
+        "reportedCauseCode": null,
+        "ownedStartupComposition": true,
+        "engineProvidedSubtype": null
+      },
+      "observed": {
+        "stage": "database-resource",
+        "activeQuery": "q2779",
+        "deadlineStage": "database-resource",
+        "deadlineQuery": "q2779"
+      }
+    },
+    {
+      "request": "edit-18",
+      "attempt": 1,
+      "error": {
+        "name": "TransactionStartDeadlineError",
+        "constructorName": "TransactionStartDeadlineError",
+        "code": "P2028",
+        "reportedMetaPhase": "transaction-start",
+        "reportedMaxWait": 2000,
+        "reportedTimeout": null,
+        "reportedMetaCode": null,
+        "reportedCauseCode": null,
+        "ownedStartupComposition": true,
+        "engineProvidedSubtype": null
+      },
+      "observed": {
+        "stage": "database-resource",
+        "activeQuery": "q4230",
+        "deadlineStage": "database-resource",
+        "deadlineQuery": "q4230"
+      }
+    },
+    {
+      "request": "edit-16",
+      "attempt": 1,
+      "error": {
+        "name": "TransactionStartDeadlineError",
+        "constructorName": "TransactionStartDeadlineError",
+        "code": "P2028",
+        "reportedMetaPhase": "transaction-start",
+        "reportedMaxWait": 2000,
+        "reportedTimeout": null,
+        "reportedMetaCode": null,
+        "reportedCauseCode": null,
+        "ownedStartupComposition": true,
+        "engineProvidedSubtype": null
+      },
+      "observed": {
+        "stage": "database-resource",
+        "activeQuery": "q4538",
+        "deadlineStage": "database-resource",
+        "deadlineQuery": "q4538"
+      }
+    },
+    {
+      "request": "edit-14",
+      "attempt": 1,
+      "error": {
+        "name": "TransactionStartDeadlineError",
+        "constructorName": "TransactionStartDeadlineError",
+        "code": "P2028",
+        "reportedMetaPhase": "transaction-start",
+        "reportedMaxWait": 2000,
+        "reportedTimeout": null,
+        "reportedMetaCode": null,
+        "reportedCauseCode": null,
+        "ownedStartupComposition": true,
+        "engineProvidedSubtype": null
+      },
+      "observed": {
+        "stage": "cleanup",
+        "activeQuery": null,
+        "deadlineStage": "post-admission",
+        "deadlineQuery": null
+      }
+    }
+  ],
+  "phase": "observed-overlap",
+  "cleanup": {
+    "listenerClosed": true,
+    "checkedOut": 0
+  },
+  "meaning": "Five failed EDIT HTTP responses inside one failed test. Positively retained owned startup-deadline classification;4resource acquisition and1post-admission. Exact prior holder/delay source remains unknown. No engine subtype or performance/machine cause inferred.",
+  "benchmarkRan": false
+}

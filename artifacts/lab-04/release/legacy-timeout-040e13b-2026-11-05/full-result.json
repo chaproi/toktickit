@@ -1,0 +1,1734 @@
+{
+  "label": "full",
+  "command": "npm.cmd test -- --exclude tests/lab-04/performance-smoke.integration.test.ts --reporter=default --reporter=json --outputFile=<private-phase-directory>\\full-vitest.json",
+  "head": "040e13b78893ab8155bac89758334adf1a045b01",
+  "sourceState": "production unchanged; explicit test-only legacy diagnostic delta",
+  "runnerPid": 24988,
+  "startedAt": "2026-11-04T18:31:20.889513+00:00",
+  "outerSafetyBudgetSeconds": 3600,
+  "signalsObserved": [],
+  "outputMode": "binary direct file; no output buffer/maxBuffer",
+  "events": [
+    {
+      "event": "runner-start",
+      "at": "2026-11-04T18:31:20.889603+00:00",
+      "atMs": 0.06009999196976423
+    },
+    {
+      "event": "spawned",
+      "at": "2026-11-04T18:31:20.900980+00:00",
+      "atMs": 11.444400006439537
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:31:25.902421+00:00",
+      "atMs": 5012.86680001067,
+      "logBytes": 867,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:31:30.904695+00:00",
+      "atMs": 10015.100799995707,
+      "logBytes": 3714,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:31:35.907137+00:00",
+      "atMs": 15017.512499995064,
+      "logBytes": 4004,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:31:40.912985+00:00",
+      "atMs": 20023.339800012764,
+      "logBytes": 4247,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:31:45.923792+00:00",
+      "atMs": 25034.123499994166,
+      "logBytes": 6155,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:31:50.925817+00:00",
+      "atMs": 30036.103199992795,
+      "logBytes": 8673,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:31:55.927234+00:00",
+      "atMs": 35037.49039999093,
+      "logBytes": 8673,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:32:00.929095+00:00",
+      "atMs": 40039.33759999927,
+      "logBytes": 8673,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:32:05.932048+00:00",
+      "atMs": 45042.24660000182,
+      "logBytes": 10180,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:32:10.933909+00:00",
+      "atMs": 50044.07810000703,
+      "logBytes": 10180,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:32:15.935821+00:00",
+      "atMs": 55045.966600009706,
+      "logBytes": 10180,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:32:20.937576+00:00",
+      "atMs": 60047.68160000094,
+      "logBytes": 10180,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:32:25.939130+00:00",
+      "atMs": 65049.20629999833,
+      "logBytes": 12456,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:32:30.940820+00:00",
+      "atMs": 70050.86899999878,
+      "logBytes": 16958,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:32:35.942594+00:00",
+      "atMs": 75052.6094000088,
+      "logBytes": 22441,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:32:40.944386+00:00",
+      "atMs": 80054.38359998516,
+      "logBytes": 24012,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:32:45.947356+00:00",
+      "atMs": 85057.32150000404,
+      "logBytes": 25316,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:32:50.949496+00:00",
+      "atMs": 90059.42020000657,
+      "logBytes": 26476,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:32:55.950709+00:00",
+      "atMs": 95060.6037999969,
+      "logBytes": 29608,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:33:00.952487+00:00",
+      "atMs": 100062.36630000058,
+      "logBytes": 31076,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:33:05.956352+00:00",
+      "atMs": 105066.2047000078,
+      "logBytes": 32587,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:33:10.958861+00:00",
+      "atMs": 110068.66930000251,
+      "logBytes": 34043,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:33:15.961641+00:00",
+      "atMs": 115071.41559998854,
+      "logBytes": 35918,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:33:20.962826+00:00",
+      "atMs": 120072.57530000061,
+      "logBytes": 37142,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:33:25.964762+00:00",
+      "atMs": 125074.4771999889,
+      "logBytes": 37142,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:33:30.965804+00:00",
+      "atMs": 130075.48969998606,
+      "logBytes": 40553,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:33:35.967165+00:00",
+      "atMs": 135076.8182000029,
+      "logBytes": 41251,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:33:40.968457+00:00",
+      "atMs": 140078.08269999805,
+      "logBytes": 42578,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:33:45.969734+00:00",
+      "atMs": 145079.32799999253,
+      "logBytes": 42578,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:33:50.971303+00:00",
+      "atMs": 150080.8692999999,
+      "logBytes": 43064,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:33:55.975095+00:00",
+      "atMs": 155084.63060000213,
+      "logBytes": 44570,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:34:00.976515+00:00",
+      "atMs": 160086.0216000001,
+      "logBytes": 44886,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:34:05.977689+00:00",
+      "atMs": 165087.1643999999,
+      "logBytes": 51261,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:34:10.979345+00:00",
+      "atMs": 170088.79479998723,
+      "logBytes": 52687,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:34:15.980901+00:00",
+      "atMs": 175090.3177,
+      "logBytes": 56254,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:34:20.982649+00:00",
+      "atMs": 180092.04660000978,
+      "logBytes": 61614,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:34:25.986575+00:00",
+      "atMs": 185096.00620000856,
+      "logBytes": 72639,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:34:30.989530+00:00",
+      "atMs": 190098.8667999918,
+      "logBytes": 78362,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:34:35.991755+00:00",
+      "atMs": 195101.05219998513,
+      "logBytes": 86103,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:34:40.993137+00:00",
+      "atMs": 200102.40249999333,
+      "logBytes": 87985,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:34:45.994510+00:00",
+      "atMs": 205103.74530000263,
+      "logBytes": 92859,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:34:50.996621+00:00",
+      "atMs": 210105.8275999967,
+      "logBytes": 97931,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:34:55.998034+00:00",
+      "atMs": 215107.21349998494,
+      "logBytes": 105304,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:35:00.999506+00:00",
+      "atMs": 220108.65710000508,
+      "logBytes": 105425,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:35:06.001160+00:00",
+      "atMs": 225110.27569998987,
+      "logBytes": 106386,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:35:11.002846+00:00",
+      "atMs": 230111.94020000403,
+      "logBytes": 106736,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:35:16.006376+00:00",
+      "atMs": 235115.43639999582,
+      "logBytes": 106795,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:35:21.009196+00:00",
+      "atMs": 240118.232000008,
+      "logBytes": 107191,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:35:26.011274+00:00",
+      "atMs": 245120.26999998488,
+      "logBytes": 107635,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:35:31.012963+00:00",
+      "atMs": 250121.9276000047,
+      "logBytes": 107635,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:35:36.014227+00:00",
+      "atMs": 255123.1628000096,
+      "logBytes": 107944,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:35:41.016073+00:00",
+      "atMs": 260124.98100000084,
+      "logBytes": 109923,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:35:46.018394+00:00",
+      "atMs": 265127.27150000865,
+      "logBytes": 114642,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:35:51.019788+00:00",
+      "atMs": 270128.6405999854,
+      "logBytes": 123754,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:35:56.021577+00:00",
+      "atMs": 275130.39659999777,
+      "logBytes": 123754,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:36:01.024196+00:00",
+      "atMs": 280132.99169999664,
+      "logBytes": 123754,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:36:06.026597+00:00",
+      "atMs": 285135.3562999866,
+      "logBytes": 125280,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:36:11.028574+00:00",
+      "atMs": 290137.2985999915,
+      "logBytes": 131468,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:36:16.030263+00:00",
+      "atMs": 295138.9572999906,
+      "logBytes": 133699,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:36:21.031705+00:00",
+      "atMs": 300140.3691000014,
+      "logBytes": 136478,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:36:26.032819+00:00",
+      "atMs": 305141.45749999443,
+      "logBytes": 138831,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:36:31.034398+00:00",
+      "atMs": 310143.00619999995,
+      "logBytes": 141366,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:36:36.036451+00:00",
+      "atMs": 315145.031299995,
+      "logBytes": 142323,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:36:41.038652+00:00",
+      "atMs": 320147.1962000069,
+      "logBytes": 142785,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:36:46.040312+00:00",
+      "atMs": 325148.8257999881,
+      "logBytes": 142785,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:36:51.041773+00:00",
+      "atMs": 330150.2618000086,
+      "logBytes": 143495,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:36:56.043383+00:00",
+      "atMs": 335151.8371999846,
+      "logBytes": 143495,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:37:01.044843+00:00",
+      "atMs": 340153.2670999877,
+      "logBytes": 143495,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:37:06.050791+00:00",
+      "atMs": 345159.2328000115,
+      "logBytes": 143785,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:37:11.053972+00:00",
+      "atMs": 350162.3902999854,
+      "logBytes": 144685,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:37:16.056936+00:00",
+      "atMs": 355165.2868000092,
+      "logBytes": 144975,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:37:21.061289+00:00",
+      "atMs": 360169.6018000075,
+      "logBytes": 145815,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:37:26.063843+00:00",
+      "atMs": 365172.1230999974,
+      "logBytes": 146051,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:37:31.067274+00:00",
+      "atMs": 370175.5173999991,
+      "logBytes": 146051,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:37:36.069285+00:00",
+      "atMs": 375177.5178000098,
+      "logBytes": 146751,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:37:41.074226+00:00",
+      "atMs": 380182.41360000684,
+      "logBytes": 148139,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:37:46.076921+00:00",
+      "atMs": 385185.087299993,
+      "logBytes": 148351,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:37:51.085994+00:00",
+      "atMs": 390194.1320000042,
+      "logBytes": 148351,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:37:56.092442+00:00",
+      "atMs": 395200.5577000091,
+      "logBytes": 148351,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:38:01.100146+00:00",
+      "atMs": 400208.2339999906,
+      "logBytes": 148351,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:38:06.106796+00:00",
+      "atMs": 405214.83589999843,
+      "logBytes": 148351,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:38:11.110920+00:00",
+      "atMs": 410218.94620000967,
+      "logBytes": 148351,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:38:16.116641+00:00",
+      "atMs": 415224.6351999929,
+      "logBytes": 148351,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:38:21.121221+00:00",
+      "atMs": 420229.1888000036,
+      "logBytes": 148351,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:38:26.127125+00:00",
+      "atMs": 425235.0536999875,
+      "logBytes": 148351,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:38:31.132612+00:00",
+      "atMs": 430240.5327000015,
+      "logBytes": 149042,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:38:36.139719+00:00",
+      "atMs": 435247.5787999865,
+      "logBytes": 149759,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:38:41.146833+00:00",
+      "atMs": 440254.6713000047,
+      "logBytes": 149759,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:38:46.154362+00:00",
+      "atMs": 445262.203899998,
+      "logBytes": 149759,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:38:51.161604+00:00",
+      "atMs": 450269.3775999942,
+      "logBytes": 149759,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:38:56.166127+00:00",
+      "atMs": 455273.8939000119,
+      "logBytes": 149759,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:39:01.172030+00:00",
+      "atMs": 460279.767,
+      "logBytes": 149759,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:39:06.180210+00:00",
+      "atMs": 465287.9069999908,
+      "logBytes": 149759,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:39:11.184719+00:00",
+      "atMs": 470292.39550000057,
+      "logBytes": 149759,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:39:16.192097+00:00",
+      "atMs": 475299.72710000584,
+      "logBytes": 149759,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:39:21.198514+00:00",
+      "atMs": 480306.1288000026,
+      "logBytes": 149759,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:39:26.205531+00:00",
+      "atMs": 485313.11620000633,
+      "logBytes": 149759,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:39:31.212400+00:00",
+      "atMs": 490319.9534000014,
+      "logBytes": 149759,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:39:36.219030+00:00",
+      "atMs": 495326.5555000107,
+      "logBytes": 149759,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:39:41.226773+00:00",
+      "atMs": 500334.2527000059,
+      "logBytes": 149759,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:39:46.231639+00:00",
+      "atMs": 505339.08969999175,
+      "logBytes": 149759,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:39:51.236332+00:00",
+      "atMs": 510343.75090000685,
+      "logBytes": 149759,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:39:56.240908+00:00",
+      "atMs": 515348.34980001324,
+      "logBytes": 149759,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:40:01.247361+00:00",
+      "atMs": 520354.7205000068,
+      "logBytes": 153135,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:40:06.257617+00:00",
+      "atMs": 525364.966299996,
+      "logBytes": 154345,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:40:11.265198+00:00",
+      "atMs": 530372.4936000071,
+      "logBytes": 157563,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:40:16.270696+00:00",
+      "atMs": 535377.9702000029,
+      "logBytes": 157563,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:40:21.278137+00:00",
+      "atMs": 540385.3920999973,
+      "logBytes": 157563,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:40:26.284724+00:00",
+      "atMs": 545391.944300005,
+      "logBytes": 157563,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:40:31.291198+00:00",
+      "atMs": 550398.3809000056,
+      "logBytes": 157563,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:40:36.296241+00:00",
+      "atMs": 555403.3916000044,
+      "logBytes": 158873,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:40:41.302431+00:00",
+      "atMs": 560409.564600006,
+      "logBytes": 159115,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:40:46.311859+00:00",
+      "atMs": 565418.9492999867,
+      "logBytes": 160514,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:40:51.317504+00:00",
+      "atMs": 570424.5804999955,
+      "logBytes": 160514,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:40:56.325170+00:00",
+      "atMs": 575432.2265000083,
+      "logBytes": 160682,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:41:01.331470+00:00",
+      "atMs": 580438.4878000128,
+      "logBytes": 160972,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:41:06.336382+00:00",
+      "atMs": 585443.3882999874,
+      "logBytes": 160972,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:41:11.342632+00:00",
+      "atMs": 590449.6261999884,
+      "logBytes": 161197,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:41:16.348351+00:00",
+      "atMs": 595455.3031999967,
+      "logBytes": 161398,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:41:21.353623+00:00",
+      "atMs": 600460.5664999981,
+      "logBytes": 161638,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:41:26.359743+00:00",
+      "atMs": 605466.6637000046,
+      "logBytes": 161638,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:41:31.366338+00:00",
+      "atMs": 610473.2306000078,
+      "logBytes": 161638,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:41:36.372171+00:00",
+      "atMs": 615479.0452999878,
+      "logBytes": 164617,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:41:41.376684+00:00",
+      "atMs": 620483.5458000016,
+      "logBytes": 164837,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:41:46.380669+00:00",
+      "atMs": 625487.515899993,
+      "logBytes": 164837,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:41:51.388366+00:00",
+      "atMs": 630495.187499997,
+      "logBytes": 164837,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:41:56.395522+00:00",
+      "atMs": 635502.2936000023,
+      "logBytes": 164837,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:42:01.400313+00:00",
+      "atMs": 640507.065999991,
+      "logBytes": 164837,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:42:06.420139+00:00",
+      "atMs": 645526.8690999947,
+      "logBytes": 164837,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:42:11.433615+00:00",
+      "atMs": 650540.3408000129,
+      "logBytes": 164837,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:42:16.442176+00:00",
+      "atMs": 655548.864899989,
+      "logBytes": 164837,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:42:21.447617+00:00",
+      "atMs": 660554.2844999873,
+      "logBytes": 164837,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:42:26.453932+00:00",
+      "atMs": 665560.5876999907,
+      "logBytes": 165127,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:42:31.460685+00:00",
+      "atMs": 670567.3078999971,
+      "logBytes": 165639,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:42:36.466138+00:00",
+      "atMs": 675572.746299993,
+      "logBytes": 166153,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:42:41.470324+00:00",
+      "atMs": 680576.9175000023,
+      "logBytes": 166153,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:42:46.478255+00:00",
+      "atMs": 685584.8176,
+      "logBytes": 167490,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:42:51.482556+00:00",
+      "atMs": 690589.1083999886,
+      "logBytes": 167675,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:42:56.489761+00:00",
+      "atMs": 695596.2883000029,
+      "logBytes": 167675,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:43:01.495578+00:00",
+      "atMs": 700602.0764999848,
+      "logBytes": 167675,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:43:06.499681+00:00",
+      "atMs": 705606.1533000029,
+      "logBytes": 167675,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:43:11.502721+00:00",
+      "atMs": 710609.1739000112,
+      "logBytes": 167675,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:43:16.508552+00:00",
+      "atMs": 715615.0083999964,
+      "logBytes": 167675,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:43:21.518568+00:00",
+      "atMs": 720624.9914999935,
+      "logBytes": 167965,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:43:26.525850+00:00",
+      "atMs": 725632.2566999879,
+      "logBytes": 168396,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:43:31.536315+00:00",
+      "atMs": 730642.6943000115,
+      "logBytes": 168561,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:43:36.546630+00:00",
+      "atMs": 735652.9909000092,
+      "logBytes": 168561,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:43:41.555552+00:00",
+      "atMs": 740661.8731000053,
+      "logBytes": 168561,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:43:46.560651+00:00",
+      "atMs": 745666.9507999904,
+      "logBytes": 168783,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:43:51.588455+00:00",
+      "atMs": 750694.7369000118,
+      "logBytes": 168783,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:43:56.593939+00:00",
+      "atMs": 755700.2142000129,
+      "logBytes": 168783,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:44:01.597736+00:00",
+      "atMs": 760703.98630001,
+      "logBytes": 173809,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:44:06.600730+00:00",
+      "atMs": 765706.9622999988,
+      "logBytes": 173809,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:44:11.605018+00:00",
+      "atMs": 770711.226799991,
+      "logBytes": 174754,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:44:16.609270+00:00",
+      "atMs": 775715.4637000058,
+      "logBytes": 174754,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:44:21.624243+00:00",
+      "atMs": 780730.403900001,
+      "logBytes": 174915,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:44:26.630472+00:00",
+      "atMs": 785736.6188000015,
+      "logBytes": 175143,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:44:31.636403+00:00",
+      "atMs": 790742.5280000025,
+      "logBytes": 179568,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:44:36.641770+00:00",
+      "atMs": 795747.8582999902,
+      "logBytes": 179568,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:44:41.647779+00:00",
+      "atMs": 800753.8568000018,
+      "logBytes": 179568,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:44:46.652277+00:00",
+      "atMs": 805758.3210000012,
+      "logBytes": 179568,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:44:51.665814+00:00",
+      "atMs": 810771.8362000014,
+      "logBytes": 179568,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:44:56.676929+00:00",
+      "atMs": 815782.9405000084,
+      "logBytes": 180789,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:45:01.682722+00:00",
+      "atMs": 820788.7197000091,
+      "logBytes": 180789,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:45:06.690329+00:00",
+      "atMs": 825796.2962999882,
+      "logBytes": 181070,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:45:11.696233+00:00",
+      "atMs": 830802.18530001,
+      "logBytes": 181585,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:45:16.706779+00:00",
+      "atMs": 835812.714700005,
+      "logBytes": 181864,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:45:21.716306+00:00",
+      "atMs": 840822.2176000127,
+      "logBytes": 181864,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:45:26.722685+00:00",
+      "atMs": 845828.5711999924,
+      "logBytes": 182805,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:45:31.726459+00:00",
+      "atMs": 850832.318700006,
+      "logBytes": 182805,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:45:36.731810+00:00",
+      "atMs": 855837.6567999949,
+      "logBytes": 183486,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:45:41.737562+00:00",
+      "atMs": 860843.3802000072,
+      "logBytes": 184754,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:45:46.741932+00:00",
+      "atMs": 865847.7143000055,
+      "logBytes": 185522,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:45:51.745931+00:00",
+      "atMs": 870851.7118000018,
+      "logBytes": 186576,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:45:56.750884+00:00",
+      "atMs": 875856.6798999964,
+      "logBytes": 187912,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:46:01.754422+00:00",
+      "atMs": 880860.139700002,
+      "logBytes": 189174,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:46:06.758128+00:00",
+      "atMs": 885863.8359000033,
+      "logBytes": 190004,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:46:11.761100+00:00",
+      "atMs": 890866.7908000061,
+      "logBytes": 194594,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:46:16.766423+00:00",
+      "atMs": 895872.0897999883,
+      "logBytes": 194884,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:46:21.772176+00:00",
+      "atMs": 900877.8074999864,
+      "logBytes": 196269,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:46:26.776989+00:00",
+      "atMs": 905882.6004999864,
+      "logBytes": 196330,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:46:31.782137+00:00",
+      "atMs": 910887.7447000123,
+      "logBytes": 196330,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:46:36.788739+00:00",
+      "atMs": 915894.3167999969,
+      "logBytes": 196762,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:46:41.792050+00:00",
+      "atMs": 920897.6122000022,
+      "logBytes": 196762,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:46:46.800509+00:00",
+      "atMs": 925906.0549999995,
+      "logBytes": 197527,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:46:51.806255+00:00",
+      "atMs": 930911.7616000003,
+      "logBytes": 197527,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:46:56.811481+00:00",
+      "atMs": 935916.9765000115,
+      "logBytes": 198478,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:47:01.816092+00:00",
+      "atMs": 940921.5641999908,
+      "logBytes": 201301,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:47:06.820221+00:00",
+      "atMs": 945925.6715000083,
+      "logBytes": 204070,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:47:11.824133+00:00",
+      "atMs": 950929.5616000018,
+      "logBytes": 205441,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:47:16.828718+00:00",
+      "atMs": 955934.1278999927,
+      "logBytes": 208079,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:47:21.834016+00:00",
+      "atMs": 960939.3918999995,
+      "logBytes": 212027,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:47:26.838781+00:00",
+      "atMs": 965944.1475000058,
+      "logBytes": 212027,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:47:31.843913+00:00",
+      "atMs": 970949.2439999885,
+      "logBytes": 212027,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:47:36.848941+00:00",
+      "atMs": 975954.264400003,
+      "logBytes": 212931,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:47:41.858727+00:00",
+      "atMs": 980964.0354999865,
+      "logBytes": 213069,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:47:46.871908+00:00",
+      "atMs": 985977.1769999934,
+      "logBytes": 213069,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:47:51.877886+00:00",
+      "atMs": 990983.1529000076,
+      "logBytes": 213333,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:47:56.885739+00:00",
+      "atMs": 995990.973100008,
+      "logBytes": 214273,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:48:01.890228+00:00",
+      "atMs": 1000995.4365000012,
+      "logBytes": 214273,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:48:06.896079+00:00",
+      "atMs": 1006001.2660000066,
+      "logBytes": 214273,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:48:11.900257+00:00",
+      "atMs": 1011005.4339999915,
+      "logBytes": 214273,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:48:16.906014+00:00",
+      "atMs": 1016011.1711999925,
+      "logBytes": 215017,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:48:21.912113+00:00",
+      "atMs": 1021017.2415999987,
+      "logBytes": 215179,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:48:26.917240+00:00",
+      "atMs": 1026022.3508999916,
+      "logBytes": 215179,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:48:31.922587+00:00",
+      "atMs": 1031027.6590999856,
+      "logBytes": 216065,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:48:36.926892+00:00",
+      "atMs": 1036031.9560999924,
+      "logBytes": 216065,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:48:41.933204+00:00",
+      "atMs": 1041038.2337000046,
+      "logBytes": 216065,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:48:46.937447+00:00",
+      "atMs": 1046042.4672999943,
+      "logBytes": 216732,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:48:51.949873+00:00",
+      "atMs": 1051054.8806999868,
+      "logBytes": 217084,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:48:56.960965+00:00",
+      "atMs": 1056065.9436999995,
+      "logBytes": 217490,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:49:01.966079+00:00",
+      "atMs": 1061071.0387,
+      "logBytes": 219386,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:49:06.971572+00:00",
+      "atMs": 1066076.499399991,
+      "logBytes": 219781,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:49:11.977647+00:00",
+      "atMs": 1071082.5605999853,
+      "logBytes": 220418,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:49:16.982060+00:00",
+      "atMs": 1076086.951300007,
+      "logBytes": 221141,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:49:21.986891+00:00",
+      "atMs": 1081091.7604000133,
+      "logBytes": 222028,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:49:26.992597+00:00",
+      "atMs": 1086097.4549000093,
+      "logBytes": 222028,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:49:31.998854+00:00",
+      "atMs": 1091103.676800005,
+      "logBytes": 222489,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:49:37.003980+00:00",
+      "atMs": 1096108.7889999908,
+      "logBytes": 222489,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:49:42.008922+00:00",
+      "atMs": 1101113.7033000123,
+      "logBytes": 229551,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:49:47.014618+00:00",
+      "atMs": 1106119.4411999895,
+      "logBytes": 230287,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:49:52.018307+00:00",
+      "atMs": 1111123.0400000059,
+      "logBytes": 230287,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:49:57.024154+00:00",
+      "atMs": 1116128.8752999972,
+      "logBytes": 230780,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:50:02.029038+00:00",
+      "atMs": 1121133.736399992,
+      "logBytes": 231008,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:50:07.032877+00:00",
+      "atMs": 1126137.5398999953,
+      "logBytes": 231438,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:50:12.037071+00:00",
+      "atMs": 1131141.727899987,
+      "logBytes": 231438,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:50:17.041591+00:00",
+      "atMs": 1136146.2119999924,
+      "logBytes": 232081,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:50:22.045093+00:00",
+      "atMs": 1141149.7072000057,
+      "logBytes": 232275,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:50:27.050541+00:00",
+      "atMs": 1146155.1418000017,
+      "logBytes": 232275,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:50:32.059841+00:00",
+      "atMs": 1151164.4277999876,
+      "logBytes": 232836,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:50:37.066739+00:00",
+      "atMs": 1156171.2931999937,
+      "logBytes": 233397,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:50:42.074833+00:00",
+      "atMs": 1161179.3466999952,
+      "logBytes": 234158,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:50:47.080126+00:00",
+      "atMs": 1166184.6170999925,
+      "logBytes": 234450,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:50:52.085124+00:00",
+      "atMs": 1171189.596399985,
+      "logBytes": 234621,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:50:57.091365+00:00",
+      "atMs": 1176195.83099999,
+      "logBytes": 235020,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:51:02.095871+00:00",
+      "atMs": 1181200.316500006,
+      "logBytes": 235217,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:51:07.101278+00:00",
+      "atMs": 1186205.6976000022,
+      "logBytes": 235217,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:51:12.107139+00:00",
+      "atMs": 1191211.5224000008,
+      "logBytes": 235869,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:51:17.111048+00:00",
+      "atMs": 1196215.4260000098,
+      "logBytes": 235869,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:51:22.117017+00:00",
+      "atMs": 1201221.3611000043,
+      "logBytes": 236358,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:51:27.120387+00:00",
+      "atMs": 1206224.7066000127,
+      "logBytes": 237086,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:51:32.124872+00:00",
+      "atMs": 1211229.1698000045,
+      "logBytes": 238717,
+      "childStillRunning": false
+    },
+    {
+      "event": "child-exit",
+      "at": "2026-11-04T18:51:32.127749+00:00",
+      "atMs": 1211232.0624999993,
+      "exitCode": 1,
+      "exitKind": "Windows native process exit; no POSIX signal inference"
+    },
+    {
+      "event": "runner-finished",
+      "at": "2026-11-04T18:51:32.131442+00:00",
+      "atMs": 1211235.7272999943
+    }
+  ],
+  "childPid": 61112,
+  "exitCode": 1,
+  "finishedAt": "2026-11-04T18:51:32.131406+00:00",
+  "elapsedSeconds": 1211.235708399996,
+  "childStillRunning": false
+}

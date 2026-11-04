@@ -1,0 +1,103 @@
+{
+  "label": "legacy",
+  "command": "npm.cmd test -- tests/lab-04/legacy-actions.integration.test.ts --reporter=default --reporter=json --outputFile=<private-phase-directory>\\legacy-vitest.json",
+  "head": "040e13b78893ab8155bac89758334adf1a045b01",
+  "sourceState": "production unchanged; explicit test-only legacy diagnostic delta",
+  "runnerPid": 23712,
+  "startedAt": "2026-11-04T18:24:40.295882+00:00",
+  "outerSafetyBudgetSeconds": 300,
+  "signalsObserved": [],
+  "outputMode": "binary direct file; no output buffer/maxBuffer",
+  "events": [
+    {
+      "event": "runner-start",
+      "at": "2026-11-04T18:24:40.295936+00:00",
+      "atMs": 0.033499993151053786
+    },
+    {
+      "event": "spawned",
+      "at": "2026-11-04T18:24:40.311871+00:00",
+      "atMs": 15.984800003934652
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:24:45.313572+00:00",
+      "atMs": 5017.648899985943,
+      "logBytes": 378,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:24:50.314776+00:00",
+      "atMs": 10018.829500011634,
+      "logBytes": 378,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:24:55.316849+00:00",
+      "atMs": 15020.879499992589,
+      "logBytes": 856,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:25:00.319841+00:00",
+      "atMs": 20023.847800010117,
+      "logBytes": 3703,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:25:05.324147+00:00",
+      "atMs": 25028.10789999785,
+      "logBytes": 3969,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:25:10.325856+00:00",
+      "atMs": 30029.786300001433,
+      "logBytes": 3969,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:25:15.327565+00:00",
+      "atMs": 35031.46269998979,
+      "logBytes": 6067,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:25:20.330457+00:00",
+      "atMs": 40034.3290999881,
+      "logBytes": 10314,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:25:25.332477+00:00",
+      "atMs": 45036.313799995696,
+      "logBytes": 10314,
+      "childStillRunning": false
+    },
+    {
+      "event": "child-exit",
+      "at": "2026-11-04T18:25:25.333676+00:00",
+      "atMs": 45037.51540000667,
+      "exitCode": 1,
+      "exitKind": "Windows native process exit; no POSIX signal inference"
+    },
+    {
+      "event": "runner-finished",
+      "at": "2026-11-04T18:25:25.336012+00:00",
+      "atMs": 45039.8436000105
+    }
+  ],
+  "childPid": 30304,
+  "exitCode": 1,
+  "finishedAt": "2026-11-04T18:25:25.335961+00:00",
+  "elapsedSeconds": 45.039821000013035,
+  "childStillRunning": false
+}

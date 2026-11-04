@@ -1,0 +1,24 @@
+{
+  "executionHead": "040e13b78893ab8155bac89758334adf1a045b01",
+  "observations": [
+    {
+      "assignment": "self",
+      "exactCurrentIdentities": true,
+      "exactDTOHistoryReceiptAndParentChecksReached": true,
+      "realCallbackDriverQueries": 8,
+      "postInsertProjectionReads": []
+    },
+    {
+      "assignment": "distinct",
+      "exactCurrentIdentities": true,
+      "exactDTOHistoryReceiptAndParentChecksReached": true,
+      "realCallbackDriverQueries": 8,
+      "postInsertProjectionReads": []
+    }
+  ],
+  "cleanup": {
+    "fixturesRemoved": true,
+    "prismaDisconnected": true,
+    "observersRestored": true
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "label": "types-correction",
+  "command": "npm.cmd exec -- tsc --noEmit",
+  "head": "040e13b78893ab8155bac89758334adf1a045b01",
+  "sourceState": "production unchanged; explicit test-only legacy diagnostic delta",
+  "runnerPid": 7484,
+  "startedAt": "2026-11-04T18:28:08.428999+00:00",
+  "outerSafetyBudgetSeconds": 300,
+  "signalsObserved": [],
+  "outputMode": "binary direct file; no output buffer/maxBuffer",
+  "events": [
+    {
+      "event": "runner-start",
+      "at": "2026-11-04T18:28:08.429073+00:00",
+      "atMs": 0.049700000090524554
+    },
+    {
+      "event": "spawned",
+      "at": "2026-11-04T18:28:08.438718+00:00",
+      "atMs": 9.707899997010827
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:28:13.440905+00:00",
+      "atMs": 5011.860400001751,
+      "logBytes": 0,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:28:18.442858+00:00",
+      "atMs": 10013.795599981677,
+      "logBytes": 0,
+      "childStillRunning": false
+    },
+    {
+      "event": "child-exit",
+      "at": "2026-11-04T18:28:18.445269+00:00",
+      "atMs": 10016.20240000193,
+      "exitCode": 0,
+      "exitKind": "Windows native process exit; no POSIX signal inference"
+    },
+    {
+      "event": "runner-finished",
+      "at": "2026-11-04T18:28:18.446824+00:00",
+      "atMs": 10017.740699986462
+    }
+  ],
+  "childPid": 44952,
+  "exitCode": 0,
+  "finishedAt": "2026-11-04T18:28:18.446796+00:00",
+  "elapsedSeconds": 10.017727700003888,
+  "childStillRunning": false
+}

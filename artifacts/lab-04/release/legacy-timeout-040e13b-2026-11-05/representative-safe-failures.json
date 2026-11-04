@@ -1,0 +1,35 @@
+[
+  {
+    "test": "T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows resolves a migrated active zero-Action Ticket with its eligible historical owner",
+    "firstError": "Error: Test timed out in 5000ms.",
+    "errorName": "Error",
+    "code": null,
+    "safeFrames": [
+      "node_modules/@vitest/runner/dist/index.js:44:18",
+      "node:internal/timers:605:17",
+      "node:internal/timers:541:7"
+    ]
+  },
+  {
+    "test": "T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows closes a migrated RESOLVED zero-Action Ticket without fabricating positive completion",
+    "firstError": "Error: Test timed out in 5000ms.",
+    "errorName": "Error",
+    "code": null,
+    "safeFrames": [
+      "node_modules/@vitest/runner/dist/index.js:44:18",
+      "node:internal/timers:605:17",
+      "node:internal/timers:541:7"
+    ]
+  },
+  {
+    "test": "T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows reopens and performs later real work without requiring a new completion each cycle",
+    "firstError": "Error: Test timed out in 5000ms.",
+    "errorName": "Error",
+    "code": null,
+    "safeFrames": [
+      "node_modules/@vitest/runner/dist/index.js:44:18",
+      "node:internal/timers:605:17",
+      "node:internal/timers:541:7"
+    ]
+  }
+]

@@ -1,0 +1,61 @@
+{
+  "label": "legacy-confirm",
+  "command": "npm.cmd test -- tests/lab-04/legacy-actions.integration.test.ts --reporter=default --reporter=json --outputFile=<private-phase-directory>\\legacy-confirm-vitest.json",
+  "head": "040e13b78893ab8155bac89758334adf1a045b01",
+  "sourceState": "production unchanged; explicit test-only legacy diagnostic delta",
+  "runnerPid": 55764,
+  "startedAt": "2026-11-04T18:29:09.067962+00:00",
+  "outerSafetyBudgetSeconds": 300,
+  "signalsObserved": [],
+  "outputMode": "binary direct file; no output buffer/maxBuffer",
+  "events": [
+    {
+      "event": "runner-start",
+      "at": "2026-11-04T18:29:09.068008+00:00",
+      "atMs": 0.029700022423639894
+    },
+    {
+      "event": "spawned",
+      "at": "2026-11-04T18:29:09.075731+00:00",
+      "atMs": 7.764500012854114
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:29:14.076989+00:00",
+      "atMs": 5008.991500013508,
+      "logBytes": 864,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:29:19.078040+00:00",
+      "atMs": 10010.012400016421,
+      "logBytes": 5796,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T18:29:24.079415+00:00",
+      "atMs": 15011.358600022504,
+      "logBytes": 8902,
+      "childStillRunning": false
+    },
+    {
+      "event": "child-exit",
+      "at": "2026-11-04T18:29:24.080567+00:00",
+      "atMs": 15012.50870001968,
+      "exitCode": 0,
+      "exitKind": "Windows native process exit; no POSIX signal inference"
+    },
+    {
+      "event": "runner-finished",
+      "at": "2026-11-04T18:29:24.081755+00:00",
+      "atMs": 15013.689200015506
+    }
+  ],
+  "childPid": 48080,
+  "exitCode": 0,
+  "finishedAt": "2026-11-04T18:29:24.081724+00:00",
+  "elapsedSeconds": 15.013676100003067,
+  "childStillRunning": false
+}

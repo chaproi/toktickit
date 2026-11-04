@@ -1,0 +1,15 @@
+{
+  "UTF8TextFilesChecked": 83,
+  "jsonFilesParsed": 65,
+  "localLinksChecked": 27,
+  "trackedFilesChecked": 1120,
+  "onlyAuthorizedTrackedDelta": [
+    "server/tests/lab-04/legacy-actions.integration.test.ts"
+  ],
+  "existingExpectLinesPreserved": 38,
+  "productionUnchanged": true,
+  "oldEvidenceManifestsVerified": 2,
+  "errors": [],
+  "diffContextHandling": "Unified-diff single-space context marker is syntax, not an added whitespace defect. Added lines are checked; git diff --check independently passed. Initial validator finding retained.",
+  "testsExecutedByValidation": false
+}

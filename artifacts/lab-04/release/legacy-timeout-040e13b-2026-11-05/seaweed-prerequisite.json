@@ -1,0 +1,8 @@
+{
+    "version":  "4.51",
+    "officialRelease":  "https://github.com/seaweedfs/seaweedfs/releases/tag/4.51",
+    "expectedSha256":  "08866a53e1bdd5378ee9880f8ee30d981d1bbb6ae22ee1897deb17ff87f8d2fb",
+    "actualSha256":  "08866a53e1bdd5378ee9880f8ee30d981d1bbb6ae22ee1897deb17ff87f8d2fb",
+    "purpose":  "Restore exact unchanged persistent-test prerequisite only",
+    "applicationChange":  false
+}

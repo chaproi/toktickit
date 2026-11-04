@@ -1,0 +1,20 @@
+{
+  "executionHead": "040e13b78893ab8155bac89758334adf1a045b01",
+  "dirtySourceState": "One modified legacy test plus one new dedicated test-only diagnostic helper; no production edits",
+  "changedTrackedPaths": [
+    "server/tests/lab-04/legacy-actions.integration.test.ts"
+  ],
+  "newHelper": "server/tests/lab-04/legacy-phase-diagnostic.ts",
+  "productionTree": "1b7b2fa48d68704407fd5e33b9d2aaebcef4ffa5",
+  "productionSourceBytesUnchanged": true,
+  "existingContractsConfigsDependenciesMigrationsUnchanged": true,
+  "uncommittedAndUnstaged": true,
+  "separation": "instrumentation-only.patch shows original?observed harness; harness-correction.patch shows observed?corrected lifecycle; full-source-delta.patch shows complete final tracked delta. Helper is a standalone test-only source file.",
+  "finalStatus": [
+    " M server/tests/lab-04/legacy-actions.integration.test.ts",
+    "?? artifacts/lab-04/release/",
+    "?? server/tests/lab-04/legacy-phase-diagnostic.ts"
+  ],
+  "stagedPaths": [],
+  "checkedAt": "2026-11-04T18:56:24.497949+00:00"
+}

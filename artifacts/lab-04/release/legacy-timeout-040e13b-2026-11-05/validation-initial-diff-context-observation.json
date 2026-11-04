@@ -1,0 +1,18 @@
+{
+  "UTF8TextFilesChecked": 81,
+  "jsonFilesParsed": 63,
+  "localLinksChecked": 27,
+  "trackedFilesChecked": 1120,
+  "onlyAuthorizedTrackedDelta": [
+    "server/tests/lab-04/legacy-actions.integration.test.ts"
+  ],
+  "existingExpectLinesPreserved": 38,
+  "productionUnchanged": true,
+  "oldEvidenceManifestsVerified": 2,
+  "errors": [
+    "Whitespace: full-source-delta.patch",
+    "Whitespace: harness-correction.patch",
+    "Whitespace: instrumentation-only.patch"
+  ],
+  "testsNotExecutedByValidation": true
+}

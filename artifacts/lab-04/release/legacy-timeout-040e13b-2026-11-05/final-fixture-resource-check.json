@@ -1,0 +1,13 @@
+{
+  "at": "2026-11-04T18:52:43.405Z",
+  "guardPassed": true,
+  "liveTargetVerifiedPreviously": true,
+  "valuesWithheld": true,
+  "actionfixtureusers": 0,
+  "actionfixturesessions": 0,
+  "cascadefaulttriggers": 0,
+  "cascadefaultfunctions": 0,
+  "cascadefaultsequences": 0,
+  "scope": "Read-only prefix/catalog absence check; no broad prefix deletion; other fixture cleanup is supported by fixture logs and disposable-schema absence.",
+  "clientDisconnectedInFinally": true
+}

@@ -1,0 +1,13 @@
+{
+  "originalExpectLines": 38,
+  "allExpectLinesIdentical": true,
+  "testDeclarationsIdentical": true,
+  "originalCaseTimeoutMs": 5000,
+  "currentCaseTimeoutMs": 5000,
+  "hookTimeoutCustomOverride": false,
+  "newBeforeAllUsesExistingVitestDefaultHookBudgetMs": 10000,
+  "productionSourceChanged": false,
+  "setupAllocationChangedExplicitly": "App graph import shared once in file beforeAll; schema/migrations/seed/real clients/auth/business remain inside each case. Not a production latency correction.",
+  "testFileSha256": "77d18ef2f9bac33a35d3d61366f1d3a3c14ad5d1579f5c43ebe392103330dc3d",
+  "helperSha256": "9f999d9e3d2ac0ff90c24e6260c68d79f590984ed84b7d92c6c032de1e312ed9"
+}

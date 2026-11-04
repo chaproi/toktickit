@@ -1,0 +1,20 @@
+{
+  "readOnlyPreparationErrors": [
+    {
+      "stage": "in-place edit script",
+      "errorName": "FileNotFoundError",
+      "effect": "Used repository-relative server path from server cwd; corrected before test execution. Preliminary TypeScript then returned0."
+    },
+    {
+      "stage": "new durable runner bootstrap",
+      "errorName": "SyntaxError",
+      "effect": "Missing whitespace in Python conditional expression prevented launch; retained initial source/compile output. Corrected and py_compile passed before representative command."
+    }
+  ],
+  "applicationTestAttempts": {
+    "initialInstrumentedLegacy": 1,
+    "postCorrectionLegacyConfirmation": 1,
+    "authorizedComprehensiveServer": 1
+  },
+  "typeCheckAttempts": "One preliminary normal tsc exit0; durable types exit0; types-correction exit0. No application build."
+}

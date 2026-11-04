@@ -1,0 +1,14 @@
+{
+  "declaredAt": "2026-11-04T18:31:19.536859+00:00",
+  "reason": "The representative reproduced3timeouts with a positive first App-import6.397s > unchanged5s budget and queued follow-on deadlines. A narrow fixture lifecycle correction passed4/4. Other comprehensive failures and missing final summary remain unexplained; one normal-discovery full server run is necessary to retain their chronology, detailed JSON stacks, native child exit and termination records without chasing files individually.",
+  "limit": "Exactly one comprehensive diagnostic run. No unchanged full rerun after any failure.",
+  "command": "npm.cmd test -- --exclude tests/lab-04/performance-smoke.integration.test.ts --reporter=default --reporter=json --outputFile=<private>/full-vitest.json",
+  "source": "040e13b production unchanged plus explicit legacy test-only lifecycle correction and phase-observer delta",
+  "normalSequencerAndCache": "unchanged, no forced ordering/cache clearing; actual order will be recorded, may differ from historical run",
+  "budgets": "All test/transaction/pool/maxWait/retry/threshold settings unchanged. Outer runner has explicit finite3600s safety cap, separate from application/case budgets.",
+  "settings": "child-only pinned Seaweed4.51 path and private phase-output directory; restore on child exit",
+  "otherPassingReleaseCommands": "not rerun",
+  "fullRunCountThisBatch": 1,
+  "productionTree": "1b7b2fa48d68704407fd5e33b9d2aaebcef4ffa5",
+  "testDeclarationsAndExpectLinesPreserved": true
+}

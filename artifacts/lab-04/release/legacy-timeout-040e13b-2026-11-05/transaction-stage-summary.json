@@ -1,0 +1,926 @@
+{
+  "qualifications": "Transaction-call ordinals for reused method labels are not asserted retry counts; nested spans overlap, never sum. Identity keys, SQL and parameters omitted.",
+  "runs": {
+    "legacy": [
+      {
+        "caseId": 1,
+        "request": "legacy-1-auth-real-login",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 9.001899999999296,
+        "bodyMs": 14.902400000000853,
+        "checkoutToResultMs": 0.08339999999952852,
+        "beginToResultMs": 0.8470999999990454,
+        "bodyExitToTransactionResultMs": 5.127300000000105,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 1,
+        "request": "legacy-1-http-patch",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 5.2181000000000495,
+        "bodyMs": 16.273199999999633,
+        "checkoutToResultMs": 0.12600000000020373,
+        "beginToResultMs": 0.2180000000007567,
+        "bodyExitToTransactionResultMs": 3.7193999999999505,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 2,
+        "request": "legacy-2-auth-real-login",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 13.818100000000413,
+        "bodyMs": 12.225399999999354,
+        "checkoutToResultMs": 0.05429999999978463,
+        "beginToResultMs": 0.7316000000009808,
+        "bodyExitToTransactionResultMs": 3.9804000000003725,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 2,
+        "request": "legacy-2-http-patch",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 15.347200000000157,
+        "bodyMs": 22.644000000000233,
+        "checkoutToResultMs": 0.2245999999995547,
+        "beginToResultMs": 1.4020999999993364,
+        "bodyExitToTransactionResultMs": 8.049299999998766,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-auth-real-login",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 8.89509999999791,
+        "bodyMs": 9.345400000001973,
+        "checkoutToResultMs": 0.0705999999991036,
+        "beginToResultMs": 0.591100000001461,
+        "bodyExitToTransactionResultMs": 6.221099999998842,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 10.809399999998277,
+        "bodyMs": 20.363600000000588,
+        "checkoutToResultMs": 0.10339999999996508,
+        "beginToResultMs": 1.0262000000002445,
+        "bodyExitToTransactionResultMs": 6.102399999999761,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 2,
+        "transactionCallToBodyMs": 7.964500000001863,
+        "bodyMs": 15.987699999997858,
+        "checkoutToResultMs": 0.062099999999190914,
+        "beginToResultMs": 0.7213000000010652,
+        "bodyExitToTransactionResultMs": 7.081399999999121,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-post",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 7.367200000000594,
+        "bodyMs": 28.786299999999756,
+        "checkoutToResultMs": 0.05849999999918509,
+        "beginToResultMs": 0.668599999997241,
+        "bodyExitToTransactionResultMs": 6.707299999998213,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 3,
+        "transactionCallToBodyMs": 15.038500000002387,
+        "bodyMs": 32.197299999999814,
+        "checkoutToResultMs": 0.1161000000029162,
+        "beginToResultMs": 1.381600000000617,
+        "bodyExitToTransactionResultMs": 6.75539999999819,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2",
+          "resource-3"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 4,
+        "transactionCallToBodyMs": 6.396300000000338,
+        "bodyMs": 19.089700000000448,
+        "checkoutToResultMs": 0.053599999999278225,
+        "beginToResultMs": 0.6088999999992666,
+        "bodyExitToTransactionResultMs": 3.827499999999418,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2",
+          "resource-3"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 5,
+        "transactionCallToBodyMs": 7.764500000001135,
+        "bodyMs": 12.944500000001426,
+        "checkoutToResultMs": 0.05099999999947613,
+        "beginToResultMs": 0.6296999999976833,
+        "bodyExitToTransactionResultMs": 2.875099999997474,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 6,
+        "transactionCallToBodyMs": 6.508099999999104,
+        "bodyMs": 10.375200000002224,
+        "checkoutToResultMs": 0.056300000000192085,
+        "beginToResultMs": 1.4726000000009662,
+        "bodyExitToTransactionResultMs": 4.142299999999523,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 7,
+        "transactionCallToBodyMs": 5.391399999996793,
+        "bodyMs": 12.954400000002352,
+        "checkoutToResultMs": 0.058100000002013985,
+        "beginToResultMs": 0.5344999999979336,
+        "bodyExitToTransactionResultMs": 3.056300000000192,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-post",
+        "transactionOrdinal": 2,
+        "transactionCallToBodyMs": 5.983599999999569,
+        "bodyMs": 14.86109999999826,
+        "checkoutToResultMs": 0.24250000000029104,
+        "beginToResultMs": 0.6533999999992375,
+        "bodyExitToTransactionResultMs": 3.146100000001752,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 8,
+        "transactionCallToBodyMs": 6.182199999999284,
+        "bodyMs": 19.21150000000125,
+        "checkoutToResultMs": 0.08520000000135042,
+        "beginToResultMs": 0.5863000000026659,
+        "bodyExitToTransactionResultMs": 2.9879000000000815,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2",
+          "resource-3"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 9,
+        "transactionCallToBodyMs": 5.429700000000594,
+        "bodyMs": 12.61989999999787,
+        "checkoutToResultMs": 0.0797999999995227,
+        "beginToResultMs": 0.5106999999989057,
+        "bodyExitToTransactionResultMs": 3.0784999999996217,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 4,
+        "request": "legacy-4-auth-real-login",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 8.047300000001997,
+        "bodyMs": 14.64549999999872,
+        "checkoutToResultMs": 0.07040000000051805,
+        "beginToResultMs": 0.4489000000030501,
+        "bodyExitToTransactionResultMs": 3.89429999999993,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 4,
+        "request": "legacy-4-http-patch",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 5.171200000000681,
+        "bodyMs": 3.2669000000023516,
+        "checkoutToResultMs": 0.06300000000192085,
+        "beginToResultMs": 0.2947999999996682,
+        "bodyExitToTransactionResultMs": 2.1296000000002095,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      }
+    ],
+    "legacy-confirm": [
+      {
+        "caseId": 1,
+        "request": "legacy-1-auth-real-login",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 9.000300000000152,
+        "bodyMs": 13.744499999999789,
+        "checkoutToResultMs": 0.06860000000006039,
+        "beginToResultMs": 0.7377000000001317,
+        "bodyExitToTransactionResultMs": 5.6702000000000226,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 1,
+        "request": "legacy-1-http-patch",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 8.44210000000021,
+        "bodyMs": 15.446799999999712,
+        "checkoutToResultMs": 0.14820000000008804,
+        "beginToResultMs": 0.6059999999997672,
+        "bodyExitToTransactionResultMs": 3.3778000000002066,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 2,
+        "request": "legacy-2-auth-real-login",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 5.687200000000303,
+        "bodyMs": 5.6984999999995125,
+        "checkoutToResultMs": 0.038800000000264845,
+        "beginToResultMs": 0.3481000000001586,
+        "bodyExitToTransactionResultMs": 2.3945000000003347,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 2,
+        "request": "legacy-2-http-patch",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 4.402200000000448,
+        "bodyMs": 8.754100000000108,
+        "checkoutToResultMs": 0.03879999999935535,
+        "beginToResultMs": 0.46379999999953725,
+        "bodyExitToTransactionResultMs": 2.248099999999795,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-auth-real-login",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 5.203899999999521,
+        "bodyMs": 5.358100000000377,
+        "checkoutToResultMs": 0.04470000000037544,
+        "beginToResultMs": 0.31090000000040163,
+        "bodyExitToTransactionResultMs": 2.457800000000134,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 3.071000000000822,
+        "bodyMs": 8.097799999999552,
+        "checkoutToResultMs": 0.03080000000045402,
+        "beginToResultMs": 0.34400000000005093,
+        "bodyExitToTransactionResultMs": 1.7998999999999796,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 2,
+        "transactionCallToBodyMs": 3.7934000000004744,
+        "bodyMs": 5.849899999999252,
+        "checkoutToResultMs": 0.03240000000005239,
+        "beginToResultMs": 0.2941000000000713,
+        "bodyExitToTransactionResultMs": 2.46520000000055,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-post",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 2.475199999999859,
+        "bodyMs": 13.977100000000064,
+        "checkoutToResultMs": 0.0327000000006592,
+        "beginToResultMs": 0.19689999999991414,
+        "bodyExitToTransactionResultMs": 2.021600000000035,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 3,
+        "transactionCallToBodyMs": 4.207799999999224,
+        "bodyMs": 13.358600000000479,
+        "checkoutToResultMs": 0.026300000000446744,
+        "beginToResultMs": 0.41629999999986467,
+        "bodyExitToTransactionResultMs": 2.29950000000008,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2",
+          "resource-3"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 4,
+        "transactionCallToBodyMs": 6.105799999999363,
+        "bodyMs": 10.832300000000032,
+        "checkoutToResultMs": 0.03240000000005239,
+        "beginToResultMs": 0.5281999999997424,
+        "bodyExitToTransactionResultMs": 3.09900000000016,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2",
+          "resource-3"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 5,
+        "transactionCallToBodyMs": 5.64890000000014,
+        "bodyMs": 10.167499999999563,
+        "checkoutToResultMs": 0.04100000000016735,
+        "beginToResultMs": 0.7182000000002517,
+        "bodyExitToTransactionResultMs": 2.5151999999998225,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 6,
+        "transactionCallToBodyMs": 6.348100000000159,
+        "bodyMs": 6.631099999999606,
+        "checkoutToResultMs": 0.09420000000045547,
+        "beginToResultMs": 0.3139000000001033,
+        "bodyExitToTransactionResultMs": 2.288300000000163,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 7,
+        "transactionCallToBodyMs": 4.88130000000001,
+        "bodyMs": 6.8770999999997,
+        "checkoutToResultMs": 0.07029999999940628,
+        "beginToResultMs": 0.47040000000015425,
+        "bodyExitToTransactionResultMs": 2.6023000000004686,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-post",
+        "transactionOrdinal": 2,
+        "transactionCallToBodyMs": 4.48529999999937,
+        "bodyMs": 10.29320000000007,
+        "checkoutToResultMs": 0.02930000000014843,
+        "beginToResultMs": 0.3209000000006199,
+        "bodyExitToTransactionResultMs": 2.3083999999998923,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 8,
+        "transactionCallToBodyMs": 3.2312000000001717,
+        "bodyMs": 11.512400000000525,
+        "checkoutToResultMs": 0.029800000000250293,
+        "beginToResultMs": 0.2418999999999869,
+        "bodyExitToTransactionResultMs": 2.508100000000013,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2",
+          "resource-3"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 9,
+        "transactionCallToBodyMs": 6.03439999999955,
+        "bodyMs": 8.157600000000457,
+        "checkoutToResultMs": 0.040300000000570435,
+        "beginToResultMs": 1.0510000000003856,
+        "bodyExitToTransactionResultMs": 2.02599999999984,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 4,
+        "request": "legacy-4-auth-real-login",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 5.829200000000128,
+        "bodyMs": 6.327099999999518,
+        "checkoutToResultMs": 0.03920000000016444,
+        "beginToResultMs": 0.2739000000001397,
+        "bodyExitToTransactionResultMs": 2.8666999999995824,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 4,
+        "request": "legacy-4-http-patch",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 3.168499999999767,
+        "bodyMs": 2.4463000000005195,
+        "checkoutToResultMs": 0.03120000000035361,
+        "beginToResultMs": 0.27070000000003347,
+        "bodyExitToTransactionResultMs": 1.9153999999998632,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      }
+    ],
+    "full": [
+      {
+        "caseId": 1,
+        "request": "legacy-1-auth-real-login",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 8.179700000000139,
+        "bodyMs": 11.926699999999983,
+        "checkoutToResultMs": 0.07029999999986103,
+        "beginToResultMs": 0.547099999999773,
+        "bodyExitToTransactionResultMs": 3.0531999999998334,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 1,
+        "request": "legacy-1-http-patch",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 4.088199999999688,
+        "bodyMs": 12.84750000000031,
+        "checkoutToResultMs": 0.04750000000012733,
+        "beginToResultMs": 0.30310000000008586,
+        "bodyExitToTransactionResultMs": 2.3906999999999243,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 2,
+        "request": "legacy-2-auth-real-login",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 6.527999999999793,
+        "bodyMs": 6.345000000000255,
+        "checkoutToResultMs": 0.04529999999977008,
+        "beginToResultMs": 0.3443999999999505,
+        "bodyExitToTransactionResultMs": 3.4149999999999636,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 2,
+        "request": "legacy-2-http-patch",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 6.650000000000091,
+        "bodyMs": 15.6878999999999,
+        "checkoutToResultMs": 0.04329999999981737,
+        "beginToResultMs": 0.5722999999998137,
+        "bodyExitToTransactionResultMs": 2.766700000000128,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-auth-real-login",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 6.217099999999846,
+        "bodyMs": 7.218399999999747,
+        "checkoutToResultMs": 0.04330000000027212,
+        "beginToResultMs": 0.6693999999997686,
+        "bodyExitToTransactionResultMs": 3.1622999999999593,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 4.59059999999954,
+        "bodyMs": 9.287400000000162,
+        "checkoutToResultMs": 0.02910000000065338,
+        "beginToResultMs": 0.4371999999993932,
+        "bodyExitToTransactionResultMs": 2.746200000000499,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 2,
+        "transactionCallToBodyMs": 4.834399999999732,
+        "bodyMs": 7.480599999999868,
+        "checkoutToResultMs": 0.03329999999914435,
+        "beginToResultMs": 0.4502999999995154,
+        "bodyExitToTransactionResultMs": 2.2223000000003594,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-post",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 5.353900000000067,
+        "bodyMs": 16.7467000000006,
+        "checkoutToResultMs": 0.051599999999780266,
+        "beginToResultMs": 0.61200000000008,
+        "bodyExitToTransactionResultMs": 3.0901999999996406,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 3,
+        "transactionCallToBodyMs": 5.702199999999721,
+        "bodyMs": 15.119800000000396,
+        "checkoutToResultMs": 0.033400000000256114,
+        "beginToResultMs": 0.411300000000665,
+        "bodyExitToTransactionResultMs": 3.314400000000205,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2",
+          "resource-3"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 4,
+        "transactionCallToBodyMs": 6.406399999999849,
+        "bodyMs": 17.445799999999508,
+        "checkoutToResultMs": 0.03430000000025757,
+        "beginToResultMs": 0.7272000000002663,
+        "bodyExitToTransactionResultMs": 3.5781000000006316,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2",
+          "resource-3"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 5,
+        "transactionCallToBodyMs": 6.278899999999339,
+        "bodyMs": 9.89810000000034,
+        "checkoutToResultMs": 0.04129999999986467,
+        "beginToResultMs": 0.45420000000012806,
+        "bodyExitToTransactionResultMs": 2.7447000000001935,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 6,
+        "transactionCallToBodyMs": 5.8827000000001135,
+        "bodyMs": 8.444700000000012,
+        "checkoutToResultMs": 0.0316000000002532,
+        "beginToResultMs": 0.63799999999992,
+        "bodyExitToTransactionResultMs": 2.2036000000007334,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 7,
+        "transactionCallToBodyMs": 5.6698999999998705,
+        "bodyMs": 9.42529999999988,
+        "checkoutToResultMs": 0.04569999999966967,
+        "beginToResultMs": 0.6824999999998909,
+        "bodyExitToTransactionResultMs": 2.934900000000198,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-post",
+        "transactionOrdinal": 2,
+        "transactionCallToBodyMs": 5.414099999999962,
+        "bodyMs": 12.369900000000598,
+        "checkoutToResultMs": 0.040899999999965075,
+        "beginToResultMs": 0.6719000000002779,
+        "bodyExitToTransactionResultMs": 2.5244000000002416,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 8,
+        "transactionCallToBodyMs": 6.742099999999482,
+        "bodyMs": 16.77480000000014,
+        "checkoutToResultMs": 0.02819999999974243,
+        "beginToResultMs": 0.48369999999977153,
+        "bodyExitToTransactionResultMs": 3.461500000000342,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2",
+          "resource-3"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 3,
+        "request": "legacy-3-http-patch",
+        "transactionOrdinal": 9,
+        "transactionCallToBodyMs": 5.838199999999233,
+        "bodyMs": 9.978800000000774,
+        "checkoutToResultMs": 0.03110000000015134,
+        "beginToResultMs": 0.8314000000000306,
+        "bodyExitToTransactionResultMs": 2.9606999999996333,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 4,
+        "request": "legacy-4-auth-real-login",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 5.054900000000089,
+        "bodyMs": 5.2676000000001295,
+        "checkoutToResultMs": 0.04209999999966385,
+        "beginToResultMs": 0.2110000000002401,
+        "bodyExitToTransactionResultMs": 2.1603000000004613,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1"
+        ],
+        "noErrorObservedInThisTransaction": true
+      },
+      {
+        "caseId": 4,
+        "request": "legacy-4-http-patch",
+        "transactionOrdinal": 1,
+        "transactionCallToBodyMs": 3.9638999999997395,
+        "bodyMs": 2.653900000000249,
+        "checkoutToResultMs": 0.03459999999995489,
+        "beginToResultMs": 0.40430000000014843,
+        "bodyExitToTransactionResultMs": 1.949399999999514,
+        "physicalReleaseObserved": true,
+        "admissionAcquisitionKinds": [
+          "maintenance-shared",
+          "resource-1",
+          "resource-2"
+        ],
+        "noErrorObservedInThisTransaction": true
+      }
+    ]
+  }
+}
