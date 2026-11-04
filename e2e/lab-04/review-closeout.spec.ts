@@ -6,6 +6,7 @@ import { join, relative } from "node:path";
 import { chromium, expect, type Page } from "@playwright/test";
 import { test, login, syntheticAction, type Fixture } from "./action-browser-fixtures.js";
 import { geometry, keyboardFocus, reachable, trap } from "./action-layout-helpers.js";
+import { reach } from "./staff-dashboard-accessibility-helpers.js";
 
 // Bounded T-37/T-38 contribution. Reuses a separately guarded review runtime;
 // normal Playwright global setup can also run this file with its own schema.
@@ -16,18 +17,21 @@ mkdirSync(output, { recursive: true });
 const head = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
 const dirty = execFileSync("git", ["-c", "core.longpaths=true", "status", "--short"], { encoding: "utf8" }).trim();
 
-async function capture(page: Page, name: string, role: string, state: string, zoom = 1, extra: object = {}) {
+async function capture(page: Page, name: string, role: string, state: string, zoom = 1, extra: object = {}, fullPage = false) {
   const session = await page.context().newCDPSession(page);
   try {
     const browser = await session.send("Browser.getVersion");
     // Compositor-only application viewport: no browser chrome/personal tabs.
-    const png = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
-    writeFileSync(join(output, `${name}.png`), Buffer.from(png.data, "base64"));
+    if (fullPage) await page.screenshot({ path: join(output, `${name}.png`), fullPage: true, animations: "disabled" });
+    else {
+      const png = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+      writeFileSync(join(output, `${name}.png`), Buffer.from(png.data, "base64"));
+    }
     writeFileSync(join(output, `${name}.json`), JSON.stringify({ capturedAt: new Date().toISOString(),
       timezone: "Asia/Bangkok", sourceHead: head, dirtyState: dirty, role, state,
       browser: browser.product, userAgent: browser.userAgent, zoom,
       nativeViewport: await page.evaluate(() => ({ width: innerWidth, height: innerHeight, pinchScale: visualViewport?.scale })),
-      syntheticDataOnly: true, visualInspection: "Pending", ...extra }, null, 2) + "\n");
+      fullPage, syntheticDataOnly: true, visualInspection: "Pending", ...extra }, null, 2) + "\n");
   } finally { await session.detach(); }
 }
 
@@ -83,6 +87,69 @@ test("T-38 Staff History controlled read failure and real Retry with keyboard fo
   } finally { await page.unroute(pattern); }
 });
 
+// The supplied review gallery has only desktop Create Ticket/My Tickets pixels.
+// Capture only these missing viewport/screen combinations, not another Dashboard
+// or detail workflow. No Ticket is submitted and no existing assertion is removed.
+for (const viewport of [{ width: 390, height: 844 }, { width: 834, height: 1112 }]) {
+  test(`T-37 missing Create Ticket and owned-list pixels at ${viewport.width}x${viewport.height}`, async ({ page, fixture: f }) => {
+    const summary = `${f.marker} literal summary <script>inert</script> ` + "UnbrokenReference".repeat(4);
+    expect(summary.length).toBeLessThanOrEqual(150);
+    await f.prisma.ticket.update({ where: { id: f.ticket.id }, data: { summary } });
+    await page.setViewportSize(viewport); await login(page, f.requester);
+    await page.goto("/tickets/new");
+    await expect(page.getByRole("heading", { name: "Create Ticket", exact: true })).toBeVisible();
+    await expect(page.getByLabel(/^Category/)).toBeEnabled();
+    await page.getByLabel(/^Category/).selectOption(String(f.categoryId));
+    await page.getByLabel(/^Related System/).selectOption(String(f.relatedSystemId));
+    await page.getByLabel(/^Summary/).fill(summary);
+    await page.getByLabel(/^Description/).fill("Valid long literal form text <script>inert</script>. " + "DiagnosticReferenceWithoutSpaces".repeat(8));
+    const formGeometry = await page.locator("form").evaluate(form => {
+      const box = (node: Element) => { const r = node.getBoundingClientRect(); return { left: r.left, right: r.right, width: r.width }; };
+      const grid = form.querySelector(".row")!;
+      return { viewport: innerWidth, rootWidth: document.documentElement.clientWidth, rootScrollWidth: document.documentElement.scrollWidth,
+        form: { ...box(form), clientWidth: form.clientWidth, scrollWidth: form.scrollWidth },
+        grid: { ...box(grid), marginLeft: getComputedStyle(grid).marginLeft, marginRight: getComputedStyle(grid).marginRight },
+        card: box(form.closest(".card")!),
+        controls: [...form.querySelectorAll("label,input,select,textarea,button")].map(node => ({ tag: node.tagName, ...box(node) })) };
+    });
+    writeFileSync(join(output, `gap-${viewport.width}-geometry.json`), JSON.stringify(formGeometry, null, 2) + "\n");
+    // Bootstrap's -8px row gutters extend into the card's padding, not beyond
+    // the page or over essential content. Inspect the form's real controls and
+    // page bounds rather than treating the parent's intrinsic scrollWidth as
+    // clipped text. The shared geometry helper and its tolerances are unchanged.
+    expect(formGeometry.grid.left).toBeGreaterThanOrEqual(formGeometry.card.left);
+    expect(formGeometry.grid.right).toBeLessThanOrEqual(formGeometry.card.right);
+    expect(formGeometry.controls.filter(c => c.left < -1 || c.right > viewport.width + 1)).toEqual([]);
+    await geometry(page, page.locator("form")); await reach(page.getByLabel(/^Description/));
+    await reach(page.getByRole("button", { name: "Create Ticket", exact: true }));
+    await capture(page, `gap-${viewport.width}x${viewport.height}-create-ticket`, "REQUESTER", "Previously absent mobile/tablet Create Ticket; valid draft only, no submission", 1, {}, true);
+    await page.goto(`/tickets?search=${encodeURIComponent(f.marker)}`);
+    await expect(page.getByRole("link", { name: f.ticket.ticketNumber, exact: true })).toBeVisible();
+    await expect(page.getByText(summary, { exact: true })).toBeVisible();
+    const rootSize = await page.evaluate(() => ({ width: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth }));
+    expect(rootSize.scroll).toBeLessThanOrEqual(rootSize.width + 1);
+    const table = page.getByRole("region", { name: "Scrollable My Tickets table", exact: true });
+    await expect(table).toHaveAttribute("tabindex", "0"); await keyboardFocus(page, table);
+    const ticketLink = page.getByRole("link", { name: f.ticket.ticketNumber, exact: true });
+    await ticketLink.evaluate(el => el.scrollIntoView({ block: "center", inline: "nearest" }));
+    await ticketLink.focus(); await page.keyboard.press("Tab"); await page.keyboard.press("Shift+Tab");
+    await expect(ticketLink).toBeFocused();
+    // An inline link can have two line boxes; its union's center may be blank
+    // TD space. Hit-test each actual line, retaining visibility and obstruction
+    // checks rather than requiring whitespace to be part of the anchor.
+    const linkLines = await ticketLink.evaluate(el => [...el.getClientRects()].filter(r => r.width > 0 && r.height > 0).map(r => {
+      const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+      return { visible: r.left >= -1 && r.right <= innerWidth + 1 && r.top >= -1 && r.bottom <= innerHeight + 1,
+        unobscured: Boolean(hit && (el === hit || el.contains(hit))) };
+    }));
+    expect(linkLines.length).toBeGreaterThan(0);
+    expect(linkLines.every(line => line.visible && line.unobscured)).toBe(true);
+    await expect(page.getByRole("navigation", { name: "My Tickets pagination", exact: true })).toBeVisible();
+    await capture(page, `gap-${viewport.width}x${viewport.height}-my-tickets`, "REQUESTER", "Previously absent mobile/tablet populated My Tickets; keyboard-reachable contained table and pagination", 1, {}, true);
+    expect(f.pageErrors).toEqual([]);
+  });
+}
+
 test("T-38 real In Progress Ticket blocker and keyboard View Actions Taken handoff", async ({ page, fixture: f }) => {
   const action = await syntheticAction(f, { description: "Owned unfinished review task; resolution must be rejected.", status: "IN_PROGRESS" });
   await login(page, f.operator);
@@ -130,12 +197,21 @@ test("T-37/T-38 real Microsoft Edge Admin navigation and History at genuine 200%
   let context: Awaited<ReturnType<typeof chromium.launchPersistentContext>> | undefined;
   let page: Page | undefined;
   let zoom: ((factor?: number) => Promise<number>) | undefined;
+  let primaryFailure = false;
   try {
     context = await chromium.launchPersistentContext(profile, { channel: "msedge", headless: false,
       baseURL: "http://127.0.0.1:4173", viewport: null,
       args: ["--window-size=1440,900", `--disable-extensions-except=${extension}`, `--load-extension=${extension}`] });
     const worker = context.serviceWorkers()[0] ?? await context.waitForEvent("serviceworker");
     page = await context.newPage(); const current = page;
+    await page.addInitScript(() => {
+      const events: object[] = []; Reflect.set(window, "__closeoutNavigation", events);
+      new MutationObserver(records => {
+        if (!records.some(r => r.target instanceof Element && (r.target.id === "primary-navigation" || r.target.getAttribute("aria-controls") === "primary-navigation"))) return;
+        const nav = document.getElementById("primary-navigation"), toggle = document.querySelector('[aria-controls="primary-navigation"]');
+        events.push({ at: performance.now(), width: innerWidth, navHidden: nav?.hasAttribute("hidden"), expanded: toggle?.getAttribute("aria-expanded"), toggleHidden: toggle?.hasAttribute("hidden") });
+      }).observe(document, { subtree: true, attributes: true, attributeFilter: ["hidden", "aria-expanded"] });
+    });
     page.on("pageerror", () => f.pageErrors.push("Edge page error"));
     zoom = factor => worker.evaluate(async ({ url, factor }) => {
       const controller = (globalThis as unknown as { toktickitTabZoom: { get(url: string): Promise<number>; set(url: string, value: number): Promise<number> } }).toktickitTabZoom;
@@ -143,22 +219,32 @@ test("T-37/T-38 real Microsoft Edge Admin navigation and History at genuine 200%
     }, { url: current.url(), factor });
     await login(page, f.owner);
     await expect(page).toHaveURL(/\/staff\/dashboard$/);
+    await expect(page.getByRole("link", { name: "View my actions", exact: true })).toBeVisible();
     const width = await page.evaluate(() => innerWidth);
     expect(await zoom()).toBe(1); expect(await zoom(2)).toBe(2);
     await expect.poll(() => page!.evaluate(() => innerWidth)).toBeLessThan(width);
     expect(await page.evaluate(() => visualViewport?.scale)).toBe(1);
+    // Native CSS width changes before React necessarily handles matchMedia.
+    // Await the actual collapsed mobile navigation before keyboard activation.
+    const mobileToggle = page.getByRole("button", { name: "Toggle primary navigation", exact: true });
+    await expect(mobileToggle).toBeVisible();
+    await expect(mobileToggle).toHaveAttribute("aria-expanded", "false");
     for (const [name, destination] of [["User Management", "/admin/users"], ["Ticket Queue", "/staff/tickets"], ["My assigned Actions", "/staff/actions"], ["Dashboard", "/staff/dashboard"]] as const) {
       const toggle = page.getByRole("button", { name: "Toggle primary navigation", exact: true });
       if (await toggle.isVisible() && await toggle.getAttribute("aria-expanded") !== "true") { await keyboardFocus(page, toggle); await page.keyboard.press("Enter"); }
       const nav = page.getByRole("navigation", { name: "Primary navigation", exact: true });
+      await expect(toggle).toHaveAttribute("aria-expanded", "true"); await expect(nav).toBeVisible();
       const link = nav.getByRole("link", { name, exact: true });
       await keyboardFocus(page, link); await page.keyboard.press("Enter");
       await expect(page).toHaveURL(new RegExp(destination + "$"));
+      await expect(page.getByRole("heading", { name: name === "Dashboard" ? "Staff Dashboard" : name === "My assigned Actions" ? "My assigned Actions" : name, exact: true })).toBeVisible();
+      await expect(toggle).toHaveAttribute("aria-expanded", "false");
       if (await toggle.isVisible() && await toggle.getAttribute("aria-expanded") !== "true") await toggle.click();
       await expect(nav.getByRole("link", { name, exact: true })).toHaveAttribute("aria-current", "page");
       expect(await zoom()).toBe(2);
     }
     await geometry(page);
+    writeFileSync(join(output, "edge-navigation-pre-detail.json"), JSON.stringify(await page.evaluate(() => Reflect.get(window, "__closeoutNavigation") ?? []), null, 2) + "\n");
     await capture(page, "edge-admin-navigation-200", "ADMINISTRATOR", "All four Admin destinations activated by keyboard; correct active state at real tab zoom 2", 2, { initialCSSWidth: width, verifiedTabZoom: await zoom() });
     await openTicket(page, f);
     const before = await digest(f);
@@ -179,12 +265,22 @@ test("T-37/T-38 real Microsoft Edge Admin navigation and History at genuine 200%
     expect(await digest(f)).toBe(before); expect(f.pageErrors).toEqual([]);
     expect(await zoom(1)).toBe(1); await expect.poll(() => page!.evaluate(() => innerWidth)).toBe(width);
     writeFileSync(join(output, "edge-zoom.json"), JSON.stringify({ sourceHead: head, browser: context.browser()?.version(), factors: [1, 2, 1], initialCSSWidth: width, restoredCSSWidth: await page.evaluate(() => innerWidth), pinchScale: await page.evaluate(() => visualViewport?.scale) }, null, 2) + "\n");
-  } finally {
-    if (page && zoom && page.url().startsWith("http://127.0.0.1:4173")) await zoom(1);
-    await context?.close();
-    const owned = relative(temp, profile);
-    if (!owned.startsWith("issue49-edge-closeout-") || owned.includes("..")) throw new Error("Refusing unowned Edge profile cleanup");
-    rmSync(profile, { recursive: true, force: true });
-    console.info("Owned Edge context closed, zoom restored and profile removed.");
+  } catch (error) { primaryFailure = true; throw error; }
+  finally {
+    let cleanupFailed = false;
+    try {
+      if (page && !page.isClosed()) writeFileSync(join(output, "edge-navigation-observations.json"), JSON.stringify(await page.evaluate(() => Reflect.get(window, "__closeoutNavigation") ?? []), null, 2) + "\n");
+    } catch { console.info("Edge observation unavailable during failure teardown; primary failure retained."); }
+    try {
+      if (page && !page.isClosed() && zoom && page.url().startsWith("http://127.0.0.1:4173")) await zoom(1);
+    } catch { cleanupFailed = true; }
+    try { await context?.close(); } catch { cleanupFailed = true; }
+    try {
+      const owned = relative(temp, profile);
+      if (!owned.startsWith("issue49-edge-closeout-") || owned.includes("..")) throw new Error("Refusing unowned Edge profile cleanup");
+      rmSync(profile, { recursive: true, force: true });
+    } catch { cleanupFailed = true; }
+    console.info(cleanupFailed ? "Edge cleanup incomplete; independent owned-resource check required." : "Owned Edge context closed, zoom restored and profile removed.");
+    if (cleanupFailed && !primaryFailure) throw new Error("Owned Edge cleanup failed; details withheld.");
   }
 });
