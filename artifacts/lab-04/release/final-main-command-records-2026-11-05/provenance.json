@@ -1,0 +1,27 @@
+{
+  "reason": "Curated existing final-main command records for commit-pinned report links. No new tests, image captures or execution. Complete initial local package retained unchanged.",
+  "executionSha": "040e13b78893ab8155bac89758334adf1a045b01",
+  "files": {
+    "commands.json": "7cd12b1b59e9b0a7c879943922a0b3810e0672889226f5622ab68a35722a7db0",
+    "summary.json": "0029933fb0e2bfa4b2b7655a0d609a0900e35e0d86e1e7efbb8e22ef7345b0c1",
+    "environment.json": "a7ab91f13a1bc1cd76a621845ab2f355e76a31250b87cdf8f7a89bfab5c9c8c3",
+    "01-client-test.txt": "8a5d173f96169398c858fa0921d277f469d85019c658392a7dabd6d8a57e743c",
+    "02-client-build.txt": "de94082199c03e579b053c38a4f55392323f5a02e868c74e34ac5ad52c1594fc",
+    "03-server-correctness.txt": "8a15d39860749aa369e1d8fc4b4cfe18175b55af36d27390b9ac91d3d7337e16",
+    "03b-server-correctness-after-generate.txt": "0b2307c3805804c95ed411ea5c04838c9812a8047975e4afe1e45085b3c95ad9",
+    "04-server-build.txt": "28a6e78f523b6a90271b7882fdceb950e8c1c5799ef401d6a39633044255cb03",
+    "05-e2e.txt": "12a8c735c7ff2173ccf4a8486da97f46a72c9664e54997152a41fa493f7aafc4",
+    "03b-server-incomplete-observation.json": "c277a290a851ea20a5207e2cce2a9c6a0252dd4cc36b2cda49a4e9836be5a621",
+    "server-failure-observations.json": "c8e125a5503dfe75a7d12621f0878f3c9042683c523a2adf6923687ee7d6b785",
+    "server-partial-file-summaries.json": "16f06e8ea3cf1859376e8850b3ad9ea2748e46913a5fd9d5eae3bbc7a0f16a70",
+    "cleanup-summary.json": "6b8978a51999e0db1817eb72a822d995ebab8112ed9bd728746197deb8f300b0",
+    "before-isolation-cleanup.json": "613a6a73b2be296be8be6810d884c807a81396521ffb724eb2d0b42ed2e03b05",
+    "after-server-isolation-cleanup.json": "4f04e0189b6dc22e9a9af6f2f7aacc23d037eab616a0857ed44a7fb374e7d1ad",
+    "after-e2e-isolation-cleanup.json": "f79afd159abcd5baf9a15a2914d5763d697d1a858e7d8707cd99aaf49a5551e1",
+    "artifact-handling.json": "b668e6ff401f6dc41c175ee218e807a026a37dd994fe570073585f5629b98ec4",
+    "warning-observations.json": "dc8c8817da45fde3dce85579c2018f0153970f43d3e7853b062666b8dfc435ea",
+    "repository-verification.json": "5d3e6d927c63cc2ff60d55646891a58900d2310870d230710d54733a5590687b",
+    "final-git-state.json": "e58cb831394da7d76c8cae663cf2fabd9cd5d98a882e86c1cd1a786a9821c4b9"
+  },
+  "overallVerdict": "Initial server run incomplete/failed; later fullserver2109pass1fail is recorded separately, not replaced by targeted passes."
+}

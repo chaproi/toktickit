@@ -1,0 +1,233 @@
+[
+  {
+    "file": "tests/lab-04/dashboard-drilldown.api.test.ts",
+    "cases": "90",
+    "failed": null,
+    "skipped": null,
+    "ms": "54110"
+  },
+  {
+    "file": "tests/lab-04/action-validation.unit.test.ts",
+    "cases": "527",
+    "failed": null,
+    "skipped": null,
+    "ms": "502"
+  },
+  {
+    "file": "tests/lab-04/ticket-workflow.api.test.ts",
+    "cases": "220",
+    "failed": null,
+    "skipped": null,
+    "ms": "95693"
+  },
+  {
+    "file": "tests/lab-04/requester-dashboard.api.test.ts",
+    "cases": "34",
+    "failed": null,
+    "skipped": null,
+    "ms": "20977"
+  },
+  {
+    "file": "tests/lab-04/staff-dashboard.api.test.ts",
+    "cases": "28",
+    "failed": null,
+    "skipped": null,
+    "ms": "20900"
+  },
+  {
+    "file": "tests/lab-04/seed.integration.test.ts",
+    "cases": "16",
+    "failed": null,
+    "skipped": null,
+    "ms": "120644"
+  },
+  {
+    "file": "tests/lab-04/actions-taken.api.test.ts",
+    "cases": "199",
+    "failed": null,
+    "skipped": null,
+    "ms": "84624"
+  },
+  {
+    "file": "tests/lab-02/attachments.api.test.ts",
+    "cases": "42",
+    "failed": null,
+    "skipped": null,
+    "ms": "10826"
+  },
+  {
+    "file": "tests/lab-04/actions-concurrency.api.test.ts",
+    "cases": "53",
+    "failed": null,
+    "skipped": null,
+    "ms": "101263"
+  },
+  {
+    "file": "tests/lab-04/staff-dashboard-security.api.test.ts",
+    "cases": "39",
+    "failed": null,
+    "skipped": null,
+    "ms": "20159"
+  },
+  {
+    "file": "tests/lab-04/migration-recovery.integration.test.ts",
+    "cases": "21",
+    "failed": null,
+    "skipped": null,
+    "ms": "62011"
+  },
+  {
+    "file": "tests/lab-04/write-admission-feasibility.integration.test.ts",
+    "cases": "14",
+    "failed": "2",
+    "skipped": null,
+    "ms": "16316"
+  },
+  {
+    "file": "tests/lab-03/staff-queue.api.test.ts",
+    "cases": "25",
+    "failed": null,
+    "skipped": null,
+    "ms": "9622"
+  },
+  {
+    "file": "tests/lab-02/my-tickets.api.test.ts",
+    "cases": "16",
+    "failed": null,
+    "skipped": null,
+    "ms": "4877"
+  },
+  {
+    "file": "tests/lab-04/action-eligibility.api.test.ts",
+    "cases": "50",
+    "failed": null,
+    "skipped": null,
+    "ms": "91021"
+  },
+  {
+    "file": "tests/lab-04/attachment-recovery.integration.test.ts",
+    "cases": "1",
+    "failed": "1",
+    "skipped": null,
+    "ms": "30241"
+  },
+  {
+    "file": "tests/lab-04/requester-dashboard-security.api.test.ts",
+    "cases": "16",
+    "failed": null,
+    "skipped": null,
+    "ms": "21412"
+  },
+  {
+    "file": "tests/lab-04/dashboard-snapshot.integration.test.ts",
+    "cases": "4",
+    "failed": null,
+    "skipped": null,
+    "ms": "7656"
+  },
+  {
+    "file": "tests/lab-04/legacy-actions.integration.test.ts",
+    "cases": "4",
+    "failed": "4",
+    "skipped": null,
+    "ms": "27331"
+  },
+  {
+    "file": "tests/lab-04/action-create-contention.integration.test.ts",
+    "cases": "1",
+    "failed": null,
+    "skipped": null,
+    "ms": "21616"
+  },
+  {
+    "file": "tests/lab-04/staff-actions.api.test.ts",
+    "cases": "106",
+    "failed": null,
+    "skipped": null,
+    "ms": "33125"
+  },
+  {
+    "file": "tests/lab-04/t47-diagnosis.integration.test.ts",
+    "cases": "1",
+    "failed": null,
+    "skipped": null,
+    "ms": "45337"
+  },
+  {
+    "file": "tests/lab-03/authorization.api.test.ts",
+    "cases": "5",
+    "failed": null,
+    "skipped": null,
+    "ms": "20105"
+  },
+  {
+    "file": "tests/lab-04/attachment-cold-upload.integration.test.ts",
+    "cases": "2",
+    "failed": null,
+    "skipped": null,
+    "ms": "23984"
+  },
+  {
+    "file": "tests/lab-04/action-patch-projection.integration.test.ts",
+    "cases": "1",
+    "failed": "1",
+    "skipped": null,
+    "ms": "65338"
+  },
+  {
+    "file": "tests/lab-03/ownership-eligibility-races.api.test.ts",
+    "cases": "22",
+    "failed": "3",
+    "skipped": null,
+    "ms": "94787"
+  },
+  {
+    "file": "tests/lab-04/staff-queue-pagination.api.test.ts",
+    "cases": "19",
+    "failed": null,
+    "skipped": null,
+    "ms": "7523"
+  },
+  {
+    "file": "tests/lab-03/requester-mutation-concurrency.api.test.ts",
+    "cases": "10",
+    "failed": null,
+    "skipped": null,
+    "ms": "36387"
+  },
+  {
+    "file": "tests/lab-04/action-commit-recovery.api.test.ts",
+    "cases": "2",
+    "failed": null,
+    "skipped": null,
+    "ms": "15248"
+  },
+  {
+    "file": "tests/lab-04/actions-authorization.api.test.ts",
+    "cases": "96",
+    "failed": null,
+    "skipped": "96",
+    "ms": "10142"
+  },
+  {
+    "file": "tests/lab-04/create-critical-path.integration.test.ts",
+    "cases": "1",
+    "failed": null,
+    "skipped": null,
+    "ms": "65574"
+  },
+  {
+    "file": "tests/lab-04/write-admission-front-queue.integration.test.ts",
+    "cases": "6",
+    "failed": null,
+    "skipped": null,
+    "ms": "3224"
+  },
+  {
+    "file": "tests/lab-03/auth.api.test.ts",
+    "cases": "16",
+    "failed": null,
+    "skipped": null,
+    "ms": "14631"
+  }
+]

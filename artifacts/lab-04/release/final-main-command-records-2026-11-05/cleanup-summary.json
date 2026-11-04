@@ -1,0 +1,29 @@
+{
+  "at": "2026-11-04T17:10:59.925544+00:00",
+  "guardAndLiveTargetChecks": "before writes, after server cleanup, after E2E",
+  "operationalDatabase": "never connected to or reset; dedicated target verified distinct",
+  "serverInterruptionRemnants": {
+    "newOwnedSchemasRemoved": 3,
+    "newOwnedRecoveryDirectoriesRemoved": 1,
+    "ownershipProof": "Absent from saved baseline; exact test schema patterns and stopped owned Seaweed process; no competing connections before removal.",
+    "preexistingSchemasAndRowsUnchanged": true
+  },
+  "finalIndependentProbes": {
+    "testListeners3100And4173": 0,
+    "databaseOtherConnections": 0,
+    "idleTransactions": 0,
+    "advisoryLocks": 0,
+    "newDisposableSchemas": 0,
+    "ownedZoomProfiles": 0,
+    "ownedNodeStorageBrowserProcesses": 0,
+    "actionFixtureUsersAndSessions": 0,
+    "cascadeFaultTriggersFunctionsSequences": 0
+  },
+  "historicalArtifacts": "105 overwritten files restored exactly; 94 new generated files archived separately; all 780 historical artifact files and all 1120 tracked files hash-identical",
+  "temporarySettings": "Command-scoped only; no persistent environment or pool/timeout/retry settings changed",
+  "privateLogs": "Retained privately; public evidence is redacted",
+  "qualification": "Interrupted server run did not reach a final runner/teardown summary. Independently verified remnants were removed; do not infer every unexecuted test or hook passed.",
+  "privateEnvironmentCopyRemoved": true,
+  "ownedDownloadedToolDirectoryRemoved": true,
+  "ignoredDependencyAndBuildOutputs": "Retained in isolated worktree; no live runtime"
+}

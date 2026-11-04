@@ -1,0 +1,37 @@
+{
+  "recordedAt": "2026-11-04T16:22:50.853Z",
+  "timezone": "Asia/Bangkok",
+  "executionSha": "040e13b78893ab8155bac89758334adf1a045b01",
+  "node": "v24.14.0",
+  "npm": "11.9.0",
+  "platform": "win32",
+  "architecture": "x64",
+  "osRelease": "10.0.26200",
+  "cpu": "13th Gen Intel(R) Core(TM) i5-13420H",
+  "logicalProcessors": 12,
+  "totalRamBytes": 34049220608,
+  "versions": {
+    "prisma": "6.19.3",
+    "client": "6.19.3",
+    "adapter": "6.19.3",
+    "generated": "6.19.3",
+    "serverVitest": "2.1.9",
+    "clientVitest": "2.1.9",
+    "vite": "6.4.3",
+    "playwright": "1.63.0"
+  },
+  "lockfileVersions": {
+    "root": 3,
+    "client": 3,
+    "server": 3
+  },
+  "settings": {
+    "serverExcludedOnly": "tests/lab-04/performance-smoke.integration.test.ts",
+    "e2eWorkers": 1,
+    "e2eRetries": 0,
+    "e2eCaseTimeoutMs": 60000,
+    "e2eExpectTimeoutMs": 10000,
+    "noPoolOrTransactionOverrides": true,
+    "noBenchmarkOrSpeechOrExtraVisualReview": true
+  }
+}

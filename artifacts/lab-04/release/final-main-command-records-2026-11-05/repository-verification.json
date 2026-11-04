@@ -1,0 +1,18 @@
+{
+  "repository": "chaproi/toktickit",
+  "executionHead": "040e13b78893ab8155bac89758334adf1a045b01",
+  "worktree": "isolated detached final-main-040e13b",
+  "sourceAndIndexCleanBeforeExecution": true,
+  "liveOriginMainVerifiedBeforeAndAfter": true,
+  "finalRemoteMainSha": "040e13b78893ab8155bac89758334adf1a045b01",
+  "finalRemoteReadAt": "2026-11-04T17:08Z",
+  "otherWorktreesPreserved": {
+    "originalBranch": "feat/49-final-hardening",
+    "originalHead": "535a2e5426ffe263630e44b763779050a95ab436",
+    "untrackedProposalSha256": "E3BD394EDAE0C677A301E43F02B04EC6363907BF27972B302FA19647AEE7790D",
+    "candidateHead": "db852ac20653e65e8609670e6adbbe0375c62986",
+    "candidateTrackedState": "clean; unchanged"
+  },
+  "applicableInstructions": "No AGENTS.md found in the checked repository tree or ancestor locations; release handoff read before execution.",
+  "noCommitsPushesOrGitHubMetadataChanges": true
+}

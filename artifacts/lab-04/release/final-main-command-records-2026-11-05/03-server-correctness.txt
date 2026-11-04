@@ -1,0 +1,59 @@
+> toktickit-server@1.0.0 test
+> vitest run --exclude tests/lab-04/performance-smoke.integration.test.ts
+
+
+ RUN  v2.1.9 D:/KMUTT/ปี 3 เทอม 1/Software Engineering/CPE334-Lab1/Lab1_Starter_Scaffold/toktickit/.worktrees/final-main-040e13b/server
+
+npm.cmd : warn The configuration property `package.json#prisma` is deprecated and will be removed in Prisma 7. Please
+migrate to a Prisma config file (e.g., `prisma.config.ts`).
+At <private-verification-directory>\run.ps1:6 char:1
++ & npm.cmd @NpmArguments *> $log
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (warn The config...ma.config.ts`).:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+For more information, see: https://pris.ly/prisma-config
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+Datasource identity verified privately; connection values withheld.
+
+6 migrations found in prisma/migrations
+
+
+No pending migrations to apply.
+
+ Test Files  no tests
+      Tests  no tests
+   Start at  23:20:19
+   Duration  11.51s (transform 1.02s, setup 0ms, collect 0ms, tests 0ms, environment 0ms, prepare 0ms)
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: @prisma/client did not initialize yet. Please run "prisma generate" and try to import it again.
+ ❯ new PrismaClient node_modules/.prisma/client/default.js:43:11
+ ❯ Module.deadlineClient src/database/transaction-deadline.ts:57:18
+     55|     pending.add(work); void work.then(() => pending.delete(work), () =…
+     56|   };
+     57|   const drain = async () => { while (pending.size) await Promise.allSe…
+       |                  ^
+     58|   function transact(this: PrismaClient, input: unknown, supplied?: Opt…
+     59|     // Preserve a public $extends receiver; binding every call to the …
+ ❯ createPrismaClient src/prisma-client.ts:35:44
+ ❯ Module.prepareTestDatabase src/testing/prepare-test-database.ts:51:18
+ ❯ Object.globalSetup [as setup] tests/global-setup.ts:20:3
+ ❯ WorkspaceProject.initializeGlobalSetup ../../../../../../../../%E0%B8%9B%E0%B8%B5%203%20%E0%B9%80%E0%B8%97%E0%B8%AD%
+E0%B8%A1%201/Software%20Engineering/CPE334-Lab1/Lab1_Starter_Scaffold/toktickit/.worktrees/final-main-040e13b/server/no
+de_modules/vitest/dist/chunks/cli-api.DqsSTaIi.js:9926:24
+ ❯ Vitest.initializeGlobalSetup ../../../../../../../../%E0%B8%9B%E0%B8%B5%203%20%E0%B9%80%E0%B8%97%E0%B8%AD%E0%B8%A1%2
+01/Software%20Engineering/CPE334-Lab1/Lab1_Starter_Scaffold/toktickit/.worktrees/final-main-040e13b/server/node_modules
+/vitest/dist/chunks/cli-api.DqsSTaIi.js:10794:7
+ ❯ ../../../../../../../../%E0%B8%9B%E0%B8%B5%203%20%E0%B9%80%E0%B8%97%E0%B8%AD%E0%B8%A1%201/Software%20Engineering/CPE
+334-Lab1/Lab1_Starter_Scaffold/toktickit/.worktrees/final-main-040e13b/server/node_modules/vitest/dist/chunks/cli-api.D
+qsSTaIi.js:10816:7
+ ❯ Vitest.runFiles ../../../../../../../../%E0%B8%9B%E0%B8%B5%203%20%E0%B9%80%E0%B8%97%E0%B8%AD%E0%B8%A1%201/Software%2
+0Engineering/CPE334-Lab1/Lab1_Starter_Scaffold/toktickit/.worktrees/final-main-040e13b/server/node_modules/vitest/dist/
+chunks/cli-api.DqsSTaIi.js:10840:12
+ ❯ Vitest.start ../../../../../../../../%E0%B8%9B%E0%B8%B5%203%20%E0%B9%80%E0%B8%97%E0%B8%AD%E0%B8%A1%201/Software%20En
+gineering/CPE334-Lab1/Lab1_Starter_Scaffold/toktickit/.worktrees/final-main-040e13b/server/node_modules/vitest/dist/chu
+nks/cli-api.DqsSTaIi.js:10682:7

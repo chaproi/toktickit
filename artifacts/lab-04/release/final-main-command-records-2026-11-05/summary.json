@@ -1,0 +1,15 @@
+{
+  "testedHead": "040e13b78893ab8155bac89758334adf1a045b01",
+  "overallVerdict": "NOT GREEN: server regression incomplete with retained failures",
+  "requestedChecks": {
+    "clientTest": "24 files / 352 passed / exit 0",
+    "clientBuild": "passed / exit 0",
+    "serverTest": "initial setup exit 1; after explicit Prisma generation, incomplete result with 11 observed failures and 96 skipped; final exit unknown",
+    "serverBuild": "passed / exit 0",
+    "e2e": "16 files / 77 passed / exit 0 / workers 1 / retries 0"
+  },
+  "benchmark": "performance-smoke.integration.test.ts excluded and not executed; existing bounded diagnostic files were included by the exact requested server command",
+  "noApplicationTestConfigurationDocumentationChanges": true,
+  "releaseSubmissionClaim": false,
+  "humanAcceptedEvidence": "Existing peer-accepted T37/T38 and limited T47 provenance preserved; no new audio/visual review or acceptance promotion."
+}

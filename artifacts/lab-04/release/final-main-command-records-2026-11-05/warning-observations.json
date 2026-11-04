@@ -1,0 +1,44 @@
+{
+  "01-client-test": {
+    "reactActWarningOccurrences": 10,
+    "routerFutureWarningOccurrences": 2,
+    "jsdomNavigationNotImplementedOccurrences": 1,
+    "pgConcurrentQueryDeprecationOccurrences": 0,
+    "colorEnvironmentWarningMentions": 0
+  },
+  "02-client-build": {
+    "reactActWarningOccurrences": 0,
+    "routerFutureWarningOccurrences": 0,
+    "jsdomNavigationNotImplementedOccurrences": 0,
+    "pgConcurrentQueryDeprecationOccurrences": 0,
+    "colorEnvironmentWarningMentions": 0
+  },
+  "03-server-correctness": {
+    "reactActWarningOccurrences": 0,
+    "routerFutureWarningOccurrences": 0,
+    "jsdomNavigationNotImplementedOccurrences": 0,
+    "pgConcurrentQueryDeprecationOccurrences": 0,
+    "colorEnvironmentWarningMentions": 0
+  },
+  "03b-server-correctness-after-generate": {
+    "reactActWarningOccurrences": 0,
+    "routerFutureWarningOccurrences": 0,
+    "jsdomNavigationNotImplementedOccurrences": 0,
+    "pgConcurrentQueryDeprecationOccurrences": 15,
+    "colorEnvironmentWarningMentions": 0
+  },
+  "04-server-build": {
+    "reactActWarningOccurrences": 0,
+    "routerFutureWarningOccurrences": 0,
+    "jsdomNavigationNotImplementedOccurrences": 0,
+    "pgConcurrentQueryDeprecationOccurrences": 0,
+    "colorEnvironmentWarningMentions": 0
+  },
+  "05-e2e": {
+    "reactActWarningOccurrences": 0,
+    "routerFutureWarningOccurrences": 0,
+    "jsdomNavigationNotImplementedOccurrences": 0,
+    "pgConcurrentQueryDeprecationOccurrences": 1,
+    "colorEnvironmentWarningMentions": 2
+  }
+}

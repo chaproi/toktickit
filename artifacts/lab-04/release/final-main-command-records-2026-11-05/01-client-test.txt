@@ -1,0 +1,522 @@
+> toktickit-client@1.0.0 test
+> vitest run
+
+
+ RUN  v2.1.9 D:/KMUTT/ปี 3 เทอม 1/Software Engineering/CPE334-Lab1/Lab1_Starter_Scaffold/toktickit/.worktrees/final-main-040e13b/client
+
+npm.cmd : stderr | tests/lab-02/MyTickets.test.tsx > My Tickets > UI-05 opens /tickets for the authenticated Requester
+without a client-supplied identity and exposes a semantic loading state
+At <private-verification-directory>\run.ps1:6 char:1
++ & npm.cmd @NpmArguments *> $log
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (stderr | tests/...c loading state:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+Warning: An update to MyTickets inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at
+https://reactjs.org/link/wrap-tests-with-act
+    at MyTickets (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\fina
+l-main-040e13b\client\src\components\MyTickets.tsx:74:61)
+    at main
+    at div
+    at AppShell (D:\KMUTT\ปี 3 เทอม 1\Software
+Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-main-040e13b\client\src\App.tsx:137:3)
+    at RenderedRoute (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\
+final-main-040e13b\client\node_modules\react-router\dist\umd\react-router.development.js:535:7)
+    at Routes (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-m
+ain-040e13b\client\node_modules\react-router\dist\umd\react-router.development.js:1269:7)
+    at AuthenticatedRoutes (D:\KMUTT\ปี 3 เทอม 1\Software
+Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-main-040e13b\client\src\App.tsx:327:42)
+    at Router (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-m
+ain-040e13b\client\node_modules\react-router\dist\umd\react-router.development.js:1203:17)
+    at BrowserRouter (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\
+final-main-040e13b\client\node_modules\react-router-dom\dist\umd\react-router-dom.development.js:688:7)
+    at App
+Warning: An update to MyTickets inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at
+https://reactjs.org/link/wrap-tests-with-act
+    at MyTickets (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\fina
+l-main-040e13b\client\src\components\MyTickets.tsx:74:61)
+    at main
+    at div
+    at AppShell (D:\KMUTT\ปี 3 เทอม 1\Software
+Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-main-040e13b\client\src\App.tsx:137:3)
+    at RenderedRoute (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\
+final-main-040e13b\client\node_modules\react-router\dist\umd\react-router.development.js:535:7)
+    at Routes (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-m
+ain-040e13b\client\node_modules\react-router\dist\umd\react-router.development.js:1269:7)
+    at AuthenticatedRoutes (D:\KMUTT\ปี 3 เทอม 1\Software
+Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-main-040e13b\client\src\App.tsx:327:42)
+    at Router (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-m
+ain-040e13b\client\node_modules\react-router\dist\umd\react-router.development.js:1203:17)
+    at BrowserRouter (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\
+final-main-040e13b\client\node_modules\react-router-dom\dist\umd\react-router-dom.development.js:688:7)
+    at App
+Warning: An update to MyTickets inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at
+https://reactjs.org/link/wrap-tests-with-act
+    at MyTickets (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\fina
+l-main-040e13b\client\src\components\MyTickets.tsx:74:61)
+    at main
+    at div
+    at AppShell (D:\KMUTT\ปี 3 เทอม 1\Software
+Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-main-040e13b\client\src\App.tsx:137:3)
+    at RenderedRoute (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\
+final-main-040e13b\client\node_modules\react-router\dist\umd\react-router.development.js:535:7)
+    at Routes (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-m
+ain-040e13b\client\node_modules\react-router\dist\umd\react-router.development.js:1269:7)
+    at AuthenticatedRoutes (D:\KMUTT\ปี 3 เทอม 1\Software
+Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-main-040e13b\client\src\App.tsx:327:42)
+    at Router (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-m
+ain-040e13b\client\node_modules\react-router\dist\umd\react-router.development.js:1203:17)
+    at BrowserRouter (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\
+final-main-040e13b\client\node_modules\react-router-dom\dist\umd\react-router-dom.development.js:688:7)
+    at App
+
+ ✓ tests/lab-03/ResolutionIndication.test.tsx (10 tests) 5313ms
+   ✓ Issue 29 resolution indication UI > confirms the indication and never represents formal status as changed 1390ms
+   ✓ Issue 29 resolution indication UI > reloads authoritative Ticket state and focuses it after RESOLUTION_INDICATION_NOT_ALLOWED 653ms
+   ✓ Issue 29 resolution indication UI > reloads the complete authoritative Ticket and focuses it after CONCURRENT_UPDATE 633ms
+   ✓ Issue 29 resolution indication UI > keeps the resolution action and gives retry guidance when CONCURRENT_UPDATE reload remains eligible 563ms
+   ✓ Issue 29 resolution indication UI > shows the approved safe failure when conflict-state reload fails 604ms
+   ✓ Issue 29 resolution indication UI > traps focus, handles Escape safely, and restores focus to the trigger 663ms
+   ✓ Issue 29 resolution indication UI > keeps formal status and renders a safe dependency failure 336ms
+stderr | tests/lab-02/MyTickets.test.tsx > My Tickets > UI-05 clears Requester data immediately when the authenticated
+session expires
+Warning: An update to AuthenticatedRoutes inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at
+https://reactjs.org/link/wrap-tests-with-act
+    at AuthenticatedRoutes (D:\KMUTT\ปี 3 เทอม 1\Software
+Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-main-040e13b\client\src\App.tsx:327:42)
+    at Router (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-m
+ain-040e13b\client\node_modules\react-router\dist\umd\react-router.development.js:1203:17)
+    at BrowserRouter (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\
+final-main-040e13b\client\node_modules\react-router-dom\dist\umd\react-router-dom.development.js:688:7)
+    at App
+Warning: An update to AuthenticatedRoutes inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at
+https://reactjs.org/link/wrap-tests-with-act
+    at AuthenticatedRoutes (D:\KMUTT\ปี 3 เทอม 1\Software
+Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-main-040e13b\client\src\App.tsx:327:42)
+    at Router (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-m
+ain-040e13b\client\node_modules\react-router\dist\umd\react-router.development.js:1203:17)
+    at BrowserRouter (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\
+final-main-040e13b\client\node_modules\react-router-dom\dist\umd\react-router-dom.development.js:688:7)
+    at App
+Warning: An update to AuthenticatedRoutes inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at
+https://reactjs.org/link/wrap-tests-with-act
+    at AuthenticatedRoutes (D:\KMUTT\ปี 3 เทอม 1\Software
+Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-main-040e13b\client\src\App.tsx:327:42)
+    at Router (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-m
+ain-040e13b\client\node_modules\react-router\dist\umd\react-router.development.js:1203:17)
+    at BrowserRouter (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\
+final-main-040e13b\client\node_modules\react-router-dom\dist\umd\react-router-dom.development.js:688:7)
+    at App
+Warning: An update to AuthenticatedRoutes inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at
+https://reactjs.org/link/wrap-tests-with-act
+    at AuthenticatedRoutes (D:\KMUTT\ปี 3 เทอม 1\Software
+Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-main-040e13b\client\src\App.tsx:327:42)
+    at Router (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-m
+ain-040e13b\client\node_modules\react-router\dist\umd\react-router.development.js:1203:17)
+    at BrowserRouter (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\
+final-main-040e13b\client\node_modules\react-router-dom\dist\umd\react-router-dom.development.js:688:7)
+    at App
+Warning: An update to BrowserRouter inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at
+https://reactjs.org/link/wrap-tests-with-act
+    at BrowserRouter (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\
+final-main-040e13b\client\node_modules\react-router-dom\dist\umd\react-router-dom.development.js:688:7)
+    at App
+
+ ✓ tests/lab-02/MyTickets.test.tsx (13 tests) 8283ms
+   ✓ My Tickets > UI-05 preserves protected-route behavior when no authenticated Requester session exists 709ms
+   ✓ My Tickets > UI-05 opens /tickets for the authenticated Requester without a client-supplied identity and exposes a semantic loading state 331ms
+   ✓ My Tickets > UI-05 displays every approved Ticket field, text badges, one Detail link, and Create Ticket 456ms
+   ✓ My Tickets > UI-05 provides persistently labelled search, filter, sort, and page-size controls 976ms
+   ✓ My Tickets > UI-05 keeps search and filter edits as drafts until Apply and resets to page 1 1932ms
+   ✓ My Tickets > UI-05 clears applied search and filters, returns to page 1, and reloads 996ms
+   ✓ My Tickets > UI-05 applies sort field, direction, and page size immediately from page 1 663ms
+   ✓ My Tickets > UI-05 displays pagination metadata and preserves the applied query on Previous and Next 796ms
+   ✓ My Tickets > UI-05 shows no-results only for applied search or filters and Clear Filters reloads page 1 493ms
+   ✓ My Tickets > UI-05 replaces stale Tickets with a safe alert and retries the current applied query 442ms
+ ✓ tests/lab-04/MyActions.test.tsx (25 tests) 8421ms
+   ✓ Issue 45 My assigned Actions — partial AC-01/03/36/44, T-35/36/54 > 'IT_STAFF' reads actor-assigned safe Action/Ticket rows with 1/10 defaults and literal text 1105ms
+   ✓ Issue 45 My assigned Actions — partial AC-01/03/36/44, T-35/36/54 > 'ADMINISTRATOR' reads actor-assigned safe Action/Ticket rows with 1/10 defaults and literal text 314ms
+   ✓ Issue 45 My assigned Actions — partial AC-01/03/36/44, T-35/36/54 > contradictory Action status/group yields a genuine filtered no-results state with both predicates retained 360ms
+   ✓ Issue 45 My assigned Actions — partial AC-01/03/36/44, T-35/36/54 > safe dependency failure offers Retry without fake empty data and renders the authoritative retry 403ms
+   ✓ Issue 45 My assigned Actions — partial AC-01/03/36/44, T-35/36/54 > preserves every approved URL predicate, keeping Action status distinct from parent Ticket currentStatus 381ms
+   ✓ Issue 45 My assigned Actions — partial AC-01/03/36/44, T-35/36/54 > accessible filters reset paging; 10/25/50 choices preserve server order, ties and authoritative totals 3127ms
+   ✓ Issue 45 My assigned Actions — partial AC-01/03/36/44, T-35/36/54 > opens and focuses the hash-selected Action on authorized Ticket detail (off initial page=false) 354ms
+   ✓ Issue 45 My assigned Actions — partial AC-01/03/36/44, T-35/36/54 > opens and focuses the hash-selected Action on authorized Ticket detail (off initial page=true) 534ms
+ ✓ tests/lab-04/RequesterDashboard.test.tsx (19 tests) 9907ms
+   ✓ Issue 47 Requester Dashboard UI — partial Dashboard, drill-down and safe-state contracts > renders four server metrics, bounded ordered safe lists, Bangkok dates and the calendar-window explanation 1360ms
+   ✓ Issue 47 Requester Dashboard UI — partial Dashboard, drill-down and safe-state contracts > keeps a pending initial read busy without zero/empty flashes, then displays the authoritative response 597ms
+   ✓ Issue 47 Requester Dashboard UI — partial Dashboard, drill-down and safe-state contracts > shows genuine unfiltered zeros and a page-content Create Ticket action 406ms
+   ✓ Issue 47 Requester Dashboard UI — partial Dashboard, drill-down and safe-state contracts > distinguishes filtered no-results and Clear filters from an account with no Tickets 450ms
+   ✓ Issue 47 Requester Dashboard UI — partial Dashboard, drill-down and safe-state contracts > retries a safe dependency failure without fabricated zeros and uses the successful server data 466ms
+   ✓ Issue 47 Requester Dashboard UI — partial Dashboard, drill-down and safe-state contracts > applies all six trimmed base filters together, summarizes them and does not fetch while editing drafts 2373ms
+   ✓ Issue 47 Requester Dashboard UI — partial Dashboard, drill-down and safe-state contracts > clears every base filter and URL context through a new unfiltered authoritative read 614ms
+   ✓ Issue 47 Requester Dashboard UI — partial Dashboard, drill-down and safe-state contracts > 'outstanding' opens My Tickets and retains descriptor predicates through fresh-total pagination 712ms
+   ✓ Issue 47 Requester Dashboard UI — partial Dashboard, drill-down and safe-state contracts > 'needsAttention' opens My Tickets and retains descriptor predicates through fresh-total pagination 808ms
+   ✓ Issue 47 Requester Dashboard UI — partial Dashboard, drill-down and safe-state contracts > 'recentUpdated' opens My Tickets and retains descriptor predicates through fresh-total pagination 468ms
+   ✓ Issue 47 Requester Dashboard UI — partial Dashboard, drill-down and safe-state contracts > 'recentResolved' opens My Tickets and retains descriptor predicates through fresh-total pagination 536ms
+   ✓ keeps CLOSED filter context and truthful widget-empty wording when an owned old CLOSED Ticket exists 460ms
+ ✓ tests/lab-03/RequesterTicketFlow.test.tsx (11 tests) 12610ms
+   ✓ Issue 29 Requester UI regression > lists authenticated Tickets with both priorities, owner, and no development identity 773ms
+   ✓ Issue 29 Requester UI regression > creates a Ticket from session identity without client ownership fields 3272ms
+   ✓ Issue 29 Requester UI regression > sends the documented search, filter, sort, and pagination controls 2260ms
+   ✓ Issue 29 Requester UI regression > completes public Comment, Attachment, and resolution-indication actions without changing formal status 2135ms
+   ✓ Issue 29 Requester UI regression > shows a newly posted Comment on its authoritative final page without clearing failed drafts 1493ms
+   ✓ Issue 29 Requester UI regression > recovers from an initial Comment-list failure after a successful POST 732ms
+   ✓ Issue 29 Requester UI regression > locates a concurrently shifted created Comment on authoritative page 3 1194ms
+   ✓ Issue 29 Requester UI regression > shows deterministic loading, empty, no-results, validation, and dependency-failure states 511ms
+ ✓ tests/lab-04/StaffDashboard.test.tsx (25 tests) 14151ms
+   ✓ Issue 48 Staff Dashboard route and authoritative rendering > 'IT_STAFF' reads its own server counts, all bins and bounded literal previews 2161ms
+   ✓ Issue 48 Staff Dashboard route and authoritative rendering > 'ADMINISTRATOR' reads its own server counts, all bins and bounded literal previews 1120ms
+   ✓ Staff Dashboard honest async and empty states > announces pending loading without fabricated zeros/empty state, then renders the resolved response 329ms
+   ✓ Staff Dashboard honest async and empty states > shows one accessible dependency error and explicit Retry, never fake zero success 473ms
+   ✓ Staff Dashboard honest async and empty states > shows genuine global zero bins and empty lists without a dependency error 579ms
+   ✓ Staff Dashboard honest async and empty states > retains CLOSED filter/bin while zero active/recent widgets do not claim no matching Tickets 785ms
+   ✓ Staff Dashboard honest async and empty states > shows filtered no-results with retained context and a working Clear filters recovery 551ms
+   ✓ Staff Dashboard honest async and empty states > keeps global data with no-assignments and no unfinished assignments 457ms
+   ✓ Staff Dashboard honest async and empty states > keeps global data with terminal-only and no unfinished assignments 405ms
+   ✓ Staff Dashboard honest async and empty states > keeps all seven filters in URL/API, applies deliberately, clears, and ignores an obsolete response 1621ms
+   ✓ Staff Dashboard structured drill-downs use real destination consumers > 'mine' retains all descriptor predicates through Staff Queue pagination 583ms
+   ✓ Staff Dashboard structured drill-downs use real destination consumers > 'status' retains all descriptor predicates through Staff Queue pagination 683ms
+   ✓ Staff Dashboard structured drill-downs use real destination consumers > 'IT priority' retains all descriptor predicates through Staff Queue pagination 611ms
+   ✓ Staff Dashboard structured drill-downs use real destination consumers > 'recent updates' retains all descriptor predicates through Staff Queue pagination 748ms
+   ✓ Staff Dashboard structured drill-downs use real destination consumers > 'recent resolutions' retains all descriptor predicates through Staff Queue pagination 729ms
+   ✓ Staff Dashboard structured drill-downs use real destination consumers > 'View my actions' maps to assignee=me, retains base filters and My Actions paging 566ms
+   ✓ Staff Dashboard structured drill-downs use real destination consumers > 'terminal Completed count' maps to assignee=me, retains base filters and My Actions paging 493ms
+   ✓ Staff Dashboard structured drill-downs use real destination consumers > Ticket preview opens the real authorized detail route 332ms
+   ✓ Staff Dashboard structured drill-downs use real destination consumers > Action preview opens the real authorized detail route 383ms
+ ✓ tests/lab-02/CreateTicket.test.tsx (14 tests) 15324ms
+   ✓ Create Ticket > UI-02 loads reference data and displays the selected Requester 1142ms
+   ✓ Create Ticket > UI-02 shows a reference-data error and retries successfully 361ms
+   ✓ Create Ticket > UI-03 clears entered values and selected Attachments 2677ms
+   ✓ Create Ticket > UI-03 blocks an invalid submission and displays validation errors 365ms
+   ✓ Create Ticket > UI-03 submits valid data and displays the generated Ticket Number 2501ms
+   ✓ Create Ticket > UI-03 preserves entered values when the Ticket API fails 1852ms
+   ✓ Create Ticket > UI-03 disables submission and sends only one request while creating 1882ms
+   ✓ Create Ticket > UI-04 keeps a valid Attachment and rejects an unsupported file 399ms
+   ✓ Create Ticket > UI-04 uploads selected Attachments after the Ticket is created 1643ms
+   ✓ Create Ticket > UI-04 keeps Ticket success visible when an Attachment upload fails 1667ms
+ ✓ tests/lab-04/DashboardNavigation.test.tsx (34 tests) 17050ms
+   ✓ Issue 53 approved role landing - AC-35/T-35 > 'REQUESTER' login opens '/dashboard' 1172ms
+   ✓ Issue 53 approved role landing - AC-35/T-35 > 'IT_STAFF' login opens '/staff/dashboard' 521ms
+   ✓ Issue 53 approved role landing - AC-35/T-35 > 'ADMINISTRATOR' login opens '/staff/dashboard' 545ms
+   ✓ Issue 53 approved role landing - AC-35/T-35 > 'IT_STAFF' authenticated / opens its Dashboard 334ms
+   ✓ Issue 53 approved role landing - AC-35/T-35 > 'ADMINISTRATOR' authenticated /login opens its Dashboard 309ms
+   ✓ Issue 53 approved role landing - AC-35/T-35 > 'REQUESTER' brand-home interaction returns to '/dashboard' 469ms
+   ✓ Issue 53 approved role landing - AC-35/T-35 > 'IT_STAFF' brand-home interaction returns to '/staff/dashboard' 389ms
+   ✓ Issue 53 approved role landing - AC-35/T-35 > 'ADMINISTRATOR' brand-home interaction returns to '/staff/dashboard' 570ms
+   ✓ Issue 53 approved role landing - AC-35/T-35 > 'ADMINISTRATOR' forbidden-page role home uses '/staff/dashboard' without protected reads 322ms
+   ✓ Issue 53 approved role landing - AC-35/T-35 > 'IT_STAFF' must change password before any Dashboard landing 363ms
+   ✓ Issue 53 approved role landing - AC-35/T-35 > 'ADMINISTRATOR' must change password before any Dashboard landing 346ms
+   ✓ Dashboard navigation and preserved earlier routes - AC-35/T-35 > 'REQUESTER' has accessible Dashboard navigation with distinct active states 477ms
+   ✓ Dashboard navigation and preserved earlier routes - AC-35/T-35 > 'IT_STAFF' has accessible Dashboard navigation with distinct active states 652ms
+   ✓ Dashboard navigation and preserved earlier routes - AC-35/T-35 > 'ADMINISTRATOR' has accessible Dashboard navigation with distinct active states 843ms
+   ✓ Dashboard navigation and preserved earlier routes - AC-35/T-35 > Requester retains My Tickets, owned detail and Create Ticket without privileged lookups 434ms
+   ✓ Dashboard navigation and preserved earlier routes - AC-35/T-35 > 'IT_STAFF' retains Queue, authorized detail and earlier operational navigation 716ms
+   ✓ Dashboard navigation and preserved earlier routes - AC-35/T-35 > 'ADMINISTRATOR' retains Queue, authorized detail and earlier operational navigation 552ms
+   ✓ Actual Actions return consumer - AC-44/T-54 and partial AC-35/T-35 > 'IT_STAFF' completes filtered Dashboard -> My Actions -> selected Action -> Dashboard return 2391ms
+   ✓ Actual Actions return consumer - AC-44/T-54 and partial AC-35/T-35 > 'ADMINISTRATOR' completes filtered Dashboard -> My Actions -> selected Action -> Dashboard return 2076ms
+   ✓ Actual Actions return consumer - AC-44/T-54 and partial AC-35/T-35 > rejects an unsafe return selector, then Clear and Back reach the actual known Dashboard 410ms
+   ✓ Navigation identity/session isolation - partial AC-01/02/35, T-01/02/35 > late prior-user Dashboard response cannot return after logout/login as another worker 587ms
+   ✓ Navigation identity/session isolation - partial AC-01/02/35, T-01/02/35 > late prior-user Actions response cannot return after logout/login as another worker 566ms
+ ✓ tests/lab-03/StaffTicketQueue.test.tsx (11 tests) 5168ms
+   ✓ UI-05 IT Staff Ticket Queue > renders the complete populated Queue for undefined 850ms
+   ✓ UI-05 IT Staff Ticket Queue > renders the complete populated Queue for undefined 369ms
+   ✓ UI-05 IT Staff Ticket Queue > keeps search and filters draft until Apply, then clears them and resets page one 1320ms
+   ✓ UI-05 IT Staff Ticket Queue > applies sort, direction, and page size immediately with page reset and accessible pagination 659ms
+   ✓ UI-05 IT Staff Ticket Queue > recovers an out-of-range page by requesting the final valid page once 359ms
+   ✓ UI-05 IT Staff Ticket Queue > shows no-results with Clear Filters after an applied query 571ms
+   ✓ UI-05 IT Staff Ticket Queue > removes stale Queue data on safe failure and retries successfully 369ms
+ ✓ tests/lab-04/TicketWorkflow.test.tsx (16 tests) 24670ms
+   ✓ Ticket Workflow UI: D-20, blockers and safe recovery > 'IT_STAFF' submits an optional trimmed literal reason for 'WAITING_FOR_REQUESTER' with inherited tokens/confirmation 4522ms
+   ✓ Ticket Workflow UI: D-20, blockers and safe recovery > 'IT_STAFF' submits an optional trimmed literal reason for 'RESOLVED' with inherited tokens/confirmation 3006ms
+   ✓ Ticket Workflow UI: D-20, blockers and safe recovery > 'ADMINISTRATOR' submits an optional trimmed literal reason for 'WAITING_FOR_REQUESTER' with inherited tokens/confirmation 2151ms
+   ✓ Ticket Workflow UI: D-20, blockers and safe recovery > 'ADMINISTRATOR' submits an optional trimmed literal reason for 'RESOLVED' with inherited tokens/confirmation 2221ms
+   ✓ Ticket Workflow UI: D-20, blockers and safe recovery > explains cancellation cascade and renders only authoritative refreshed Ticket/history/Action state 1817ms
+   ✓ Ticket Workflow UI: D-20, blockers and safe recovery > rejects cancellation reason with 'trimmed four characters' using accessible field feedback and no write 358ms
+   ✓ Ticket Workflow UI: D-20, blockers and safe recovery > rejects cancellation reason with '501 characters without silent truncat…' using accessible field feedback and no write 360ms
+   ✓ Ticket Workflow UI: D-20, blockers and safe recovery > retains RESOLVED draft after ACTIONS_OUTSTANDING and links the exact server-derived unfinished total 2702ms
+   ✓ Ticket Workflow UI: D-20, blockers and safe recovery > retains CLOSED draft after ACTIONS_OUTSTANDING and links the exact server-derived unfinished total 2174ms
+   ✓ Ticket Workflow UI: D-20, blockers and safe recovery > preserves cancellation draft and associates server-400 reason feedback with its field 1270ms
+   ✓ Ticket Workflow UI: D-20, blockers and safe recovery > retains stale cancellation draft and uses a refreshed Ticket token only on deliberate retry 1719ms
+   ✓ Ticket Workflow UI: D-20, blockers and safe recovery > blocks duplicate confirmation and dismissal while pending, keeps focus and announces no premature success 505ms
+   ✓ Ticket Workflow UI: D-20, blockers and safe recovery > reports confirmed save with failed refresh and recovers through reads without offering another mutation 1378ms
+ ✓ tests/lab-03/CommentsNotes.test.tsx (7 tests) 5184ms
+   ✓ UI-08 Public Comments and Internal Notes > keeps public and private communication visibly and semantically separate with inert text 529ms
+   ✓ UI-08 Public Comments and Internal Notes > retains a failed Note draft and uses authoritative created data after success 1081ms
+   ✓ UI-08 Public Comments and Internal Notes > enforces trimmed public and private boundaries and renders markup-like content inertly 641ms
+   ✓ UI-08 Public Comments and Internal Notes > clears an initial blocking list failure after a successful authoritative post refresh 456ms
+   ✓ UI-08 Public Comments and Internal Notes > finds a concurrently paginated created Comment and restores authoritative page boundaries 973ms
+   ✓ UI-08 Public Comments and Internal Notes > clears temporary retention when an authoritative Internal Note page is located 840ms
+   ✓ UI-08 Public Comments and Internal Notes > retains the exact created entry and gives a non-blocking warning when refresh fails 661ms
+stderr | tests/lab-02/AttachmentSection.test.tsx > Ticket Detail Attachment section > UI-06 provides keyboard-operable
+Preview and Download controls with approved requests
+Error: Not implemented: navigation (except hash changes)
+    at module.exports (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees
+\final-main-040e13b\client\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at navigateFetch (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\
+final-main-040e13b\client\node_modules\jsdom\lib\jsdom\living\window\navigation.js:77:3)
+    at exports.navigate (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktre
+es\final-main-040e13b\client\node_modules\jsdom\lib\jsdom\living\window\navigation.js:55:3)
+    at Timeout._onTimeout (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.workt
+rees\final-main-040e13b\client\node_modules\jsdom\lib\jsdom\living\nodes\HTMLHyperlinkElementUtils-impl.js:81:7)
+    at listOnTimeout (node:internal/timers:605:17)
+    at processTimers (node:internal/timers:541:7) undefined
+
+ ✓ tests/lab-03/UserManagement.test.tsx (26 tests) 26092ms
+   ✓ UI-10 and UI-11 Administrator User Management > shows a safe role destination without requesting protected User data 628ms
+   ✓ UI-10 and UI-11 Administrator User Management > keeps a named loading region, then renders safe table and mobile-card fields with navigation 521ms
+   ✓ UI-10 and UI-11 Administrator User Management > applies trimmed search and one role filter and distinguishes empty from no-results 1076ms
+   ✓ UI-10 and UI-11 Administrator User Management > creates a User with validation, busy protection, safe success, and focus on the new row 3232ms
+   ✓ UI-10 and UI-11 Administrator User Management > reconciles successful creation against the active search and uses authoritative server data 4575ms
+   ✓ UI-10 and UI-11 Administrator User Management > removes an edited User that no longer matches the active role filter 552ms
+   ✓ UI-10 and UI-11 Administrator User Management > describes preserved terminal ownership for deactivation and conversion to Requester 626ms
+   ✓ UI-10 and UI-11 Administrator User Management > programmatically associates every Administrator dialog description 466ms
+   ✓ UI-10 and UI-11 Administrator User Management > associates password guidance and combined field errors with both password controls 509ms
+   ✓ UI-10 and UI-11 Administrator User Management > traps focus, makes the background inert, restores focus, and blocks dismissal while saving 1621ms
+   ✓ UI-10 and UI-11 Administrator User Management > keeps duplicate-email errors and safe input inside the active dialog 1602ms
+   ✓ UI-10 and UI-11 Administrator User Management > updates the authenticated shell and filtered User list together after a self-profile edit 1479ms
+   ✓ UI-10 and UI-11 Administrator User Management > retains edits and focus after ordinary/conflict failures and can reload authoritative User state 601ms
+   ✓ UI-10 and UI-11 Administrator User Management > reconciles conflict reloads against the active query without patching an unfiltered User 822ms
+   ✓ UI-10 and UI-11 Administrator User Management > retains an accessible active-query retry after an authoritative conflict reload fails 1336ms
+   ✓ UI-10 and UI-11 Administrator User Management > retains the last authoritative filtered list after a conflict reload fails and the dialog closes 724ms
+   ✓ UI-10 and UI-11 Administrator User Management > keeps safe USER_HAS_NON_TERMINAL_TICKETS feedback and retained edits inside the active dialog 841ms
+   ✓ UI-10 and UI-11 Administrator User Management > keeps safe LAST_ACTIVE_ADMIN_REQUIRED feedback and retained edits inside the active dialog 456ms
+   ✓ UI-10 and UI-11 Administrator User Management > keeps safe CONCURRENT_UPDATE feedback and retained edits inside the active dialog 452ms
+   ✓ UI-10 and UI-11 Administrator User Management > sets another User's initial password, clears password fields, and refreshes forced-change state 1017ms
+   ✓ UI-10 and UI-11 Administrator User Management > returns from the password dialog to the selected User edit context with focus after Cancel 1103ms
+   ✓ UI-10 and UI-11 Administrator User Management > returns from the password dialog to the selected User edit context with focus after Escape 1042ms
+ ✓ tests/lab-03/StaffTicketActions.test.tsx (18 tests) 7954ms
+   ✓ UI-07 Staff Ticket actions > uses accessible owner, priority, and status controls from the authoritative DTO 515ms
+   ✓ UI-07 Staff Ticket actions > announces Claiming while the claim request is in progress 337ms
+   ✓ UI-07 Staff Ticket actions > keeps the owner-independent REOPENED to CANCELLED transition available 345ms
+   ✓ UI-07 Staff Ticket actions > makes an owner-required target available after authoritative assignment 920ms
+   ✓ UI-07 Staff Ticket actions > opens a trapped described assignment dialog and restores focus on Cancel and Escape 434ms
+   ✓ UI-07 Staff Ticket actions > prevents duplicate owner submission and retains the dialog and input after ordinary failure 964ms
+   ✓ UI-07 Staff Ticket actions > keeps a failed status dialog, cancellation reason, alert, and focus accessible 896ms
+   ✓ UI-07 Staff Ticket actions > closes successful owner submission through the focus-restoring path 500ms
+   ✓ UI-07 Staff Ticket actions > confirms RESOLVED/CANCELLED, requires a cancellation reason, and protects processing 819ms
+   ✓ UI-07 Staff Ticket actions > reloads authoritative state after a stale conflict without showing false success 312ms
+   ✓ UI-07 Staff Ticket actions > closes a conflict dialog after authoritative reload and focuses the stable heading when its trigger disappears 338ms
+ ✓ tests/lab-02/AttachmentSection.test.tsx (8 tests) 7097ms
+   ✓ Ticket Detail Attachment section > UI-06 displays active and removed Attachment metadata with non-color state text 545ms
+   ✓ Ticket Detail Attachment section > UI-06 uploads an owned Attachment with progress and success feedback 573ms
+   ✓ Ticket Detail Attachment section > UI-06 provides keyboard-operable Preview and Download controls with approved requests 3562ms
+   ✓ Ticket Detail Attachment section > UI-06 requires a confirmed 5 to 200 character removal reason 937ms
+   ✓ Ticket Detail Attachment section > UI-06 confirms soft removal, sends the reason, and announces the retained Removed state 800ms
+ ✓ tests/lab-03/StaffTicketDetail.test.tsx (7 tests) 1469ms
+   ✓ UI-06 Staff operational Ticket Detail > renders the six distinct groups, authoritative fields, indication, and read-only history 679ms
+stderr | tests/lab-02/RequesterTicketDetail.test.tsx > Requester Ticket Detail > UI-06 renders a semantic loading
+state and requests the owned Ticket
+Warning: An update to RequesterTicketDetail inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at
+https://reactjs.org/link/wrap-tests-with-act
+    at RequesterTicketDetail (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.wo
+rktrees\final-main-040e13b\client\src\components\RequesterTicketDetail.tsx:343:34)
+    at main
+    at div
+    at AppShell (D:\KMUTT\ปี 3 เทอม 1\Software
+Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-main-040e13b\client\src\App.tsx:137:3)
+    at RenderedRoute (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\
+final-main-040e13b\client\node_modules\react-router\dist\umd\react-router.development.js:535:7)
+    at Routes (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-m
+ain-040e13b\client\node_modules\react-router\dist\umd\react-router.development.js:1269:7)
+    at AuthenticatedRoutes (D:\KMUTT\ปี 3 เทอม 1\Software
+Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-main-040e13b\client\src\App.tsx:327:42)
+    at Router (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-m
+ain-040e13b\client\node_modules\react-router\dist\umd\react-router.development.js:1203:17)
+    at BrowserRouter (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\
+final-main-040e13b\client\node_modules\react-router-dom\dist\umd\react-router-dom.development.js:688:7)
+    at App
+Warning: An update to RequesterTicketDetail inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at
+https://reactjs.org/link/wrap-tests-with-act
+    at RequesterTicketDetail (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.wo
+rktrees\final-main-040e13b\client\src\components\RequesterTicketDetail.tsx:343:34)
+    at main
+    at div
+    at AppShell (D:\KMUTT\ปี 3 เทอม 1\Software
+Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-main-040e13b\client\src\App.tsx:137:3)
+    at RenderedRoute (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\
+final-main-040e13b\client\node_modules\react-router\dist\umd\react-router.development.js:535:7)
+    at Routes (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-m
+ain-040e13b\client\node_modules\react-router\dist\umd\react-router.development.js:1269:7)
+    at AuthenticatedRoutes (D:\KMUTT\ปี 3 เทอม 1\Software
+Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-main-040e13b\client\src\App.tsx:327:42)
+    at Router (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\final-m
+ain-040e13b\client\node_modules\react-router\dist\umd\react-router.development.js:1203:17)
+    at BrowserRouter (D:\KMUTT\ปี 3 เทอม 1\Software Engineering\CPE334-Lab1\Lab1_Starter_Scaffold\toktickit\.worktrees\
+final-main-040e13b\client\node_modules\react-router-dom\dist\umd\react-router-dom.development.js:688:7)
+    at App
+
+ ✓ tests/lab-03/ChangePassword.test.tsx (12 tests) 6416ms
+   ✓ Issue 29 Change Password > accepts 'the exact 12-character boundary' without exposing password values 437ms
+   ✓ Issue 29 Change Password > rejects a new password equal to the current password 1238ms
+   ✓ Issue 29 Change Password > forces initial rotation, validates matching policy, and opens the role home 1607ms
+   ✓ Issue 29 Change Password > shows the safe wrong-current failure and clears every password field 1127ms
+   ✓ Issue 29 Change Password > locks controls while the password change is pending 1100ms
+ ✓ tests/lab-02/RequesterTicketDetail.test.tsx (6 tests) 1282ms
+   ✓ Requester Ticket Detail > UI-06 renders a semantic loading state and requests the owned Ticket 425ms
+   ✓ Requester Ticket Detail > UI-06 renders all approved Ticket fields as read-only and omits prohibited workflow controls 386ms
+ ✓ tests/lab-04/ActionsTaken.test.tsx (58 tests) 50539ms
+   ✓ Issue 45 Actions Taken — first partial UI RED batch > AC-02/03/06/39 T-02/03/06/39: shows owned Requester Actions, distinct identities and inert Attachment Notes read-only 1203ms
+   ✓ Issue 45 Actions Taken — first partial UI RED batch > AC-36 T-36: renders a safe dependency error and retries to authoritative Actions 454ms
+   ✓ Issue 45 Actions Taken — first partial UI RED batch > AC-03 T-03 D-04: IT_STAFF sees IN_PROGRESS Edit/Reassign/Complete/Cancel despite distinct owner and assignee 447ms
+   ✓ Issue 45 Actions Taken — first partial UI RED batch > AC-03 T-03 D-04: ADMINISTRATOR sees IN_PROGRESS Edit/Reassign/Complete/Cancel despite distinct owner and assignee 323ms
+   ✓ Issue 45 bounded operation UI — additional RED > AC-08/36 T-08/36: Edit preserves omitted follow-up, blocks busy dismissal and refreshes authoritative data 2136ms
+   ✓ Issue 45 bounded operation UI — additional RED > AC-07/08 T-07/08: Reassign cancels with focus return or changes only assignment, preserving Ticket Owner 967ms
+   ✓ Issue 45 bounded operation UI — additional RED > AC-10 T-10 D-04/06: non-assignee completion requires result/confirmation and retains informative follow-up 1067ms
+   ✓ Issue 45 bounded operation UI — additional RED > AC-11 T-11: Cancel requires a reason, sends confirmed status and retains attribution 1008ms
+   ✓ Issue 45 bounded operation UI — additional RED > AC-41 T-50: cancelled clearing keeps checkbox/text and sends nothing; confirmed clearing sends explicit null 772ms
+   ✓ Issue 45 Create Action UI — bounded 12-case RED > AC-03/07 T-03/07 D-04: active IT_STAFF can create as a non-owner, defaulting to self and choosing another eligible worker 432ms
+   ✓ Issue 45 Create Action UI — bounded 12-case RED > AC-03/07 T-03/07 D-04: active ADMINISTRATOR can create as a non-owner, defaulting to self and choosing another eligible worker 465ms
+   ✓ Issue 45 Create Action UI — bounded 12-case RED > AC-03/05/06/07/36 T-03/05/06/07/36: creates false-follow-up through API-04 and renders authoritative distinct identities and parent token 1440ms
+   ✓ Issue 45 Create Action UI — bounded 12-case RED > AC-05/06/41 T-05/06/49: creates true-follow-up with trimmed supplementary text and inert Attachment Notes 3339ms
+   ✓ Issue 45 Create Action UI — bounded 12-case RED > AC-05/41 T-05/49: three-code-point description and missing required follow-up note block POST with accessible field feedback 1289ms
+   ✓ Issue 45 Create Action UI — bounded 12-case RED > AC-07/36 T-07/36: commit-time ASSIGNEE_INELIGIBLE retains draft and selected worker while offering recovery 1179ms
+   ✓ Issue 45 Create Action UI — bounded 12-case RED > AC-14/36 T-14/36: pending create blocks duplicates and dismissal, then announces one authoritative success 1408ms
+   ✓ Issue 45 Create Action UI — bounded 12-case RED > AC-36 T-36: Cancel and Escape before submission never write and return focus to Create trigger 1884ms
+   ✓ Issue 45 Action history UI — focused interaction RED > AC-13/39/45 T-13/39/55: REQUESTER reads complete safe history with actor, version, UTC instants and scalar identity snapshots 861ms
+   ✓ Issue 45 Action history UI — focused interaction RED > AC-13/39/45 T-13/39/55: IT_STAFF reads complete safe history with actor, version, UTC instants and scalar identity snapshots 903ms
+   ✓ Issue 45 Action history UI — focused interaction RED > AC-13/39/45 T-13/39/55: ADMINISTRATOR reads complete safe history with actor, version, UTC instants and scalar identity snapshots 927ms
+   ✓ Issue 45 Action history UI — focused interaction RED > AC-41/45 T-50/55: cleared note survives before; combined content/reassignment renders exactly one Reassigned event 316ms
+   ✓ Issue 45 Action history UI — focused interaction RED > AC-12/45 T-12/55: renders separate cancelled lifecycle (Ticket cascade=false) with safe source and retained draft 380ms
+   ✓ Issue 45 Action history UI — focused interaction RED > AC-12/45 T-12/55: renders separate cancelled lifecycle (Ticket cascade=true) with safe source and retained draft 366ms
+   ✓ Issue 45 Action history UI — focused interaction RED > AC-12 T-12: frozen RESOLVED Ticket still opens terminal Action history 318ms
+   ✓ Issue 45 Action history UI — focused interaction RED > AC-36 T-36: safe history dependency failure offers Retry and replaces failure with authoritative events 380ms
+   ✓ Issue 45 Action history UI — focused interaction RED > AC-36/45 T-36/55: maps 20/50/100 history pages, renders chronological server pages and resets size changes to page one 3610ms
+   ✓ Issue 45 Action history UI — focused interaction RED > AC-36 T-36: history is labelled and keyboard-readable; dialog presentation dismisses and restores trigger focus 556ms
+   ✓ Issue 45 focused recovery/validation — partial UI verification and RED > AC-14/36 T-14/36: lost CREATE retries identical input/key and refreshes beyond the operation-time replay 1559ms
+   ✓ Issue 45 focused recovery/validation — partial UI verification and RED > AC-14/36 T-14/36: lost EDIT response retains exact PATCH/tokens/key on explicit unchanged retry 1509ms
+   ✓ Issue 45 focused recovery/validation — partial UI verification and RED > AC-14/36 T-14/36: lost START response retains exact PATCH/tokens/key on explicit unchanged retry 402ms
+   ✓ Issue 45 focused recovery/validation — partial UI verification and RED > AC-14/36 T-14/36: lost COMPLETE response retains exact PATCH/tokens/key on explicit unchanged retry 1229ms
+   ✓ Issue 45 focused recovery/validation — partial UI verification and RED > AC-14/36 T-14/36: lost CANCEL response retains exact PATCH/tokens/key on explicit unchanged retry 1012ms
+   ✓ Issue 45 focused recovery/validation — partial UI verification and RED > AC-05/34/36 T-05/34/36: server 400 on CREATE keeps literal draft and accessible description feedback 1386ms
+   ✓ Issue 45 focused recovery/validation — partial UI verification and RED > AC-05/34/36 T-05/34/36: server 400 on EDIT keeps literal draft and accessible description feedback 1368ms
+   ✓ Issue 45 focused recovery/validation — partial UI verification and RED > AC-05/36 T-05/36: local invalid EDIT description has accessible feedback and no write 1498ms
+   ✓ Issue 45 focused recovery/validation — partial UI verification and RED > AC-05/36 T-05/36: local invalid EDIT followUpNote has accessible feedback and no write 1424ms
+   ✓ Issue 45 focused recovery/validation — partial UI verification and RED > AC-15/36 T-15/36: STALE_WRITE retains a confirmed-clear draft, requires review, then deliberate fresh-token PATCH 2018ms
+   ✓ Issue 45 focused recovery/validation — partial UI verification and RED > AC-36 T-36 with AC-12/T-12: parent freezes while Complete is open; explicit refresh cannot re-enable writes 1329ms
+   ✓ Issue 45 focused recovery/validation — partial UI verification and RED > AC-07/36 T-07/36: rejected reassignment retains the chosen worker through explicit reload and deliberate reselection 648ms
+   ✓ Issue 45 focused recovery/validation — partial UI verification and RED > AC-34/36 T-34/36: confirmed CREATE plus failed refresh reports saved, offers only read recovery 1690ms
+   ✓ Issue 45 focused recovery/validation — partial UI verification and RED > AC-34/36 T-34/36: confirmed EDIT plus failed refresh reports saved, offers only read recovery 1513ms
+ ✓ tests/lab-03/AuthenticatedShell.test.tsx (9 tests) 1978ms
+   ✓ Issue 29 authenticated shell > bootstraps the session, shows role navigation, and logs out with cache clearing 1098ms
+   ✓ Issue 29 authenticated shell > routes IT_STAFF to its role destination 427ms
+ ✓ tests/lab-02/AttachmentUploadApi.test.tsx (1 test) 25ms
+ ✓ tests/lab-02/UiStyleAccessibility.test.tsx (4 tests) 942ms
+   ✓ UI-07 responsive and accessible behavior > starts mobile navigation collapsed and supports keyboard open, close, and destination activation 664ms
+ ✓ tests/lab-03/Login.test.tsx (8 tests) 7812ms
+   ✓ Issue 29 Login > shows accessible validation and authenticates without persisting a password 1153ms
+   ✓ Issue 29 Login > uses approved safe messages and clears the password after failure 1449ms
+   ✓ Issue 29 Login > renders the approved ACCOUNT_INACTIVE failure without exposing server detail 933ms
+   ✓ Issue 29 Login > renders the approved LOGIN_THROTTLED failure without exposing server detail 884ms
+   ✓ Issue 29 Login > renders the approved ORIGIN_REQUIRED failure without exposing server detail 804ms
+   ✓ Issue 29 Login > renders the approved ORIGIN_FORBIDDEN failure without exposing server detail 806ms
+   ✓ Issue 29 Login > renders the approved SAFE_FAILURE failure without exposing server detail 975ms
+   ✓ Issue 29 Login > disables the form while login is pending and prevents duplicate submission 803ms
+ ✓ tests/lab-01/App.test.tsx (5 tests) 731ms
+stderr | tests/lab-03/UiStyleAccessibility.test.tsx > STYLE-01 shared Zen Green and accessibility contract >
+associates Create Ticket required errors, counts, and character limits
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7.
+You can use the `v7_startTransition` future flag to opt-in early. For more information, see
+https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the
+`v7_relativeSplatPath` future flag to opt-in early. For more information, see
+https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+ ✓ tests/lab-03/UiStyleAccessibility.test.tsx (5 tests) 1035ms
+   ✓ STYLE-01 shared Zen Green and accessibility contract > programmatically associates Login required errors and announces safe feedback 361ms
+   ✓ STYLE-01 shared Zen Green and accessibility contract > associates Create Ticket required errors, counts, and character limits 351ms
+
+ Test Files  24 passed (24)
+      Tests  352 passed (352)
+   Start at  23:15:02
+   Duration  85.71s (transform 10.80s, setup 66.87s, collect 100.47s, tests 239.45s, environment 269.97s, prepare 12.20s)

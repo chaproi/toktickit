@@ -1,0 +1,15 @@
+{
+  "at": "2026-11-04T16:52:21.521Z",
+  "guardPassed": true,
+  "dedicatedLiveTargetMatches": true,
+  "distinctOperationalDatabase": true,
+  "valuesWithheld": true,
+  "postgresVersion": "PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit",
+  "existingSchemaCount": 2,
+  "otherconnections": 0,
+  "idletransactions": 0,
+  "advisorylocks": 0,
+  "probeDisconnectsInFinally": true,
+  "preexistingSchemasAndRowsUnchanged": true,
+  "newTemporaryDirectories": []
+}

@@ -1,0 +1,22 @@
+{
+  "command": "npm.cmd --prefix server test -- --exclude tests/lab-04/performance-smoke.integration.test.ts",
+  "executionHead": "040e13b78893ab8155bac89758334adf1a045b01",
+  "exitCode": null,
+  "runnerSummaryAvailable": false,
+  "runnerResultAvailable": false,
+  "processVerifiedAbsentAt": "2026-11-04T16:50Z (process ownership inspection)",
+  "logCreatedAt": "2026-11-04T16:22:06.754651+00:00",
+  "logLastWrittenAt": "2026-11-04T16:45:47.408724+00:00",
+  "logEvidenceWindowSeconds": 1420.6540727615356,
+  "causeOfTermination": "unestablished",
+  "counts": {
+    "fileSummariesRetained": 33,
+    "casesInRetainedFileSummaries": 1687,
+    "failedInRetainedFileSummaries": 11,
+    "skippedInRetainedFileSummaries": 96,
+    "passedInRetainedFileSummaries": 1580,
+    "executedInRetainedFileSummaries": 1591
+  },
+  "countsQualification": "Partial file-summary observations only, not final suite discovery/execution totals. Remaining tests and final hooks are unverified.",
+  "rerunDisposition": "Not repeated; incomplete run and all failures retained."
+}

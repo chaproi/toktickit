@@ -1,0 +1,74 @@
+{
+  "executionSha": "040e13b78893ab8155bac89758334adf1a045b01",
+  "serverInvocationState": "terminated without retained final runner summary or exit result; cause unestablished",
+  "observedFailureCases": [
+    {
+      "case": "coordinates independent processes before snapshots and drains both checkouts 5059ms",
+      "detail": "Observable admission condition was not reached."
+    },
+    {
+      "case": "keeps reads and another schema independent; execution may exceed maxWait after startup 529ms",
+      "detail": "Transaction startup deadline exceeded."
+    },
+    {
+      "case": "restores a quiesced PostgreSQL/S3 recovery pair and enforces active/removed attachment access on restored targets 30239ms",
+      "detail": "Test timed out in 30000ms."
+    },
+    {
+      "case": "T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows > resolves a migrated active zero-Action Ticket with its eligible historical owner 6387ms",
+      "detail": "Test timed out in 5000ms."
+    },
+    {
+      "case": "T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows > closes a migrated RESOLVED zero-Action Ticket without fabricating positive completion 6684ms",
+      "detail": "Test timed out in 5000ms."
+    },
+    {
+      "case": "T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows > reopens and performs later real work without requiring a new completion each cycle 6143ms",
+      "detail": "Test timed out in 5000ms."
+    },
+    {
+      "case": "T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows > preserves the migrated null-owner guard and all domain state on rejection 6743ms",
+      "detail": "Test timed out in 5000ms."
+    },
+    {
+      "case": "preserves PATCH identities and bounds projection reads during one EDIT-START-terminal cohort 65335ms",
+      "detail": "expected 500 to be 200 // Object.is equality"
+    },
+    {
+      "case": "SEC-09 through SEC-14 ownership eligibility races > proves claim versus claimant deactivation with edit-first locking 5133ms",
+      "detail": "Test timed out in 5000ms."
+    },
+    {
+      "case": "SEC-09 through SEC-14 ownership eligibility races > proves reassign versus new-owner deactivation with { isActive: false } locking 6051ms",
+      "detail": "Test timed out in 5000ms."
+    },
+    {
+      "case": "SEC-09 through SEC-14 ownership eligibility races > proves reassign versus new-owner Requester role change with { role: 'REQUESTER' } locking 5054ms",
+      "detail": "Test timed out in 5000ms."
+    }
+  ],
+  "observedSkippedFile": "tests/lab-04/actions-authorization.api.test.ts: 96 skipped; cause not exposed before final summary was lost",
+  "patchDiagnostic": {
+    "mode": "bounded-PATCH-chain-with-Requester-reads-not-T47",
+    "failedEditResponses": 11,
+    "retainedErrorEvents": 11,
+    "actualClassification": "TransactionStartDeadlineError / P2028 / meta.phase=transaction-start / maxWait=2000; engineProvidedSubtype=null",
+    "observedDeadlineStages": {
+      "database-resource": 8,
+      "post-admission": 3
+    },
+    "cleanup": {
+      "listenerClosed": true,
+      "checkedOut": 0
+    },
+    "observationLimit": "9000 retained events; this request-local evidence does not classify historical errors"
+  },
+  "recoveryTimeout": {
+    "caseBudgetMs": 30000,
+    "lastCompletedPhase": "restored-application-target",
+    "inFlightPhase": "authorized-reads",
+    "observation": "Phases already consumed approximately 30110 ms before authorized reads began; aggregate budget overrun is observed, a hung read is not demonstrated."
+  },
+  "noApplicationChanges": true,
+  "noPerformanceBenchmarkRun": true
+}
