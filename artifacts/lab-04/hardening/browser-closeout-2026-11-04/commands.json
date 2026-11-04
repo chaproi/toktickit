@@ -1,0 +1,56 @@
+{
+  "attempt": "attempt-1",
+  "command": "node --env-file=server/.env --import tsx <private guarded runner> attempt-1",
+  "executionHead": "57f04bd5313c443ffcf00ec6abc16da149753d20",
+  "startedAt": "2026-11-04T09:37:32.395Z",
+  "finishedAt": "2026-11-04T09:37:49.997Z",
+  "elapsedMs": 17601.3612,
+  "exitCode": 0,
+  "signal": null,
+  "workers": 1,
+  "retries": 0,
+  "caseBudgetMs": 60000,
+  "expectBudgetMs": 10000,
+  "reusedExistingRuntime": true,
+  "actualCommand": "node --env-file=server/.env --import ./server/node_modules/tsx/dist/loader.mjs <Windows-Temp guarded runner> attempt-1",
+  "commandFieldQualification": "The runner internal command field used the shorthand tsx; actual executed loader path is recorded above. No second test execution occurred.",
+  "files": 1,
+  "collected": 3,
+  "executed": 3,
+  "passed": 3,
+  "failed": 0,
+  "skipped": 0,
+  "frameworkDurationSeconds": 17.0,
+  "typeCheck": {
+    "command": "node server/node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ES2022 --moduleResolution bundler --esModuleInterop --strict --skipLibCheck --jsx react-jsx --typeRoots server/node_modules/@types e2e/lab-04/review-closeout.spec.ts client/src/vite-env.d.ts",
+    "exitCode": 0,
+    "durationSeconds": 1.882304
+  },
+  "preExecutionFailure": {
+    "command": "node --env-file=server/.env --import tsx <Windows-Temp guarded runner> attempt-1",
+    "exitCode": 1,
+    "classification": "ERR_MODULE_NOT_FOUND: root-local tsx absent; resolved using existing server-local loader, no dependency install",
+    "collected": 0,
+    "executed": 0,
+    "fixtureWrites": 0
+  },
+  "warnings": [
+    "NO_COLOR ignored because FORCE_COLOR is set"
+  ],
+  "windows": {
+    "caption": "Microsoft Windows 11 Home Single Language",
+    "version": "10.0.26200",
+    "buildNumber": "26200"
+  },
+  "node": "24.14.0",
+  "edgeProbe": {
+    "installedEdge": "156.0.4314.58",
+    "zoomFactors": [
+      1,
+      2,
+      1
+    ],
+    "ownedProfileRemoved": true,
+    "noBusinessFixtureWrites": true
+  }
+}

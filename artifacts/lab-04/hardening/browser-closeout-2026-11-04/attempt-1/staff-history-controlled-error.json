@@ -1,0 +1,23 @@
+{
+  "capturedAt": "2026-11-04T09:37:40.891Z",
+  "timezone": "Asia/Bangkok",
+  "sourceHead": "57f04bd5313c443ffcf00ec6abc16da149753d20",
+  "dirtyState": "?? e2e/lab-04/review-closeout.spec.ts",
+  "role": "IT_STAFF",
+  "state": "Controlled browser transport abort; one alert and focused Retry",
+  "browser": "HeadlessChrome/153.0.8010.12",
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36",
+  "zoom": 1,
+  "nativeViewport": {
+    "width": 1440,
+    "height": 900,
+    "pinchScale": 1
+  },
+  "syntheticDataOnly": true,
+  "visualInspection": "AI visually inspected the complete application-only PNG at native resolution on 2026-11-04; readable captured text/controls, visible focus where applicable, no clearly blocking captured-pixel clipping. This is not human sign-off or a full scroll-content inspection.",
+  "windows": {
+    "caption": "Microsoft Windows 11 Home Single Language",
+    "version": "10.0.26200",
+    "buildNumber": "26200"
+  }
+}

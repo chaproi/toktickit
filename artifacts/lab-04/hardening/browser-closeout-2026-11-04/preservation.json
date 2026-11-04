@@ -1,0 +1,8 @@
+{
+  "baseline": "57f04bd5313c443ffcf00ec6abc16da149753d20",
+  "checkedTrackedFiles": 1061,
+  "trackedChangesBeforeDocumentation": [],
+  "historicalArtifactsUnchanged": true,
+  "productionAndExistingTestsUnchanged": true,
+  "longPathRecovery": "Initial fast-forward unpack hit Windows path length; all 166 partial files verified equal fetched blobs before reconciliation; per-command core.longpaths=true completed fast-forward. No user work was discarded."
+}

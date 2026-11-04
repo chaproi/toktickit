@@ -31,3 +31,9 @@ T-37 still needs coverage-mapped human disposition of remaining screens/viewport
 T-47 still has complete passing A1/B2 and failed B3/A4 observations; its explicit acceptance decision remains Pending. Human amendment/implementation review and Issue49 acceptance remain Pending. Issue50 still owns reviewed main integration, required final-main verification and the nine-part report/reflection.
 
 This publication changes documentation and a new observation JSON only. No suite/benchmark was repeated, no production/test/configuration/dependency/threshold or historical artifact changed, and no scenario/DoD checkbox, peer approval, merge, deployment or Issue closure is promoted.
+
+## Subsequent consolidated Staff report and automated follow-up
+
+The student subsequently confirms Mina's successful login/password change and complete reading of Create validation, the nested clear-note confirmation, Start dialog and History. This is a consolidated user report; no exact transcript, per-control announcement, new audio capture or independent Narrator observation is invented. The earlier Requester route is not repeated.
+
+The [separate automated follow-up](browser-closeout-2026-11-04.md) records real Staff History fault/Retry, Ticket blocker/focus handoff and installed Edge Admin navigation/History at genuine200% zoom. Those three passing Playwright cases and six AI-inspected screenshots establish browser semantics/geometry/focus, not what Narrator said. Newly exercised error/Retry/blocker/Admin speech, other unsupported combinations and final student/peer acceptance remain unverified. Earlier source/environment observations above retain their original provenance.

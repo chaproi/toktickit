@@ -1,0 +1,26 @@
+{
+  "checkedAt": "2026-11-04T09:39:39.258Z",
+  "guardPassed": true,
+  "dedicatedLiveDatabaseMatches": true,
+  "valuesWithheld": true,
+  "ownedMarkerCounts": [
+    {
+      "users": 0,
+      "tickets": 0,
+      "categories": 0,
+      "systems": 0
+    },
+    {
+      "users": 0,
+      "tickets": 0,
+      "categories": 0,
+      "systems": 0
+    }
+  ],
+  "idleTransactions": 0,
+  "advisoryLocks": 0,
+  "existingReviewSchemaPreserved": true,
+  "existingReviewRuntimePreserved": true,
+  "fixtureCleanup": "All three inherited fixture teardowns independently assert zero owned users/Tickets/Actions/ActionHistory/receipts/sessions/references and disconnect; this separate client verifies markers absent.",
+  "probeClient": "Disconnected in finally"
+}
