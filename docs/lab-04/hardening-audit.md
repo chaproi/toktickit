@@ -2,6 +2,8 @@
 
 Audit date: **2026-10-31, Asia/Bangkok**. This document records source inspection and historical execution evidence. It is not an application run, peer approval, scenario-status update or Product DoD acceptance.
 
+**Current candidate reconciliation (2026-11-04):** [The complete55-row closeout packet](hardening-closeout-2026-11-04.md) supersedes the initial matrix's integration-status summary at candidate `a7eb4ec`. It links unchanged current source to recorded server2110/client352/E2E72 results and explicitly retains T-37/T-38 physical gaps and mixed T-47 outcomes awaiting acceptance. Every historical audit/execution below retains its original scope.
+
 ## 1. Verified baseline and method
 
 Repository: **chaproi/toktickit**. Branch: **feat/49-final-hardening**. Audited integration baseline: **dd8eafb9a101625d07e4ce164fcc856402ecaed5**.
@@ -749,3 +751,11 @@ The existing99file/2110pass server confirmation,onlyT47excluded,retains source8e
 546historical artifacts retain exact bytes:102browser overwrites archived/restored,63new generated files privately archived/removed (92PNG/73JSON). Fresh images are not visually inspected or relabelled as historical captures. Native guard/live cleanup21:24:00.100Z includes browser issue27 schemas and findszeroowned resources;process/profile/listener cleanup21:24:03.648Z findszeroowned leftovers and preserves unrelated browsers. Child environment settings restore and source/test/config bytes remain unchanged. Reactact/Router/jsdom/color/pgwarnings and earlier unknown failure causes remain explicit.
 
 The package is ready for **student and actual human peer candidate review**,not amendment adoption,merge,deployment or Issue49 acceptance. Remaining T37current integrated visual inspection,T38screen-reader/broader-browser/contrast limits,full55scenario acceptance/reconciliation,existing retention/dependency risks and #50release/submission remain concrete obligations. Normative six documents,accepted decisions and historical approvals remain unchanged;D12/D13 adoption/reviewPending. The next action is actual review of the prepared scope and amendment,plus the bounded remaining visual/accessibility work;no automatic performance repetition or additional implementation investigation is required by this preparation batch.
+
+## 45. Current55-row reconciliation and pre-integration gates - 2026-11-04
+
+The student requested “โอเตรพาแก้” and then “ดำเนินการต่อในแชตนี้” after supplying requested-changes feedback. [The closeout packet](hardening-closeout-2026-11-04.md) and [machine-readable record](../../artifacts/lab-04/hardening/closeout-reconciliation-2026-11-04.json) now map all55 rows to actual current source and carried results. All57 mapped source/helper paths exist and were read during this continuing task;304 non-documentation/non-artifact blobs match both2671b3a and84ef0ad. The100 server test files (99withoutT47),24 client tests and15 E2E specs match recorded file totals. Source inventory is not a test run.
+
+52 listed-obligation evidence mappings await human integrated acceptance; T-37/T-38 retain physical-observation gaps and T-47 retains mixed results awaiting a real acceptance decision. Server2110 excluding onlyT47,client352/build andE2E72 keep original provenance. Four ABBA stdout verdicts were read directly: A1/B2 pass,B3/A4 fail. No application/DB/browser/screen-reader/benchmark command or new runtime-cleanup run occurred in this publication.
+
+The packet clarifies the existing #49→#50 dependency without waiving requirements. Fresh private captures and actual Windows assistive-technology observation are unavailable here; the next review continues in this chat from the actual archive and student-observed operation. No scenario/DoD checkbox,student T-47 decision,human approval,merge or deployment is fabricated. Historical artifacts and all known limitations are preserved.

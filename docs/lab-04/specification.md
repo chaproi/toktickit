@@ -442,6 +442,8 @@ The original unnumbered plan remains in approved baseline `d4560d73819cb193c7b9c
 
 ## 11. Product Definition of Done
 
+**Stage ownership (2026-11-04):** [The current closeout packet](hardening-closeout-2026-11-04.md#4-issue49-and-product-dod-stages) follows the existing section10 dependency: #49 provides actual hardening verification and human review; #50 subsequently performs reviewed release integration,authoritative main and Parts1–9PDF/reflection. Candidate approval,staging integration and final Product DoD are distinct events. No requirement is waived or checkbox changed. The55-row evidence reconciliation is recorded; T-37/T-38 physical observation,T-47 acceptance and human amendment/implementation review remain open.
+
 - [x] Student acceptance of D-01–D-20 and conflict choices is recorded; actual dated formal contract review/approval is evidenced by cottonlnwza's APPROVED review of fec388a3c2ab63cabb1bf20f3fa913fb023d9241 on 2026-10-04 18:31:01 Asia/Bangkok. See [completed peer review](reviewer.md#completed-peer-review); this completes only the original contract-review item, not approval of the new metadata change or the 2026-11-04 D-12/D-13 amendment; that amendment's human review remains Pending.
 - [ ] All H fields, assignment/lifecycle/complete/cancel/inactive rejection and current-user Actions are implemented under approved decisions.
 - [ ] Every approved FR/BR/AC maps to implemented tests with actual results; all eight status edges/forbidden edges and direct backend gates verified.

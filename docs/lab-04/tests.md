@@ -20,6 +20,10 @@ Preserve **genuine SERIALIZABLE COMMIT-error tests separately** using real SERIA
 
 Test/review the User/login/password/reset/seed/session-only participants as well as Ticket and Action bodies; current session denial precedes replay, and authorized original replay precedes stale/frozen and mutable-plan drift. Seed/reference maintenance is exclusive, ordinary commands shared; a new uncoordinated reference/maintenance writer is outside this guarantee. Resource startup expiry/draining/exact release and disjoint overlap evidence are part of the review, not a new scenario count. No payload, safe-code, UI, latency threshold or scenario/DoD status changes. [Decision evidence](reviewer.md#20-d-12-and-d-13-student-adoption-2026-11-04).
 
+### Current55-row evidence reconciliation (2026-11-04)
+
+[All55 current rows](hardening-closeout-2026-11-04.md#2-all-55-current-rows) now link actual source and execution:52 listed-obligation mappings await human integrated acceptance,T-37/T-38 retain physical-observation gaps,and T-47 retains mixed outcomes with acceptance Pending. These are not52 whole-scenario passes. Actual server2110 (onlyT47excluded),client352/build andE2E72 retain their execution provenance,with304 protected blobs unchanged. Planned rows below remain the contract plan. [T-47 disposition](hardening-closeout-2026-11-04.md#3-t-47-decision-packet),[DoD stages](hardening-closeout-2026-11-04.md#4-issue49-and-product-dod-stages) and [continuing physical review](hardening-closeout-2026-11-04.md#5-continue-the-physical-checks-in-this-chat) identify remaining work. No application command or benchmark ran for this publication.
+
 ## 2. Planned tests and AC traceability
 
 | Test ID | AC | Accepted decisions | Concrete intended test-file path | Fixture / observable assertions | Status |
