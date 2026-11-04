@@ -427,3 +427,7 @@ PR58 remains Draft,Issue49 open,human amendment/implementation review Pending. P
 ## T-37 AI image review supplement, 4 November 2026
 
 [All92supplied originals and actual AI observations](t37-visual-review-2026-11-04.md) are now available for student/peer review,with all165artifact hashes verified. Human observation/sign-off must be recorded by the actual inspector;this AI review is not a fabricated student or peer inspection. Review OBS-01 and missing-state coverage before disposition. Human amendment/implementation review,T-38actual observations,T-47acceptance and Issue49acceptance remain Pending;PR58 stays Draft.
+
+## Student Requester observation supplement, 4 November 2026
+
+[Actual student-operated Login/Requester/Narrator and Chrome/Edge 200% observations](student-requester-observations-2026-11-04.md), with [reported-versus-visible evidence and supplied-file hashes](../../artifacts/lab-04/hardening/student-requester-observations-2026-11-04.json), now partially address T-37/T-38. Source/version/focus qualifications and unobserved Staff/Action/dialog/error patterns remain explicit. The earlier Chrome screenshot is not misclassified as Edge. No full T-37/T-38 acceptance, T-47 disposition, peer approval, Issue/DoD closure or fresh suite result is inferred; historical records above retain their original dates and provenance. PR58 remains Draft.

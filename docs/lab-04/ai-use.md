@@ -465,3 +465,7 @@ It prepared [the complete55-row reconciliation](hardening-closeout-2026-11-04.md
 ## AI visual review of supplied originals, 4 November 2026
 
 ChatGPT/Codex inspected all92original uploaded PNGs and matched92PNG+73JSON to the published165fresh hashes. [Separate evidence](t37-visual-review-2026-11-04.md) records image-level observations,one minor spacing concern,partial-region limits and four absent referenced PNGs. It does not attribute inspection to the student/peer,claim live speech/browser operation,mark scenarios accepted or rerun application/benchmark commands. Human acceptance remains Pending.
+
+## Student-operated Requester observation assistance, 4 November 2026
+
+The student requested help completing physical checks and later asked whether the work was ready to submit. AI guided local startup, read-only 503/P2021 attribution, the existing guarded migration/deploy/seed sequence and local clipboard retrieval without exposing credentials. The student successfully logged in/changed password and reports Requester reading/navigation in Chrome and Edge at 200%. [The separate report](student-requester-observations-2026-11-04.md) records actual reports, screenshots, uncertain speech, source/version and coverage limits. AI did not operate Windows Narrator, hear audio, run the student's database commands or certify all screens. This evidence-only publication repeats no suite/benchmark and promotes no acceptance, peer review, merge or release gate.

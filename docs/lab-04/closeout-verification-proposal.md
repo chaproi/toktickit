@@ -36,7 +36,7 @@ No repeated comprehensive suite follows solely from this documentation proposal.
 
 For each group, collect one compact record: operator/date, application HEAD and dirty state, actual browser/Windows/screen-reader versions, task/actions, words actually heard, focus/state result and defect/untested items. A short user-supplied recording can assist transcription when available; do not record real passwords or treat silence/uncertain transcription as a pass.
 
-Current student reports are **partial**: Email/Password approximately “added requie”; Show password was initially unheard, then “scan checked”, with the name subsequently explicitly confirmed; error text was reported after blank submit, but exact spoken words/automatic focus behavior remain unconfirmed. Sign in's own button-name announcement and exact local source/version metadata remain unrecorded. This does not establish a new demonstrated code defect or a full Login/T-38 pass.
+Subsequent [student-operated observations](student-requester-observations-2026-11-04.md) now confirm reported Login field/button names, successful login/password change, Requester reading/navigation and actual Chrome/Edge 200% views. Earlier approximate “added requie”/“scan checked” transcriptions remain uncertain. Exact summary speech, separate focus details, current source/version metadata and Staff/Action/dialog/error-pattern observations remain incomplete. These are partial human observations, not a full Login/T-38 pass or acceptance of this proposed method/browser/performance disposition.
 
 ## 4. Proposed T-47 disposition, for explicit review
 
