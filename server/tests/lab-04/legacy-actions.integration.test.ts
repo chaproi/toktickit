@@ -4,7 +4,7 @@ import type { PrismaClient, TicketStatus } from "@prisma/client";
 import type { Express } from "express";
 import type { Client } from "pg";
 import request from "supertest";
-import { afterAll, describe, expect, it, vi } from "vitest";
+import { beforeAll, afterAll, describe, expect, it, vi } from "vitest";
 import { hashPassword } from "../../src/auth/password.js";
 import { configureTestDatabaseEnvironment } from "../../src/testing/test-database.js";
 import {
@@ -73,6 +73,17 @@ async function populateFocusedLegacy(client: Client, password: string) {
   }
 }
 
+// Load the real module graph once under the existing default setup-hook budget.
+// Schema/migration fixtures, real login and business assertions stay per case.
+let application: typeof import("../../src/app.js");
+let prismaModule: typeof import("../../src/prisma.js");
+let clientFactory: typeof import("../../src/prisma-client.js");
+beforeAll(async () => {
+  application = await import("../../src/app.js");
+  prismaModule = await import("../../src/prisma.js");
+  clientFactory = await import("../../src/prisma-client.js");
+});
+
 const pendingApplications = new Set<Promise<void>>();
 let applicationQueue = Promise.resolve();
 
@@ -112,16 +123,16 @@ async function isolatedMigratedApplication(work: (context: LegacyContext) => Pro
     const selected = new URL(verifiedTestTarget().databaseUrl);
     selected.searchParams.set("schema", schema);
     let prisma: PrismaClient | undefined;
+    let clientSeam: ReturnType<typeof vi.spyOn> | undefined;
     try {
       process.env.TEST_DATABASE_URL = selected.toString();
       process.env.DATABASE_URL = selected.toString();
       const identity = configureTestDatabaseEnvironment();
       expect(identity.schema).toBe(schema);
-      // No module mocks: reset the test module registry before loading BOTH
-      // App and its lazy Prisma singleton. A separate client alone is not enough.
-      vi.resetModules();
-      const application = await import("../../src/app.js");
-      prisma = (await import("../../src/prisma.js")).getPrisma();
+      // Supply this case's fresh real guarded client through the public seam.
+      // App/middleware/authentication and PostgreSQL business results stay real.
+      prisma = clientFactory.createPrismaClient();
+      clientSeam = vi.spyOn(prismaModule, "getPrisma").mockReturnValue(prisma);
       const [live] = await prisma.$queryRaw<Array<{ database: string; schema: string }>>`
         SELECT current_database() AS database,current_schema() AS schema`;
       expect(live.database === identity.databaseName && live.schema === schema,
@@ -139,9 +150,9 @@ async function isolatedMigratedApplication(work: (context: LegacyContext) => Pro
           if (original[key] === undefined) delete process.env[key];
           else process.env[key] = original[key];
         }
-        vi.resetModules();
+        clientSeam?.mockRestore();
         same(Object.fromEntries(keys.map((key) => [key, process.env[key]])), original, "Scoped database environment restored");
-        console.info("Legacy App cleanup: Prisma disconnected, module registry reset and database environment restored; owned schema removal follows.");
+        console.info("Legacy App cleanup: Prisma disconnected, real-client seam and database environment restored; owned schema removal follows.");
       }
     }
   });
