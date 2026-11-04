@@ -1,0 +1,23 @@
+{
+  "command": "npm.cmd test -- tests/lab-04/action-patch-projection.integration.test.ts --reporter=default --reporter=json --outputFile=<private>/patch-vitest.json",
+  "workingDirectory": "server/",
+  "executionHead": "73872c103b1730555d612d5a1ea170e6821d46de",
+  "sourceState": "minimal legacy harness branch plus explicit temporary PATCH observer wiring; production040e13b unchanged",
+  "startedAt": "2026-11-04T19:06:22.883140+00:00",
+  "finishedAt": "2026-11-04T19:07:07.924465+00:00",
+  "exitCode": 0,
+  "outerDurationSeconds": 45.09371159999864,
+  "counts": {
+    "files": 1,
+    "collected": 1,
+    "executed": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0
+  },
+  "frameworkDuration": "Duration  42.78s (transform 789ms, setup 0ms, collect 1.60s, tests 35.82s, environment 0ms, prepare 91ms)",
+  "runnerException": null,
+  "outerDeadlineTriggered": false,
+  "childStillRunning": false,
+  "furtherTestRuns": 0
+}

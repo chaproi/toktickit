@@ -1,0 +1,13 @@
+{
+  "utf8FilesChecked": 22,
+  "jsonFilesParsed": 15,
+  "localLinksChecked": 15,
+  "errors": [],
+  "patchTestRestored": true,
+  "temporaryExecutableObserversRemoved": true,
+  "minimalLegacyExpectLinesPreserved": 38,
+  "productionDiffFromMain": [],
+  "testRunCount": 1,
+  "fullRunCount": 0,
+  "knownLimitation": "Historical holder unconfirmable; standalone passes. No causal-production-fix or performance acceptance claim."
+}

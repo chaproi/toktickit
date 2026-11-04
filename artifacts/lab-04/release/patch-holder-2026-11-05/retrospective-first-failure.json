@@ -1,0 +1,394 @@
+{
+  "originalArtifact": "artifacts/lab-04/release/legacy-timeout-040e13b-2026-11-05/full-generated/patch-chain-phases-2026-11-04-239a92c6.json",
+  "originalExportSha256": "5faf8d73e31c96143912fb6c181b3d4f89a2d7134d6bce82b1613ac723b52d50",
+  "firstFailureRequest": "edit-19",
+  "attempt": 1,
+  "error": {
+    "name": "TransactionStartDeadlineError",
+    "constructorName": "TransactionStartDeadlineError",
+    "code": "P2028",
+    "reportedMetaPhase": "transaction-start",
+    "reportedMaxWait": 2000,
+    "reportedTimeout": null,
+    "reportedMetaCode": null,
+    "reportedCauseCode": null,
+    "ownedStartupComposition": true,
+    "engineProvidedSubtype": null
+  },
+  "timeline": [
+    {
+      "atMs": 45584.8988,
+      "request": "edit-19",
+      "attempt": 0,
+      "stage": "http-dispatch"
+    },
+    {
+      "atMs": 45721.159400000004,
+      "request": "edit-19",
+      "attempt": 0,
+      "stage": "http-entry"
+    },
+    {
+      "atMs": 45724.426400000004,
+      "request": "edit-19",
+      "attempt": 0,
+      "stage": "checkout-start",
+      "total": 17,
+      "idle": 0,
+      "waiting": 2
+    },
+    {
+      "atMs": 45770.5048,
+      "request": "edit-19",
+      "attempt": 0,
+      "stage": "checkout-result",
+      "total": 17,
+      "idle": 0,
+      "waiting": 12
+    },
+    {
+      "atMs": 45862.1386,
+      "request": "edit-19",
+      "attempt": 0,
+      "stage": "physical-release",
+      "total": 17,
+      "idle": 0,
+      "waiting": 32
+    },
+    {
+      "atMs": 45862.8041,
+      "request": "edit-19",
+      "attempt": 0,
+      "stage": "checkout-start",
+      "total": 17,
+      "idle": 0,
+      "waiting": 31
+    },
+    {
+      "atMs": 45913.959200000005,
+      "request": "edit-19",
+      "attempt": 0,
+      "stage": "checkout-result",
+      "total": 17,
+      "idle": 0,
+      "waiting": 31
+    },
+    {
+      "atMs": 45919.3972,
+      "request": "edit-19",
+      "attempt": 0,
+      "stage": "physical-release",
+      "total": 17,
+      "idle": 0,
+      "waiting": 32
+    },
+    {
+      "atMs": 45923.029800000004,
+      "request": "edit-19",
+      "attempt": 0,
+      "stage": "checkout-start",
+      "total": 17,
+      "idle": 0,
+      "waiting": 31
+    },
+    {
+      "atMs": 46062.894700000004,
+      "request": "edit-19",
+      "attempt": 0,
+      "stage": "checkout-result",
+      "total": 17,
+      "idle": 0,
+      "waiting": 31
+    },
+    {
+      "atMs": 46086.6653,
+      "request": "edit-19",
+      "attempt": 0,
+      "stage": "physical-release",
+      "total": 17,
+      "idle": 0,
+      "waiting": 32
+    },
+    {
+      "atMs": 46088.339700000004,
+      "request": "edit-19",
+      "attempt": 0,
+      "stage": "checkout-start",
+      "total": 17,
+      "idle": 0,
+      "waiting": 31
+    },
+    {
+      "atMs": 46246.8065,
+      "request": "edit-19",
+      "attempt": 0,
+      "stage": "checkout-result",
+      "total": 17,
+      "idle": 0,
+      "waiting": 31
+    },
+    {
+      "atMs": 46266.5928,
+      "request": "edit-19",
+      "attempt": 0,
+      "stage": "physical-release",
+      "total": 17,
+      "idle": 0,
+      "waiting": 32
+    },
+    {
+      "atMs": 46267.0795,
+      "request": "edit-19",
+      "attempt": 1,
+      "stage": "transaction-start"
+    },
+    {
+      "atMs": 46267.1164,
+      "request": "edit-19",
+      "attempt": 1,
+      "stage": "attempt-selected",
+      "maxWait": 2000
+    },
+    {
+      "atMs": 46267.2632,
+      "request": "edit-19",
+      "attempt": 1,
+      "stage": "checkout-start",
+      "total": 17,
+      "idle": 0,
+      "waiting": 31
+    },
+    {
+      "atMs": 46363.3925,
+      "request": "edit-19",
+      "attempt": 1,
+      "stage": "checkout-result",
+      "total": 17,
+      "idle": 0,
+      "waiting": 26
+    },
+    {
+      "atMs": 46422.1096,
+      "request": "edit-19",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q2686",
+      "kind": "maintenance-shared",
+      "operation": "SELECT",
+      "inStage": "admission-setup"
+    },
+    {
+      "atMs": 46451.0838,
+      "request": "edit-19",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q2686",
+      "kind": "maintenance-shared",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 46451.097200000004,
+      "request": "edit-19",
+      "attempt": 1,
+      "stage": "admission-acquired",
+      "kind": "maintenance-shared"
+    },
+    {
+      "atMs": 46469.9308,
+      "request": "edit-19",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q2722",
+      "kind": "resource-1",
+      "operation": "SELECT",
+      "inStage": "database-resource"
+    },
+    {
+      "atMs": 46476.039300000004,
+      "request": "edit-19",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q2722",
+      "kind": "resource-1",
+      "operation": "SELECT",
+      "error": null
+    },
+    {
+      "atMs": 46476.0481,
+      "request": "edit-19",
+      "attempt": 1,
+      "stage": "admission-acquired",
+      "kind": "resource-1"
+    },
+    {
+      "atMs": 46480.981,
+      "request": "edit-19",
+      "attempt": 1,
+      "stage": "query-start",
+      "queryId": "q2754",
+      "kind": "resource-1",
+      "operation": "SELECT",
+      "inStage": "database-resource"
+    },
+    {
+      "atMs": 48271.436,
+      "request": "edit-19",
+      "attempt": 1,
+      "stage": "deadline-before-cleanup",
+      "observed": {
+        "stage": "database-resource",
+        "activeQuery": "q2754",
+        "deadlineStage": "database-resource",
+        "deadlineQuery": "q2754"
+      },
+      "queue": []
+    },
+    {
+      "atMs": 48274.255000000005,
+      "request": "edit-19",
+      "attempt": 1,
+      "stage": "physical-release",
+      "total": 17,
+      "idle": 0,
+      "waiting": 31
+    },
+    {
+      "atMs": 48277.4916,
+      "request": "edit-19",
+      "attempt": 1,
+      "stage": "transaction-error-before-test-cleanup",
+      "observed": {
+        "stage": "database-resource",
+        "activeQuery": "q2754",
+        "deadlineStage": "database-resource",
+        "deadlineQuery": "q2754"
+      },
+      "error": {
+        "name": "TransactionStartDeadlineError",
+        "constructorName": "TransactionStartDeadlineError",
+        "code": "P2028",
+        "reportedMetaPhase": "transaction-start",
+        "reportedMaxWait": 2000,
+        "reportedTimeout": null,
+        "reportedMetaCode": null,
+        "reportedCauseCode": null,
+        "ownedStartupComposition": true,
+        "engineProvidedSubtype": null
+      }
+    },
+    {
+      "atMs": 48300.503600000004,
+      "request": "edit-19",
+      "attempt": 0,
+      "stage": "http-result"
+    },
+    {
+      "atMs": 48306.6719,
+      "request": "edit-19",
+      "attempt": 1,
+      "stage": "query-end",
+      "queryId": "q2754",
+      "kind": "resource-1",
+      "operation": "SELECT",
+      "error": {
+        "name": "Error",
+        "constructorName": "Error",
+        "code": null,
+        "reportedMetaPhase": null,
+        "reportedMaxWait": null,
+        "reportedTimeout": null,
+        "reportedMetaCode": null,
+        "reportedCauseCode": null,
+        "ownedStartupComposition": false,
+        "engineProvidedSubtype": null
+      }
+    },
+    {
+      "atMs": 48306.7801,
+      "request": "edit-19",
+      "attempt": 1,
+      "stage": "deadline-before-cleanup",
+      "observed": {
+        "stage": "database-resource",
+        "activeQuery": null,
+        "deadlineStage": "database-resource",
+        "deadlineQuery": "q2754"
+      },
+      "queue": []
+    },
+    {
+      "atMs": 48308.3243,
+      "request": "edit-19",
+      "attempt": 1,
+      "stage": "finish-before-cleanup",
+      "observed": {
+        "stage": "database-resource",
+        "activeQuery": null,
+        "deadlineStage": "database-resource",
+        "deadlineQuery": "q2754"
+      },
+      "hasPrimary": true,
+      "error": {
+        "name": "TransactionStartDeadlineError",
+        "constructorName": "TransactionStartDeadlineError",
+        "code": "P2028",
+        "reportedMetaPhase": "transaction-start",
+        "reportedMaxWait": 2000,
+        "reportedTimeout": null,
+        "reportedMetaCode": null,
+        "reportedCauseCode": null,
+        "ownedStartupComposition": true,
+        "engineProvidedSubtype": null
+      }
+    },
+    {
+      "atMs": 48308.3756,
+      "request": "edit-19",
+      "attempt": 1,
+      "stage": "finish-drained"
+    }
+  ],
+  "startupCheckoutMs": 96.12930000000051,
+  "activeUserQueryStartMs": 46480.981,
+  "deadlineMs": 48271.436,
+  "activeUserQueryUntilDeadlineMs": 1790.4550000000017,
+  "selectedUntilDeadlineMs": 2004.3196000000025,
+  "BEGINReached": false,
+  "callbackReached": false,
+  "mappingInventory": {
+    "eventFields": [
+      "atMs",
+      "attempt",
+      "error",
+      "hasPrimary",
+      "idle",
+      "inStage",
+      "kind",
+      "maxWait",
+      "observed",
+      "operation",
+      "queryId",
+      "queue",
+      "request",
+      "stage",
+      "total",
+      "waiting"
+    ],
+    "sampleFields": [
+      "atMs",
+      "databaseResourceOwners",
+      "databaseResourceWaiters",
+      "fronts",
+      "idle",
+      "owners",
+      "total",
+      "waiters",
+      "waiting"
+    ],
+    "hasBackendPID": false,
+    "hasActualResourceKey": false,
+    "hasBlockingHolderMapping": false
+  },
+  "conclusion": "Blocking holder cannot be confirmed retrospectively. Kind resource-1 identifies User namespace only; aggregate counts do not identify a holder. No cleanup-state inference is used. Finish/drain after physical destruction is late startup cleanup, not a committed business transaction."
+}

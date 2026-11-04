@@ -1,0 +1,12 @@
+{
+  "declaredAt": "2026-11-04T19:04:08.767064+00:00",
+  "head": "73872c103b1730555d612d5a1ea170e6821d46de",
+  "branch": "feat/50-server-patch-diagnosis",
+  "executionLimit": "Exactly one targeted PATCH file; no comprehensive, other-file chasing or workload/threshold changes. Stop if standalone passes without cause captured.",
+  "addedObservation": "Transparent SQL comments with random diagnostic nonce, request,attempt,query sequence. Public pg_stat_activity parses ONLY the comment tag, returning no SQL. Public pg_locks and pg_blocking_pids provide PID/resource/holder chains. Public query API; no pg/Prisma private fields or production hooks.",
+  "querySemanticPreservation": "No application query/request added, no parameters changed; only comments on unnamed queries with diagnostic ALS frame. Named prepared queries are tagged only if safe (otherwise record omitted); no fabricated results.",
+  "sampling": "One dedicated native observation query every25ms serialized; max4096 samples. Record query time and scheduling lag; added observation overhead is a limitation. Existing aggregate sampler remains unchanged.",
+  "settings": "All original30writers/19requesters/90writes/57reads, fixture2050/8030, pool17, maxWait2000/execution5000, retries/assertions/case120000 unchanged.",
+  "sourceDeltas": "One existing PATCH test wires a new dedicated observer; no shared observer or production changes. Archive/remove temporary wiring after run.",
+  "priorFailure": "Latest fullrun99files/2110executed/2109passed/1failed preserved; preceding legacy correction remains minimal."
+}

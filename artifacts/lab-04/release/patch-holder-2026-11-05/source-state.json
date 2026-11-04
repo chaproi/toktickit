@@ -1,0 +1,14 @@
+{
+  "head": "73872c103b1730555d612d5a1ea170e6821d46de",
+  "branch": "feat/50-server-patch-diagnosis",
+  "productionUnchanged": true,
+  "productionTree": "1b7b2fa48d68704407fd5e33b9d2aaebcef4ffa5",
+  "pendingInstrumentation": [
+    "server/tests/lab-04/action-patch-projection.integration.test.ts",
+    "server/tests/lab-04/patch-blocking-diagnostic.ts"
+  ],
+  "testSha256": "71dd230ddf1c3ac2d3c6b0a05d929af3ad7b0dfadd5eba023035e4eb96c711f1",
+  "helperSha256": "dfcd5c106bfef4faadbbdaefbaf074835f9540c9da58f6ae6a37b56812413115",
+  "typesCommand": "npm.cmd --prefix server exec -- tsc --noEmit --project server/tsconfig.json",
+  "typesExit": 0
+}

@@ -1,0 +1,91 @@
+> toktickit-server@1.0.0 test
+> vitest run tests/lab-04/legacy-actions.integration.test.ts --reporter=default --reporter=json --outputFile=<private-phase-directory>\legacy-confirm-vitest.json
+
+
+ RUN  v2.1.9 <final-main-worktree>/server
+
+warn The configuration property `package.json#prisma` is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file (e.g., `prisma.config.ts`).
+For more information, see: https://pris.ly/prisma-config
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+Datasource identity verified privately; connection values withheld.
+
+6 migrations found in prisma/migrations
+
+
+No pending migrations to apply.
+Seed skipped Emily Carter: legacy identity is ambiguous or lacks durable evidence; no original-email account guessed; review required.
+Seed skipped Noah Williams: legacy identity is ambiguous or lacks durable evidence; no original-email account guessed; review required.
+Seed skipped Sofia Garcia: legacy identity is ambiguous or lacks durable evidence; no original-email account guessed; review required.
+Seed skipped Inactive Support: legacy identity is ambiguous or lacks durable evidence; no original-email account guessed; review required.
+Seed skipped Avery Chen: legacy identity is ambiguous or lacks durable evidence; no original-email account guessed; review required.
+Seed skipped Empty Dashboard Requester: legacy identity is ambiguous or lacks durable evidence; no original-email account guessed; review required.
+Seed skipped lab3:categoryId:Account and Access: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:categoryId:Software: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:categoryId:Network: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:relatedSystemId:Email: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:relatedSystemId:Campus Wi-Fi: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:relatedSystemId:VPN: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:relatedSystemId:LEB2 App: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:relatedSystemId:Grade Submission App: legacy reference requires verified identity mapping; review required.
+Seed skipped lab3:relatedSystemId:Printer: legacy reference requires verified identity mapping; review required.
+Seed skipped lab4:action:202 on TKT-2026-00167: frozen parent or ineligible worker (mina.patel@example.com, noah.williams@example.com); review required.
+Seed skipped lab4:action:203 on TKT-2026-00167: frozen parent or ineligible worker (noah.williams@example.com, mina.patel@example.com); review required.
+Seed skipped lab4:action:204 on TKT-2026-00169: frozen parent or ineligible worker (mina.patel@example.com, noah.williams@example.com); review required.
+Seed skipped lab4:action:205 on TKT-2026-00170: frozen parent or ineligible worker (noah.williams@example.com, mina.patel@example.com); review required.
+Seed skipped lab4:action:206 on TKT-2026-00171: frozen parent or ineligible worker (mina.patel@example.com, noah.williams@example.com); review required.
+Seed skipped lab4:action:207 on TKT-2026-00172: frozen parent or ineligible worker (mina.patel@example.com, mina.patel@example.com); review required.
+Seeded create-only registered Lab 3/4 fixtures; operational records preserved.
+stdout | tests/lab-04/legacy-actions.integration.test.ts > T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows > resolves a migrated active zero-Action Ticket with its eligible historical owner
+Production migration path: 4 historical; 2 later.
+
+stdout | tests/lab-04/legacy-actions.integration.test.ts > T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows > resolves a migrated active zero-Action Ticket with its eligible historical owner
+Legacy verification: actual historical SQL + forward increments; migrated App connection and real login verified; no invented legacy Actions.
+Legacy App cleanup: Prisma disconnected, real-client seam and database environment restored; owned schema removal follows.
+
+stdout | tests/lab-04/legacy-actions.integration.test.ts > T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows > resolves a migrated active zero-Action Ticket with its eligible historical owner
+Lab 4 populated fixture: owned schema created and removed; remaining=0.
+
+stdout | tests/lab-04/legacy-actions.integration.test.ts > T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows > closes a migrated RESOLVED zero-Action Ticket without fabricating positive completion
+Production migration path: 4 historical; 2 later.
+
+stdout | tests/lab-04/legacy-actions.integration.test.ts > T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows > closes a migrated RESOLVED zero-Action Ticket without fabricating positive completion
+Legacy verification: actual historical SQL + forward increments; migrated App connection and real login verified; no invented legacy Actions.
+Legacy App cleanup: Prisma disconnected, real-client seam and database environment restored; owned schema removal follows.
+
+stdout | tests/lab-04/legacy-actions.integration.test.ts > T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows > closes a migrated RESOLVED zero-Action Ticket without fabricating positive completion
+Lab 4 populated fixture: owned schema created and removed; remaining=0.
+
+stdout | tests/lab-04/legacy-actions.integration.test.ts > T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows > reopens and performs later real work without requiring a new completion each cycle
+Production migration path: 4 historical; 2 later.
+
+stdout | tests/lab-04/legacy-actions.integration.test.ts > T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows > reopens and performs later real work without requiring a new completion each cycle
+Legacy verification: actual historical SQL + forward increments; migrated App connection and real login verified; no invented legacy Actions.
+Legacy App cleanup: Prisma disconnected, real-client seam and database environment restored; owned schema removal follows.
+
+stdout | tests/lab-04/legacy-actions.integration.test.ts > T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows > reopens and performs later real work without requiring a new completion each cycle
+Lab 4 populated fixture: owned schema created and removed; remaining=0.
+
+stdout | tests/lab-04/legacy-actions.integration.test.ts > T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows > preserves the migrated null-owner guard and all domain state on rejection
+Production migration path: 4 historical; 2 later.
+
+stdout | tests/lab-04/legacy-actions.integration.test.ts > T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows > preserves the migrated null-owner guard and all domain state on rejection
+Legacy verification: actual historical SQL + forward increments; migrated App connection and real login verified; no invented legacy Actions.
+Legacy App cleanup: Prisma disconnected, real-client seam and database environment restored; owned schema removal follows.
+
+stdout | tests/lab-04/legacy-actions.integration.test.ts > T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows > preserves the migrated null-owner guard and all domain state on rejection
+Lab 4 populated fixture: owned schema created and removed; remaining=0.
+
+ ✓ tests/lab-04/legacy-actions.integration.test.ts (4 tests) 6712ms
+   ✓ T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows > resolves a migrated active zero-Action Ticket with its eligible historical owner 2572ms
+   ✓ T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows > closes a migrated RESOLVED zero-Action Ticket without fabricating positive completion 1058ms
+   ✓ T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows > reopens and performs later real work without requiring a new completion each cycle 1434ms
+   ✓ T-43 / AC-19: genuine migrated legacy zero-Action and reopened workflows > preserves the migrated null-owner guard and all domain state on rejection 961ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  01:29:10
+   Duration  11.29s (transform 502ms, setup 0ms, collect 223ms, tests 6.71s, environment 0ms, prepare 76ms)
+
+JSON report written to <private-phase-directory>/legacy-confirm-vitest.json

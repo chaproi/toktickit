@@ -1,0 +1,11 @@
+{
+  "branch": "feat/50-server-patch-diagnosis",
+  "head": "73872c103b1730555d612d5a1ea170e6821d46de",
+  "productionDiffFromMain": [],
+  "patchTestGitCanonicalHashMatchesOriginal": true,
+  "temporaryExecutableInstrumentationRemoved": true,
+  "onlyRetainedSourceCorrection": "server/tests/lab-04/legacy-actions.integration.test.ts",
+  "legacyEvidenceCommit": "0138c140c76e64b721576c6629d48c3e2304bccc",
+  "minimalLegacyCommit": "73872c103b1730555d612d5a1ea170e6821d46de",
+  "noPR": true
+}

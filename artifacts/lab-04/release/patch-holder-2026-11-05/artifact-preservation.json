@@ -1,0 +1,9 @@
+{
+  "generatedOriginalPath": "artifacts/lab-04/hardening/patch-chain-phases-2026-11-04-8fab9c08.json",
+  "originalGeneratedSha256": "60fba933864a67f4be76b20c43bcbb972c05e8906cc50d498776ee37b208d27c",
+  "redactedExportPath": "fresh-output/patch-chain-phases-2026-11-04-8fab9c08.json",
+  "redactedExportSha256": "60fba933864a67f4be76b20c43bcbb972c05e8906cc50d498776ee37b208d27c",
+  "priorArtifactFilesHashChecked": 1134,
+  "priorArtifactsUnchanged": true,
+  "noHistoricalCleanupStateUsedToInferHolder": true
+}

@@ -1,0 +1,101 @@
+{
+  "label": "patch",
+  "command": "npm.cmd test -- tests/lab-04/action-patch-projection.integration.test.ts --reporter=default --reporter=json --outputFile=<private-PATCH-diagnostic>\\patch-vitest.json",
+  "head": "73872c103b1730555d612d5a1ea170e6821d46de",
+  "runnerPid": 16660,
+  "startedAt": "2026-11-04T19:06:22.883140+00:00",
+  "outerSafetyBudgetSeconds": 300,
+  "noTestOrTransactionBudgetChanges": true,
+  "outputMode": "binary direct-to-file; no buffered communicate/maxBuffer",
+  "events": [
+    {
+      "event": "runner-start",
+      "at": "2026-11-04T19:06:22.883168+00:00",
+      "elapsedSeconds": 0.052545700018526986
+    },
+    {
+      "event": "spawned",
+      "at": "2026-11-04T19:06:22.896056+00:00",
+      "elapsedSeconds": 0.06544170001870953
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T19:06:27.897958+00:00",
+      "elapsedSeconds": 5.067328800010728,
+      "logBytes": 863,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T19:06:32.900976+00:00",
+      "elapsedSeconds": 10.07033180000144,
+      "logBytes": 3710,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T19:06:37.902542+00:00",
+      "elapsedSeconds": 15.071887099999003,
+      "logBytes": 3922,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T19:06:42.904695+00:00",
+      "elapsedSeconds": 20.074019699997734,
+      "logBytes": 3922,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T19:06:47.912195+00:00",
+      "elapsedSeconds": 25.08152120001614,
+      "logBytes": 3922,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T19:06:52.916684+00:00",
+      "elapsedSeconds": 30.085990300023695,
+      "logBytes": 3922,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T19:06:57.918242+00:00",
+      "elapsedSeconds": 35.087524700007634,
+      "logBytes": 3922,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T19:07:02.919897+00:00",
+      "elapsedSeconds": 40.089159299997846,
+      "logBytes": 3922,
+      "childStillRunning": true
+    },
+    {
+      "event": "heartbeat",
+      "at": "2026-11-04T19:07:07.921623+00:00",
+      "elapsedSeconds": 45.0908784000203,
+      "logBytes": 4868,
+      "childStillRunning": false
+    },
+    {
+      "event": "child-exit",
+      "at": "2026-11-04T19:07:07.923399+00:00",
+      "elapsedSeconds": 45.09264750001603,
+      "exitCode": 0
+    },
+    {
+      "event": "runner-finished",
+      "at": "2026-11-04T19:07:07.924482+00:00",
+      "elapsedSeconds": 45.09371790001751
+    }
+  ],
+  "childPid": 54972,
+  "exitCode": 0,
+  "finishedAt": "2026-11-04T19:07:07.924465+00:00",
+  "elapsedSeconds": 45.09371159999864,
+  "childStillRunning": false
+}

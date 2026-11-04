@@ -1,0 +1,17 @@
+python :   File "<private-phase-directory>\runner-initial.py", line 9
+At line:3 char:1
++ python -m py_compile "$env:TEMP\toktickit50-legacy-phases-20261105\ru ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (  File "C:\User...ial.py", line 9:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+    state={'label':label,'command':'npm.cmd '+' '.join(args),'head':subprocess.check_output(['git','rev-parse','HEAD'],
+cwd=R,text=True).strip(),'sourceState':'production unchanged; explicit test-only legacy diagnostic delta','runnerPid':o
+s.getpid(),'startedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'outerSafetyBudgetSeconds':3600 if
+label=='full'else300,'signalsObserved':[],'outputMode':'binary direct file; no output
+buffer/maxBuffer','events':[]};start=time.monotonic();child=None
+
+
+
+^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: expected 'else' after 'if' expression
