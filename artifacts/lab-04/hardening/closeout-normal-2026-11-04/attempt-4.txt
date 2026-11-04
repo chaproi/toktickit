@@ -11,7 +11,7 @@ Issue45 owned fixture/domain/session cleanup verified; client disconnect follows
 e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844
 Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
 
-  1) e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844 
+  1) e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844
 
     Error: expect(locator).toBeVisible() failed
 
@@ -45,7 +45,7 @@ Safe control geometry: {"visible":false,"unobscured":true,"clips":[],"debug":{"t
 
 Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
 
-  2) e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112 
+  2) e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
 
     Error: Control is reachable and unobscured
 
@@ -89,8 +89,8 @@ Owned Edge context closed, zoom restored and profile removed.
 Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
 
   2 failed
-    e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844 
-    e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112 
+    e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844
+    e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
   3 passed (40.1s)
 
 (node:46532) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.

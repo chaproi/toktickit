@@ -14,7 +14,7 @@ Safe control geometry: {"visible":true,"unobscured":false,"clips":[],"debug":{"t
 
 Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
 
-  1) e2e\lab-04\review-closeout.spec.ts:94:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112 
+  1) e2e\lab-04\review-closeout.spec.ts:94:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
 
     Error: Control is reachable and unobscured
 
@@ -46,7 +46,7 @@ Issue45 owned fixture/domain/session cleanup verified; client disconnect follows
 
 
   1 failed
-    e2e\lab-04\review-closeout.spec.ts:94:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112 
+    e2e\lab-04\review-closeout.spec.ts:94:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
   1 passed (14.9s)
 
 warning: in the working copy of 'e2e/lab-04/review-closeout.spec.ts', LF will be replaced by CRLF the next time Git touches it

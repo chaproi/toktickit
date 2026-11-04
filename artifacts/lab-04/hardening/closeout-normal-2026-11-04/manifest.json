@@ -2,28 +2,28 @@
   "files": [
     {
       "path": "attempt-2.txt",
-      "bytes": 4465,
-      "sha256": "2e4ab04aae9a5c0ea2d267b8725a3dfc1f880710efc67e179c371c22f184090f"
+      "bytes": 4372,
+      "sha256": "54d0220eb8256c01c546ee2aedf643c9ba66b9219c30f6ad9a021417eb1cf8b6"
     },
     {
       "path": "attempt-3.txt",
-      "bytes": 4187,
-      "sha256": "12d795848449d91503d547b6b29033dd81ada7c75bcf871dadb9c36834b2256e"
+      "bytes": 4091,
+      "sha256": "0de0d8d4e98971efd6908c6ffb26395fea7440120cd86268c309cc510c2bae54"
     },
     {
       "path": "attempt-4.txt",
-      "bytes": 5780,
-      "sha256": "f3af4199558fb80c086773c9fe3578a40de7267966e1d37789c7ee825612e041"
+      "bytes": 5675,
+      "sha256": "c709e76f34157fdd9921e0f9af532eab99aea30314f5f4351ae5c0e65a466cbd"
     },
     {
       "path": "attempt-5.txt",
-      "bytes": 2675,
-      "sha256": "85ec015dcde67ac2d275c656325234023a2a74a4384ff3872655664b727fbd26"
+      "bytes": 2618,
+      "sha256": "a467a0be485ac384a283a6e6447838717736fe1c8672c5df41987df2dcc9bb41"
     },
     {
       "path": "attempt-6.txt",
-      "bytes": 787,
-      "sha256": "60204172d5ab6f8c924aa8390ad090ef2dab12d7f96974ff048a0fc7989f13a7"
+      "bytes": 771,
+      "sha256": "8b269f3ae7bc7ced23af2221fc06bb03103e80a692d434ff5b1b1475be351978"
     },
     {
       "path": "captures/gap-390x844-create-ticket.json",
@@ -82,13 +82,13 @@
     },
     {
       "path": "comprehensive-confirmation.txt",
-      "bytes": 39334,
-      "sha256": "897c2f03ad9ec9c080ee937b238f171f950426a94eb557290a00fbd538c2f59c"
+      "bytes": 38348,
+      "sha256": "7ca4b76f35bedc0f8d67812bfad5acdb91544d484af48309465d3dd26b2f5410"
     },
     {
       "path": "comprehensive-e2e.txt",
-      "bytes": 45010,
-      "sha256": "e1a2d5f746ffbaee9db306142d249a270fdd6bd11eb419642e63df010db3711b"
+      "bytes": 43787,
+      "sha256": "2a1c4358966240b8d4e7ca924957d012d822c8dbcacdd045891d59207a154e59"
     },
     {
       "path": "earlier-attempts.json",
@@ -165,5 +165,6 @@
   "newPngs": 4,
   "historicalArtifactHashesPreserved": 747,
   "normalConfirmationSource": "65f4bb1b1c5f4ec9f4f87b2b410ff62fbdb2cd29",
-  "noBenchmarkExecution": true
+  "noBenchmarkExecution": true,
+  "publicationFormatting": "New redacted text exports normalized to LF without trailing whitespace in a separate corrective commit. All raw private outputs and recorded results remain unchanged; historical artifacts untouched."
 }

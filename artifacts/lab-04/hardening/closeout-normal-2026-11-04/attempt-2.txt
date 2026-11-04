@@ -7,7 +7,7 @@ Running 3 tests using 1 worker
 e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844
 Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
 
-  1) e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844 
+  1) e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844
 
     Test timeout of 60000ms exceeded.
 
@@ -37,7 +37,7 @@ Issue45 owned fixture/domain/session cleanup verified; client disconnect follows
 e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
 Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
 
-  2) e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112 
+  2) e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
 
     Test timeout of 60000ms exceeded.
 
@@ -67,7 +67,7 @@ Issue45 owned fixture/domain/session cleanup verified; client disconnect follows
 e2e\lab-04\review-closeout.spec.ts:172:1 › T-37/T-38 real Microsoft Edge Admin navigation and History at genuine 200% tab zoom
 Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
 
-  3) e2e\lab-04\review-closeout.spec.ts:172:1 › T-37/T-38 real Microsoft Edge Admin navigation and History at genuine 200% tab zoom 
+  3) e2e\lab-04\review-closeout.spec.ts:172:1 › T-37/T-38 real Microsoft Edge Admin navigation and History at genuine 200% tab zoom
 
     Test timeout of 60000ms exceeded.
 
@@ -75,9 +75,9 @@ Issue45 owned fixture/domain/session cleanup verified; client disconnect follows
 
 
   3 failed
-    e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844 
-    e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112 
-    e2e\lab-04\review-closeout.spec.ts:172:1 › T-37/T-38 real Microsoft Edge Admin navigation and History at genuine 200% tab zoom 
+    e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844
+    e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
+    e2e\lab-04\review-closeout.spec.ts:172:1 › T-37/T-38 real Microsoft Edge Admin navigation and History at genuine 200% tab zoom
 
 (node:39104) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 (Use `node --trace-warnings ...` to show where the warning was created)

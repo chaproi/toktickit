@@ -1,577 +1,577 @@
-
-> toktickit-e2e@1.0.0 test:e2e
-> playwright test
-
-Seeded create-only registered Lab 3/4 fixtures; operational records preserved.
-npm.cmd : warning: in the working copy of 'e2e/lab-04/review-closeout.spec.ts', LF will be replaced by CRLF the next 
-time Git touches it
-At line:2 char:400
-+ ... T_CLOSEOUT_ATTEMPT='normal-1'; & npm.cmd run test:e2e *> $log; $code= ...
-+                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (warning: in the... Git touches it:String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
-
-Running 77 tests using 1 worker
-
-(node:55460) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
-(Use `node --trace-warnings ...` to show where the warning was created)
-
-
-[1/77] e2e\lab-02\requester-ticket-flow.spec.ts:266:1 › E2E-01 authenticates and restores a Requester session, creates an owned Ticket, and opens its read-only Detail
-(node:53196) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and 
-will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
-(Use `node --trace-deprecation ...` to show where the warning was created)
-[2/77] e2e\lab-02\requester-ticket-flow.spec.ts:391:1 › E2E-01 shows required-field and approved invalid-file feedback
-[3/77] e2e\lab-02\requester-ticket-flow.spec.ts:428:1 › E2E-01 exercises applied search, filters, sorting, pagination, and reset behavior
-[4/77] e2e\lab-02\requester-ticket-flow.spec.ts:515:1 › E2E-02 and E2E-03 complete the owned Attachment lifecycle and enforce ownership isolation
-[5/77] e2e\lab-02\requester-ticket-flow.spec.ts:647:1 › E2E-01 shows a safe API failure and retries without stale data
-[6/77] e2e\lab-02\requester-ticket-flow.spec.ts:692:1 › E2E-04 keeps every Lab 2 screen usable at desktop, tablet, and mobile sizes
-[7/77] e2e\lab-03\authentication.spec.ts:17:1 › E2E-01 authenticates, forces rotation, preserves reload, and logs out
-[8/77] e2e\lab-03\authorization.spec.ts:33:1 › E2E-05 enforces direct navigation, API role, ownership, and Internal Note isolation
-[9/77] e2e\lab-03\requester-regression.spec.ts:23:1 › E2E-02 retains the complete Requester workflow under session identity
-[10/77] e2e\lab-03\responsive.spec.ts:439:3 › RESP-01 captures all six major screens at 390x844
-[11/77] e2e\lab-03\responsive.spec.ts:439:3 › RESP-01 captures all six major screens at 834x1112
-[12/77] e2e\lab-03\responsive.spec.ts:439:3 › RESP-01 captures all six major screens at 1440x900
-[13/77] e2e\lab-03\responsive.spec.ts:508:1 › RESP-02 keeps all six screens operable with keyboard and accessibility semantics at genuine 200% browser tab zoom
-[14/77] e2e\lab-03\staff-ticket-flow.spec.ts:21:1 › E2E-03 completes the Staff operational Ticket workflow
-[15/77] e2e\lab-03\user-administration.spec.ts:14:1 › E2E-04 manages Users, safety conflicts, and historical ownership
-[16/77] e2e\lab-03\user-administration.spec.ts:117:1 › E2E-04 resets another User and enforces mandatory password change
-[17/77] e2e\lab-04\accessibility.spec.ts:6:1 › T-38 labelled Action forms, validation, keyboard traps, clearing confirmation and focus return
-e2e\lab-04\accessibility.spec.ts:6:1 › T-38 labelled Action forms, validation, keyboard traps, clearing confirmation and focus return
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[18/77] e2e\lab-04\accessibility.spec.ts:59:1 › T-38 read-only history, real-read loading and transport error announcements, filter labels and sampled contrast
-e2e\lab-04\accessibility.spec.ts:59:1 › T-38 read-only history, real-read loading and transport error announcements, filter labels and sampled contrast
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[19/77] e2e\lab-04\accessibility.spec.ts:105:1 › T-38 genuine 200% tab zoom reflows Actions, dialogs, history and My Actions; zoom/profile restored
-e2e\lab-04\accessibility.spec.ts:105:1 › T-38 genuine 200% tab zoom reflows Actions, dialogs, history and My Actions; zoom/profile restored
-Issue45 owned zoom context closed, tab zoom restored and temporary profile removed.
-
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[20/77] e2e\lab-04\actions-taken-flow.spec.ts:54:1 › T-48 AC-03/06/08/09/10/13/45: non-assignee Staff creates, edits, starts and completes a delegated Action
-e2e\lab-04\actions-taken-flow.spec.ts:54:1 › T-48 AC-03/06/08/09/10/13/45: non-assignee Staff creates, edits, starts and completes a delegated Action
-Issue45 browser=chromium; real authentication/React/Express/PostgreSQL; no endpoint mocks.
-
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[21/77] e2e\lab-04\actions-taken-flow.spec.ts:122:1 › T-48 AC-02/03/39/45: owned Requester reads inert Actions/history and logout prevents foreign data retention
-e2e\lab-04\actions-taken-flow.spec.ts:122:1 › T-48 AC-02/03/39/45: owned Requester reads inert Actions/history and logout prevents foreign data retention
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[22/77] e2e\lab-04\actions-taken-flow.spec.ts:175:1 › T-48/T-50 AC-08/41/45: cancelling follow-up clear preserves state; confirmed clear sends null and retains history
-e2e\lab-04\actions-taken-flow.spec.ts:175:1 › T-48/T-50 AC-08/41/45: cancelling follow-up clear preserves state; confirmed clear sends null and retains history
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[23/77] e2e\lab-04\actions-taken-flow.spec.ts:219:1 › T-48/T-54 AC-03/44: My assigned Actions uses real actor filtering/pagination, selected detail and safe Dashboard handoff
-e2e\lab-04\actions-taken-flow.spec.ts:219:1 › T-48/T-54 AC-03/44: My assigned Actions uses real actor filtering/pagination, selected detail and safe Dashboard handoff
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[24/77] e2e\lab-04\actions-taken-flow.spec.ts:285:60 › Navigation #53: IT_STAFF filtered Dashboard -> paged My Actions -> off-page detail -> real Dashboard return
-e2e\lab-04\actions-taken-flow.spec.ts:285:60 › Navigation #53: IT_STAFF filtered Dashboard -> paged My Actions -> off-page detail -> real Dashboard return
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[25/77] e2e\lab-04\actions-taken-flow.spec.ts:285:60 › Navigation #53: ADMINISTRATOR filtered Dashboard -> paged My Actions -> off-page detail -> real Dashboard return
-e2e\lab-04\actions-taken-flow.spec.ts:285:60 › Navigation #53: ADMINISTRATOR filtered Dashboard -> paged My Actions -> off-page detail -> real Dashboard return
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[26/77] e2e\lab-04\actions-taken-flow.spec.ts:363:61 › Navigation #53: real Administrator demotion revokes the open worker session and clears Action/Dashboard views
-e2e\lab-04\actions-taken-flow.spec.ts:363:61 › Navigation #53: real Administrator demotion revokes the open worker session and clears Action/Dashboard views
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[27/77] e2e\lab-04\actions-taken-flow.spec.ts:363:61 › Navigation #53: real Administrator deactivation revokes the open worker session and clears Action/Dashboard views
-e2e\lab-04\actions-taken-flow.spec.ts:363:61 › Navigation #53: real Administrator deactivation revokes the open worker session and clears Action/Dashboard views
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[28/77] e2e\lab-04\actions-taken-flow.spec.ts:427:1 › Issue49 T-48: late picker ineligibility is real initial-read 400, retained draft and deliberate recovery
-e2e\lab-04\actions-taken-flow.spec.ts:427:1 › Issue49 T-48: late picker ineligibility is real initial-read 400, retained draft and deliberate recovery
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[29/77] e2e\lab-04\actions-taken-flow.spec.ts:516:1 › Issue49 T-36: committed EDIT response loss explicitly replays original payload and both optimistic tokens
-e2e\lab-04\actions-taken-flow.spec.ts:516:1 › Issue49 T-36: committed EDIT response loss explicitly replays original payload and both optimistic tokens
-Issue49 controlled committed-response loss/replay verified; browser=chromium 153.0.8010.12; original payload/key/version/parent token retained; one committed edit.
-
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[30/77] e2e\lab-04\dashboards.spec.ts:74:1 › Requester Dashboard: real metrics, all four drill-downs, stable ordering, pagination and owned detail
-e2e\lab-04\dashboards.spec.ts:74:1 › Requester Dashboard: real metrics, all four drill-downs, stable ordering, pagination and owned detail
-Issue47 browser=chromium 153.0.8010.12; real browser/API/PostgreSQL; no successful response mocks.
-
-Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
-
-[31/77] e2e\lab-04\dashboards.spec.ts:133:1 › Requester Dashboard: all six filters, URL reload/back, intersections and retained list drafts
-e2e\lab-04\dashboards.spec.ts:133:1 › Requester Dashboard: all six filters, URL reload/back, intersections and retained list drafts
-Issue47 sort diagnostic: real descending response and rendered page match after response readiness; no inherited assertion changed.
-
-Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
-
-[32/77] e2e\lab-04\dashboards.spec.ts:195:1 › Requester Dashboard: real logout/login isolates accounts, owned details and operational-role denials
-e2e\lab-04\dashboards.spec.ts:195:1 › Requester Dashboard: real logout/login isolates accounts, owned details and operational-role denials
-Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
-
-[33/77] e2e\lab-04\dashboards.spec.ts:238:1 › Requester Dashboard: genuine empty state and one injected transport failure recover through real reads
-e2e\lab-04\dashboards.spec.ts:238:1 › Requester Dashboard: genuine empty state and one injected transport failure recover through real reads
-Issue47 recovery: exactly one browser transport abort; subsequent successful Dashboard response is the real API, not a simulated backend outage.
-
-Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
-
-[34/77] e2e\lab-04\dashboards.spec.ts:273:1 › Requester Dashboard: an owned old CLOSED Ticket matches base filters while every widget is zero
-e2e\lab-04\dashboards.spec.ts:273:1 › Requester Dashboard: an owned old CLOSED Ticket matches base filters while every widget is zero
-Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
-
-[35/77] e2e\lab-04\dashboards.spec.ts:309:3 › Navigation #53: REQUESTER real landing, root/login/brand and preserved role routes
-
-e2e\lab-04\dashboards.spec.ts:309:3 › Navigation #53: REQUESTER real landing, root/login/brand and preserved role 
-routes
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-create-errors.json', LF will 
-be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-history-error.json', LF will 
-be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-my-actions-focus.json', LF 
-will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-create.json', LF will be replaced 
-by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-history.json', LF will be replaced 
-by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-my-actions.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-staff-actions.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'e2e/lab-04/review-closeout.spec.ts', LF will be replaced by CRLF the next time Git 
-touches it
-Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
-
-[36/77] e2e\lab-04\dashboards.spec.ts:356:3 › Navigation #53: REQUESTER real mandatory password rotation precedes Dashboard
-e2e\lab-04\dashboards.spec.ts:356:3 › Navigation #53: REQUESTER real mandatory password rotation precedes Dashboard
-Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
-
-[37/77] e2e\lab-04\dashboards.spec.ts:309:3 › Navigation #53: IT_STAFF real landing, root/login/brand and preserved role routes
-e2e\lab-04\dashboards.spec.ts:309:3 › Navigation #53: IT_STAFF real landing, root/login/brand and preserved role routes
-Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
-
-[38/77] e2e\lab-04\dashboards.spec.ts:356:3 › Navigation #53: IT_STAFF real mandatory password rotation precedes Dashboard
-e2e\lab-04\dashboards.spec.ts:356:3 › Navigation #53: IT_STAFF real mandatory password rotation precedes Dashboard
-Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
-
-[39/77] e2e\lab-04\dashboards.spec.ts:309:3 › Navigation #53: ADMINISTRATOR real landing, root/login/brand and preserved role routes
-e2e\lab-04\dashboards.spec.ts:309:3 › Navigation #53: ADMINISTRATOR real landing, root/login/brand and preserved role routes
-Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
-
-[40/77] e2e\lab-04\dashboards.spec.ts:356:3 › Navigation #53: ADMINISTRATOR real mandatory password rotation precedes Dashboard
-e2e\lab-04\dashboards.spec.ts:356:3 › Navigation #53: ADMINISTRATOR real mandatory password rotation precedes Dashboard
-Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
-
-[41/77] e2e\lab-04\dashboards.spec.ts:393:1 › Navigation #53: mobile menu and genuine 200% tab zoom retain reachable Dashboard navigation
-e2e\lab-04\dashboards.spec.ts:393:1 › Navigation #53: mobile menu and genuine 200% tab zoom retain reachable Dashboard 
-navigation
-
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-create-errors.json', LF will 
-be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-history-error.json', LF will 
-be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-my-actions-focus.json', LF 
-will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-create.json', LF will be replaced 
-by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-history.json', LF will be replaced 
-by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-my-actions.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-staff-actions.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/dashboard-navigation/requester-desktop.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'e2e/lab-04/review-closeout.spec.ts', LF will be replaced by CRLF the next time Git 
-touches it
-
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-create-errors.json', LF will 
-be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-history-error.json', LF will 
-be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-my-actions-focus.json', LF 
-will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-create.json', LF will be replaced 
-by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-history.json', LF will be replaced 
-by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-my-actions.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-staff-actions.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/dashboard-navigation/requester-desktop.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/dashboard-navigation/staff-mobile-menu.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'e2e/lab-04/review-closeout.spec.ts', LF will be replaced by CRLF the next time Git 
-touches it
-Issue53 genuine tab zoom 1 -> 2 -> 1; native initial viewport 1424x805; pinch scale remains 1.
-
-Issue45 owned zoom context closed, tab zoom restored and temporary profile removed.
-
-Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
-
-[42/77] e2e\lab-04\dashboards.spec.ts:433:1 › Navigation #53: held real Dashboard response cannot survive logout, revoked session or another identity
-e2e\lab-04\dashboards.spec.ts:433:1 › Navigation #53: held real Dashboard response cannot survive logout, revoked session or another identity
-Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
-
-[43/77] e2e\lab-04\dashboards.spec.ts:467:1 › Navigation #53: Create Ticket alone is active on /tickets/new
-e2e\lab-04\dashboards.spec.ts:467:1 › Navigation #53: Create Ticket alone is active on /tickets/new
-Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
-
-[44/77] e2e\lab-04\requester-dashboard-layout.spec.ts:251:3 › T-37 Requester Dashboard and drill-down reflow at 390x844
-e2e\lab-04\requester-dashboard-layout.spec.ts:251:3 › T-37 Requester Dashboard and drill-down reflow at 390x844
-Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
-
-[45/77] e2e\lab-04\requester-dashboard-layout.spec.ts:251:3 › T-37 Requester Dashboard and drill-down reflow at 834x1112
-e2e\lab-04\requester-dashboard-layout.spec.ts:251:3 › T-37 Requester Dashboard and drill-down reflow at 834x1112
-Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
-
-[46/77] e2e\lab-04\requester-dashboard-layout.spec.ts:251:3 › T-37 Requester Dashboard and drill-down reflow at 1440x900
-e2e\lab-04\requester-dashboard-layout.spec.ts:251:3 › T-37 Requester Dashboard and drill-down reflow at 1440x900
-Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
-
-[47/77] e2e\lab-04\requester-dashboard-layout.spec.ts:269:1 › T-38 Requester Dashboard keyboard labels, focus, Apply/Clear, loading and safe Retry
-e2e\lab-04\requester-dashboard-layout.spec.ts:269:1 › T-38 Requester Dashboard keyboard labels, focus, Apply/Clear, loading and safe Retry
-Issue47 layout: one controlled browser transport abort after settled mount; Retry uses real authoritative API data.
-
-Issue47 representative computed contrast: {"metric":6.63,"summary":15.43,"apply":6.63}; sampled solid backgrounds only, no certification.
-
-Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
-
-[48/77] e2e\lab-04\requester-dashboard-layout.spec.ts:295:1 › T-38 Requester Dashboard genuine 200% tab zoom preserves filters, Retry and drill-down
-e2e\lab-04\requester-dashboard-layout.spec.ts:295:1 › T-38 Requester Dashboard genuine 200% tab zoom preserves filters, Retry and drill-down
-Issue47 layout: one controlled browser transport abort after settled mount; Retry uses real authoritative API data.
-
-Issue47 genuine tab zoom: {"factors":[1,2,1],"before":{"width":1424,"height":805,"pinchScale":1},"zoomed":{"width":712,"height":402,"pinchScale":1},"restored":{"width":1424,"height":805,"pinchScale":1}}; extension-controlled, no viewport/device/CSS/pinch substitution.
-
-Issue45 owned zoom context closed, tab zoom restored and temporary profile removed.
-
-Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
-
-[49/77] e2e\lab-04\responsive.spec.ts:7:3 › T-37 Actions screens and all dialogs reflow at 390x844
-e2e\lab-04\responsive.spec.ts:7:3 › T-37 Actions screens and all dialogs reflow at 390x844
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[50/77] e2e\lab-04\responsive.spec.ts:7:3 › T-37 Actions screens and all dialogs reflow at 834x1112
-e2e\lab-04\responsive.spec.ts:7:3 › T-37 Actions screens and all dialogs reflow at 834x1112
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[51/77] e2e\lab-04\responsive.spec.ts:7:3 › T-37 Actions screens and all dialogs reflow at 1440x900
-e2e\lab-04\responsive.spec.ts:7:3 › T-37 Actions screens and all dialogs reflow at 1440x900
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[52/77] e2e\lab-04\review-closeout.spec.ts:54:1 › T-38 Staff History controlled read failure and real Retry with keyboard focus
-e2e\lab-04\review-closeout.spec.ts:54:1 › T-38 Staff History controlled read failure and real Retry with keyboard focus
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[53/77] e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844
-e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-  1) e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844 
-
-    Error: Visible text and controls wrap within their containers
-
-    expect(received).toEqual(expected) // deep equality
-
-    - Expected  - 1
-    + Received  + 3
-
-    - Array []
-    + Array [
-    +   "FORM ",
-    + ]
-
-       at lab-04\action-layout-helpers.ts:62
-
-      60 |        !["INPUT", "TEXTAREA", "SELECT"].includes(element.tagName) && element.scrollWidth > element.clientWidth + 1);
-      61 |   }).map((element) => `${element.tagName} ${element.id}`));
-    > 62 |   expect(overflow, "Visible text and controls wrap within their containers").toEqual([]);
-         |                                                                              ^
-      63 | }
-      64 |
-      65 | export async function reachable(control: Locator) {
-        at geometry (<candidate-worktree>\e2e\lab-04\action-layout-helpers.ts:62:78)
-        at <candidate-worktree>\e2e\lab-04\review-closeout.spec.ts:105:5
-
-    Error Context: test-results\lab-04-review-closeout-T-3-a7abd-wned-list-pixels-at-390x844\error-context.md
-
-
-(node:59840) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
-(Use `node --trace-warnings ...` to show where the warning was created)
-
-
-[54/77] e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
-e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-  2) e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112 
-
-    Error: Visible text and controls wrap within their containers
-
-    expect(received).toEqual(expected) // deep equality
-
-    - Expected  - 1
-    + Received  + 3
-
-    - Array []
-    + Array [
-    +   "FORM ",
-    + ]
-
-       at lab-04\action-layout-helpers.ts:62
-
-      60 |        !["INPUT", "TEXTAREA", "SELECT"].includes(element.tagName) && element.scrollWidth > element.clientWidth + 1);
-      61 |   }).map((element) => `${element.tagName} ${element.id}`));
-    > 62 |   expect(overflow, "Visible text and controls wrap within their containers").toEqual([]);
-         |                                                                              ^
-      63 | }
-      64 |
-      65 | export async function reachable(control: Locator) {
-        at geometry (<candidate-worktree>\e2e\lab-04\action-layout-helpers.ts:62:78)
-        at <candidate-worktree>\e2e\lab-04\review-closeout.spec.ts:105:5
-
-    Error Context: test-results\lab-04-review-closeout-T-3-ca4dc-ned-list-pixels-at-834x1112\error-context.md
-
-
-
-
-(node:45696) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
-(Use `node --trace-warnings ...` to show where the warning was created)
-[55/77] e2e\lab-04\review-closeout.spec.ts:122:1 › T-38 real In Progress Ticket blocker and keyboard View Actions Taken handoff
-e2e\lab-04\review-closeout.spec.ts:122:1 › T-38 real In Progress Ticket blocker and keyboard View Actions Taken handoff
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[56/77] e2e\lab-04\review-closeout.spec.ts:162:1 › T-37/T-38 real Microsoft Edge Admin navigation and History at genuine 200% tab zoom
-e2e\lab-04\review-closeout.spec.ts:162:1 › T-37/T-38 real Microsoft Edge Admin navigation and History at genuine 200% tab zoom
-Owned Edge context closed, zoom restored and profile removed.
-
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-  3) e2e\lab-04\review-closeout.spec.ts:162:1 › T-37/T-38 real Microsoft Edge Admin navigation and History at genuine 200% tab zoom 
-
-    Error: expect(locator).toBeFocused() failed
-
-    Locator: getByRole('navigation', { name: 'Primary navigation', exact: true }).getByRole('link', { name: 'User Management', exact: true })
-    Expected: focused
-    Timeout: 10000ms
-    Error: element(s) not found
-
-    Call log:
-      - Expect "toBeFocused" getByRole('navigation', { name: 'Primary navigation', exact: true }).getByRole('link', { name: 'User Management', exact: true }) with timeout 10000ms
-      - waiting for getByRole('navigation', { name: 'Primary navigation', exact: true }).getByRole('link', { name: 'User Management', exact: true })
-
-
-       at lab-04\action-layout-helpers.ts:90
-
-      88 |   // Programmatically choose the starting point, then verify real keyboard arrival.
-      89 |   await target.focus(); await page.keyboard.press("Tab"); await page.keyboard.press("Shift+Tab");
-    > 90 |   await expect(target).toBeFocused(); await reachable(target);
-         |                        ^
-      91 |   const styled = await target.evaluate((element) => { const s = getComputedStyle(element);
-      92 |     return s.outlineStyle !== "none" && parseFloat(s.outlineWidth) > 0 || s.boxShadow !== "none"; });
-      93 |   expect(styled, "Focused control has a visible computed focus treatment").toBe(true);
-        at keyboardFocus (<candidate-worktree>\e2e\lab-04\action-layout-helpers.ts:90:24)
-        at <candidate-worktree>\e2e\lab-04\review-closeout.spec.ts:191:7
-
-    Error Context: test-results\lab-04-review-closeout-T-3-29e7c-ory-at-genuine-200-tab-zoom\error-context.md
-
-
-(node:55472) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
-(Use `node --trace-warnings ...` to show where the warning was created)
-
-
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/1440x900-cancel.json', LF will be replaced 
-by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/1440x900-complete.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/1440x900-create.json', LF will be replaced 
-by CRLF the next time Git touches it
-
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/1440x900-edit.json', LF will be replaced 
-by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/1440x900-history.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/1440x900-my-actions.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/1440x900-reassign.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/1440x900-requester-actions.json', LF will 
-be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/1440x900-staff-actions.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/390x844-clear-confirmation.json', LF will 
-be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/390x844-create.json', LF will be replaced 
-by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/390x844-history.json', LF will be replaced 
-by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/390x844-my-actions.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/390x844-requester-actions.json', LF will 
-be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/390x844-staff-actions.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/834x1112-create.json', LF will be replaced 
-by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/834x1112-history.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/834x1112-my-actions.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/834x1112-requester-actions.json', LF will 
-be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/834x1112-staff-actions.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-create-errors.json', LF will 
-be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-history-error.json', LF will 
-be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-my-actions-focus.json', LF 
-will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-create.json', LF will be replaced 
-by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-history.json', LF will be replaced 
-by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-my-actions.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-staff-actions.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/dashboard-navigation/admin-zoom-200.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/dashboard-navigation/requester-desktop.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'artifacts/lab-04/screenshots/dashboard-navigation/staff-mobile-menu.json', LF will be 
-replaced by CRLF the next time Git touches it
-warning: in the working copy of 'e2e/lab-04/review-closeout.spec.ts', LF will be replaced by CRLF the next time Git 
-touches it
-[57/77] e2e\lab-04\staff-dashboard.spec.ts:68:1 › Staff Dashboard: known aggregates, all Ticket widget destinations, pagination and preview detail
-e2e\lab-04\staff-dashboard.spec.ts:68:1 › Staff Dashboard: known aggregates, all Ticket widget destinations, pagination and preview detail
-Issue48 Chromium 153.0.8010.12; real authenticated API/PostgreSQL reads.
-
-Issue48 guarded live schema, exact read preservation, zero owned fixtures/sessions and client disconnection verified.
-
-[58/77] e2e\lab-04\staff-dashboard.spec.ts:105:1 › Staff Dashboard: Administrator parity and actor with no assignments retains global data
-e2e\lab-04\staff-dashboard.spec.ts:105:1 › Staff Dashboard: Administrator parity and actor with no assignments retains global data
-Issue48 guarded live schema, exact read preservation, zero owned fixtures/sessions and client disconnection verified.
-
-[59/77] e2e\lab-04\staff-dashboard.spec.ts:118:1 › Staff Dashboard: seven filters Apply/Clear, reload/back/forward, empty and old CLOSED matches
-e2e\lab-04\staff-dashboard.spec.ts:118:1 › Staff Dashboard: seven filters Apply/Clear, reload/back/forward, empty and old CLOSED matches
-Issue48 guarded live schema, exact read preservation, zero owned fixtures/sessions and client disconnection verified.
-
-[60/77] e2e\lab-04\staff-dashboard.spec.ts:141:1 › Staff Dashboard: actor-assigned unfinished/completed drill-downs and selected Action browser focus
-e2e\lab-04\staff-dashboard.spec.ts:141:1 › Staff Dashboard: actor-assigned unfinished/completed drill-downs and selected Action browser focus
-Issue48 guarded live schema, exact read preservation, zero owned fixtures/sessions and client disconnection verified.
-
-[61/77] e2e\lab-04\staff-dashboard.spec.ts:167:1 › Staff Dashboard: unauthenticated/Requester denial and late real response after logout
-e2e\lab-04\staff-dashboard.spec.ts:167:1 › Staff Dashboard: unauthenticated/Requester denial and late real response after logout
-Issue48 guarded live schema, exact read preservation, zero owned fixtures/sessions and client disconnection verified.
-
-[62/77] e2e\lab-04\staff-dashboard.spec.ts:196:35 › Staff Dashboard layout and keyboard: 390x844
-e2e\lab-04\staff-dashboard.spec.ts:196:35 › Staff Dashboard layout and keyboard: 390x844
-Issue48 guarded live schema, exact read preservation, zero owned fixtures/sessions and client disconnection verified.
-
-[63/77] e2e\lab-04\staff-dashboard.spec.ts:196:35 › Staff Dashboard layout and keyboard: 834x1112
-e2e\lab-04\staff-dashboard.spec.ts:196:35 › Staff Dashboard layout and keyboard: 834x1112
-Issue48 guarded live schema, exact read preservation, zero owned fixtures/sessions and client disconnection verified.
-
-[64/77] e2e\lab-04\staff-dashboard.spec.ts:196:35 › Staff Dashboard layout and keyboard: 1440x900
-e2e\lab-04\staff-dashboard.spec.ts:196:35 › Staff Dashboard layout and keyboard: 1440x900
-Issue48 guarded live schema, exact read preservation, zero owned fixtures/sessions and client disconnection verified.
-
-[65/77] e2e\lab-04\staff-dashboard.spec.ts:248:1 › Staff accessibility: logical keyboard order, textual statuses, honest announcements and real Retry
-e2e\lab-04\staff-dashboard.spec.ts:248:1 › Staff accessibility: logical keyboard order, textual statuses, honest announcements and real Retry
-Issue48 guarded live schema, exact read preservation, zero owned fixtures/sessions and client disconnection verified.
-
-[66/77] e2e\lab-04\staff-dashboard.spec.ts:270:1 › Staff accessibility: computed text, control-boundary and keyboard-focus contrast
-e2e\lab-04\staff-dashboard.spec.ts:270:1 › Staff accessibility: computed text, control-boundary and keyboard-focus contrast
-Issue48 guarded live schema, exact read preservation, zero owned fixtures/sessions and client disconnection verified.
-
-[67/77] e2e\lab-04\staff-dashboard.spec.ts:295:1 › Staff accessibility: genuine 200% tab zoom reflows filters, cards, Retry, pagination and selected Action
-e2e\lab-04\staff-dashboard.spec.ts:295:1 › Staff accessibility: genuine 200% tab zoom reflows filters, cards, Retry, pagination and selected Action
-Issue48 native tab zoom verified: {"factors":[1,2,1],"before":{"width":1424,"height":805,"pinchScale":1},"zoomed":{"width":712,"height":402,"pinchScale":1},"restored":{"width":1424,"height":805,"pinchScale":1}}
-
-Issue45 owned zoom context closed, tab zoom restored and temporary profile removed.
-
-Issue48 guarded live schema, exact read preservation, zero owned fixtures/sessions and client disconnection verified.
-
-[68/77] e2e\lab-04\ticket-resolution.spec.ts:142:1 › T-18/19/20/48/53: unfinished work, non-assignee completion, resolution and paired reopening
-e2e\lab-04\ticket-resolution.spec.ts:142:1 › T-18/19/20/48/53: unfinished work, non-assignee completion, resolution and paired reopening
-Workflow46 environment: browser=chromium; version=153.0.8010.12; node=v24.14.0; platform=win32; real React/Express/PostgreSQL; no business-endpoint mocks.
-
-Workflow46 browser diagnostics: pageErrors=0; warningMessages=0; no warning text/credentials recorded.
-
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[69/77] e2e\lab-04\ticket-resolution.spec.ts:213:1 › T-19/48/53: Administrator resolves and closes zero Actions with empty and whitespace optional reasons
-e2e\lab-04\ticket-resolution.spec.ts:213:1 › T-19/48/53: Administrator resolves and closes zero Actions with empty and whitespace optional reasons
-Workflow46 environment: browser=chromium; version=153.0.8010.12; node=v24.14.0; platform=win32; real React/Express/PostgreSQL; no business-endpoint mocks.
-
-Workflow46 browser diagnostics: pageErrors=0; warningMessages=0; no warning text/credentials recorded.
-
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[70/77] e2e\lab-04\ticket-resolution.spec.ts:230:1 › T-21/48/53/55: real mixed-cohort cancellation, immutable terminal work and safe owned Requester history
-e2e\lab-04\ticket-resolution.spec.ts:230:1 › T-21/48/53/55: real mixed-cohort cancellation, immutable terminal work and safe owned Requester history
-Workflow46 environment: browser=chromium; version=153.0.8010.12; node=v24.14.0; platform=win32; real React/Express/PostgreSQL; no business-endpoint mocks.
-
-Workflow46 browser diagnostics: pageErrors=0; warningMessages=0; no warning text/credentials recorded.
-
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[71/77] e2e\lab-04\ticket-resolution.spec.ts:286:1 › T-19/48/53: all independently cancelled Actions permit resolution and closure without fabricated completion
-e2e\lab-04\ticket-resolution.spec.ts:286:1 › T-19/48/53: all independently cancelled Actions permit resolution and closure without fabricated completion
-Workflow46 environment: browser=chromium; version=153.0.8010.12; node=v24.14.0; platform=win32; real React/Express/PostgreSQL; no business-endpoint mocks.
-
-Workflow46 browser diagnostics: pageErrors=0; warningMessages=0; no warning text/credentials recorded.
-
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[72/77] e2e\lab-04\ticket-resolution.spec.ts:298:1 › T-17/48/53: two real actor contexts preserve stale draft until explicit refresh and deliberate retry
-e2e\lab-04\ticket-resolution.spec.ts:298:1 › T-17/48/53: two real actor contexts preserve stale draft until explicit refresh and deliberate retry
-Workflow46 environment: browser=chromium; version=153.0.8010.12; node=v24.14.0; platform=win32; real React/Express/PostgreSQL; no business-endpoint mocks.
-
-Workflow46 browser diagnostics: pageErrors=0; warningMessages=0; no warning text/credentials recorded.
-
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[73/77] e2e\lab-04\ticket-workflow-layout.spec.ts:162:3 › T-37 workflow forms, confirmations and literal history at 390x844
-e2e\lab-04\ticket-workflow-layout.spec.ts:162:3 › T-37 workflow forms, confirmations and literal history at 390x844
-Workflow layout diagnostics: pageErrors=0; browserWarnings=0; real endpoints; no transport faults.
-
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[74/77] e2e\lab-04\ticket-workflow-layout.spec.ts:162:3 › T-37 workflow forms, confirmations and literal history at 834x1112
-e2e\lab-04\ticket-workflow-layout.spec.ts:162:3 › T-37 workflow forms, confirmations and literal history at 834x1112
-Workflow layout diagnostics: pageErrors=0; browserWarnings=0; real endpoints; no transport faults.
-
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[75/77] e2e\lab-04\ticket-workflow-layout.spec.ts:162:3 › T-37 workflow forms, confirmations and literal history at 1440x900
-e2e\lab-04\ticket-workflow-layout.spec.ts:162:3 › T-37 workflow forms, confirmations and literal history at 1440x900
-Workflow layout diagnostics: pageErrors=0; browserWarnings=0; real endpoints; no transport faults.
-
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[76/77] e2e\lab-04\ticket-workflow-layout.spec.ts:187:1 › T-38 labelled reasons, invalid feedback, dialog trapping and real blocker keyboard handoff
-e2e\lab-04\ticket-workflow-layout.spec.ts:187:1 › T-38 labelled reasons, invalid feedback, dialog trapping and real blocker keyboard handoff
-Workflow layout diagnostics: pageErrors=0; browserWarnings=0; real endpoints; no transport faults.
-
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-[77/77] e2e\lab-04\ticket-workflow-layout.spec.ts:211:1 › T-38 genuine 200% tab zoom preserves workflow controls, blockers, history and focus
-e2e\lab-04\ticket-workflow-layout.spec.ts:211:1 › T-38 genuine 200% tab zoom preserves workflow controls, blockers, history and focus
-Workflow tab zoom verified 1.0 -> 2.0 -> 1.0; CSS viewport changed; pinch scale stayed 1; helper closes/removes the owned profile.
-
-Issue45 owned zoom context closed, tab zoom restored and temporary profile removed.
-
-Workflow layout diagnostics: pageErrors=0; browserWarnings=0; real endpoints; no transport faults.
-
-Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
-
-  3 failed
-    e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844 
-    e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112 
-    e2e\lab-04\review-closeout.spec.ts:162:1 › T-37/T-38 real Microsoft Edge Admin navigation and History at genuine 200% tab zoom 
-  74 passed (5.4m)
+
+> toktickit-e2e@1.0.0 test:e2e
+> playwright test
+
+Seeded create-only registered Lab 3/4 fixtures; operational records preserved.
+npm.cmd : warning: in the working copy of 'e2e/lab-04/review-closeout.spec.ts', LF will be replaced by CRLF the next
+time Git touches it
+At line:2 char:400
++ ... T_CLOSEOUT_ATTEMPT='normal-1'; & npm.cmd run test:e2e *> $log; $code= ...
++                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (warning: in the... Git touches it:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+
+Running 77 tests using 1 worker
+
+(node:55460) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/77] e2e\lab-02\requester-ticket-flow.spec.ts:266:1 › E2E-01 authenticates and restores a Requester session, creates an owned Ticket, and opens its read-only Detail
+(node:53196) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and
+will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2/77] e2e\lab-02\requester-ticket-flow.spec.ts:391:1 › E2E-01 shows required-field and approved invalid-file feedback
+[3/77] e2e\lab-02\requester-ticket-flow.spec.ts:428:1 › E2E-01 exercises applied search, filters, sorting, pagination, and reset behavior
+[4/77] e2e\lab-02\requester-ticket-flow.spec.ts:515:1 › E2E-02 and E2E-03 complete the owned Attachment lifecycle and enforce ownership isolation
+[5/77] e2e\lab-02\requester-ticket-flow.spec.ts:647:1 › E2E-01 shows a safe API failure and retries without stale data
+[6/77] e2e\lab-02\requester-ticket-flow.spec.ts:692:1 › E2E-04 keeps every Lab 2 screen usable at desktop, tablet, and mobile sizes
+[7/77] e2e\lab-03\authentication.spec.ts:17:1 › E2E-01 authenticates, forces rotation, preserves reload, and logs out
+[8/77] e2e\lab-03\authorization.spec.ts:33:1 › E2E-05 enforces direct navigation, API role, ownership, and Internal Note isolation
+[9/77] e2e\lab-03\requester-regression.spec.ts:23:1 › E2E-02 retains the complete Requester workflow under session identity
+[10/77] e2e\lab-03\responsive.spec.ts:439:3 › RESP-01 captures all six major screens at 390x844
+[11/77] e2e\lab-03\responsive.spec.ts:439:3 › RESP-01 captures all six major screens at 834x1112
+[12/77] e2e\lab-03\responsive.spec.ts:439:3 › RESP-01 captures all six major screens at 1440x900
+[13/77] e2e\lab-03\responsive.spec.ts:508:1 › RESP-02 keeps all six screens operable with keyboard and accessibility semantics at genuine 200% browser tab zoom
+[14/77] e2e\lab-03\staff-ticket-flow.spec.ts:21:1 › E2E-03 completes the Staff operational Ticket workflow
+[15/77] e2e\lab-03\user-administration.spec.ts:14:1 › E2E-04 manages Users, safety conflicts, and historical ownership
+[16/77] e2e\lab-03\user-administration.spec.ts:117:1 › E2E-04 resets another User and enforces mandatory password change
+[17/77] e2e\lab-04\accessibility.spec.ts:6:1 › T-38 labelled Action forms, validation, keyboard traps, clearing confirmation and focus return
+e2e\lab-04\accessibility.spec.ts:6:1 › T-38 labelled Action forms, validation, keyboard traps, clearing confirmation and focus return
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[18/77] e2e\lab-04\accessibility.spec.ts:59:1 › T-38 read-only history, real-read loading and transport error announcements, filter labels and sampled contrast
+e2e\lab-04\accessibility.spec.ts:59:1 › T-38 read-only history, real-read loading and transport error announcements, filter labels and sampled contrast
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[19/77] e2e\lab-04\accessibility.spec.ts:105:1 › T-38 genuine 200% tab zoom reflows Actions, dialogs, history and My Actions; zoom/profile restored
+e2e\lab-04\accessibility.spec.ts:105:1 › T-38 genuine 200% tab zoom reflows Actions, dialogs, history and My Actions; zoom/profile restored
+Issue45 owned zoom context closed, tab zoom restored and temporary profile removed.
+
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[20/77] e2e\lab-04\actions-taken-flow.spec.ts:54:1 › T-48 AC-03/06/08/09/10/13/45: non-assignee Staff creates, edits, starts and completes a delegated Action
+e2e\lab-04\actions-taken-flow.spec.ts:54:1 › T-48 AC-03/06/08/09/10/13/45: non-assignee Staff creates, edits, starts and completes a delegated Action
+Issue45 browser=chromium; real authentication/React/Express/PostgreSQL; no endpoint mocks.
+
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[21/77] e2e\lab-04\actions-taken-flow.spec.ts:122:1 › T-48 AC-02/03/39/45: owned Requester reads inert Actions/history and logout prevents foreign data retention
+e2e\lab-04\actions-taken-flow.spec.ts:122:1 › T-48 AC-02/03/39/45: owned Requester reads inert Actions/history and logout prevents foreign data retention
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[22/77] e2e\lab-04\actions-taken-flow.spec.ts:175:1 › T-48/T-50 AC-08/41/45: cancelling follow-up clear preserves state; confirmed clear sends null and retains history
+e2e\lab-04\actions-taken-flow.spec.ts:175:1 › T-48/T-50 AC-08/41/45: cancelling follow-up clear preserves state; confirmed clear sends null and retains history
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[23/77] e2e\lab-04\actions-taken-flow.spec.ts:219:1 › T-48/T-54 AC-03/44: My assigned Actions uses real actor filtering/pagination, selected detail and safe Dashboard handoff
+e2e\lab-04\actions-taken-flow.spec.ts:219:1 › T-48/T-54 AC-03/44: My assigned Actions uses real actor filtering/pagination, selected detail and safe Dashboard handoff
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[24/77] e2e\lab-04\actions-taken-flow.spec.ts:285:60 › Navigation #53: IT_STAFF filtered Dashboard -> paged My Actions -> off-page detail -> real Dashboard return
+e2e\lab-04\actions-taken-flow.spec.ts:285:60 › Navigation #53: IT_STAFF filtered Dashboard -> paged My Actions -> off-page detail -> real Dashboard return
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[25/77] e2e\lab-04\actions-taken-flow.spec.ts:285:60 › Navigation #53: ADMINISTRATOR filtered Dashboard -> paged My Actions -> off-page detail -> real Dashboard return
+e2e\lab-04\actions-taken-flow.spec.ts:285:60 › Navigation #53: ADMINISTRATOR filtered Dashboard -> paged My Actions -> off-page detail -> real Dashboard return
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[26/77] e2e\lab-04\actions-taken-flow.spec.ts:363:61 › Navigation #53: real Administrator demotion revokes the open worker session and clears Action/Dashboard views
+e2e\lab-04\actions-taken-flow.spec.ts:363:61 › Navigation #53: real Administrator demotion revokes the open worker session and clears Action/Dashboard views
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[27/77] e2e\lab-04\actions-taken-flow.spec.ts:363:61 › Navigation #53: real Administrator deactivation revokes the open worker session and clears Action/Dashboard views
+e2e\lab-04\actions-taken-flow.spec.ts:363:61 › Navigation #53: real Administrator deactivation revokes the open worker session and clears Action/Dashboard views
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[28/77] e2e\lab-04\actions-taken-flow.spec.ts:427:1 › Issue49 T-48: late picker ineligibility is real initial-read 400, retained draft and deliberate recovery
+e2e\lab-04\actions-taken-flow.spec.ts:427:1 › Issue49 T-48: late picker ineligibility is real initial-read 400, retained draft and deliberate recovery
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[29/77] e2e\lab-04\actions-taken-flow.spec.ts:516:1 › Issue49 T-36: committed EDIT response loss explicitly replays original payload and both optimistic tokens
+e2e\lab-04\actions-taken-flow.spec.ts:516:1 › Issue49 T-36: committed EDIT response loss explicitly replays original payload and both optimistic tokens
+Issue49 controlled committed-response loss/replay verified; browser=chromium 153.0.8010.12; original payload/key/version/parent token retained; one committed edit.
+
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[30/77] e2e\lab-04\dashboards.spec.ts:74:1 › Requester Dashboard: real metrics, all four drill-downs, stable ordering, pagination and owned detail
+e2e\lab-04\dashboards.spec.ts:74:1 › Requester Dashboard: real metrics, all four drill-downs, stable ordering, pagination and owned detail
+Issue47 browser=chromium 153.0.8010.12; real browser/API/PostgreSQL; no successful response mocks.
+
+Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
+
+[31/77] e2e\lab-04\dashboards.spec.ts:133:1 › Requester Dashboard: all six filters, URL reload/back, intersections and retained list drafts
+e2e\lab-04\dashboards.spec.ts:133:1 › Requester Dashboard: all six filters, URL reload/back, intersections and retained list drafts
+Issue47 sort diagnostic: real descending response and rendered page match after response readiness; no inherited assertion changed.
+
+Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
+
+[32/77] e2e\lab-04\dashboards.spec.ts:195:1 › Requester Dashboard: real logout/login isolates accounts, owned details and operational-role denials
+e2e\lab-04\dashboards.spec.ts:195:1 › Requester Dashboard: real logout/login isolates accounts, owned details and operational-role denials
+Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
+
+[33/77] e2e\lab-04\dashboards.spec.ts:238:1 › Requester Dashboard: genuine empty state and one injected transport failure recover through real reads
+e2e\lab-04\dashboards.spec.ts:238:1 › Requester Dashboard: genuine empty state and one injected transport failure recover through real reads
+Issue47 recovery: exactly one browser transport abort; subsequent successful Dashboard response is the real API, not a simulated backend outage.
+
+Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
+
+[34/77] e2e\lab-04\dashboards.spec.ts:273:1 › Requester Dashboard: an owned old CLOSED Ticket matches base filters while every widget is zero
+e2e\lab-04\dashboards.spec.ts:273:1 › Requester Dashboard: an owned old CLOSED Ticket matches base filters while every widget is zero
+Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
+
+[35/77] e2e\lab-04\dashboards.spec.ts:309:3 › Navigation #53: REQUESTER real landing, root/login/brand and preserved role routes
+
+e2e\lab-04\dashboards.spec.ts:309:3 › Navigation #53: REQUESTER real landing, root/login/brand and preserved role
+routes
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-create-errors.json', LF will
+be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-history-error.json', LF will
+be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-my-actions-focus.json', LF
+will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-create.json', LF will be replaced
+by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-history.json', LF will be replaced
+by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-my-actions.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-staff-actions.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/lab-04/review-closeout.spec.ts', LF will be replaced by CRLF the next time Git
+touches it
+Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
+
+[36/77] e2e\lab-04\dashboards.spec.ts:356:3 › Navigation #53: REQUESTER real mandatory password rotation precedes Dashboard
+e2e\lab-04\dashboards.spec.ts:356:3 › Navigation #53: REQUESTER real mandatory password rotation precedes Dashboard
+Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
+
+[37/77] e2e\lab-04\dashboards.spec.ts:309:3 › Navigation #53: IT_STAFF real landing, root/login/brand and preserved role routes
+e2e\lab-04\dashboards.spec.ts:309:3 › Navigation #53: IT_STAFF real landing, root/login/brand and preserved role routes
+Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
+
+[38/77] e2e\lab-04\dashboards.spec.ts:356:3 › Navigation #53: IT_STAFF real mandatory password rotation precedes Dashboard
+e2e\lab-04\dashboards.spec.ts:356:3 › Navigation #53: IT_STAFF real mandatory password rotation precedes Dashboard
+Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
+
+[39/77] e2e\lab-04\dashboards.spec.ts:309:3 › Navigation #53: ADMINISTRATOR real landing, root/login/brand and preserved role routes
+e2e\lab-04\dashboards.spec.ts:309:3 › Navigation #53: ADMINISTRATOR real landing, root/login/brand and preserved role routes
+Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
+
+[40/77] e2e\lab-04\dashboards.spec.ts:356:3 › Navigation #53: ADMINISTRATOR real mandatory password rotation precedes Dashboard
+e2e\lab-04\dashboards.spec.ts:356:3 › Navigation #53: ADMINISTRATOR real mandatory password rotation precedes Dashboard
+Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
+
+[41/77] e2e\lab-04\dashboards.spec.ts:393:1 › Navigation #53: mobile menu and genuine 200% tab zoom retain reachable Dashboard navigation
+e2e\lab-04\dashboards.spec.ts:393:1 › Navigation #53: mobile menu and genuine 200% tab zoom retain reachable Dashboard
+navigation
+
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-create-errors.json', LF will
+be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-history-error.json', LF will
+be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-my-actions-focus.json', LF
+will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-create.json', LF will be replaced
+by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-history.json', LF will be replaced
+by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-my-actions.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-staff-actions.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/dashboard-navigation/requester-desktop.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/lab-04/review-closeout.spec.ts', LF will be replaced by CRLF the next time Git
+touches it
+
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-create-errors.json', LF will
+be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-history-error.json', LF will
+be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-my-actions-focus.json', LF
+will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-create.json', LF will be replaced
+by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-history.json', LF will be replaced
+by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-my-actions.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-staff-actions.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/dashboard-navigation/requester-desktop.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/dashboard-navigation/staff-mobile-menu.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/lab-04/review-closeout.spec.ts', LF will be replaced by CRLF the next time Git
+touches it
+Issue53 genuine tab zoom 1 -> 2 -> 1; native initial viewport 1424x805; pinch scale remains 1.
+
+Issue45 owned zoom context closed, tab zoom restored and temporary profile removed.
+
+Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
+
+[42/77] e2e\lab-04\dashboards.spec.ts:433:1 › Navigation #53: held real Dashboard response cannot survive logout, revoked session or another identity
+e2e\lab-04\dashboards.spec.ts:433:1 › Navigation #53: held real Dashboard response cannot survive logout, revoked session or another identity
+Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
+
+[43/77] e2e\lab-04\dashboards.spec.ts:467:1 › Navigation #53: Create Ticket alone is active on /tickets/new
+e2e\lab-04\dashboards.spec.ts:467:1 › Navigation #53: Create Ticket alone is active on /tickets/new
+Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
+
+[44/77] e2e\lab-04\requester-dashboard-layout.spec.ts:251:3 › T-37 Requester Dashboard and drill-down reflow at 390x844
+e2e\lab-04\requester-dashboard-layout.spec.ts:251:3 › T-37 Requester Dashboard and drill-down reflow at 390x844
+Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
+
+[45/77] e2e\lab-04\requester-dashboard-layout.spec.ts:251:3 › T-37 Requester Dashboard and drill-down reflow at 834x1112
+e2e\lab-04\requester-dashboard-layout.spec.ts:251:3 › T-37 Requester Dashboard and drill-down reflow at 834x1112
+Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
+
+[46/77] e2e\lab-04\requester-dashboard-layout.spec.ts:251:3 › T-37 Requester Dashboard and drill-down reflow at 1440x900
+e2e\lab-04\requester-dashboard-layout.spec.ts:251:3 › T-37 Requester Dashboard and drill-down reflow at 1440x900
+Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
+
+[47/77] e2e\lab-04\requester-dashboard-layout.spec.ts:269:1 › T-38 Requester Dashboard keyboard labels, focus, Apply/Clear, loading and safe Retry
+e2e\lab-04\requester-dashboard-layout.spec.ts:269:1 › T-38 Requester Dashboard keyboard labels, focus, Apply/Clear, loading and safe Retry
+Issue47 layout: one controlled browser transport abort after settled mount; Retry uses real authoritative API data.
+
+Issue47 representative computed contrast: {"metric":6.63,"summary":15.43,"apply":6.63}; sampled solid backgrounds only, no certification.
+
+Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
+
+[48/77] e2e\lab-04\requester-dashboard-layout.spec.ts:295:1 › T-38 Requester Dashboard genuine 200% tab zoom preserves filters, Retry and drill-down
+e2e\lab-04\requester-dashboard-layout.spec.ts:295:1 › T-38 Requester Dashboard genuine 200% tab zoom preserves filters, Retry and drill-down
+Issue47 layout: one controlled browser transport abort after settled mount; Retry uses real authoritative API data.
+
+Issue47 genuine tab zoom: {"factors":[1,2,1],"before":{"width":1424,"height":805,"pinchScale":1},"zoomed":{"width":712,"height":402,"pinchScale":1},"restored":{"width":1424,"height":805,"pinchScale":1}}; extension-controlled, no viewport/device/CSS/pinch substitution.
+
+Issue45 owned zoom context closed, tab zoom restored and temporary profile removed.
+
+Issue47 dedicated live target, read-only domain preservation and owned fixture/session cleanup verified.
+
+[49/77] e2e\lab-04\responsive.spec.ts:7:3 › T-37 Actions screens and all dialogs reflow at 390x844
+e2e\lab-04\responsive.spec.ts:7:3 › T-37 Actions screens and all dialogs reflow at 390x844
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[50/77] e2e\lab-04\responsive.spec.ts:7:3 › T-37 Actions screens and all dialogs reflow at 834x1112
+e2e\lab-04\responsive.spec.ts:7:3 › T-37 Actions screens and all dialogs reflow at 834x1112
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[51/77] e2e\lab-04\responsive.spec.ts:7:3 › T-37 Actions screens and all dialogs reflow at 1440x900
+e2e\lab-04\responsive.spec.ts:7:3 › T-37 Actions screens and all dialogs reflow at 1440x900
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[52/77] e2e\lab-04\review-closeout.spec.ts:54:1 › T-38 Staff History controlled read failure and real Retry with keyboard focus
+e2e\lab-04\review-closeout.spec.ts:54:1 › T-38 Staff History controlled read failure and real Retry with keyboard focus
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[53/77] e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844
+e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+  1) e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844
+
+    Error: Visible text and controls wrap within their containers
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "FORM ",
+    + ]
+
+       at lab-04\action-layout-helpers.ts:62
+
+      60 |        !["INPUT", "TEXTAREA", "SELECT"].includes(element.tagName) && element.scrollWidth > element.clientWidth + 1);
+      61 |   }).map((element) => `${element.tagName} ${element.id}`));
+    > 62 |   expect(overflow, "Visible text and controls wrap within their containers").toEqual([]);
+         |                                                                              ^
+      63 | }
+      64 |
+      65 | export async function reachable(control: Locator) {
+        at geometry (<candidate-worktree>\e2e\lab-04\action-layout-helpers.ts:62:78)
+        at <candidate-worktree>\e2e\lab-04\review-closeout.spec.ts:105:5
+
+    Error Context: test-results\lab-04-review-closeout-T-3-a7abd-wned-list-pixels-at-390x844\error-context.md
+
+
+(node:59840) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[54/77] e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
+e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+  2) e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
+
+    Error: Visible text and controls wrap within their containers
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "FORM ",
+    + ]
+
+       at lab-04\action-layout-helpers.ts:62
+
+      60 |        !["INPUT", "TEXTAREA", "SELECT"].includes(element.tagName) && element.scrollWidth > element.clientWidth + 1);
+      61 |   }).map((element) => `${element.tagName} ${element.id}`));
+    > 62 |   expect(overflow, "Visible text and controls wrap within their containers").toEqual([]);
+         |                                                                              ^
+      63 | }
+      64 |
+      65 | export async function reachable(control: Locator) {
+        at geometry (<candidate-worktree>\e2e\lab-04\action-layout-helpers.ts:62:78)
+        at <candidate-worktree>\e2e\lab-04\review-closeout.spec.ts:105:5
+
+    Error Context: test-results\lab-04-review-closeout-T-3-ca4dc-ned-list-pixels-at-834x1112\error-context.md
+
+
+
+
+(node:45696) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[55/77] e2e\lab-04\review-closeout.spec.ts:122:1 › T-38 real In Progress Ticket blocker and keyboard View Actions Taken handoff
+e2e\lab-04\review-closeout.spec.ts:122:1 › T-38 real In Progress Ticket blocker and keyboard View Actions Taken handoff
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[56/77] e2e\lab-04\review-closeout.spec.ts:162:1 › T-37/T-38 real Microsoft Edge Admin navigation and History at genuine 200% tab zoom
+e2e\lab-04\review-closeout.spec.ts:162:1 › T-37/T-38 real Microsoft Edge Admin navigation and History at genuine 200% tab zoom
+Owned Edge context closed, zoom restored and profile removed.
+
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+  3) e2e\lab-04\review-closeout.spec.ts:162:1 › T-37/T-38 real Microsoft Edge Admin navigation and History at genuine 200% tab zoom
+
+    Error: expect(locator).toBeFocused() failed
+
+    Locator: getByRole('navigation', { name: 'Primary navigation', exact: true }).getByRole('link', { name: 'User Management', exact: true })
+    Expected: focused
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeFocused" getByRole('navigation', { name: 'Primary navigation', exact: true }).getByRole('link', { name: 'User Management', exact: true }) with timeout 10000ms
+      - waiting for getByRole('navigation', { name: 'Primary navigation', exact: true }).getByRole('link', { name: 'User Management', exact: true })
+
+
+       at lab-04\action-layout-helpers.ts:90
+
+      88 |   // Programmatically choose the starting point, then verify real keyboard arrival.
+      89 |   await target.focus(); await page.keyboard.press("Tab"); await page.keyboard.press("Shift+Tab");
+    > 90 |   await expect(target).toBeFocused(); await reachable(target);
+         |                        ^
+      91 |   const styled = await target.evaluate((element) => { const s = getComputedStyle(element);
+      92 |     return s.outlineStyle !== "none" && parseFloat(s.outlineWidth) > 0 || s.boxShadow !== "none"; });
+      93 |   expect(styled, "Focused control has a visible computed focus treatment").toBe(true);
+        at keyboardFocus (<candidate-worktree>\e2e\lab-04\action-layout-helpers.ts:90:24)
+        at <candidate-worktree>\e2e\lab-04\review-closeout.spec.ts:191:7
+
+    Error Context: test-results\lab-04-review-closeout-T-3-29e7c-ory-at-genuine-200-tab-zoom\error-context.md
+
+
+(node:55472) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/1440x900-cancel.json', LF will be replaced
+by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/1440x900-complete.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/1440x900-create.json', LF will be replaced
+by CRLF the next time Git touches it
+
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/1440x900-edit.json', LF will be replaced
+by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/1440x900-history.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/1440x900-my-actions.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/1440x900-reassign.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/1440x900-requester-actions.json', LF will
+be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/1440x900-staff-actions.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/390x844-clear-confirmation.json', LF will
+be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/390x844-create.json', LF will be replaced
+by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/390x844-history.json', LF will be replaced
+by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/390x844-my-actions.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/390x844-requester-actions.json', LF will
+be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/390x844-staff-actions.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/834x1112-create.json', LF will be replaced
+by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/834x1112-history.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/834x1112-my-actions.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/834x1112-requester-actions.json', LF will
+be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/834x1112-staff-actions.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-create-errors.json', LF will
+be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-history-error.json', LF will
+be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/accessibility-my-actions-focus.json', LF
+will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-create.json', LF will be replaced
+by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-history.json', LF will be replaced
+by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-my-actions.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/actions-taken/zoom200-staff-actions.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/dashboard-navigation/admin-zoom-200.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/dashboard-navigation/requester-desktop.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'artifacts/lab-04/screenshots/dashboard-navigation/staff-mobile-menu.json', LF will be
+replaced by CRLF the next time Git touches it
+warning: in the working copy of 'e2e/lab-04/review-closeout.spec.ts', LF will be replaced by CRLF the next time Git
+touches it
+[57/77] e2e\lab-04\staff-dashboard.spec.ts:68:1 › Staff Dashboard: known aggregates, all Ticket widget destinations, pagination and preview detail
+e2e\lab-04\staff-dashboard.spec.ts:68:1 › Staff Dashboard: known aggregates, all Ticket widget destinations, pagination and preview detail
+Issue48 Chromium 153.0.8010.12; real authenticated API/PostgreSQL reads.
+
+Issue48 guarded live schema, exact read preservation, zero owned fixtures/sessions and client disconnection verified.
+
+[58/77] e2e\lab-04\staff-dashboard.spec.ts:105:1 › Staff Dashboard: Administrator parity and actor with no assignments retains global data
+e2e\lab-04\staff-dashboard.spec.ts:105:1 › Staff Dashboard: Administrator parity and actor with no assignments retains global data
+Issue48 guarded live schema, exact read preservation, zero owned fixtures/sessions and client disconnection verified.
+
+[59/77] e2e\lab-04\staff-dashboard.spec.ts:118:1 › Staff Dashboard: seven filters Apply/Clear, reload/back/forward, empty and old CLOSED matches
+e2e\lab-04\staff-dashboard.spec.ts:118:1 › Staff Dashboard: seven filters Apply/Clear, reload/back/forward, empty and old CLOSED matches
+Issue48 guarded live schema, exact read preservation, zero owned fixtures/sessions and client disconnection verified.
+
+[60/77] e2e\lab-04\staff-dashboard.spec.ts:141:1 › Staff Dashboard: actor-assigned unfinished/completed drill-downs and selected Action browser focus
+e2e\lab-04\staff-dashboard.spec.ts:141:1 › Staff Dashboard: actor-assigned unfinished/completed drill-downs and selected Action browser focus
+Issue48 guarded live schema, exact read preservation, zero owned fixtures/sessions and client disconnection verified.
+
+[61/77] e2e\lab-04\staff-dashboard.spec.ts:167:1 › Staff Dashboard: unauthenticated/Requester denial and late real response after logout
+e2e\lab-04\staff-dashboard.spec.ts:167:1 › Staff Dashboard: unauthenticated/Requester denial and late real response after logout
+Issue48 guarded live schema, exact read preservation, zero owned fixtures/sessions and client disconnection verified.
+
+[62/77] e2e\lab-04\staff-dashboard.spec.ts:196:35 › Staff Dashboard layout and keyboard: 390x844
+e2e\lab-04\staff-dashboard.spec.ts:196:35 › Staff Dashboard layout and keyboard: 390x844
+Issue48 guarded live schema, exact read preservation, zero owned fixtures/sessions and client disconnection verified.
+
+[63/77] e2e\lab-04\staff-dashboard.spec.ts:196:35 › Staff Dashboard layout and keyboard: 834x1112
+e2e\lab-04\staff-dashboard.spec.ts:196:35 › Staff Dashboard layout and keyboard: 834x1112
+Issue48 guarded live schema, exact read preservation, zero owned fixtures/sessions and client disconnection verified.
+
+[64/77] e2e\lab-04\staff-dashboard.spec.ts:196:35 › Staff Dashboard layout and keyboard: 1440x900
+e2e\lab-04\staff-dashboard.spec.ts:196:35 › Staff Dashboard layout and keyboard: 1440x900
+Issue48 guarded live schema, exact read preservation, zero owned fixtures/sessions and client disconnection verified.
+
+[65/77] e2e\lab-04\staff-dashboard.spec.ts:248:1 › Staff accessibility: logical keyboard order, textual statuses, honest announcements and real Retry
+e2e\lab-04\staff-dashboard.spec.ts:248:1 › Staff accessibility: logical keyboard order, textual statuses, honest announcements and real Retry
+Issue48 guarded live schema, exact read preservation, zero owned fixtures/sessions and client disconnection verified.
+
+[66/77] e2e\lab-04\staff-dashboard.spec.ts:270:1 › Staff accessibility: computed text, control-boundary and keyboard-focus contrast
+e2e\lab-04\staff-dashboard.spec.ts:270:1 › Staff accessibility: computed text, control-boundary and keyboard-focus contrast
+Issue48 guarded live schema, exact read preservation, zero owned fixtures/sessions and client disconnection verified.
+
+[67/77] e2e\lab-04\staff-dashboard.spec.ts:295:1 › Staff accessibility: genuine 200% tab zoom reflows filters, cards, Retry, pagination and selected Action
+e2e\lab-04\staff-dashboard.spec.ts:295:1 › Staff accessibility: genuine 200% tab zoom reflows filters, cards, Retry, pagination and selected Action
+Issue48 native tab zoom verified: {"factors":[1,2,1],"before":{"width":1424,"height":805,"pinchScale":1},"zoomed":{"width":712,"height":402,"pinchScale":1},"restored":{"width":1424,"height":805,"pinchScale":1}}
+
+Issue45 owned zoom context closed, tab zoom restored and temporary profile removed.
+
+Issue48 guarded live schema, exact read preservation, zero owned fixtures/sessions and client disconnection verified.
+
+[68/77] e2e\lab-04\ticket-resolution.spec.ts:142:1 › T-18/19/20/48/53: unfinished work, non-assignee completion, resolution and paired reopening
+e2e\lab-04\ticket-resolution.spec.ts:142:1 › T-18/19/20/48/53: unfinished work, non-assignee completion, resolution and paired reopening
+Workflow46 environment: browser=chromium; version=153.0.8010.12; node=v24.14.0; platform=win32; real React/Express/PostgreSQL; no business-endpoint mocks.
+
+Workflow46 browser diagnostics: pageErrors=0; warningMessages=0; no warning text/credentials recorded.
+
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[69/77] e2e\lab-04\ticket-resolution.spec.ts:213:1 › T-19/48/53: Administrator resolves and closes zero Actions with empty and whitespace optional reasons
+e2e\lab-04\ticket-resolution.spec.ts:213:1 › T-19/48/53: Administrator resolves and closes zero Actions with empty and whitespace optional reasons
+Workflow46 environment: browser=chromium; version=153.0.8010.12; node=v24.14.0; platform=win32; real React/Express/PostgreSQL; no business-endpoint mocks.
+
+Workflow46 browser diagnostics: pageErrors=0; warningMessages=0; no warning text/credentials recorded.
+
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[70/77] e2e\lab-04\ticket-resolution.spec.ts:230:1 › T-21/48/53/55: real mixed-cohort cancellation, immutable terminal work and safe owned Requester history
+e2e\lab-04\ticket-resolution.spec.ts:230:1 › T-21/48/53/55: real mixed-cohort cancellation, immutable terminal work and safe owned Requester history
+Workflow46 environment: browser=chromium; version=153.0.8010.12; node=v24.14.0; platform=win32; real React/Express/PostgreSQL; no business-endpoint mocks.
+
+Workflow46 browser diagnostics: pageErrors=0; warningMessages=0; no warning text/credentials recorded.
+
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[71/77] e2e\lab-04\ticket-resolution.spec.ts:286:1 › T-19/48/53: all independently cancelled Actions permit resolution and closure without fabricated completion
+e2e\lab-04\ticket-resolution.spec.ts:286:1 › T-19/48/53: all independently cancelled Actions permit resolution and closure without fabricated completion
+Workflow46 environment: browser=chromium; version=153.0.8010.12; node=v24.14.0; platform=win32; real React/Express/PostgreSQL; no business-endpoint mocks.
+
+Workflow46 browser diagnostics: pageErrors=0; warningMessages=0; no warning text/credentials recorded.
+
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[72/77] e2e\lab-04\ticket-resolution.spec.ts:298:1 › T-17/48/53: two real actor contexts preserve stale draft until explicit refresh and deliberate retry
+e2e\lab-04\ticket-resolution.spec.ts:298:1 › T-17/48/53: two real actor contexts preserve stale draft until explicit refresh and deliberate retry
+Workflow46 environment: browser=chromium; version=153.0.8010.12; node=v24.14.0; platform=win32; real React/Express/PostgreSQL; no business-endpoint mocks.
+
+Workflow46 browser diagnostics: pageErrors=0; warningMessages=0; no warning text/credentials recorded.
+
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[73/77] e2e\lab-04\ticket-workflow-layout.spec.ts:162:3 › T-37 workflow forms, confirmations and literal history at 390x844
+e2e\lab-04\ticket-workflow-layout.spec.ts:162:3 › T-37 workflow forms, confirmations and literal history at 390x844
+Workflow layout diagnostics: pageErrors=0; browserWarnings=0; real endpoints; no transport faults.
+
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[74/77] e2e\lab-04\ticket-workflow-layout.spec.ts:162:3 › T-37 workflow forms, confirmations and literal history at 834x1112
+e2e\lab-04\ticket-workflow-layout.spec.ts:162:3 › T-37 workflow forms, confirmations and literal history at 834x1112
+Workflow layout diagnostics: pageErrors=0; browserWarnings=0; real endpoints; no transport faults.
+
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[75/77] e2e\lab-04\ticket-workflow-layout.spec.ts:162:3 › T-37 workflow forms, confirmations and literal history at 1440x900
+e2e\lab-04\ticket-workflow-layout.spec.ts:162:3 › T-37 workflow forms, confirmations and literal history at 1440x900
+Workflow layout diagnostics: pageErrors=0; browserWarnings=0; real endpoints; no transport faults.
+
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[76/77] e2e\lab-04\ticket-workflow-layout.spec.ts:187:1 › T-38 labelled reasons, invalid feedback, dialog trapping and real blocker keyboard handoff
+e2e\lab-04\ticket-workflow-layout.spec.ts:187:1 › T-38 labelled reasons, invalid feedback, dialog trapping and real blocker keyboard handoff
+Workflow layout diagnostics: pageErrors=0; browserWarnings=0; real endpoints; no transport faults.
+
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[77/77] e2e\lab-04\ticket-workflow-layout.spec.ts:211:1 › T-38 genuine 200% tab zoom preserves workflow controls, blockers, history and focus
+e2e\lab-04\ticket-workflow-layout.spec.ts:211:1 › T-38 genuine 200% tab zoom preserves workflow controls, blockers, history and focus
+Workflow tab zoom verified 1.0 -> 2.0 -> 1.0; CSS viewport changed; pinch scale stayed 1; helper closes/removes the owned profile.
+
+Issue45 owned zoom context closed, tab zoom restored and temporary profile removed.
+
+Workflow layout diagnostics: pageErrors=0; browserWarnings=0; real endpoints; no transport faults.
+
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+  3 failed
+    e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844
+    e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
+    e2e\lab-04\review-closeout.spec.ts:162:1 › T-37/T-38 real Microsoft Edge Admin navigation and History at genuine 200% tab zoom
+  74 passed (5.4m)
