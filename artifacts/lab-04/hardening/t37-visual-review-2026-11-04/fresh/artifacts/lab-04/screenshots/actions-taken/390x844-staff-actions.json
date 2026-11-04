@@ -1,0 +1,19 @@
+{
+  "screenshot": "390x844-staff-actions.png",
+  "date": "2026-11-04 04:21:37",
+  "timezone": "Asia/Bangkok",
+  "testedCommit": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+  "browser": "Chromium",
+  "browserVersion": "HeadlessChrome/153.0.8010.12",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "viewportMeaning": "Configured CSS viewport at 100% zoom",
+  "role": "IT_STAFF",
+  "screenState": "Ticket Actions long content and distinct identities",
+  "zoomFactor": 1,
+  "zoomMethod": "unmodified browser zoom",
+  "syntheticDataOnly": true,
+  "visualInspection": "Pending manual inspection"
+}

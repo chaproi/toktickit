@@ -1,0 +1,11 @@
+{
+  "observedAt": "2026-11-04T10:08:20.569Z",
+  "source": "Retained execution-tool output; private probe output filename was subsequently reused for post-diagnostic check, which has its own actual timestamp",
+  "guardPassed": true,
+  "normalSchemaRemoved": true,
+  "unchangedExistingSchemas": 2,
+  "unchangedTables": 30,
+  "unchangedPasswordAndSessionRows": true,
+  "idleTransactions": 0,
+  "advisoryLocks": 0
+}

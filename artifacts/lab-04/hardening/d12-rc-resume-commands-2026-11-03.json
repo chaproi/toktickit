@@ -1,0 +1,903 @@
+{
+  "date": "2026-11-03",
+  "scope": "isolated proposed D12 candidate resume; not accepted",
+  "candidateHead": "20eec1e97da5eac65ee118ca117920cf80555c72",
+  "initialCleanup": {
+    "at": "2026-11-03T13:53:29.376Z",
+    "guardVerified": true,
+    "liveTargetMatches": true,
+    "distinctOperationalDatabase": true,
+    "ownedSchemas": 0,
+    "otherConnections": 0,
+    "idleTransactions": 0,
+    "advisoryLocks": 0,
+    "sessions": 0,
+    "faultFunctions": 0,
+    "ownedRelations": 0,
+    "ownedFunctions": 0
+  },
+  "beforeComprehensiveCleanup": {
+    "at": "2026-11-03T14:43:21.355Z",
+    "allAboveCountersZero": true
+  },
+  "remotePreflight": {
+    "authenticatedReadSucceeded": true,
+    "originalBranchSha": "535a2e5426ffe263630e44b763779050a95ab436",
+    "candidateAbsent": true
+  },
+  "attempts": [
+    {
+      "label": "12-domain-resume",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-04/command-session.api.test.ts",
+        "tests/lab-04/independent-action-create.api.test.ts",
+        "tests/lab-04/action-commit-recovery.api.test.ts",
+        "tests/lab-03/admin-concurrency.api.test.ts"
+      ],
+      "started": "2026-11-03T13:53:41.8222217Z",
+      "finished": "2026-11-03T13:54:47.8224800Z",
+      "exit": 1,
+      "seconds": 66.0063091,
+      "sourceProvenance": "c6775c0 with evolving pending production/test bytes; subsequently committed in525d76e/20eec1e. Not exact-run clean HEAD."
+    },
+    {
+      "label": "13-resource-coordination-corrected",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-03/admin-concurrency.api.test.ts",
+        "tests/lab-03/staff-ticket-workflow.api.test.ts",
+        "tests/lab-03/staff-ticket-ownership.api.test.ts"
+      ],
+      "started": "2026-11-03T13:55:29.2805449Z",
+      "finished": "2026-11-03T13:56:07.9020152Z",
+      "exit": 0,
+      "seconds": 38.6319975,
+      "sourceProvenance": "c6775c0 with evolving pending production/test bytes; subsequently committed in525d76e/20eec1e. Not exact-run clean HEAD."
+    },
+    {
+      "label": "14-action-session-receipts",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-04/command-session.api.test.ts",
+        "tests/lab-04/command-replay-footprint.api.test.ts",
+        "tests/lab-04/command-coordination.integration.test.ts",
+        "tests/lab-04/actions-concurrency.api.test.ts",
+        "tests/lab-04/action-idempotency.api.test.ts",
+        "tests/lab-04/action-idempotency-recovery.integration.test.ts",
+        "tests/lab-04/action-eligibility.api.test.ts",
+        "tests/lab-03/concurrency.api.test.ts",
+        "tests/lab-04/receipt-recovery.unit.test.ts"
+      ],
+      "started": "2026-11-03T13:56:28.6321402Z",
+      "finished": "2026-11-03T13:59:21.0506845Z",
+      "exit": 0,
+      "seconds": 172.42052339999998,
+      "sourceProvenance": "c6775c0 with evolving pending production/test bytes; subsequently committed in525d76e/20eec1e. Not exact-run clean HEAD."
+    },
+    {
+      "label": "15-mixed-writers-snapshots",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-04/ticket-workflow.api.test.ts",
+        "tests/lab-03/ownership-eligibility-races.api.test.ts",
+        "tests/lab-03/requester-mutation-concurrency.api.test.ts",
+        "tests/lab-03/auth.api.test.ts",
+        "tests/lab-03/auth-security.api.test.ts",
+        "tests/lab-03/authorization.api.test.ts",
+        "tests/lab-03/password-change.api.test.ts",
+        "tests/lab-03/comments-notes.api.test.ts",
+        "tests/lab-03/attachments.api.test.ts",
+        "tests/lab-04/dashboard-snapshot.integration.test.ts",
+        "tests/lab-04/seed.integration.test.ts"
+      ],
+      "started": "2026-11-03T14:34:09.4487912Z",
+      "finished": "2026-11-03T14:37:00.5895288Z",
+      "exit": 0,
+      "seconds": 171.14375289999998,
+      "sourceProvenance": "c6775c0 with evolving pending production/test bytes; subsequently committed in525d76e/20eec1e. Not exact-run clean HEAD."
+    },
+    {
+      "label": "16-resume-types",
+      "arguments": [
+        "exec",
+        "--",
+        "tsc",
+        "--noEmit"
+      ],
+      "started": "2026-11-03T14:36:04.3530349Z",
+      "finished": "2026-11-03T14:36:19.4371410Z",
+      "exit": 0,
+      "seconds": 15.0861054,
+      "sourceProvenance": "c6775c0 with evolving pending production/test bytes; subsequently committed in525d76e/20eec1e. Not exact-run clean HEAD."
+    },
+    {
+      "label": "17-resource-contention-recovery",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-04/command-contention.api.test.ts",
+        "tests/lab-04/create-critical-path.integration.test.ts",
+        "tests/lab-04/write-admission-feasibility.integration.test.ts",
+        "tests/lab-04/write-admission-front-queue.integration.test.ts",
+        "tests/lab-04/prisma-client-lifecycle.integration.test.ts",
+        "tests/lab-04/attachment-recovery.integration.test.ts",
+        "tests/lab-04/attachment-cold-upload.integration.test.ts"
+      ],
+      "started": "2026-11-03T14:37:22.5673281Z",
+      "finished": "2026-11-03T14:39:37.7716047Z",
+      "exit": 1,
+      "seconds": 135.2114502,
+      "sourceProvenance": "c6775c0 with evolving pending production/test bytes; subsequently committed in525d76e/20eec1e. Not exact-run clean HEAD."
+    },
+    {
+      "label": "18-resource-observer-corrected",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-04/create-critical-path.integration.test.ts"
+      ],
+      "started": "2026-11-03T14:40:02.5424150Z",
+      "finished": "2026-11-03T14:40:57.8860556Z",
+      "exit": 0,
+      "seconds": 55.3511629,
+      "sourceProvenance": "c6775c0 with evolving pending production/test bytes; subsequently committed in525d76e/20eec1e. Not exact-run clean HEAD."
+    },
+    {
+      "label": "19-independent-create-edit",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-04/independent-action-create.api.test.ts"
+      ],
+      "started": "2026-11-03T14:41:27.2461668Z",
+      "finished": "2026-11-03T14:42:01.4060448Z",
+      "exit": 0,
+      "seconds": 34.1675219,
+      "sourceProvenance": "c6775c0 with evolving pending production/test bytes; subsequently committed in525d76e/20eec1e. Not exact-run clean HEAD."
+    },
+    {
+      "label": "20-final-candidate-types",
+      "arguments": [
+        "exec",
+        "--",
+        "tsc",
+        "--noEmit"
+      ],
+      "started": "2026-11-03T14:42:22.4657264Z",
+      "finished": "2026-11-03T14:42:42.3513020Z",
+      "exit": 0,
+      "seconds": 19.8933122,
+      "sourceProvenance": "c6775c0 with evolving pending production/test bytes; subsequently committed in525d76e/20eec1e. Not exact-run clean HEAD."
+    },
+    {
+      "label": "21-comprehensive-excluding-T47",
+      "arguments": [
+        "test",
+        "--",
+        "--exclude",
+        "tests/lab-04/performance-smoke.integration.test.ts"
+      ],
+      "started": "2026-11-03T14:43:36.4339136Z",
+      "finished": "2026-11-03T15:02:40.5247488Z",
+      "exit": 1,
+      "seconds": 1144.0963998,
+      "sourceProvenance": "Committed application/test source; documentation/evidence pending.",
+      "testedApplicationRevision": "20eec1e97da5eac65ee118ca117920cf80555c72"
+    },
+    {
+      "label": "22-projection-observer-corrected",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-04/action-create-projection.api.test.ts"
+      ],
+      "started": "2026-11-03T15:03:29.0439364Z",
+      "finished": "2026-11-03T15:03:43.5240798Z",
+      "exit": 0,
+      "seconds": 14.4836542,
+      "sourceProvenance": "Pending single test-observer correction subsequently committed unchanged as8b877b6.",
+      "testedApplicationRevision": "20eec1e97da5eac65ee118ca117920cf80555c72"
+    },
+    {
+      "label": "23-candidate-build",
+      "arguments": [
+        "run",
+        "build"
+      ],
+      "started": "2026-11-03T15:03:56.0760021Z",
+      "finished": "2026-11-03T15:04:10.4868629Z",
+      "exit": 0,
+      "seconds": 14.4145668,
+      "sourceProvenance": "Build source bytes unchanged; commit recorded during command. No clean-tree claim.",
+      "testedApplicationRevision": "8b877b6da7f1c624881761e259398736c346283e"
+    },
+    {
+      "label": "24-comprehensive-observer-confirmation",
+      "arguments": [
+        "test",
+        "--",
+        "--exclude",
+        "tests/lab-04/performance-smoke.integration.test.ts"
+      ],
+      "started": "2026-11-03T15:17:46.9874329Z",
+      "finished": "2026-11-03T15:30:12.3761453Z",
+      "exit": 0,
+      "seconds": 745.3927414999999,
+      "testedApplicationRevision": "8b877b6da7f1c624881761e259398736c346283e",
+      "sourceProvenance": "Committed application/test source; only documentation and new evidence pending. No publication-HEAD execution claim."
+    }
+  ],
+  "discovery": {
+    "head": "20eec1e97da5eac65ee118ca117920cf80555c72",
+    "configuration": "unchanged vitest.config.ts include tests/**/*.test.ts, fileParallelism=false",
+    "discoveredFiles": 97,
+    "executedCandidateFiles": 96,
+    "excludedOnly": [
+      "tests/lab-04/performance-smoke.integration.test.ts"
+    ],
+    "included": [
+      "tests/lab-01/categories.test.ts",
+      "tests/lab-01/health.test.ts",
+      "tests/lab-02/attachment-validation.unit.test.ts",
+      "tests/lab-02/attachments.api.test.ts",
+      "tests/lab-02/create-ticket.api.test.ts",
+      "tests/lab-02/error-handling.api.test.ts",
+      "tests/lab-02/my-tickets.api.test.ts",
+      "tests/lab-02/reference-data.api.test.ts",
+      "tests/lab-02/test-database.unit.test.ts",
+      "tests/lab-02/ticket-detail.api.test.ts",
+      "tests/lab-02/ticket-number.unit.test.ts",
+      "tests/lab-02/ticket-query.unit.test.ts",
+      "tests/lab-02/ticket-validation.unit.test.ts",
+      "tests/lab-03/admin-concurrency.api.test.ts",
+      "tests/lab-03/admin-user-validation.unit.test.ts",
+      "tests/lab-03/attachments.api.test.ts",
+      "tests/lab-03/auth-security.api.test.ts",
+      "tests/lab-03/auth-validation.unit.test.ts",
+      "tests/lab-03/auth.api.test.ts",
+      "tests/lab-03/authorization.api.test.ts",
+      "tests/lab-03/comments-notes.api.test.ts",
+      "tests/lab-03/concurrency.api.test.ts",
+      "tests/lab-03/csrf.api.test.ts",
+      "tests/lab-03/lab2-to-lab3-credentials.migration.test.ts",
+      "tests/lab-03/lab2-to-lab3-repeatability.migration.test.ts",
+      "tests/lab-03/lab2-to-lab3.migration.test.ts",
+      "tests/lab-03/login-origin.api.test.ts",
+      "tests/lab-03/login-throttle.unit.test.ts",
+      "tests/lab-03/migrated-ticket-claim.api.test.ts",
+      "tests/lab-03/mutation-gate.integration.test.ts",
+      "tests/lab-03/ownership-eligibility-races.api.test.ts",
+      "tests/lab-03/password-change.api.test.ts",
+      "tests/lab-03/password-verification-outage.api.test.ts",
+      "tests/lab-03/requester-mutation-concurrency.api.test.ts",
+      "tests/lab-03/requester-ownership.api.test.ts",
+      "tests/lab-03/requester-regression.unit.test.ts",
+      "tests/lab-03/requester-serialization-retry.api.test.ts",
+      "tests/lab-03/requester-tickets.api.test.ts",
+      "tests/lab-03/resolution-indication.api.test.ts",
+      "tests/lab-03/safe-errors.api.test.ts",
+      "tests/lab-03/seed.integration.test.ts",
+      "tests/lab-03/session-security.unit.test.ts",
+      "tests/lab-03/staff-queue-query.unit.test.ts",
+      "tests/lab-03/staff-queue.api.test.ts",
+      "tests/lab-03/staff-ticket-detail.api.test.ts",
+      "tests/lab-03/staff-ticket-ownership.api.test.ts",
+      "tests/lab-03/staff-ticket-workflow.api.test.ts",
+      "tests/lab-03/ticket-communication.unit.test.ts",
+      "tests/lab-03/ticket-workflow.unit.test.ts",
+      "tests/lab-03/user-role-history-security.api.test.ts",
+      "tests/lab-03/users-admin-history.api.test.ts",
+      "tests/lab-03/users-admin.api.test.ts",
+      "tests/lab-04/action-commit-recovery.api.test.ts",
+      "tests/lab-04/action-create-contention.integration.test.ts",
+      "tests/lab-04/action-create-projection.api.test.ts",
+      "tests/lab-04/action-eligibility.api.test.ts",
+      "tests/lab-04/action-history.api.test.ts",
+      "tests/lab-04/action-idempotency-recovery.integration.test.ts",
+      "tests/lab-04/action-idempotency.api.test.ts",
+      "tests/lab-04/action-validation.unit.test.ts",
+      "tests/lab-04/actions-authorization.api.test.ts",
+      "tests/lab-04/actions-concurrency.api.test.ts",
+      "tests/lab-04/actions-taken.api.test.ts",
+      "tests/lab-04/attachment-cold-upload.integration.test.ts",
+      "tests/lab-04/attachment-recovery.integration.test.ts",
+      "tests/lab-04/command-contention.api.test.ts",
+      "tests/lab-04/command-coordination.integration.test.ts",
+      "tests/lab-04/command-replay-footprint.api.test.ts",
+      "tests/lab-04/command-session.api.test.ts",
+      "tests/lab-04/complete-contention.integration.test.ts",
+      "tests/lab-04/create-contention-evidence.unit.test.ts",
+      "tests/lab-04/create-critical-path.integration.test.ts",
+      "tests/lab-04/create-predicate-mechanism.integration.test.ts",
+      "tests/lab-04/dashboard-dates.unit.test.ts",
+      "tests/lab-04/dashboard-drilldown.api.test.ts",
+      "tests/lab-04/dashboard-snapshot.integration.test.ts",
+      "tests/lab-04/independent-action-create.api.test.ts",
+      "tests/lab-04/lab3-to-lab4.migration.test.ts",
+      "tests/lab-04/legacy-actions.integration.test.ts",
+      "tests/lab-04/migration-recovery.integration.test.ts",
+      "tests/lab-04/prisma-client-lifecycle.integration.test.ts",
+      "tests/lab-04/prisma-runtime.unit.test.ts",
+      "tests/lab-04/receipt-recovery.unit.test.ts",
+      "tests/lab-04/requester-dashboard-security.api.test.ts",
+      "tests/lab-04/requester-dashboard.api.test.ts",
+      "tests/lab-04/seed.integration.test.ts",
+      "tests/lab-04/staff-actions.api.test.ts",
+      "tests/lab-04/staff-dashboard-security.api.test.ts",
+      "tests/lab-04/staff-dashboard.api.test.ts",
+      "tests/lab-04/staff-queue-pagination.api.test.ts",
+      "tests/lab-04/t47-diagnosis.integration.test.ts",
+      "tests/lab-04/t47-log-classification.unit.test.ts",
+      "tests/lab-04/ticket-reason-compatibility.migration.test.ts",
+      "tests/lab-04/ticket-workflow.api.test.ts",
+      "tests/lab-04/write-admission-feasibility.integration.test.ts",
+      "tests/lab-04/write-admission-front-queue.integration.test.ts"
+    ]
+  },
+  "nonTestAttempts": [
+    {
+      "scope": "redacted wait probe",
+      "outcome": "First inline Node diagnostic failed parsing shell quoting before database access; file-based correction returned empty activity and lock arrays."
+    },
+    {
+      "scope": "read-only discovery script",
+      "outcome": "First relative_to formatting failed; no tests ran. Corrected relative paths found97files,exactly1exclusion."
+    },
+    {
+      "scope": "local normative-status check",
+      "outcome": "Default Windows cp874 decoding failed on UTF8 document. Explicit strict UTF8 recheck passed; no source/test command affected."
+    }
+  ],
+  "sequencing": "Database workloads were sequential. Local TypeScript16 overlapped the tail of database run15; no benchmark or performance acceptance is inferred. All later checks started after prior database workload finished.",
+  "T47Executed": false,
+  "freshArtifactsAtResume": [
+    {
+      "path": "artifacts/lab-04/hardening/command-hot-resource-2026-11-03-77faf7cf.json",
+      "bytes": 136881,
+      "sha256": "7e00ab467c2e015857f399988e9dd4c2eba8009ec57d2bb3c958ab8217a1806e"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-critical-path-2026-11-03-263d839d.json",
+      "bytes": 2540580,
+      "sha256": "4cc7db5c6ae5c7c76e347c7ada7f3fff2cee86b0d8fda0471e24626eb3bd6048"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-critical-path-2026-11-03-df2a866c.json",
+      "bytes": 2556846,
+      "sha256": "3327776228033d3db3053998331c0ed69f5933b48a922ba91809175e8ed32bd4"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/front-queue-resource-2026-11-03-8304639a.json",
+      "bytes": 1330,
+      "sha256": "fdd05ce30a8f9e138e7c61022dce6626812ec37f514192d7f5911701d41ce42b"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/independent-create-red-2026-11-03-3ad3acc7.json",
+      "bytes": 940,
+      "sha256": "0d3f4d812036558120b72483cd5ed1f5e0c5481bb71248d9d39bf2607647c122"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/independent-create-red-2026-11-03-52964a8d.json",
+      "bytes": 942,
+      "sha256": "d30e65256a849303397f856b3ecabb414194c635951bf9c224ef55123327919c"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/independent-create-red-2026-11-03-d35a7dae.json",
+      "bytes": 921,
+      "sha256": "1844ce848da506a835039845073bf01a38205628feded52381c7b5824f1f3845"
+    },
+    {
+      "path": "artifacts/lab-04/hardening/write-admission-feasibility-2026-11-03-8e0ad4f8.json",
+      "bytes": 40368,
+      "sha256": "1d2eb3a822ed9f52de1c0b36e68e080b8586a903e7d42a8e9fc2fb38fbf1448f"
+    }
+  ],
+  "confirmation24": {
+    "revision": "8b877b6da7f1c624881761e259398736c346283e",
+    "status": "passed",
+    "files": 96,
+    "collected": 2101,
+    "executed": 2101,
+    "passed": 2101,
+    "failed": 0,
+    "skipped": 0,
+    "onlyExclusion": "tests/lab-04/performance-smoke.integration.test.ts"
+  },
+  "beforeConfirmationCleanup": {
+    "at": "2026-11-03T15:17:46.380Z",
+    "guardVerified": true,
+    "distinctOperationalDatabase": true,
+    "liveTargetMatches": true,
+    "allOwnedResourceCountersZero": true
+  },
+  "actualComprehensiveDiscovery": {
+    "files": 96,
+    "summedCases": 2101,
+    "exactlyMatchesPredeclared96Files": true,
+    "excludedT47Absent": true,
+    "fileCaseCounts": {
+      "tests/lab-04/dashboard-drilldown.api.test.ts": 90,
+      "tests/lab-04/action-validation.unit.test.ts": 527,
+      "tests/lab-04/ticket-workflow.api.test.ts": 220,
+      "tests/lab-04/requester-dashboard.api.test.ts": 34,
+      "tests/lab-04/staff-dashboard.api.test.ts": 28,
+      "tests/lab-04/seed.integration.test.ts": 16,
+      "tests/lab-04/actions-taken.api.test.ts": 199,
+      "tests/lab-02/attachments.api.test.ts": 42,
+      "tests/lab-04/staff-dashboard-security.api.test.ts": 39,
+      "tests/lab-04/actions-concurrency.api.test.ts": 53,
+      "tests/lab-04/migration-recovery.integration.test.ts": 21,
+      "tests/lab-04/write-admission-feasibility.integration.test.ts": 14,
+      "tests/lab-03/staff-queue.api.test.ts": 25,
+      "tests/lab-02/my-tickets.api.test.ts": 16,
+      "tests/lab-04/action-eligibility.api.test.ts": 50,
+      "tests/lab-04/attachment-recovery.integration.test.ts": 1,
+      "tests/lab-04/dashboard-snapshot.integration.test.ts": 4,
+      "tests/lab-04/requester-dashboard-security.api.test.ts": 16,
+      "tests/lab-04/legacy-actions.integration.test.ts": 4,
+      "tests/lab-04/action-create-contention.integration.test.ts": 1,
+      "tests/lab-04/staff-actions.api.test.ts": 106,
+      "tests/lab-04/t47-diagnosis.integration.test.ts": 1,
+      "tests/lab-03/authorization.api.test.ts": 5,
+      "tests/lab-04/attachment-cold-upload.integration.test.ts": 2,
+      "tests/lab-03/ownership-eligibility-races.api.test.ts": 22,
+      "tests/lab-04/staff-queue-pagination.api.test.ts": 19,
+      "tests/lab-03/requester-mutation-concurrency.api.test.ts": 10,
+      "tests/lab-04/action-commit-recovery.api.test.ts": 2,
+      "tests/lab-04/actions-authorization.api.test.ts": 96,
+      "tests/lab-04/create-critical-path.integration.test.ts": 1,
+      "tests/lab-04/write-admission-front-queue.integration.test.ts": 6,
+      "tests/lab-03/auth.api.test.ts": 16,
+      "tests/lab-04/complete-contention.integration.test.ts": 1,
+      "tests/lab-04/action-idempotency.api.test.ts": 47,
+      "tests/lab-03/migrated-ticket-claim.api.test.ts": 1,
+      "tests/lab-02/create-ticket.api.test.ts": 8,
+      "tests/lab-04/action-history.api.test.ts": 28,
+      "tests/lab-03/users-admin.api.test.ts": 7,
+      "tests/lab-04/independent-action-create.api.test.ts": 2,
+      "tests/lab-04/command-coordination.integration.test.ts": 6,
+      "tests/lab-04/ticket-reason-compatibility.migration.test.ts": 14,
+      "tests/lab-04/lab3-to-lab4.migration.test.ts": 2,
+      "tests/lab-03/requester-serialization-retry.api.test.ts": 9,
+      "tests/lab-02/ticket-detail.api.test.ts": 5,
+      "tests/lab-03/attachments.api.test.ts": 3,
+      "tests/lab-03/comments-notes.api.test.ts": 6,
+      "tests/lab-04/action-idempotency-recovery.integration.test.ts": 18,
+      "tests/lab-03/staff-ticket-workflow.api.test.ts": 5,
+      "tests/lab-03/staff-queue-query.unit.test.ts": 23,
+      "tests/lab-02/ticket-query.unit.test.ts": 8,
+      "tests/lab-03/staff-ticket-ownership.api.test.ts": 5,
+      "tests/lab-04/command-contention.api.test.ts": 1,
+      "tests/lab-04/command-session.api.test.ts": 7,
+      "tests/lab-03/admin-concurrency.api.test.ts": 4,
+      "tests/lab-02/error-handling.api.test.ts": 3,
+      "tests/lab-04/create-predicate-mechanism.integration.test.ts": 5,
+      "tests/lab-04/prisma-client-lifecycle.integration.test.ts": 4,
+      "tests/lab-03/safe-errors.api.test.ts": 4,
+      "tests/lab-03/password-verification-outage.api.test.ts": 4,
+      "tests/lab-03/requester-ownership.api.test.ts": 4,
+      "tests/lab-04/action-create-projection.api.test.ts": 2,
+      "tests/lab-03/lab2-to-lab3.migration.test.ts": 4,
+      "tests/lab-03/seed.integration.test.ts": 2,
+      "tests/lab-03/requester-tickets.api.test.ts": 3,
+      "tests/lab-03/password-change.api.test.ts": 3,
+      "tests/lab-02/test-database.unit.test.ts": 6,
+      "tests/lab-04/dashboard-dates.unit.test.ts": 12,
+      "tests/lab-03/lab2-to-lab3-repeatability.migration.test.ts": 1,
+      "tests/lab-03/resolution-indication.api.test.ts": 3,
+      "tests/lab-04/receipt-recovery.unit.test.ts": 29,
+      "tests/lab-03/session-security.unit.test.ts": 14,
+      "tests/lab-04/prisma-runtime.unit.test.ts": 12,
+      "tests/lab-03/mutation-gate.integration.test.ts": 3,
+      "tests/lab-03/users-admin-history.api.test.ts": 3,
+      "tests/lab-03/lab2-to-lab3-credentials.migration.test.ts": 6,
+      "tests/lab-03/csrf.api.test.ts": 5,
+      "tests/lab-03/ticket-workflow.unit.test.ts": 3,
+      "tests/lab-02/attachment-validation.unit.test.ts": 10,
+      "tests/lab-03/login-origin.api.test.ts": 12,
+      "tests/lab-02/ticket-validation.unit.test.ts": 4,
+      "tests/lab-04/command-replay-footprint.api.test.ts": 2,
+      "tests/lab-03/admin-user-validation.unit.test.ts": 3,
+      "tests/lab-03/requester-regression.unit.test.ts": 3,
+      "tests/lab-03/staff-ticket-detail.api.test.ts": 2,
+      "tests/lab-02/reference-data.api.test.ts": 5,
+      "tests/lab-03/auth-validation.unit.test.ts": 5,
+      "tests/lab-03/user-role-history-security.api.test.ts": 2,
+      "tests/lab-04/create-contention-evidence.unit.test.ts": 5,
+      "tests/lab-03/login-throttle.unit.test.ts": 4,
+      "tests/lab-03/auth-security.api.test.ts": 2,
+      "tests/lab-03/concurrency.api.test.ts": 1,
+      "tests/lab-04/t47-log-classification.unit.test.ts": 3,
+      "tests/lab-03/ticket-communication.unit.test.ts": 2,
+      "tests/lab-02/ticket-number.unit.test.ts": 3,
+      "tests/lab-01/health.test.ts": 1,
+      "tests/lab-01/categories.test.ts": 1
+    },
+    "vitestUnhandledSummary": false
+  },
+  "finalCleanup": {
+    "at": "2026-11-03T15:30:37.030Z",
+    "recheckAfterOwnedPrerequisiteRemoval": "2026-11-03T15:31:33.397Z",
+    "guardVerified": true,
+    "liveIdentityMatches": true,
+    "distinctOperationalDatabase": true,
+    "owned_schemas": 0,
+    "other_connections": 0,
+    "idle_transactions": 0,
+    "advisory_locks": 0,
+    "sessions": 0,
+    "owned_relations": 0,
+    "owned_functions": 0,
+    "owned_triggers": 0,
+    "owned_fixture_users": 0,
+    "ownedAppStorageProcesses": 0,
+    "newOwnedRecoveryDirectories": 0,
+    "settingsRestored": true,
+    "ownedDownloadedPrerequisitesRemoved": true,
+    "historicalPrivateLogsRetained": true
+  },
+  "T47Disposition": "Unchanged and still failed. No new benchmark justified by instrumented independent/hot-resource latency; no performance acceptance.",
+  "newEvidenceArtifactsFinal": [
+    {
+      "path": "artifacts/lab-04/hardening/analyze-d12-rc-contention-2026-11-03.py",
+      "sha256": "f274b5e2c5eeb3ab7f3db9395c7b66217ee77c63f9e8bebb33e6a05c7359c098",
+      "bytes": 4022
+    },
+    {
+      "path": "artifacts/lab-04/hardening/command-hot-resource-2026-11-03-2333d43e.json",
+      "sha256": "6cee79fe18e285fcd9e1ffea162d419563430273ebe63e18acc04386d955479c",
+      "bytes": 131668
+    },
+    {
+      "path": "artifacts/lab-04/hardening/command-hot-resource-2026-11-03-77faf7cf.json",
+      "sha256": "7e00ab467c2e015857f399988e9dd4c2eba8009ec57d2bb3c958ab8217a1806e",
+      "bytes": 136881
+    },
+    {
+      "path": "artifacts/lab-04/hardening/command-hot-resource-2026-11-03-9f97c38d.json",
+      "sha256": "8d538950385a10c3f68c81858bcfe9db8274bd2ef59b79200b08a77ac4fa2c42",
+      "bytes": 127279
+    },
+    {
+      "path": "artifacts/lab-04/hardening/complete-phases-2026-11-03-ae33040b.json",
+      "sha256": "811d30d0a22fe89b4f89200de3a5469705b357d4c8591156b56e5a6fd63fa743",
+      "bytes": 641858
+    },
+    {
+      "path": "artifacts/lab-04/hardening/complete-phases-2026-11-03-e394653c.json",
+      "sha256": "bfb8e6a2229ad1016658cafff8f371c842e09779654c46c2b9f8433276955acd",
+      "bytes": 641141
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-critical-path-2026-11-03-263d839d.json",
+      "sha256": "4cc7db5c6ae5c7c76e347c7ada7f3fff2cee86b0d8fda0471e24626eb3bd6048",
+      "bytes": 2540580
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-critical-path-2026-11-03-580b7328.json",
+      "sha256": "494c77acb79cedae657fe6318be7344560560962bfd5ab37fe93251931db5d00",
+      "bytes": 2572002
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-critical-path-2026-11-03-baafce1a.json",
+      "sha256": "98ee9f540a91538ff3653b402b9e215b15c00f3a3cfefecc1d1f877407b73ab0",
+      "bytes": 2556293
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-critical-path-2026-11-03-df2a866c.json",
+      "sha256": "3327776228033d3db3053998331c0ed69f5933b48a922ba91809175e8ed32bd4",
+      "bytes": 2556846
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-predicate-2026-11-03-receipt-default-07196490.json",
+      "sha256": "b9641e3c7f77201cf553ccd5b6035eae9a8f4270840e30088d1a5a41d69dec37",
+      "bytes": 841
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-predicate-2026-11-03-receipt-default-d28f519e.json",
+      "sha256": "a629be36a0003478856797f9d58b24846d8d6d0030f198f5d0e2230a0be94218",
+      "bytes": 841
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-predicate-2026-11-03-receipt-index-1c98b456.json",
+      "sha256": "36424fd90b0d3478b53cec2d8003c51ceed513f01a5bdb9c9c90fae477f53bd5",
+      "bytes": 883
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-predicate-2026-11-03-receipt-index-91973b22.json",
+      "sha256": "dc4575bda343f1ab40e529b4e3e5a37a62dec6fb786ddaa9655a962b3baaff57",
+      "bytes": 883
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-predicate-2026-11-03-receipt-no-negative-read-3b69003a.json",
+      "sha256": "a450ec8cc25052d40a0bd7adc9c845b62e42df52c0531e2838305a08c69e1946",
+      "bytes": 508
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-predicate-2026-11-03-receipt-no-negative-read-d11ffc02.json",
+      "sha256": "d3a44166c97f45211e5636ee8793867384a4658f0c793dd8a2beab377da5ca09",
+      "bytes": 508
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-predicate-2026-11-03-ticket-default-140d4e14.json",
+      "sha256": "840506243f849dd338b95cccaab5a543c416d8cf1bdc2f2e9d61fd8f0cc51335",
+      "bytes": 821
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-predicate-2026-11-03-ticket-default-c64eff3a.json",
+      "sha256": "fad45dd22cd7b71378565bb36f9d6cbf7c10a97d4cc4c5d6fcb109c6f0e0da35",
+      "bytes": 822
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-predicate-2026-11-03-ticket-index-6fb01af7.json",
+      "sha256": "08ef94152051d2787648664aa5089cec1dca61e2bfd0c9a13f2decc1b20601b2",
+      "bytes": 1070
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-predicate-2026-11-03-ticket-index-cd51205b.json",
+      "sha256": "0ff4a667db3520cc03d7ee7ee9132e94f2145aa6cc694d911609822eff9e3cfc",
+      "bytes": 1070
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-projection-2026-11-03-20df108e.json",
+      "sha256": "70684d676a50e0d48895c9ccf46fad9c352c0a8d93fca79028dd408969036349",
+      "bytes": 635
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-projection-2026-11-03-3ccd11ed.json",
+      "sha256": "d4c51a6408fcfde3e0e7c75c1c09faf0e4c1678c4a46d3a979c7ea6237feb6e2",
+      "bytes": 199
+    },
+    {
+      "path": "artifacts/lab-04/hardening/create-projection-2026-11-03-97d91d26.json",
+      "sha256": "bfb0f61b90ccd674f6c08ef424a561628c2eff3498f4fa687179d14b8907aea3",
+      "bytes": 635
+    },
+    {
+      "path": "artifacts/lab-04/hardening/d12-rc-candidate-2026-11-03.md",
+      "sha256": "c8d047b71d77287257da7973f16f17edd0a02381f2cda2415f35eb9ee69030e5",
+      "bytes": 13554
+    },
+    {
+      "path": "artifacts/lab-04/hardening/d12-rc-candidate-commands-2026-11-03.json",
+      "sha256": "f177b887e00f5f855d84d660cf4fb8c3bf441c6f6b2c0006d03b628f685e9efa",
+      "bytes": 11889
+    },
+    {
+      "path": "artifacts/lab-04/hardening/d12-rc-contention-analysis-2026-11-03.json",
+      "sha256": "a7c288b496cdad04680cf04f4033ceb38444e9e78d44f73651e265fdc0d488e6",
+      "bytes": 4791
+    },
+    {
+      "path": "artifacts/lab-04/hardening/d12-rc-resume-2026-11-03.md",
+      "sha256": "84a11e968ac23d25d0d860c3e6eb9753cccbb80568651de5f7073fedc7685651",
+      "bytes": 21981
+    },
+    {
+      "path": "artifacts/lab-04/hardening/front-queue-resource-2026-11-03-80d21004.json",
+      "sha256": "f9597f95ddb4b53e7307e9924ea0fefad25e4bbe045bbae25138053bf1c5e29f",
+      "bytes": 1320
+    },
+    {
+      "path": "artifacts/lab-04/hardening/front-queue-resource-2026-11-03-8304639a.json",
+      "sha256": "fdd05ce30a8f9e138e7c61022dce6626812ec37f514192d7f5911701d41ce42b",
+      "bytes": 1330
+    },
+    {
+      "path": "artifacts/lab-04/hardening/front-queue-resource-2026-11-03-ba827935.json",
+      "sha256": "b49bb13fea5edf47821d210740c40a80a53a8aaeea8b2c8c7deabded95622d54",
+      "bytes": 1330
+    },
+    {
+      "path": "artifacts/lab-04/hardening/independent-create-red-2026-11-03-053614ea.json",
+      "sha256": "0d3f4d812036558120b72483cd5ed1f5e0c5481bb71248d9d39bf2607647c122",
+      "bytes": 940
+    },
+    {
+      "path": "artifacts/lab-04/hardening/independent-create-red-2026-11-03-3ad3acc7.json",
+      "sha256": "0d3f4d812036558120b72483cd5ed1f5e0c5481bb71248d9d39bf2607647c122",
+      "bytes": 940
+    },
+    {
+      "path": "artifacts/lab-04/hardening/independent-create-red-2026-11-03-52964a8d.json",
+      "sha256": "d30e65256a849303397f856b3ecabb414194c635951bf9c224ef55123327919c",
+      "bytes": 942
+    },
+    {
+      "path": "artifacts/lab-04/hardening/independent-create-red-2026-11-03-b91a3ae6.json",
+      "sha256": "0d3f4d812036558120b72483cd5ed1f5e0c5481bb71248d9d39bf2607647c122",
+      "bytes": 940
+    },
+    {
+      "path": "artifacts/lab-04/hardening/independent-create-red-2026-11-03-d169a778.json",
+      "sha256": "d30e65256a849303397f856b3ecabb414194c635951bf9c224ef55123327919c",
+      "bytes": 942
+    },
+    {
+      "path": "artifacts/lab-04/hardening/independent-create-red-2026-11-03-d35a7dae.json",
+      "sha256": "1844ce848da506a835039845073bf01a38205628feded52381c7b5824f1f3845",
+      "bytes": 921
+    },
+    {
+      "path": "artifacts/lab-04/hardening/independent-create-red-2026-11-03-e9b67746.json",
+      "sha256": "d30e65256a849303397f856b3ecabb414194c635951bf9c224ef55123327919c",
+      "bytes": 942
+    },
+    {
+      "path": "artifacts/lab-04/hardening/t47-create-contention-2026-11-03-66f0cfa8.json",
+      "sha256": "2a2a0663f42efe833fbd2378e1a7d0392718287bc5954c9b78a42170d0c60ded",
+      "bytes": 79147
+    },
+    {
+      "path": "artifacts/lab-04/hardening/t47-create-contention-2026-11-03-ecdda2c6.json",
+      "sha256": "7ad89d530de2fe38f9a50bf91688d55ae67021c7f4ef957dfc650ad889225c65",
+      "bytes": 80112
+    },
+    {
+      "path": "artifacts/lab-04/hardening/t47-diagnostic-observations-2026-11-01-34d9e127.json",
+      "sha256": "65b7673abe86f6e47f30016b2e572f1662f61ed4df09fa5ef696fcdc2aa9da17",
+      "bytes": 147099
+    },
+    {
+      "path": "artifacts/lab-04/hardening/t47-diagnostic-observations-2026-11-01-35df25bd.json",
+      "sha256": "01c0958644f064189052fe3c9a4273d437baff2e86653927f6264b8d632b9d3b",
+      "bytes": 150381
+    },
+    {
+      "path": "artifacts/lab-04/hardening/write-admission-feasibility-2026-11-03-8e0ad4f8.json",
+      "sha256": "1d2eb3a822ed9f52de1c0b36e68e080b8586a903e7d42a8e9fc2fb38fbf1448f",
+      "bytes": 40368
+    },
+    {
+      "path": "artifacts/lab-04/hardening/write-admission-feasibility-2026-11-03-9304c10b.json",
+      "sha256": "15cd1855eda72628046828fc170624f9a15586009bc76d0df919c20217deefe0",
+      "bytes": 41225
+    },
+    {
+      "path": "artifacts/lab-04/hardening/write-admission-feasibility-2026-11-03-dc7e9b1b.json",
+      "sha256": "f29c02766e39ea75557346aa37b081f2f1953552d9eb97179fa933a2941929c9",
+      "bytes": 41187
+    }
+  ],
+  "applicationSourceManifest": [
+    {
+      "path": "server/prisma/seed.ts",
+      "sha256": "2424057d7d17dd84e672daf29c871bfef87d2caf6fcc77ac9c5ea12023d9bcc9"
+    },
+    {
+      "path": "server/src/app.ts",
+      "sha256": "2488b4785ef09346ae289401ec21296f8a63c7090c809054ab0dda5a4a67fb8e"
+    },
+    {
+      "path": "server/src/auth/auth-router.ts",
+      "sha256": "301c1ebc2173001e38f1d60c9813b948f78f0d2fe2152a0a2a91b536af61087f"
+    },
+    {
+      "path": "server/src/auth/command-session.ts",
+      "sha256": "89399185ac1fd4a80c14a05793c8331458421e2005fb930ce37920b83c9de5c5"
+    },
+    {
+      "path": "server/src/auth/eligibility-transaction.ts",
+      "sha256": "942ca23e06c420f43fb3f6a359b798c880c6c96f38ac0e6b52c07c22c9223797"
+    },
+    {
+      "path": "server/src/database/write-admission.ts",
+      "sha256": "0e34243851d264d3eeae8255bfc6af172402db90e49f4cd30af3881cf94a4449"
+    },
+    {
+      "path": "server/src/tickets/staff-ticket-service.ts",
+      "sha256": "68d6c22be84e3426c5d6e8cf00f3abefb968270953a7a8c46d853d852bd9ee54"
+    },
+    {
+      "path": "server/src/tickets/ticket-service.ts",
+      "sha256": "7fa860ef718aad5a04dc14f3a40ca06eb006e5db0905f0c727a952e2fcf4d49e"
+    },
+    {
+      "path": "server/src/users/admin-user-service.ts",
+      "sha256": "c79aa64b66a11bbe912cdcbd486d23cf08c738755f7f1c7aab2d33dd382c2063"
+    },
+    {
+      "path": "server/tests/lab-03/admin-concurrency.api.test.ts",
+      "sha256": "560e826a3e4a99135d0f8354da99bd4d9f4917cc99ff9907ad072ec54a4250bb"
+    },
+    {
+      "path": "server/tests/lab-03/issue33-test-helpers.ts",
+      "sha256": "11148f0feaa951e90ffb0ddb68c61841c082f8b54028ccd776c324ad518f4562"
+    },
+    {
+      "path": "server/tests/lab-04/action-commit-recovery.api.test.ts",
+      "sha256": "923aa04a538342b14e5c74055a150864671ad48b9033a82b6bbe33cf9b6fda6e"
+    },
+    {
+      "path": "server/tests/lab-04/action-create-contention.integration.test.ts",
+      "sha256": "293cdee7faefb7a6524cdf229cbe7311d4af4499cc67b44f891b477a5cd76d87"
+    },
+    {
+      "path": "server/tests/lab-04/action-create-projection.api.test.ts",
+      "sha256": "4f0b26f5fa1c3826e4ff8b859b347f73fbc0268d608466c42a1e72b5b72b1ea6"
+    },
+    {
+      "path": "server/tests/lab-04/action-retry-test-helpers.ts",
+      "sha256": "612798095ff254fd19618028d5d7259d995246d074b7343a00389f4c6ad0ae1a"
+    },
+    {
+      "path": "server/tests/lab-04/actions-concurrency-test-helpers.ts",
+      "sha256": "bf7eefc2f3fa2241268b36448fbefe3c90490781556f145960fe2ff446970c34"
+    },
+    {
+      "path": "server/tests/lab-04/actions-concurrency.api.test.ts",
+      "sha256": "b46ee8a40b1ad2e7ea71ac8b456b9e606fad63c1f4f2093efe4366ddc77378e6"
+    },
+    {
+      "path": "server/tests/lab-04/command-contention.api.test.ts",
+      "sha256": "4f58ea1c6f123af4a7d1a8536a73061920a678501bdc9927e7ac20652b60094f"
+    },
+    {
+      "path": "server/tests/lab-04/command-coordination-child.ts",
+      "sha256": "07d7871e27a2809487677539949469055003361f83dcb70d360c73ad121098d7"
+    },
+    {
+      "path": "server/tests/lab-04/command-coordination.integration.test.ts",
+      "sha256": "0825fac61e999b5635169b4502a874ac6ac8e67bf96b8616bbfcebb97a8467d9"
+    },
+    {
+      "path": "server/tests/lab-04/command-replay-footprint.api.test.ts",
+      "sha256": "7d5a84238ca3af04aba89a8899f0850f1f449d161b2ae071e49ac6b3b0665400"
+    },
+    {
+      "path": "server/tests/lab-04/command-session.api.test.ts",
+      "sha256": "88aa27a0ba95691f4cbb88ed00380780031d0914e81e4ce5b0e21714d870f5c0"
+    },
+    {
+      "path": "server/tests/lab-04/create-critical-path.integration.test.ts",
+      "sha256": "84069056d4ab16f6cfdf14912ee90319bd07f66efe87aafe11514d2bf29e7faa"
+    },
+    {
+      "path": "server/tests/lab-04/create-phase-observer.ts",
+      "sha256": "ca71f91c064472c6dab27889d2f1b6aa00487587bb73ee0cc4bd9b324f2a5c5e"
+    },
+    {
+      "path": "server/tests/lab-04/independent-action-create.api.test.ts",
+      "sha256": "0531451f00000a1657bf575ba37873876090a0e8858f6065a3c26961cf1d67f6"
+    },
+    {
+      "path": "server/tests/lab-04/receipt-recovery-test-helpers.ts",
+      "sha256": "7459b94915de4a63faefe831ba42a0865f92e97231862acc961a4f6a475ba97b"
+    },
+    {
+      "path": "server/tests/lab-04/staff-snapshot-coordination-test-helper.ts",
+      "sha256": "dc38728157ff681e6cfd0b35adc0b93fe46ec5a85b73d0da1699549f5e802716"
+    },
+    {
+      "path": "server/tests/lab-04/t47-diagnosis.integration.test.ts",
+      "sha256": "ef1d7c96da3ca0cf35ce82da457add97092202f33bbb44bf6d676cdf7558491f"
+    },
+    {
+      "path": "server/tests/lab-04/t47-diagnostic-observer.ts",
+      "sha256": "f782974189cb63210b4feb126df020e3d6f3faafe73231c55a4a7a8c312162eb"
+    },
+    {
+      "path": "server/tests/lab-04/workflow-race-test-helpers.ts",
+      "sha256": "6ecc1cb730e10e917e47fc12396ca91a990cfe0fce7711eaec703cf881f187b5"
+    },
+    {
+      "path": "server/tests/lab-04/write-admission-test-helpers.ts",
+      "sha256": "54941f4188a26dee4c78308d45c179f089a3b07da2f2de3e93d97651c0f1e051"
+    }
+  ],
+  "localValidation": {
+    "utf8ChangedFiles": 78,
+    "localLinksChecked": 130,
+    "protectedFilesUnchanged": 12,
+    "migrationsUnchanged": true,
+    "sourceMatchesTested8b877b6": true,
+    "rawJsonRedactionCheck": true,
+    "offlinePhaseAnalysisVerified": true,
+    "whitespacePassed": true
+  }
+}

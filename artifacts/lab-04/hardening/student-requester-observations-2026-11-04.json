@@ -1,0 +1,104 @@
+{
+  "date": "2026-11-04",
+  "timezone": "Asia/Bangkok",
+  "operator": "Student (chaproi), as reported in this chat",
+  "evidenceKind": "student-reported physical observations with supplied screenshots",
+  "status": "partial observation evidence; no whole-scenario, Issue or Product DoD acceptance",
+  "reviewedDocumentationHead": "caa9c9713039a4cb65763c4764ec6ff025943a36",
+  "applicationSource": {
+    "lastObservedLocalHead": "39eb0e5bb347bcc9392ffc0ef1dcf97e0d4499cf",
+    "qualification": "Earlier git-worktree screenshot; no subsequent HEAD/dirty-state/source-hash confirmation for the manual session."
+  },
+  "environment": {
+    "os": "Windows; exact version not supplied",
+    "screenReader": "Windows Narrator, student operated; exact version not supplied",
+    "chromeVersion": null,
+    "edgeVersion": null,
+    "browsers": "Chrome and Microsoft Edge; both Chromium based, no other-engine claim",
+    "url": "http://localhost:5173"
+  },
+  "observations": [
+    {
+      "id": "M-01",
+      "task": "Login field/button names and Show password",
+      "report": "Student confirmed hearing Email, Password and Sign in names ('2. อ่านได้หมด'); Show password name was separately confirmed ('ได้ยินด้วย').",
+      "qualification": "Earlier approximate 'added requie' and 'scan checked' retained as uncertain transcriptions. Exact required/state speech, summary wording and focus movement not independently established."
+    },
+    {
+      "id": "M-02",
+      "task": "Authentication and mandatory password change",
+      "report": "Student reported 'ได้ละ'; screenshot shows Alex Morgan Requester Dashboard and Password changed successfully.",
+      "qualification": "Successful local manual navigation, not a test-suite result; no credential value retained."
+    },
+    {
+      "id": "M-03",
+      "task": "Chrome Requester dashboard filters/control names, Outstanding drilldown/list and Ticket detail reading",
+      "reportVerbatim": "อ่านได้ครบ",
+      "report": "Student reported all requested reading tasks completed; screenshots show TKT-2026-00862 detail, public-comment controls, empty Actions and attachments.",
+      "qualification": "No exact spoken transcript. Focus visibility/navigation were requested but not separately described; filter submission, pagination, populated Actions and error/retry speech were not explicitly reported."
+    },
+    {
+      "id": "M-04",
+      "task": "Chrome actual 200% zoom",
+      "reportVerbatim": "อ่านได้ครบ",
+      "report": "Student reported reading complete; screenshot displays Chrome menu at 200% on Ticket detail TKT-2026-00307.",
+      "qualification": "Initially supplied in response to an Edge request; correctly classified as Chrome and never counted as Edge. Only visible region is screenshot evidence; no full-page focus/reflow certification."
+    },
+    {
+      "id": "M-05",
+      "task": "Edge representative Requester navigation, Narrator and 200% zoom",
+      "reportVerbatim": "ได้เหมือนกัน ผ่านยังเนี่ยฉันอยากส่งงานแล้ว",
+      "report": "Student gave a consolidated same-result report after instructions to traverse Dashboard → Outstanding → detail using Narrator/keyboard and inspect zoom/layout/focus. Screenshot confirms Edge at 200% on the Outstanding My Tickets list.",
+      "qualification": "Combined student report supports only the attempted representative route. Screenshot itself covers list top and zoom; exact speech, separate focus result, remaining page regions and exact versions are not supplied."
+    }
+  ],
+  "localSetup": {
+    "initialError": "HTTP 503 SERVICE_UNAVAILABLE; Prisma client initialized but LoginThrottle read failed P2021",
+    "observedPendingMigrations": [
+      "20260918060000_lab3_authentication_foundation",
+      "20261006000000_lab4_action_foundation",
+      "20261022000000_ticket_reason_compatibility"
+    ],
+    "instructions": "Guarded Lab3 migration, then gated remaining deploy and seed; no reset or direct unguarded Lab2-to-Lab3 upgrade",
+    "observedAfter": "Seed completed while skipping ambiguous legacy fixtures. Safe query showed five existing Requesters. Student then successfully authenticated using local migration entry for User 2 and changed password.",
+    "limits": "Full migration logs/postflight and independent cleanup not supplied. Server/browser are intentionally running for manual checks; zero-resource cleanup is not claimed. No production source correction was made in this publication."
+  },
+  "screenshotManifest": [
+    {
+      "file": "image(20261104-084103).png",
+      "sha256": "89f19854c221193b4357504ef1ea0f043552a8c037b891a4d6a18c57c9a43b03",
+      "observation": "M-02"
+    },
+    {
+      "file": "image(20261104-084500).png",
+      "sha256": "47d746f0480d1bcf1456ef17d560c20bc18c6a80d955b19ad0fe95e13ff2497a",
+      "observation": "M-03"
+    },
+    {
+      "file": "image(20261104-084506).png",
+      "sha256": "9cea99779f3a5d7f2646cf6dc1888f9c235dfc3373914db1fe6e7ef15ef7fd89",
+      "observation": "M-03"
+    },
+    {
+      "file": "image(20261104-084824).png",
+      "sha256": "54611ea2f2197f910fc4a54b4edb72c19c2ac3daf26fdf96d6a2a8179a90fe4a",
+      "observation": "M-04"
+    },
+    {
+      "file": "image(20261104-085059).png",
+      "sha256": "dad03dba1a9fe261c6db65732b19034cf31ed4388d1ebb93ded2076d13f1601e",
+      "observation": "M-05"
+    }
+  ],
+  "screenshotHandling": "Originals were supplied in the student chat; hashes computed on supplied files. Browser chrome includes unrelated personal UI, so originals are not newly published in this repository. Hashes are not a substitute for inspectable image content or audio.",
+  "remaining": [
+    "Staff/Admin role navigation, Staff Dashboard and My Actions → selected Action",
+    "Distinct Action validation/status/nested-confirmation/history/Ticket-blocker focus and speech",
+    "Explicit loading/error/Retry and unobserved filter/page actions",
+    "Exact OS/browser/Narrator versions and local source/dirty-state confirmation",
+    "T37 remaining major-screen/viewport coverage and minor History spacing/missing-image disposition",
+    "Explicit student/peer T47 disposition; human amendment/implementation and Issue49 acceptance",
+    "Issue50 reviewed main integration, required final-main evidence and nine-part PDF/reflection"
+  ],
+  "preserved": "All earlier results and failures, proposed verification method, unchanged <500ms targets and mixed ABBA evidence remain. No suite, benchmark, source/config/dependency change, merge, deployment, peer approval or checklist promotion occurs in this publication."
+}

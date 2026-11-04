@@ -1,0 +1,35 @@
+{
+    "screenshot":  "zoom200-metrics-lists.png",
+    "capturedAt":  "2026-10-24T05:51:48.875Z",
+    "executionHead":  "0475989409d8d5ff73d69a6a05e379decfe05289",
+    "pendingProductionFiles":  [
+
+                               ],
+    "browser":  "Chrome/153.0.8010.12",
+    "configuredViewport":  null,
+    "actualCSSViewport":  {
+                              "width":  712,
+                              "height":  402,
+                              "pinchScale":  1
+                          },
+    "role":  "REQUESTER",
+    "state":  "Genuine 2.0 tab zoom: readable metrics and long recent rows",
+    "zoomFactor":  2,
+    "zoomMethod":  "chrome.tabs.setZoom/getZoom via unchanged genuineZoom extension helper",
+    "captureScope":  "native viewport",
+    "syntheticDataOnly":  true,
+    "visualInspection":  "Inspected by Codex at original PNG resolution on 2026-10-24; no certified accessibility claim.",
+    "verifiedTabZoom":  2,
+    "before":  {
+                   "width":  1424,
+                   "height":  805,
+                   "pinchScale":  1
+               },
+    "zoomed":  {
+                   "width":  712,
+                   "height":  402,
+                   "pinchScale":  1
+               },
+    "inspectionObservation":  "Metric labels/counts and as-of/window text are legible; lower lists continue through normal page scrolling.",
+    "executionRun":  "Focused zoom capture run after capture-only addition; 1/1 passed"
+}

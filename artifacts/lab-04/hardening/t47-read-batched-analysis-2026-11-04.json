@@ -1,0 +1,283 @@
+{
+  "artifact": "t47-performance-2026-11-04-measurement-2e8762bf.json",
+  "sha256": "1f1028dae7222fc6c1a320ddd7bef065c8b7e42f9e576c85f416ed80d8e3bb88",
+  "method": "Independent Python nearest-rank percentiles and sample interval sweep; no new traffic",
+  "sampleCount": 5500,
+  "users": 50,
+  "perUserSequential": true,
+  "roleAndOperationMixVerified": true,
+  "phases": {
+    "warmup": {
+      "statistics": {
+        "all": {
+          "count": 5000,
+          "errors": 0,
+          "p50Ms": 226.24519999999757,
+          "p95Ms": 431.04119999999966
+        },
+        "requester.ticket.detail": {
+          "count": 400,
+          "errors": 0,
+          "p50Ms": 248.58429999999862,
+          "p95Ms": 388.81760000000213
+        },
+        "requester.dashboard": {
+          "count": 400,
+          "errors": 0,
+          "p50Ms": 178.82600000000093,
+          "p95Ms": 276.8371999999981
+        },
+        "requester.tickets.list": {
+          "count": 200,
+          "errors": 0,
+          "p50Ms": 224.08119999999326,
+          "p95Ms": 383.7956000000049
+        },
+        "requester.tickets.filtered-list": {
+          "count": 200,
+          "errors": 0,
+          "p50Ms": 227.62900000000081,
+          "p95Ms": 328.5246999999945
+        },
+        "comments.list": {
+          "count": 400,
+          "errors": 0,
+          "p50Ms": 218.97539999999935,
+          "p95Ms": 298.3819999999978
+        },
+        "ticket.actions.list": {
+          "count": 200,
+          "errors": 0,
+          "p50Ms": 196.52310000000216,
+          "p95Ms": 265.7154999999984
+        },
+        "comments.create": {
+          "count": 200,
+          "errors": 0,
+          "p50Ms": 243.3107999999993,
+          "p95Ms": 301.37779999999475
+        },
+        "staff.ticket.detail": {
+          "count": 300,
+          "errors": 0,
+          "p50Ms": 213.43860000000132,
+          "p95Ms": 393.2963000000018
+        },
+        "staff.dashboard": {
+          "count": 300,
+          "errors": 0,
+          "p50Ms": 212.41120000000228,
+          "p95Ms": 306.53510000000097
+        },
+        "staff.tickets.list": {
+          "count": 300,
+          "errors": 0,
+          "p50Ms": 206.5779999999977,
+          "p95Ms": 307.9430999999968
+        },
+        "staff.actions.list": {
+          "count": 300,
+          "errors": 0,
+          "p50Ms": 200.24459999999817,
+          "p95Ms": 294.0420000000013
+        },
+        "action.create": {
+          "count": 300,
+          "errors": 0,
+          "p50Ms": 309.62379999999393,
+          "p95Ms": 502.0120999999999
+        },
+        "action.detail": {
+          "count": 300,
+          "errors": 0,
+          "p50Ms": 178.4991000000009,
+          "p95Ms": 266.0037000000011
+        },
+        "action.edit": {
+          "count": 300,
+          "errors": 0,
+          "p50Ms": 346.6449999999968,
+          "p95Ms": 439.60849999999846
+        },
+        "action.start": {
+          "count": 300,
+          "errors": 0,
+          "p50Ms": 407.27620000000024,
+          "p95Ms": 505.3629000000001
+        },
+        "action.complete": {
+          "count": 150,
+          "errors": 0,
+          "p50Ms": 425.33729999999923,
+          "p95Ms": 515.8615000000027
+        },
+        "action.cancel": {
+          "count": 150,
+          "errors": 0,
+          "p50Ms": 370.01350000000093,
+          "p95Ms": 467.6007000000027
+        },
+        "action.history": {
+          "count": 300,
+          "errors": 0,
+          "p50Ms": 177.61709999999584,
+          "p95Ms": 245.0080999999991
+        }
+      },
+      "elapsedMs": 26654.5773,
+      "throughputPerSecond": 187.58504191323266,
+      "peakHttpInFlight": 50,
+      "timeWeightedHttpInFlight": 47.0256610709786,
+      "finalHttpInFlight": 0,
+      "statuses": {
+        "200": 4500,
+        "201": 500
+      }
+    },
+    "measured": {
+      "statistics": {
+        "all": {
+          "count": 500,
+          "errors": 0,
+          "p50Ms": 203.5489000000016,
+          "p95Ms": 500.67549999999756
+        },
+        "requester.ticket.detail": {
+          "count": 40,
+          "errors": 0,
+          "p50Ms": 140.3191999999981,
+          "p95Ms": 265.0427999999956
+        },
+        "requester.dashboard": {
+          "count": 40,
+          "errors": 0,
+          "p50Ms": 131.66790000000037,
+          "p95Ms": 164.63240000000224
+        },
+        "requester.tickets.list": {
+          "count": 20,
+          "errors": 0,
+          "p50Ms": 209.9835000000021,
+          "p95Ms": 238.34459999999672
+        },
+        "requester.tickets.filtered-list": {
+          "count": 20,
+          "errors": 0,
+          "p50Ms": 228.07859999999346,
+          "p95Ms": 375.53919999999925
+        },
+        "comments.list": {
+          "count": 40,
+          "errors": 0,
+          "p50Ms": 216.51729999999952,
+          "p95Ms": 330.24199999999837
+        },
+        "ticket.actions.list": {
+          "count": 20,
+          "errors": 0,
+          "p50Ms": 174.05219999999827,
+          "p95Ms": 181.5237999999954
+        },
+        "comments.create": {
+          "count": 20,
+          "errors": 0,
+          "p50Ms": 347.34130000000005,
+          "p95Ms": 408.3945999999996
+        },
+        "staff.ticket.detail": {
+          "count": 30,
+          "errors": 0,
+          "p50Ms": 119.28530000000319,
+          "p95Ms": 126.20530000000144
+        },
+        "staff.dashboard": {
+          "count": 30,
+          "errors": 0,
+          "p50Ms": 159.99289999999746,
+          "p95Ms": 213.27930000000197
+        },
+        "staff.tickets.list": {
+          "count": 30,
+          "errors": 0,
+          "p50Ms": 211.18210000000545,
+          "p95Ms": 237.2433000000019
+        },
+        "staff.actions.list": {
+          "count": 30,
+          "errors": 0,
+          "p50Ms": 184.6661000000022,
+          "p95Ms": 215.7257000000027
+        },
+        "action.create": {
+          "count": 30,
+          "errors": 0,
+          "p50Ms": 274.1550000000061,
+          "p95Ms": 325.7075000000041
+        },
+        "action.detail": {
+          "count": 30,
+          "errors": 0,
+          "p50Ms": 166.1160000000018,
+          "p95Ms": 199.95479999999952
+        },
+        "action.edit": {
+          "count": 30,
+          "errors": 0,
+          "p50Ms": 291.19840000000113,
+          "p95Ms": 459.854800000001
+        },
+        "action.start": {
+          "count": 30,
+          "errors": 0,
+          "p50Ms": 520.3623000000007,
+          "p95Ms": 648.6022000000012
+        },
+        "action.complete": {
+          "count": 15,
+          "errors": 0,
+          "p50Ms": 310.80629999999655,
+          "p95Ms": 357.036500000002
+        },
+        "action.cancel": {
+          "count": 15,
+          "errors": 0,
+          "p50Ms": 264.4774999999936,
+          "p95Ms": 328.1157000000021
+        },
+        "action.history": {
+          "count": 30,
+          "errors": 0,
+          "p50Ms": 97.63880000000063,
+          "p95Ms": 135.70000000000437
+        }
+      },
+      "elapsedMs": 2456.7306000000026,
+      "throughputPerSecond": 203.52251891192282,
+      "peakHttpInFlight": 50,
+      "timeWeightedHttpInFlight": 46.059368862015255,
+      "finalHttpInFlight": 0,
+      "statuses": {
+        "200": 450,
+        "201": 50
+      }
+    }
+  },
+  "expectedAndObservedPersistence": {
+    "tickets": 2050,
+    "actions": 8330,
+    "actionHistory": 25320,
+    "ticketHistory": 3800,
+    "receipts": 1320,
+    "comments": 220,
+    "users": 50,
+    "sessions": 50
+  },
+  "receiptReplays": 0,
+  "retainedTransactionFailureCount": 0,
+  "measuredOperationsFailingP95": {
+    "action.start": 648.6022000000012
+  },
+  "overallMeasuredP95Below500": false,
+  "verdict": "FAIL: aggregate and action.start measured p95 targets",
+  "inlineAssertionStatus": "Not established by this offline script; see execution log and ledger"
+}

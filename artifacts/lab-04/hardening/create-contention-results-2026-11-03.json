@@ -1,0 +1,559 @@
+{
+  "recordedDate": "2026-11-03",
+  "timezone": "Asia/Bangkok",
+  "startingPublishedHead": "a6239227bd175aa17aa2d3c805f6c87fa2693e4c",
+  "originalProvidedArtifactPreserved": {
+    "file": "t47-create-contention-2026-11-02-8c110d49.json",
+    "sha256": "daed0ec94005c1892a0b10eaa0674ebc16eac8f74d51bec22053bc528783bbd8",
+    "wasUntrackedAtStart": true,
+    "localBytesUnchanged": true
+  },
+  "semanticREDCommit": "6bf76d9d991615e6294400be39d26972fdf38f91",
+  "diagnosticSourceCommit": "e014bb7a9782cd2523e8dfe75b5b5d6987c9e947",
+  "productionChanged": false,
+  "applicationGREEN": false,
+  "T47Rerun": false,
+  "disposition": "All-success RED remains; no evidence-supported permitted narrow production remedy demonstrated. Explicit transaction-design choice required, not a compatibility or retention gate.",
+  "commands": [
+    {
+      "wallMs": 15104.8845,
+      "command": "npm.cmd test -- tests/lab-04/action-create-contention.integration.test.ts",
+      "startedAt": "2026-11-02T17:05:30.2185111+00:00",
+      "mode": "default",
+      "exit": 0,
+      "cwd": "server/",
+      "frameworkSeconds": 14.09,
+      "collected": 1,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "wallMs": 14362.524300000001,
+      "command": "npm.cmd test -- tests/lab-04/action-create-contention.integration.test.ts",
+      "startedAt": "2026-11-02T17:07:01.3565211+00:00",
+      "mode": "ticket-index",
+      "exit": 0,
+      "cwd": "server/",
+      "frameworkSeconds": 13.39,
+      "collected": 1,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "wallMs": 14264.3475,
+      "command": "npm.cmd test -- tests/lab-04/action-create-contention.integration.test.ts",
+      "startedAt": "2026-11-02T17:07:15.7622058+00:00",
+      "mode": "receipt-index",
+      "exit": 0,
+      "cwd": "server/",
+      "frameworkSeconds": 13.14,
+      "collected": 1,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "wallMs": 14293.632300000001,
+      "command": "npm.cmd test -- tests/lab-04/action-create-contention.integration.test.ts",
+      "startedAt": "2026-11-02T17:07:30.0327730+00:00",
+      "mode": "both-index",
+      "exit": 0,
+      "cwd": "server/",
+      "frameworkSeconds": 13.24,
+      "collected": 1,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "wallMs": 13857.7592,
+      "command": "npm.cmd test -- tests/lab-04/independent-action-create.api.test.ts",
+      "startedAt": "2026-11-02T17:10:35.1966537+00:00",
+      "exit": 1,
+      "cwd": "server/",
+      "frameworkSeconds": 12.76,
+      "collected": 1,
+      "executed": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0
+    },
+    {
+      "wallMs": 11238.1797,
+      "command": "npm.cmd test -- tests/lab-04/create-predicate-mechanism.integration.test.ts",
+      "startedAt": "2026-11-02T17:16:20.2462521+00:00",
+      "exit": 0,
+      "cwd": "server/",
+      "frameworkSeconds": 10.23,
+      "collected": 5,
+      "executed": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "wallMs": 12054.921,
+      "command": "npm.cmd test -- tests/lab-04/action-create-contention.integration.test.ts",
+      "startedAt": "2026-11-02T17:19:53.0997263+00:00",
+      "mode": "retry-jitter",
+      "exit": 0,
+      "cwd": "server/",
+      "frameworkSeconds": 11.12,
+      "collected": 1,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "typeChecks": [
+    {
+      "command": "npm.cmd exec -- tsc --noEmit",
+      "exit": 0,
+      "wallMs": 8643.5682,
+      "state": "public query attribution added"
+    },
+    {
+      "command": "npm.cmd exec -- tsc --noEmit",
+      "exit": 1,
+      "wallMs": 8904.7269,
+      "state": "new RED sources type inference TS7034/TS7005; no tests executed by this check"
+    },
+    {
+      "command": "npm.cmd exec -- tsc --noEmit",
+      "exit": 0,
+      "wallMs": 7664.0542,
+      "state": "new sources explicit type corrected"
+    },
+    {
+      "command": "npm.cmd exec -- tsc --noEmit",
+      "exit": 0,
+      "wallMs": 6612.3835,
+      "state": "mechanism suite added"
+    },
+    {
+      "command": "npm.cmd exec -- tsc --noEmit",
+      "exit": 0,
+      "wallMs": 6656.7339,
+      "state": "final test-only jitter contrast added"
+    }
+  ],
+  "cohorts": [
+    {
+      "file": "t47-create-contention-2026-11-02-4625f93d.json",
+      "sha256": "a61b75504118b2a959057d753a8fb074fb25346eaf2f1ee14fb3c3a03dff9f28",
+      "sourceHead": "a6239227bd175aa17aa2d3c805f6c87fa2693e4c",
+      "startedAt": "2026-11-02T17:07:08.514Z",
+      "mode": "ticket-index",
+      "concurrentSuccesses": 4,
+      "concurrentCommands": 8,
+      "concurrentAttempts": 21,
+      "rejectedAttempts": 17,
+      "failureBoundaries": {
+        "callback-query": 13,
+        "transaction-completion": 4
+      },
+      "firstQuery40001": {
+        "User.SELECT": 3,
+        "MutationReceipt.INSERT": 7,
+        "completion-or-not-observed": 4,
+        "Action.SELECT": 2,
+        "Ticket.UPDATE": 1
+      },
+      "secondary25P02": 4,
+      "serialSuccesses": 8,
+      "serialAttempts": 8,
+      "allFailedAttemptsRollbackExact": true,
+      "allGatesImmediatelyAcquired": true,
+      "anyExplicitGateRestart": false,
+      "fixtureScale": {
+        "tickets": 40,
+        "receipts": 2,
+        "users": 28,
+        "sessions": 17
+      },
+      "cleanup": {
+        "operationsDrained": true,
+        "transactionObserverRestored": true,
+        "ownedFixturesRemoved": true,
+        "applicationDisconnected": true,
+        "idleTransactions": 0,
+        "observerDisconnected": true
+      }
+    },
+    {
+      "file": "t47-create-contention-2026-11-02-4ef38c46.json",
+      "sha256": "abdbd1efb72d7f161c7809b6c322e66bfb55f169ab2f2cc693a5c6744c33f26c",
+      "sourceHead": "a6239227bd175aa17aa2d3c805f6c87fa2693e4c",
+      "startedAt": "2026-11-02T17:05:38.310Z",
+      "mode": "default",
+      "concurrentSuccesses": 4,
+      "concurrentCommands": 8,
+      "concurrentAttempts": 21,
+      "rejectedAttempts": 17,
+      "failureBoundaries": {
+        "callback-query": 15,
+        "transaction-completion": 2
+      },
+      "firstQuery40001": {
+        "User.SELECT": 3,
+        "MutationReceipt.INSERT": 7,
+        "Action.SELECT": 3,
+        "completion-or-not-observed": 2,
+        "ActionHistory.INSERT": 2
+      },
+      "secondary25P02": 3,
+      "serialSuccesses": 8,
+      "serialAttempts": 8,
+      "allFailedAttemptsRollbackExact": true,
+      "allGatesImmediatelyAcquired": true,
+      "anyExplicitGateRestart": false,
+      "fixtureScale": {
+        "tickets": 40,
+        "receipts": 2,
+        "users": 28,
+        "sessions": 17
+      },
+      "cleanup": {
+        "operationsDrained": true,
+        "transactionObserverRestored": true,
+        "ownedFixturesRemoved": true,
+        "applicationDisconnected": true,
+        "idleTransactions": 0,
+        "observerDisconnected": true
+      }
+    },
+    {
+      "file": "t47-create-contention-2026-11-02-776e64b7.json",
+      "sha256": "338ef1e71565a9517d4b2e3bd1a22e382531ec55bbc9cca14ce7af6b4d62d500",
+      "sourceHead": "a6239227bd175aa17aa2d3c805f6c87fa2693e4c",
+      "startedAt": "2026-11-02T17:07:37.403Z",
+      "mode": "both-index",
+      "concurrentSuccesses": 4,
+      "concurrentCommands": 8,
+      "concurrentAttempts": 20,
+      "rejectedAttempts": 16,
+      "failureBoundaries": {
+        "callback-query": 14,
+        "transaction-completion": 2
+      },
+      "firstQuery40001": {
+        "MutationReceipt.INSERT": 8,
+        "Action.SELECT": 1,
+        "completion-or-not-observed": 2,
+        "User.SELECT": 4,
+        "Ticket.UPDATE": 1
+      },
+      "secondary25P02": 4,
+      "serialSuccesses": 8,
+      "serialAttempts": 8,
+      "allFailedAttemptsRollbackExact": true,
+      "allGatesImmediatelyAcquired": true,
+      "anyExplicitGateRestart": false,
+      "fixtureScale": {
+        "tickets": 40,
+        "receipts": 2,
+        "users": 28,
+        "sessions": 17
+      },
+      "cleanup": {
+        "operationsDrained": true,
+        "transactionObserverRestored": true,
+        "ownedFixturesRemoved": true,
+        "applicationDisconnected": true,
+        "idleTransactions": 0,
+        "observerDisconnected": true
+      }
+    },
+    {
+      "file": "t47-create-contention-2026-11-02-8c110d49.json",
+      "sha256": "daed0ec94005c1892a0b10eaa0674ebc16eac8f74d51bec22053bc528783bbd8",
+      "sourceHead": "a6239227bd175aa17aa2d3c805f6c87fa2693e4c",
+      "startedAt": "2026-11-02T16:30:10.454Z",
+      "mode": "original-provided",
+      "concurrentSuccesses": 4,
+      "concurrentCommands": 8,
+      "concurrentAttempts": 21,
+      "rejectedAttempts": 17,
+      "failureBoundaries": {
+        "transaction-completion": 6,
+        "callback-query": 11
+      },
+      "firstQuery40001": {
+        "completion-or-not-observed": 17
+      },
+      "secondary25P02": 0,
+      "serialSuccesses": 8,
+      "serialAttempts": 8,
+      "allFailedAttemptsRollbackExact": true,
+      "allGatesImmediatelyAcquired": true,
+      "anyExplicitGateRestart": false,
+      "fixtureScale": null,
+      "cleanup": {
+        "operationsDrained": true,
+        "transactionObserverRestored": true,
+        "ownedFixturesRemoved": true,
+        "applicationDisconnected": true,
+        "idleTransactions": 0,
+        "observerDisconnected": true
+      }
+    },
+    {
+      "file": "t47-create-contention-2026-11-02-a5d8755a.json",
+      "sha256": "8d909dce584c35cdcce8f8fc7376659bd2f59c198f37bd0c52a3ea05947ac5e9",
+      "sourceHead": "6bf76d9d991615e6294400be39d26972fdf38f91",
+      "startedAt": "2026-11-02T17:19:59.686Z",
+      "mode": "retry-jitter",
+      "concurrentSuccesses": 6,
+      "concurrentCommands": 8,
+      "concurrentAttempts": 18,
+      "rejectedAttempts": 12,
+      "failureBoundaries": {
+        "transaction-completion": 1,
+        "callback-query": 11
+      },
+      "firstQuery40001": {
+        "completion-or-not-observed": 1,
+        "Action.INSERT": 2,
+        "User.SELECT": 2,
+        "MutationReceipt.INSERT": 4,
+        "ActionHistory.INSERT": 2,
+        "Action.SELECT": 1
+      },
+      "secondary25P02": 2,
+      "serialSuccesses": 8,
+      "serialAttempts": 8,
+      "allFailedAttemptsRollbackExact": true,
+      "allGatesImmediatelyAcquired": true,
+      "anyExplicitGateRestart": false,
+      "fixtureScale": {
+        "tickets": 40,
+        "receipts": 2,
+        "users": 28,
+        "sessions": 17
+      },
+      "cleanup": {
+        "operationsDrained": true,
+        "transactionObserverRestored": true,
+        "ownedFixturesRemoved": true,
+        "applicationDisconnected": true,
+        "idleTransactions": 0,
+        "observerDisconnected": true
+      }
+    },
+    {
+      "file": "t47-create-contention-2026-11-02-e023abf1.json",
+      "sha256": "d3bbc9ca859539f4c8caca15f187a3e6e2c7b944b854b1ca33eb3bdb7af3f3c0",
+      "sourceHead": "a6239227bd175aa17aa2d3c805f6c87fa2693e4c",
+      "startedAt": "2026-11-02T17:07:23.452Z",
+      "mode": "receipt-index",
+      "concurrentSuccesses": 4,
+      "concurrentCommands": 8,
+      "concurrentAttempts": 21,
+      "rejectedAttempts": 17,
+      "failureBoundaries": {
+        "callback-query": 15,
+        "transaction-completion": 2
+      },
+      "firstQuery40001": {
+        "MutationReceipt.INSERT": 8,
+        "Action.SELECT": 2,
+        "User.SELECT": 2,
+        "Action.INSERT": 2,
+        "completion-or-not-observed": 2,
+        "ActionHistory.INSERT": 1
+      },
+      "secondary25P02": 2,
+      "serialSuccesses": 8,
+      "serialAttempts": 8,
+      "allFailedAttemptsRollbackExact": true,
+      "allGatesImmediatelyAcquired": true,
+      "anyExplicitGateRestart": false,
+      "fixtureScale": {
+        "tickets": 40,
+        "receipts": 2,
+        "users": 28,
+        "sessions": 17
+      },
+      "cleanup": {
+        "operationsDrained": true,
+        "transactionObserverRestored": true,
+        "ownedFixturesRemoved": true,
+        "applicationDisconnected": true,
+        "idleTransactions": 0,
+        "observerDisconnected": true
+      }
+    }
+  ],
+  "mechanisms": [
+    {
+      "file": "create-predicate-2026-11-02-receipt-default-824a9010.json",
+      "sha256": "f2bc1dca5760467777fc0cee513742c6798324d1cedd12aacf04cdcebb5bb53f",
+      "variant": "receipt-default",
+      "startedAt": "2026-11-02T17:16:30.918Z",
+      "outcomes": [
+        {
+          "command": 0,
+          "committed": true
+        },
+        {
+          "command": 1,
+          "committed": false,
+          "sqlState": "40001",
+          "stage": "write"
+        }
+      ],
+      "persistenceVerified": true,
+      "cleanup": {
+        "connectionsClosed": true
+      }
+    },
+    {
+      "file": "create-predicate-2026-11-02-receipt-index-84410eaa.json",
+      "sha256": "228227ba01097524f56b314692a2a53baae3a60957f14ccf1a8cd0ff47e9c1ff",
+      "variant": "receipt-index",
+      "startedAt": "2026-11-02T17:16:31.069Z",
+      "outcomes": [
+        {
+          "command": 0,
+          "committed": true
+        },
+        {
+          "command": 1,
+          "committed": false,
+          "sqlState": "40001",
+          "stage": "write"
+        }
+      ],
+      "persistenceVerified": true,
+      "cleanup": {
+        "connectionsClosed": true
+      }
+    },
+    {
+      "file": "create-predicate-2026-11-02-receipt-no-negative-read-942b3edb.json",
+      "sha256": "86cac33bdfe7c193891408ae3e80f236ca1594a5424c4e4c89d1eee50d2132f5",
+      "variant": "receipt-no-negative-read",
+      "startedAt": "2026-11-02T17:16:31.221Z",
+      "outcomes": [
+        {
+          "command": 0,
+          "committed": true
+        },
+        {
+          "command": 1,
+          "committed": true
+        }
+      ],
+      "persistenceVerified": true,
+      "cleanup": {
+        "connectionsClosed": true
+      }
+    },
+    {
+      "file": "create-predicate-2026-11-02-ticket-default-0c47fa6c.json",
+      "sha256": "934f5c9ec59e11ee93e5d71e5b164006805382741330a3180a84a7a714a62333",
+      "variant": "ticket-default",
+      "startedAt": "2026-11-02T17:16:30.481Z",
+      "outcomes": [
+        {
+          "command": 0,
+          "committed": true
+        },
+        {
+          "command": 1,
+          "committed": false,
+          "sqlState": "40001",
+          "stage": "write"
+        }
+      ],
+      "persistenceVerified": true,
+      "cleanup": {
+        "connectionsClosed": true
+      }
+    },
+    {
+      "file": "create-predicate-2026-11-02-ticket-index-ebd591b8.json",
+      "sha256": "22045899e658f4425b8fa9252f95b9cb35427267aeaebf6a5bbce3d0055760e0",
+      "variant": "ticket-index",
+      "startedAt": "2026-11-02T17:16:30.655Z",
+      "outcomes": [
+        {
+          "command": 0,
+          "committed": true
+        },
+        {
+          "command": 1,
+          "committed": false,
+          "sqlState": "40001",
+          "stage": "write"
+        }
+      ],
+      "persistenceVerified": true,
+      "cleanup": {
+        "connectionsClosed": true
+      }
+    }
+  ],
+  "allSuccessRegression": {
+    "file": "independent-create-red-2026-11-02-59b846d1.json",
+    "sha256": "ac2098e1368fa14ea42f3821bd0cd3d0ddf137bcd50f7a90e1ad0504cdcb8400",
+    "commands": 8,
+    "successes": 5,
+    "exhaustions": 3,
+    "attempts": 20,
+    "firstFailure": "all8 expected201 array assertion",
+    "deeperExactPersistenceAssertionsReached": false,
+    "failedAttemptRollbackChecksExecuted": true
+  },
+  "cleanup": {
+    "guard": true,
+    "distinctOperational": true,
+    "liveIdentityMatched": true,
+    "owned_users": 0,
+    "owned_tickets": 0,
+    "owned_categories": 0,
+    "owned_systems": 0,
+    "other_connections": 0,
+    "idle_transactions": 0,
+    "diagnosticSettingRestored": true
+  },
+  "unexecuted": [
+    "production correction",
+    "post-correction T42/T51/T52 and authentication/workflow regressions",
+    "comprehensive server suite excludingT47",
+    "server build",
+    "unchanged T47 confirmation"
+  ],
+  "limits": [
+    "Current attribution cohort40 Tickets/2 receipts/28 users/17 sessions, not original2050 Tickets/8000 Actions/24000 histories/50 users.",
+    "Minimal native SQL subsets isolate sufficient predicate mechanisms, not endpoint/workflow GREEN or a complete eight-request SSI pivot graph.",
+    "Native25P02 secondary aborted-transaction query errors are not primary40001 causes.",
+    "Planner experiments SET LOCAL test-only; jitter64/128ms caps test-only, did not satisfy all8 success.",
+    "Known accepted Lab-only metadata retention and15 untriaged npm audit findings preserved."
+  ],
+  "validation": {
+    "existingDiagnosticAssertionsPreserved": 20,
+    "scenarioRowsUnchanged": 55,
+    "localLinksChecked": 80,
+    "markdownTablesChecked": 9,
+    "utf8AndWhitespacePassed": true,
+    "baselineFilesUnchangedExceptAuditAndDiagnostic": 576
+  },
+  "unchangedBenchmarkFiles": {
+    "server/tests/lab-04/performance-smoke.integration.test.ts": "c9165e7e181562c5380f8d877d2bada26b82807bd99e860a2d567bffe3df77c4",
+    "server/tests/lab-04/performance-test-helpers.ts": "ff2f4fdf3c9a0cd7f28a8fe77338b88155ebe39927fbf889cf77cb7c738d35f0",
+    "artifacts/lab-04/hardening/t47-workload-plan-2026-11-01.md": "4a5a2669aab16f8c31cf5a8721807264c72ad70ea3779b8b7a3df973d3da4505"
+  },
+  "diagnosticSourceBlobs": {
+    "server/tests/lab-04/action-create-contention.integration.test.ts": "5599a067952ded53a8dd59926273b7e518d639e8",
+    "server/tests/lab-04/create-query-observer.ts": "8d7e228e6de17285f73f726a23ec85a0a492df2c",
+    "server/tests/lab-04/create-predicate-mechanism.integration.test.ts": "20c495dd40d473a47c4c29931eecd92f2c951a69"
+  }
+}

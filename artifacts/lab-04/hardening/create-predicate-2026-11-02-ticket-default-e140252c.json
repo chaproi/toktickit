@@ -1,0 +1,57 @@
+{
+  "mode": "minimal-SQL-mechanism-not-application-GREEN",
+  "variant": "ticket-default",
+  "startedAt": "2026-11-02T19:02:59.719Z",
+  "outcomes": [
+    {
+      "command": 0,
+      "committed": true
+    },
+    {
+      "command": 1,
+      "committed": false,
+      "sqlState": "40001",
+      "stage": "write"
+    }
+  ],
+  "predicateLocks": [
+    {
+      "backend": 35220,
+      "locktype": "tuple",
+      "relation": "Ticket",
+      "page": 9,
+      "tuple": 14
+    },
+    {
+      "backend": 35220,
+      "locktype": "page",
+      "relation": "Ticket_pkey",
+      "page": 2,
+      "tuple": null
+    },
+    {
+      "backend": 37628,
+      "locktype": "tuple",
+      "relation": "Ticket",
+      "page": 9,
+      "tuple": 13
+    },
+    {
+      "backend": 37628,
+      "locktype": "page",
+      "relation": "Ticket_pkey",
+      "page": 2,
+      "tuple": null
+    }
+  ],
+  "cleanup": {
+    "connectionsClosed": true
+  },
+  "fixtureScale": {
+    "tickets": 36,
+    "actions": 77,
+    "receipts": 3
+  },
+  "persistenceVerified": true,
+  "finishedAt": "2026-11-02T19:03:00.123Z"
+}

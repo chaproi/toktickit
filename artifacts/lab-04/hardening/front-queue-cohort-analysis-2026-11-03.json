@@ -1,0 +1,998 @@
+{
+  "method": "Offline nearest-rank ceil(p*n)-1; every response retained; no additional request or application execution",
+  "before": {
+    "source": "complete-phases-2026-11-03-0c00b65a.json",
+    "sha256": "93ca0f52a85e1665dbe3ed2e22f3647cb7ad04b80bde895e1d2c3bbb73228a75",
+    "executionHead": "99dc50cc6b49b930691d68bc0d8f23b2d3f6ff65",
+    "phase": "verified",
+    "before": {
+      "tickets": 2050,
+      "actions": 8030,
+      "actionHistory": 24060,
+      "ticketHistory": 3800,
+      "receipts": 60,
+      "comments": 0,
+      "users": 50,
+      "sessions": 30
+    },
+    "after": {
+      "tickets": 2050,
+      "actions": 8030,
+      "actionHistory": 24090,
+      "ticketHistory": 3800,
+      "receipts": 90,
+      "comments": 0,
+      "users": 50,
+      "sessions": 30
+    },
+    "http": {
+      "baseline-": {
+        "count": 4,
+        "p50Ms": 11.7765,
+        "p95Ms": 47.1777,
+        "maxMs": 47.1777,
+        "sumMs": 79.1518
+      },
+      "overlap-": {
+        "count": 20,
+        "p50Ms": 468.3644,
+        "p95Ms": 555.5448,
+        "maxMs": 585.0429,
+        "sumMs": 9531.1771
+      },
+      "complete-": {
+        "count": 30,
+        "p50Ms": 1136.3679,
+        "p95Ms": 1418.9112,
+        "maxMs": 1436.1264,
+        "sumMs": 32188.145
+      }
+    },
+    "phases": {
+      "preCheckoutIncludingQueue": {
+        "count": 30,
+        "p50Ms": 0.0513,
+        "p95Ms": 0.1637,
+        "maxMs": 0.2172,
+        "sumMs": 2.0346
+      },
+      "checkout": {
+        "count": 30,
+        "p50Ms": 128.908,
+        "p95Ms": 406.087,
+        "maxMs": 467.6275,
+        "sumMs": 4861.6273
+      },
+      "admissionWait": {
+        "count": 30,
+        "p50Ms": 441.0676,
+        "p95Ms": 630.3625,
+        "maxMs": 638.2695,
+        "sumMs": 12728.706
+      },
+      "startup": {
+        "count": 30,
+        "p50Ms": 659.9433,
+        "p95Ms": 815.7586,
+        "maxMs": 831.2756,
+        "sumMs": 18168.7492
+      },
+      "callback": {
+        "count": 30,
+        "p50Ms": 19.2013,
+        "p95Ms": 49.1395,
+        "maxMs": 129.8593,
+        "sumMs": 828.3059
+      },
+      "commit": {
+        "count": 30,
+        "p50Ms": 0.8058,
+        "p95Ms": 2.5854,
+        "maxMs": 3.6385,
+        "sumMs": 31.0097
+      },
+      "callbackDrainMarker": {
+        "count": 30,
+        "p50Ms": 0.0009,
+        "p95Ms": 0.0061,
+        "maxMs": 0.0077,
+        "sumMs": 0.054
+      },
+      "callbackExitToRelease": {
+        "count": 30,
+        "p50Ms": 2.0409,
+        "p95Ms": 5.6837,
+        "maxMs": 13.4041,
+        "sumMs": 77.1153
+      },
+      "admissionHold": {
+        "count": 30,
+        "p50Ms": 25.337,
+        "p95Ms": 62.1187,
+        "maxMs": 167.8197,
+        "sumMs": 1019.1953
+      }
+    },
+    "attempts": [
+      {
+        "request": "complete-0",
+        "preCheckoutIncludingQueue": 0.0513,
+        "checkout": 89.7192,
+        "admissionWait": 11.8477,
+        "startup": 152.5112,
+        "callback": 129.8593,
+        "commit": 0.4866,
+        "callbackDrainMarker": 0.0006,
+        "callbackExitToRelease": 13.4041,
+        "admissionHold": 167.8197
+      },
+      {
+        "request": "complete-1",
+        "preCheckoutIncludingQueue": 0.0396,
+        "checkout": 92.5352,
+        "admissionWait": 178.8731,
+        "startup": 300.2802,
+        "callback": 22.1376,
+        "commit": 0.5269,
+        "callbackDrainMarker": 0.0034,
+        "callbackExitToRelease": 2.3471,
+        "admissionHold": 28.8515
+      },
+      {
+        "request": "complete-2",
+        "preCheckoutIncludingQueue": 0.0724,
+        "checkout": 115.7294,
+        "admissionWait": 227.2919,
+        "startup": 383.0466,
+        "callback": 38.5953,
+        "commit": 1.2849,
+        "callbackDrainMarker": 0.0028,
+        "callbackExitToRelease": 2.5612,
+        "admissionHold": 44.5539
+      },
+      {
+        "request": "complete-3",
+        "preCheckoutIncludingQueue": 0.0804,
+        "checkout": 127.7272,
+        "admissionWait": 262.1955,
+        "startup": 430.3031,
+        "callback": 43.7136,
+        "commit": 1.4918,
+        "callbackDrainMarker": 0.0015,
+        "callbackExitToRelease": 3.0205,
+        "admissionHold": 51.9954
+      },
+      {
+        "request": "complete-4",
+        "preCheckoutIncludingQueue": 0.0285,
+        "checkout": 92.5827,
+        "admissionWait": 210.0983,
+        "startup": 332.4826,
+        "callback": 44.143,
+        "commit": 1.9734,
+        "callbackDrainMarker": 0.0023,
+        "callbackExitToRelease": 4.105,
+        "admissionHold": 53.0767
+      },
+      {
+        "request": "complete-5",
+        "preCheckoutIncludingQueue": 0.1637,
+        "checkout": 53.5561,
+        "admissionWait": 600.9684,
+        "startup": 659.9433,
+        "callback": 13.4867,
+        "commit": 0.3046,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToRelease": 0.8544,
+        "admissionHold": 16.0505
+      },
+      {
+        "request": "complete-6",
+        "preCheckoutIncludingQueue": 0.1031,
+        "checkout": 6.3359,
+        "admissionWait": 630.3625,
+        "startup": 639.8485,
+        "callback": 17.0008,
+        "commit": 0.8058,
+        "callbackDrainMarker": 0.0021,
+        "callbackExitToRelease": 1.5336,
+        "admissionHold": 19.7596
+      },
+      {
+        "request": "complete-7",
+        "preCheckoutIncludingQueue": 0.0498,
+        "checkout": 98.641,
+        "admissionWait": 569.7927,
+        "startup": 677.0611,
+        "callback": 14.5998,
+        "commit": 0.2678,
+        "callbackDrainMarker": 0.0009,
+        "callbackExitToRelease": 0.7519,
+        "admissionHold": 18.2735
+      },
+      {
+        "request": "complete-8",
+        "preCheckoutIncludingQueue": 0.0643,
+        "checkout": 179.9715,
+        "admissionWait": 525.1592,
+        "startup": 712.0538,
+        "callback": 15.1964,
+        "commit": 0.3415,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToRelease": 1.2485,
+        "admissionHold": 20.6556
+      },
+      {
+        "request": "complete-9",
+        "preCheckoutIncludingQueue": 0.0541,
+        "checkout": 150.711,
+        "admissionWait": 536.6244,
+        "startup": 692.3101,
+        "callback": 14.9918,
+        "commit": 0.3576,
+        "callbackDrainMarker": 0.0006,
+        "callbackExitToRelease": 1.0718,
+        "admissionHold": 17.5145
+      },
+      {
+        "request": "complete-10",
+        "preCheckoutIncludingQueue": 0.0399,
+        "checkout": 288.7058,
+        "admissionWait": 486.439,
+        "startup": 779.8865,
+        "callback": 13.5725,
+        "commit": 0.3138,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToRelease": 0.9925,
+        "admissionHold": 15.6724
+      },
+      {
+        "request": "complete-11",
+        "preCheckoutIncludingQueue": 0.0505,
+        "checkout": 406.087,
+        "admissionWait": 400.4049,
+        "startup": 815.7586,
+        "callback": 12.8332,
+        "commit": 0.2903,
+        "callbackDrainMarker": 0.002,
+        "callbackExitToRelease": 0.8782,
+        "admissionHold": 15.6913
+      },
+      {
+        "request": "complete-12",
+        "preCheckoutIncludingQueue": 0.0413,
+        "checkout": 467.6275,
+        "admissionWait": 359.355,
+        "startup": 831.2756,
+        "callback": 13.0427,
+        "commit": 1.3644,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToRelease": 2.1455,
+        "admissionHold": 16.9907
+      },
+      {
+        "request": "complete-13",
+        "preCheckoutIncludingQueue": 0.041,
+        "checkout": 225.5283,
+        "admissionWait": 520.158,
+        "startup": 749.7072,
+        "callback": 13.1551,
+        "commit": 0.6903,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToRelease": 1.3219,
+        "admissionHold": 16.2833
+      },
+      {
+        "request": "complete-14",
+        "preCheckoutIncludingQueue": 0.0578,
+        "checkout": 246.4882,
+        "admissionWait": 514.8178,
+        "startup": 765.6384,
+        "callback": 12.3031,
+        "commit": 0.3317,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToRelease": 0.88,
+        "admissionHold": 14.7787
+      },
+      {
+        "request": "complete-15",
+        "preCheckoutIncludingQueue": 0.0451,
+        "checkout": 347.4025,
+        "admissionWait": 441.0676,
+        "startup": 795.6873,
+        "callback": 16.7674,
+        "commit": 0.451,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToRelease": 1.1945,
+        "admissionHold": 19.3558
+      },
+      {
+        "request": "complete-16",
+        "preCheckoutIncludingQueue": 0.0528,
+        "checkout": 199.9112,
+        "admissionWait": 526.5415,
+        "startup": 730.5883,
+        "callback": 16.4935,
+        "commit": 0.3012,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToRelease": 0.8303,
+        "admissionHold": 19.4666
+      },
+      {
+        "request": "complete-17",
+        "preCheckoutIncludingQueue": 0.0802,
+        "checkout": 128.908,
+        "admissionWait": 334.6754,
+        "startup": 491.9618,
+        "callback": 35.8942,
+        "commit": 1.964,
+        "callbackDrainMarker": 0.0011,
+        "callbackExitToRelease": 3.5874,
+        "admissionHold": 41.8773
+      },
+      {
+        "request": "complete-18",
+        "preCheckoutIncludingQueue": 0.0504,
+        "checkout": 122.2938,
+        "admissionWait": 320.5297,
+        "startup": 474.4823,
+        "callback": 16.1278,
+        "commit": 0.8679,
+        "callbackDrainMarker": 0.0077,
+        "callbackExitToRelease": 2.5929,
+        "admissionHold": 20.8262
+      },
+      {
+        "request": "complete-19",
+        "preCheckoutIncludingQueue": 0.0438,
+        "checkout": 131.3693,
+        "admissionWait": 275.1902,
+        "startup": 428.4587,
+        "callback": 16.2008,
+        "commit": 0.3504,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToRelease": 1.056,
+        "admissionHold": 19.6812
+      },
+      {
+        "request": "complete-20",
+        "preCheckoutIncludingQueue": 0.0429,
+        "checkout": 132.0478,
+        "admissionWait": 295.2895,
+        "startup": 447.5792,
+        "callback": 21.2559,
+        "commit": 1.3547,
+        "callbackDrainMarker": 0.0009,
+        "callbackExitToRelease": 2.5204,
+        "admissionHold": 25.337
+      },
+      {
+        "request": "complete-21",
+        "preCheckoutIncludingQueue": 0.0536,
+        "checkout": 126.838,
+        "admissionWait": 436.1967,
+        "startup": 593.8822,
+        "callback": 48.6688,
+        "commit": 1.2499,
+        "callbackDrainMarker": 0.0026,
+        "callbackExitToRelease": 3.0843,
+        "admissionHold": 56.7694
+      },
+      {
+        "request": "complete-22",
+        "preCheckoutIncludingQueue": 0.0427,
+        "checkout": 129.2644,
+        "admissionWait": 376.0977,
+        "startup": 535.204,
+        "callback": 49.1395,
+        "commit": 2.5854,
+        "callbackDrainMarker": 0.0033,
+        "callbackExitToRelease": 5.6837,
+        "admissionHold": 58.0762
+      },
+      {
+        "request": "complete-23",
+        "preCheckoutIncludingQueue": 0.0937,
+        "checkout": 121.9901,
+        "admissionWait": 246.4055,
+        "startup": 399.7812,
+        "callback": 24.2417,
+        "commit": 0.8528,
+        "callbackDrainMarker": 0.0019,
+        "callbackExitToRelease": 1.987,
+        "admissionHold": 28.5493
+      },
+      {
+        "request": "complete-24",
+        "preCheckoutIncludingQueue": 0.2172,
+        "checkout": 88.8945,
+        "admissionWait": 638.2695,
+        "startup": 738.1348,
+        "callback": 19.2013,
+        "commit": 1.1597,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToRelease": 2.0409,
+        "admissionHold": 26.0686
+      },
+      {
+        "request": "complete-25",
+        "preCheckoutIncludingQueue": 0.1327,
+        "checkout": 77.7039,
+        "admissionWait": 609.8245,
+        "startup": 695.0458,
+        "callback": 23.2311,
+        "commit": 0.3804,
+        "callbackDrainMarker": 0.0007,
+        "callbackExitToRelease": 1.6045,
+        "admissionHold": 28.1845
+      },
+      {
+        "request": "complete-26",
+        "preCheckoutIncludingQueue": 0.0766,
+        "checkout": 129.8836,
+        "admissionWait": 545.4195,
+        "startup": 713.6802,
+        "callback": 26.3968,
+        "commit": 1.4081,
+        "callbackDrainMarker": 0.0019,
+        "callbackExitToRelease": 2.4224,
+        "admissionHold": 31.0764
+      },
+      {
+        "request": "complete-27",
+        "preCheckoutIncludingQueue": 0.0399,
+        "checkout": 127.7865,
+        "admissionWait": 483.4751,
+        "startup": 654.4803,
+        "callback": 47.4244,
+        "commit": 3.6385,
+        "callbackDrainMarker": 0.0042,
+        "callbackExitToRelease": 5.3369,
+        "admissionHold": 62.1187
+      },
+      {
+        "request": "complete-28",
+        "preCheckoutIncludingQueue": 0.0252,
+        "checkout": 170.674,
+        "admissionWait": 568.3433,
+        "startup": 758.363,
+        "callback": 24.3953,
+        "commit": 2.0462,
+        "callbackDrainMarker": 0.0061,
+        "callbackExitToRelease": 3.396,
+        "admissionHold": 33.9552
+      },
+      {
+        "request": "complete-29",
+        "preCheckoutIncludingQueue": 0.1001,
+        "checkout": 184.7137,
+        "admissionWait": 596.9919,
+        "startup": 789.3133,
+        "callback": 24.2365,
+        "commit": 1.5681,
+        "callbackDrainMarker": 0.0024,
+        "callbackExitToRelease": 2.6619,
+        "admissionHold": 29.8856
+      }
+    ],
+    "poolAndDatabase": {
+      "samples": 110,
+      "maxima": {
+        "total": 17,
+        "idle": 16,
+        "waiting": 51,
+        "waiters": 16,
+        "owners": 1
+      }
+    },
+    "errors": [],
+    "cleanup": {
+      "listenerClosed": true,
+      "checkedOut": 0,
+      "ownedSchemaRemoved": true
+    }
+  },
+  "candidate": {
+    "source": "complete-phases-2026-11-03-7dd92bd7.json",
+    "sha256": "c74956c48cc724bebf1e38fe5d99164bd688ac63bee2791944452cf5d631d065",
+    "executionHead": "9f8523e97072ae827e0cbf55d95bedae7ee7e3b1",
+    "phase": "verified",
+    "before": {
+      "tickets": 2050,
+      "actions": 8030,
+      "actionHistory": 24060,
+      "ticketHistory": 3800,
+      "receipts": 60,
+      "comments": 0,
+      "users": 50,
+      "sessions": 30
+    },
+    "after": {
+      "tickets": 2050,
+      "actions": 8030,
+      "actionHistory": 24090,
+      "ticketHistory": 3800,
+      "receipts": 90,
+      "comments": 0,
+      "users": 50,
+      "sessions": 30
+    },
+    "http": {
+      "baseline-": {
+        "count": 4,
+        "p50Ms": 10.1176,
+        "p95Ms": 48.4856,
+        "maxMs": 48.4856,
+        "sumMs": 77.4465
+      },
+      "overlap-": {
+        "count": 20,
+        "p50Ms": 436.2689,
+        "p95Ms": 486.3084,
+        "maxMs": 490.5672,
+        "sumMs": 8581.3336
+      },
+      "complete-": {
+        "count": 30,
+        "p50Ms": 902.6921,
+        "p95Ms": 1216.2453,
+        "maxMs": 1233.2455,
+        "sumMs": 26697.3256
+      }
+    },
+    "phases": {
+      "preCheckoutIncludingQueue": {
+        "count": 30,
+        "p50Ms": 543.8656,
+        "p95Ms": 753.3584,
+        "maxMs": 765.5544,
+        "sumMs": 15121.7829
+      },
+      "checkout": {
+        "count": 30,
+        "p50Ms": 0.286,
+        "p95Ms": 0.9664,
+        "maxMs": 92.7937,
+        "sumMs": 102.4356
+      },
+      "admissionWait": {
+        "count": 30,
+        "p50Ms": 0.3733,
+        "p95Ms": 0.8948,
+        "maxMs": 20.2323,
+        "sumMs": 31.8712
+      },
+      "startup": {
+        "count": 30,
+        "p50Ms": 551.9623,
+        "p95Ms": 756.2768,
+        "maxMs": 768.8753,
+        "sumMs": 15449.0766
+      },
+      "callback": {
+        "count": 30,
+        "p50Ms": 18.3384,
+        "p95Ms": 35.3248,
+        "maxMs": 92.097,
+        "sumMs": 640.5405
+      },
+      "commit": {
+        "count": 30,
+        "p50Ms": 0.4083,
+        "p95Ms": 0.7503,
+        "maxMs": 1.0439,
+        "sumMs": 13.7096
+      },
+      "callbackDrainMarker": {
+        "count": 30,
+        "p50Ms": 0.0018,
+        "p95Ms": 0.0032,
+        "maxMs": 0.005,
+        "sumMs": 0.0503
+      },
+      "callbackExitToRelease": {
+        "count": 30,
+        "p50Ms": 1.2449,
+        "p95Ms": 2.5197,
+        "maxMs": 2.8275,
+        "sumMs": 43.2877
+      },
+      "admissionHold": {
+        "count": 30,
+        "p50Ms": 20.6216,
+        "p95Ms": 37.9623,
+        "maxMs": 120.9188,
+        "sumMs": 737.8746
+      }
+    },
+    "attempts": [
+      {
+        "request": "complete-0",
+        "preCheckoutIncludingQueue": 0.1185,
+        "checkout": 92.7937,
+        "admissionWait": 20.2323,
+        "startup": 179.665,
+        "callback": 92.097,
+        "commit": 0.3496,
+        "callbackDrainMarker": 0.0024,
+        "callbackExitToRelease": 1.3922,
+        "admissionHold": 120.9188
+      },
+      {
+        "request": "complete-1",
+        "preCheckoutIncludingQueue": 290.9362,
+        "checkout": 0.4052,
+        "admissionWait": 0.3743,
+        "startup": 297.9991,
+        "callback": 17.936,
+        "commit": 0.392,
+        "callbackDrainMarker": 0.0006,
+        "callbackExitToRelease": 1.1966,
+        "admissionHold": 20.2722
+      },
+      {
+        "request": "complete-2",
+        "preCheckoutIncludingQueue": 372.1577,
+        "checkout": 0.3339,
+        "admissionWait": 0.8948,
+        "startup": 378.4116,
+        "callback": 21.2893,
+        "commit": 0.4344,
+        "callbackDrainMarker": 0.0032,
+        "callbackExitToRelease": 1.7959,
+        "admissionHold": 24.2074
+      },
+      {
+        "request": "complete-3",
+        "preCheckoutIncludingQueue": 272.8082,
+        "checkout": 0.286,
+        "admissionWait": 0.3365,
+        "startup": 277.0873,
+        "callback": 19.2424,
+        "commit": 0.4083,
+        "callbackDrainMarker": 0.0007,
+        "callbackExitToRelease": 1.588,
+        "admissionHold": 22.0179
+      },
+      {
+        "request": "complete-4",
+        "preCheckoutIncludingQueue": 297.6884,
+        "checkout": 0.4544,
+        "admissionWait": 0.4055,
+        "startup": 306.1469,
+        "callback": 23.9981,
+        "commit": 0.7452,
+        "callbackDrainMarker": 0.0011,
+        "callbackExitToRelease": 2.5197,
+        "admissionHold": 27.9107
+      },
+      {
+        "request": "complete-5",
+        "preCheckoutIncludingQueue": 590.9149,
+        "checkout": 0.3644,
+        "admissionWait": 0.8083,
+        "startup": 597.695,
+        "callback": 19.3924,
+        "commit": 0.436,
+        "callbackDrainMarker": 0.002,
+        "callbackExitToRelease": 1.5208,
+        "admissionHold": 21.8508
+      },
+      {
+        "request": "complete-6",
+        "preCheckoutIncludingQueue": 543.8656,
+        "checkout": 0.6456,
+        "admissionWait": 0.3027,
+        "startup": 551.9623,
+        "callback": 15.6088,
+        "commit": 0.3288,
+        "callbackDrainMarker": 0.002,
+        "callbackExitToRelease": 0.985,
+        "admissionHold": 17.4498
+      },
+      {
+        "request": "complete-7",
+        "preCheckoutIncludingQueue": 680.911,
+        "checkout": 0.3958,
+        "admissionWait": 0.315,
+        "startup": 685.8361,
+        "callback": 15.0998,
+        "commit": 0.4259,
+        "callbackDrainMarker": 0.0006,
+        "callbackExitToRelease": 1.0704,
+        "admissionHold": 16.8314
+      },
+      {
+        "request": "complete-8",
+        "preCheckoutIncludingQueue": 697.8568,
+        "checkout": 0.1971,
+        "admissionWait": 0.5804,
+        "startup": 702.1284,
+        "callback": 13.7337,
+        "commit": 0.2741,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToRelease": 0.9639,
+        "admissionHold": 15.1936
+      },
+      {
+        "request": "complete-9",
+        "preCheckoutIncludingQueue": 661.9583,
+        "checkout": 0.1759,
+        "admissionWait": 0.1521,
+        "startup": 664.6687,
+        "callback": 18.3384,
+        "commit": 0.3696,
+        "callbackDrainMarker": 0.0023,
+        "callbackExitToRelease": 1.8072,
+        "admissionHold": 20.6216
+      },
+      {
+        "request": "complete-10",
+        "preCheckoutIncludingQueue": 753.3584,
+        "checkout": 0.1718,
+        "admissionWait": 0.1872,
+        "startup": 756.2768,
+        "callback": 12.5117,
+        "commit": 0.5956,
+        "callbackDrainMarker": 0.002,
+        "callbackExitToRelease": 1.1037,
+        "admissionHold": 14.3796
+      },
+      {
+        "request": "complete-11",
+        "preCheckoutIncludingQueue": 716.7177,
+        "checkout": 0.1706,
+        "admissionWait": 0.1617,
+        "startup": 720.6578,
+        "callback": 14.0668,
+        "commit": 0.3568,
+        "callbackDrainMarker": 0.0031,
+        "callbackExitToRelease": 2.1469,
+        "admissionHold": 18.0262
+      },
+      {
+        "request": "complete-12",
+        "preCheckoutIncludingQueue": 618.3446,
+        "checkout": 0.3635,
+        "admissionWait": 0.5062,
+        "startup": 623.3533,
+        "callback": 15.3344,
+        "commit": 0.6441,
+        "callbackDrainMarker": 0.0022,
+        "callbackExitToRelease": 1.9243,
+        "admissionHold": 17.8597
+      },
+      {
+        "request": "complete-13",
+        "preCheckoutIncludingQueue": 568.3938,
+        "checkout": 0.2061,
+        "admissionWait": 0.5151,
+        "startup": 572.603,
+        "callback": 17.0569,
+        "commit": 0.4624,
+        "callbackDrainMarker": 0.0023,
+        "callbackExitToRelease": 1.3544,
+        "admissionHold": 19.412
+      },
+      {
+        "request": "complete-14",
+        "preCheckoutIncludingQueue": 765.5544,
+        "checkout": 0.1792,
+        "admissionWait": 0.2269,
+        "startup": 768.8753,
+        "callback": 13.0151,
+        "commit": 0.3751,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToRelease": 0.7703,
+        "admissionHold": 14.7271
+      },
+      {
+        "request": "complete-15",
+        "preCheckoutIncludingQueue": 640.5083,
+        "checkout": 0.1925,
+        "admissionWait": 0.452,
+        "startup": 644.7581,
+        "callback": 16.8082,
+        "commit": 0.372,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToRelease": 1.0216,
+        "admissionHold": 18.6488
+      },
+      {
+        "request": "complete-16",
+        "preCheckoutIncludingQueue": 736.8137,
+        "checkout": 0.325,
+        "admissionWait": 0.2017,
+        "startup": 740.121,
+        "callback": 14.5037,
+        "commit": 0.3056,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToRelease": 0.843,
+        "admissionHold": 16.0718
+      },
+      {
+        "request": "complete-17",
+        "preCheckoutIncludingQueue": 401.1271,
+        "checkout": 0.5492,
+        "admissionWait": 0.3643,
+        "startup": 407.1892,
+        "callback": 21.7447,
+        "commit": 0.4758,
+        "callbackDrainMarker": 0.0014,
+        "callbackExitToRelease": 1.5758,
+        "admissionHold": 25.0109
+      },
+      {
+        "request": "complete-18",
+        "preCheckoutIncludingQueue": 283.0602,
+        "checkout": 0.2546,
+        "admissionWait": 0.3733,
+        "startup": 287.6011,
+        "callback": 17.3951,
+        "commit": 0.4324,
+        "callbackDrainMarker": 0.0009,
+        "callbackExitToRelease": 1.1466,
+        "admissionHold": 18.966
+      },
+      {
+        "request": "complete-19",
+        "preCheckoutIncludingQueue": 430.1098,
+        "checkout": 0.349,
+        "admissionWait": 0.657,
+        "startup": 435.4708,
+        "callback": 22.4425,
+        "commit": 0.4225,
+        "callbackDrainMarker": 0.0007,
+        "callbackExitToRelease": 2.1169,
+        "admissionHold": 25.3767
+      },
+      {
+        "request": "complete-20",
+        "preCheckoutIncludingQueue": 303.5239,
+        "checkout": 0.3264,
+        "admissionWait": 0.4701,
+        "startup": 308.193,
+        "callback": 20.8673,
+        "commit": 0.2755,
+        "callbackDrainMarker": 0.0007,
+        "callbackExitToRelease": 1.0648,
+        "admissionHold": 22.837
+      },
+      {
+        "request": "complete-21",
+        "preCheckoutIncludingQueue": 459.687,
+        "checkout": 0.9664,
+        "admissionWait": 0.6017,
+        "startup": 466.5064,
+        "callback": 22.2886,
+        "commit": 0.4131,
+        "callbackDrainMarker": 0.0022,
+        "callbackExitToRelease": 1.1962,
+        "admissionHold": 24.6173
+      },
+      {
+        "request": "complete-22",
+        "preCheckoutIncludingQueue": 489.7115,
+        "checkout": 0.2722,
+        "admissionWait": 0.5504,
+        "startup": 495.7227,
+        "callback": 21.3696,
+        "commit": 0.3523,
+        "callbackDrainMarker": 0.0031,
+        "callbackExitToRelease": 1.2342,
+        "admissionHold": 23.4287
+      },
+      {
+        "request": "complete-23",
+        "preCheckoutIncludingQueue": 590.9339,
+        "checkout": 0.2021,
+        "admissionWait": 0.513,
+        "startup": 595.5469,
+        "callback": 19.4738,
+        "commit": 0.3712,
+        "callbackDrainMarker": 0.0019,
+        "callbackExitToRelease": 1.0546,
+        "admissionHold": 21.4001
+      },
+      {
+        "request": "complete-24",
+        "preCheckoutIncludingQueue": 322.3521,
+        "checkout": 0.2341,
+        "admissionWait": 0.2381,
+        "startup": 326.0821,
+        "callback": 18.0418,
+        "commit": 0.4626,
+        "callbackDrainMarker": 0.005,
+        "callbackExitToRelease": 1.4459,
+        "admissionHold": 20.3172
+      },
+      {
+        "request": "complete-25",
+        "preCheckoutIncludingQueue": 345.1648,
+        "checkout": 0.2495,
+        "admissionWait": 0.2991,
+        "startup": 350.551,
+        "callback": 20.3152,
+        "commit": 0.7103,
+        "callbackDrainMarker": 0.0019,
+        "callbackExitToRelease": 1.5816,
+        "admissionHold": 22.5768
+      },
+      {
+        "request": "complete-26",
+        "preCheckoutIncludingQueue": 517.967,
+        "checkout": 0.3135,
+        "admissionWait": 0.1827,
+        "startup": 522.8179,
+        "callback": 23.2518,
+        "commit": 1.0439,
+        "callbackDrainMarker": 0.0029,
+        "callbackExitToRelease": 2.8275,
+        "admissionHold": 26.8104
+      },
+      {
+        "request": "complete-27",
+        "preCheckoutIncludingQueue": 621.0172,
+        "checkout": 0.2638,
+        "admissionWait": 0.4535,
+        "startup": 626.3508,
+        "callback": 20.8234,
+        "commit": 0.3172,
+        "callbackDrainMarker": 0.0008,
+        "callbackExitToRelease": 1.2449,
+        "admissionHold": 22.8488
+      },
+      {
+        "request": "complete-28",
+        "preCheckoutIncludingQueue": 599.5607,
+        "checkout": 0.259,
+        "admissionWait": 0.2078,
+        "startup": 603.6833,
+        "callback": 17.1692,
+        "commit": 0.407,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToRelease": 1.2085,
+        "admissionHold": 19.323
+      },
+      {
+        "request": "complete-29",
+        "preCheckoutIncludingQueue": 548.6612,
+        "checkout": 0.5351,
+        "admissionWait": 0.3075,
+        "startup": 555.1157,
+        "callback": 35.3248,
+        "commit": 0.7503,
+        "callbackDrainMarker": 0.0018,
+        "callbackExitToRelease": 1.5863,
+        "admissionHold": 37.9623
+      }
+    ],
+    "poolAndDatabase": {
+      "samples": 98,
+      "maxima": {
+        "total": 17,
+        "idle": 16,
+        "waiting": 50,
+        "waiters": 0,
+        "owners": 1
+      }
+    },
+    "errors": [],
+    "cleanup": {
+      "listenerClosed": true,
+      "checkedOut": 0,
+      "ownedSchemaRemoved": true
+    }
+  },
+  "limitations": [
+    "Candidate cohort passes inside failed command06; unrelated new cumulative-budget fixture fails, so its whole-command verdict stays failed.",
+    "Candidate executes at RED HEAD9f8523e with pending production/coordination bytes later committed, not exact-post-GREEN-commit execution.",
+    "Timing differences are local diagnostic observations, not controlled capacity/performance acceptance or exact causal latency deltas.",
+    "Pre-checkout includes local queue and other startup overhead; the unchanged instrumentation does not expose pure queue time.",
+    "Pool and native lock samples are non-atomic. Last-client-frame labels after physical release are excluded from phase pairing.",
+    "The synchronous callback-drained marker covers awaited business work, not arbitrary background tasks.",
+    "Both cohorts contain60 post-response validation reads on the application pool, in addition to the diagnostic HTTP reads.",
+    "No P2028 occurs in either natural cohort; historical benchmark P2028s remain unclassified.",
+    "Serial admission hold time remains; local queue changes occupancy rather than removing cross-process serialization."
+  ]
+}

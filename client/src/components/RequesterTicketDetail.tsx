@@ -20,6 +20,8 @@ import {
   type TicketStatus,
 } from "../api.js";
 import AttachmentSection from "./AttachmentSection.js";
+import ActionsTaken from "./ActionsTaken.js";
+import type { AuthUser } from "../api.js";
 
 type LoadState = "loading" | "success" | "error";
 
@@ -266,7 +268,7 @@ function isResolutionEligible(ticket: TicketDetail): boolean {
     ticket.requesterResolutionIndicatedAt === null;
 }
 
-export default function RequesterTicketDetail() {
+export default function RequesterTicketDetail({ user }: { user: AuthUser }) {
   const { ticketId: parameter = "" } = useParams();
   const ticketId = Number(parameter);
   const [state, setState] = useState<LoadState>("loading");
@@ -449,6 +451,7 @@ export default function RequesterTicketDetail() {
           )}
         </div>
       </div>
+      <ActionsTaken key={ticket.id} ticket={ticket} user={user} />
       <PublicComments ticketId={ticket.id} />
       <AttachmentSection ticketId={ticket.id} />
       </div>

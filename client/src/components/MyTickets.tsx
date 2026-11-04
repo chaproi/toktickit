@@ -4,7 +4,8 @@ import {
   useState,
   type FormEvent,
 } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import { parseRequesterQuery, readRequesterFilters } from "../requester-query.js";
 import {
   ApiRequestError,
   getCategories,
@@ -14,6 +15,7 @@ import {
   type RelatedSystem,
   type RequestedPriority,
   type TicketListItem,
+  type TicketListQuery,
   type TicketListPagination,
   type TicketPageSize,
   type TicketSortField,
@@ -29,6 +31,7 @@ type FilterValues = {
   categoryId: string;
   relatedSystemId: string;
   requestedPriority: string;
+  itPriority: string;
   currentStatus: string;
 };
 
@@ -37,6 +40,7 @@ const EMPTY_FILTERS: FilterValues = {
   categoryId: "",
   relatedSystemId: "",
   requestedPriority: "",
+  itPriority: "",
   currentStatus: "",
 };
 
@@ -114,17 +118,29 @@ function enumLabel(value: string): string {
 }
 
 export default function MyTickets() {
-  const [draftFilters, setDraftFilters] =
-    useState<FilterValues>(EMPTY_FILTERS);
-  const [appliedFilters, setAppliedFilters] =
-    useState<FilterValues>(EMPTY_FILTERS);
-  const [sortBy, setSortBy] =
-    useState<TicketSortField>("updatedAt");
-  const [sortOrder, setSortOrder] =
-    useState<TicketSortOrder>("desc");
-  const [pageSize, setPageSize] =
-    useState<TicketPageSize>(10);
-  const [page, setPage] = useState(1);
+  const [parameters, setParameters] = useSearchParams();
+  const search = parameters.toString();
+  const parsed = parseRequesterQuery(parameters, "tickets");
+  const appliedFilters = readRequesterFilters(parameters);
+  const sortBy = (parameters.get("sortBy") ?? "updatedAt") as TicketListQuery["sortBy"];
+  const sortOrder = (parameters.get("sortOrder") ?? "desc") as TicketSortOrder;
+  const pageSize = Number(parameters.get("pageSize") ?? "10") as TicketPageSize;
+  const page = Number(parameters.get("page") ?? "1");
+  const [draftFilters, setDraftFilters] = useState<FilterValues>(() => readRequesterFilters(parameters));
+  const appliedFilterKey = JSON.stringify(appliedFilters);
+  // Sorting and paging use applied filters; they must not discard an idle draft.
+  useEffect(() => { setDraftFilters(JSON.parse(appliedFilterKey) as FilterValues); }, [appliedFilterKey]);
+  function updateQuery(changes: Record<string, string | undefined>) {
+    const next = new URLSearchParams(search);
+    for (const [name, value] of Object.entries(changes)) {
+      if (value === undefined || value === "") next.delete(name);
+      else next.set(name, value);
+    }
+    setParameters(next);
+  }
+  function setPage(value: number | ((current: number) => number)) {
+    updateQuery({ page: String(typeof value === "function" ? value(page) : value) });
+  }
   const [items, setItems] = useState<TicketListItem[]>([]);
   const [pagination, setPagination] =
     useState<TicketListPagination | null>(null);
@@ -173,6 +189,12 @@ export default function MyTickets() {
   }, [referenceRetryVersion]);
 
   useEffect(() => {
+    const queryParameters = parseRequesterQuery(new URLSearchParams(search), "tickets");
+    if (!queryParameters.success) {
+      setItems([]); setPagination(null); setLoadState("error");
+      setErrorMessage("Invalid query filters. Check or clear the filters and try again.");
+      return;
+    }
     const activeRequest = ++requestVersion.current;
     const controller = new AbortController();
 
@@ -180,7 +202,8 @@ export default function MyTickets() {
     setErrorMessage("");
     setItems([]);
 
-    const query = {
+    const query: TicketListQuery = {
+      ...Object.fromEntries(["updatedFrom", "updatedBefore", "resolvedFrom", "resolvedBefore"].filter((name) => queryParameters.data[name] !== undefined).map((name) => [name, queryParameters.data[name]])),
       ...(appliedFilters.search
         ? { search: appliedFilters.search }
         : {}),
@@ -206,6 +229,9 @@ export default function MyTickets() {
               appliedFilters.currentStatus as TicketStatus,
           }
         : {}),
+      ...(appliedFilters.itPriority ? { itPriority: appliedFilters.itPriority as RequestedPriority } : {}),
+      ...(queryParameters.data.statusGroup ? { statusGroup: queryParameters.data.statusGroup as TicketListQuery["statusGroup"] } : {}),
+      ...(queryParameters.data.dashboardWidget ? { dashboardWidget: queryParameters.data.dashboardWidget as TicketListQuery["dashboardWidget"] } : {}),
       sortBy,
       sortOrder,
       page,
@@ -214,7 +240,7 @@ export default function MyTickets() {
 
     void getTickets(query, controller.signal)
       .then((response) => {
-        if (activeRequest !== requestVersion.current) {
+        if (controller.signal.aborted || activeRequest !== requestVersion.current) {
           return;
         }
 
@@ -233,7 +259,7 @@ export default function MyTickets() {
       })
       .catch((error: unknown) => {
         if (
-          activeRequest !== requestVersion.current ||
+          controller.signal.aborted || activeRequest !== requestVersion.current ||
           (error instanceof DOMException &&
             error.name === "AbortError")
         ) {
@@ -253,14 +279,7 @@ export default function MyTickets() {
     return () => {
       controller.abort();
     };
-  }, [
-    appliedFilters,
-    sortBy,
-    sortOrder,
-    page,
-    pageSize,
-    retryVersion,
-  ]);
+  }, [search, retryVersion]);
 
   function updateDraftFilter(
     field: keyof FilterValues,
@@ -274,27 +293,35 @@ export default function MyTickets() {
 
   function applyFilters(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setAppliedFilters({
-      ...draftFilters,
-      search: draftFilters.search.trim(),
-    });
-    setPage(1);
+    const next = new URLSearchParams(search);
+    for (const [name, value] of Object.entries({ ...draftFilters, search: draftFilters.search.trim(), page: "1" })) {
+      if (value === "") next.delete(name);
+      else next.set(name, value);
+    }
+    if (next.toString() === search) setRetryVersion((value) => value + 1);
+    else setParameters(next);
   }
 
   function clearFilters() {
     setDraftFilters({ ...EMPTY_FILTERS });
-    setAppliedFilters({ ...EMPTY_FILTERS });
-    setPage(1);
+    const next = new URLSearchParams({
+      page: "1", pageSize: [10, 25, 50].includes(pageSize) ? String(pageSize) : "10",
+      sortBy: SORT_FIELDS.some((field) => field.value === sortBy) ? sortBy : "updatedAt",
+      sortOrder: sortOrder === "asc" ? "asc" : "desc",
+    });
+    if (next.toString() === search) setRetryVersion((value) => value + 1);
+    else setParameters(next);
   }
 
+  const hasContext = Boolean(parameters.get("dashboardWidget") || parameters.get("statusGroup") || parameters.get("updatedFrom") || parameters.get("resolvedFrom"));
   const showEmpty =
     loadState === "success" &&
     items.length === 0 &&
-    !hasAppliedSearchOrFilter(appliedFilters);
+    !hasAppliedSearchOrFilter(appliedFilters) && !hasContext;
   const showNoResults =
     loadState === "success" &&
     items.length === 0 &&
-    hasAppliedSearchOrFilter(appliedFilters);
+    (hasAppliedSearchOrFilter(appliedFilters) || hasContext);
 
   return (
     <section aria-labelledby="my-tickets-heading">
@@ -309,6 +336,7 @@ export default function MyTickets() {
         </div>
       </div>
 
+      {!parsed.success && <div className="alert alert-danger" role="alert"><h2 className="h5">Invalid query filters</h2><ul>{Object.entries(parsed.fields).map(([name, message]) => <li key={name}>{name}: {message}</li>)}</ul></div>}
       <form
         className="card border-0 shadow-sm mb-4"
         onSubmit={applyFilters}
@@ -405,6 +433,14 @@ export default function MyTickets() {
             </div>
 
             <div>
+              <label className="form-label" htmlFor="ticket-it-priority">IT Priority</label>
+              <select id="ticket-it-priority" className="form-select" value={draftFilters.itPriority} onChange={(event) => updateDraftFilter("itPriority", event.target.value)}>
+                <option value="">All Priorities</option>
+                {PRIORITIES.map((priority) => <option key={priority} value={priority}>{priority}</option>)}
+              </select>
+            </div>
+
+            <div>
               <label className="form-label" htmlFor="ticket-status">
                 Current Status
               </label>
@@ -473,11 +509,10 @@ export default function MyTickets() {
                 className="form-select"
                 value={sortBy}
                 onChange={(event) => {
-                  setSortBy(event.target.value as TicketSortField);
-                  setPage(1);
+                  updateQuery({ sortBy: event.target.value, page: "1" });
                 }}
               >
-                {SORT_FIELDS.map((field) => (
+                {[...SORT_FIELDS, ...(parameters.has("resolvedFrom") && parameters.has("resolvedBefore") ? [{ value: "resolvedAt", label: "Resolution Date" }] : [])].map((field) => (
                   <option key={field.value} value={field.value}>
                     {field.label}
                   </option>
@@ -497,8 +532,7 @@ export default function MyTickets() {
                 className="form-select"
                 value={sortOrder}
                 onChange={(event) => {
-                  setSortOrder(event.target.value as TicketSortOrder);
-                  setPage(1);
+                  updateQuery({ sortOrder: event.target.value, page: "1" });
                 }}
               >
                 <option value="asc">Ascending</option>
@@ -515,10 +549,7 @@ export default function MyTickets() {
                 className="form-select"
                 value={pageSize}
                 onChange={(event) => {
-                  setPageSize(
-                    Number(event.target.value) as TicketPageSize,
-                  );
-                  setPage(1);
+                  updateQuery({ pageSize: event.target.value, page: "1" });
                 }}
               >
                 <option value="10">10</option>
@@ -538,7 +569,7 @@ export default function MyTickets() {
             </div>
           )}
 
-          {loadState === "error" && (
+          {loadState === "error" && parsed.success && (
             <div className="alert alert-danger mb-0" role="alert">
               <p>{errorMessage}</p>
               <button
@@ -576,6 +607,7 @@ export default function MyTickets() {
                     <th scope="col">Owner</th>
                     <th scope="col">Status</th>
                     <th scope="col">Updated</th>
+                    {parameters.has("resolvedFrom") && <th scope="col">Resolved</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -635,6 +667,7 @@ export default function MyTickets() {
                           {formatDate(ticket.updatedAt)}
                         </time>
                       </td>
+                      {parameters.has("resolvedFrom") && <td data-label="Resolved">{ticket.resolvedAt ? <time dateTime={ticket.resolvedAt}>{formatDate(ticket.resolvedAt)}</time> : "Not recorded"}</td>}
                     </tr>
                   ))}
                 </tbody>

@@ -1,6 +1,8 @@
-import { Prisma, type RequestedPriority, type TicketStatus, type UserRole } from "@prisma/client";
-import { runSerializableMutation } from "../auth/eligibility-transaction.js";
+import { Prisma, type Action, type RequestedPriority, type TicketStatus, type UserRole } from "@prisma/client";
+import { toActionSnapshot } from "../actions/action-projection.js";
+import { runAdmittedSerializableMutation as runSerializableMutation } from "../auth/eligibility-transaction.js";
 import { getPrisma } from "../prisma.js";
+import { validateCommandSession } from "../auth/command-session.js";
 import {
   allowedStatusTransitions,
   canUnassignTicket,
@@ -55,7 +57,7 @@ export async function getStaffTicketDetail(ticketId: number) {
   };
 }
 
-type LockedUser = { id: number; role: UserRole; isActive: boolean };
+type LockedUser = { id: number; role: UserRole; isActive: boolean; mustChangePassword: boolean };
 type LockedTicket = {
   id: number;
   ownerId: number | null;
@@ -66,20 +68,23 @@ type LockedTicket = {
   updatedAt: Date;
 };
 
-function operational(user: LockedUser | null | undefined): boolean {
+function operational(user: Pick<LockedUser, "role" | "isActive"> | null | undefined): boolean {
   return Boolean(user?.isActive && (user.role === "IT_STAFF" || user.role === "ADMINISTRATOR"));
 }
 
-async function lockUsers(transaction: Prisma.TransactionClient, ids: readonly number[]) {
+async function lockUsers(transaction: Prisma.TransactionClient, ids: readonly number[], actorId: number) {
   const unique = [...new Set(ids)].sort((left, right) => left - right);
   if (unique.length === 0) return [];
-  return transaction.$queryRaw<LockedUser[]>(Prisma.sql`
-    SELECT "id", "role", "isActive"
+  const users = await transaction.$queryRaw<LockedUser[]>(Prisma.sql`
+    SELECT "id", "role", "isActive", "mustChangePassword"
     FROM "User"
     WHERE "id" IN (${Prisma.join(unique)})
     ORDER BY "id" ASC
     FOR UPDATE
   `);
+  const actor = users.find(u => u.id === actorId);
+  await validateCommandSession(transaction, actorId, operational(actor), actor?.mustChangePassword ?? false);
+  return users;
 }
 
 async function lockTicket(transaction: Prisma.TransactionClient, ticketId: number) {
@@ -126,7 +131,7 @@ export async function claimStaffTicket(actorId: number, ticketId: number, expect
   const initialOwner = await initialOwnerId(ticketId);
   const userIds = [actorId, ...(initialOwner === null ? [] : [initialOwner])];
   return runSerializableMutation(async (transaction) => {
-    const users = await lockUsers(transaction, userIds);
+    const users = await lockUsers(transaction, userIds, actorId);
     const actor = users.find(({ id }) => id === actorId);
     if (!operational(actor)) return { kind: "actor-conflict" as const };
     const ticket = await lockTicket(transaction, ticketId);
@@ -158,7 +163,7 @@ export async function changeStaffTicketOwner(
   const initialOwner = initial.ownerId;
   const userIds = [actorId, ...(initialOwner === null ? [] : [initialOwner]), ...(ownerId === null ? [] : [ownerId])];
   return runSerializableMutation(async (transaction) => {
-    const users = await lockUsers(transaction, userIds);
+    const users = await lockUsers(transaction, userIds, actorId);
     if (!operational(users.find(({ id }) => id === actorId))) return { kind: "actor-conflict" as const };
     const target = ownerId === null ? null : users.find(({ id }) => id === ownerId);
     if (ownerId !== null && !operational(target)) return { kind: "owner-eligibility" as const };
@@ -185,7 +190,7 @@ export async function changeStaffTicketPriority(
   expectedUpdatedAt: string,
 ) {
   return runSerializableMutation(async (transaction) => {
-    const users = await lockUsers(transaction, [actorId]);
+    const users = await lockUsers(transaction, [actorId], actorId);
     if (!operational(users[0])) return { kind: "actor-conflict" as const };
     const ticket = await lockTicket(transaction, ticketId);
     if (!ticket) return { kind: "not-found" as const };
@@ -209,7 +214,7 @@ export async function changeStaffTicketStatus(
   const initialOwner = await initialOwnerId(ticketId);
   const userIds = [actorId, ...(initialOwner === null ? [] : [initialOwner])];
   return runSerializableMutation(async (transaction) => {
-    const users = await lockUsers(transaction, userIds);
+    const users = await lockUsers(transaction, userIds, actorId);
     if (!operational(users.find(({ id }) => id === actorId))) return { kind: "actor-conflict" as const };
     const ticket = await lockTicket(transaction, ticketId);
     if (!ticket) return { kind: "not-found" as const };
@@ -220,34 +225,74 @@ export async function changeStaffTicketStatus(
     if (["RESOLVED", "CLOSED", "CANCELLED"].includes(targetStatus) && !confirm) {
       return { kind: "confirmation" as const };
     }
+    if (ticket.ownerId !== null && !userIds.includes(ticket.ownerId)) return { kind: "owner-eligibility" as const };
     if (statusRequiresOwner(targetStatus)) {
       if (ticket.ownerId === null) return { kind: "owner-required" as const };
       if (ticket.ownerId !== initialOwner || !operational(users.find(({ id }) => id === ticket.ownerId))) {
         return { kind: "owner-eligibility" as const };
       }
     }
+    if (targetStatus === "RESOLVED" || targetStatus === "CLOSED") {
+      const unfinishedAction = await transaction.action.findFirst({
+        where: { ticketId, status: { in: ["PLANNED", "IN_PROGRESS"] } },
+        select: { id: true },
+      });
+      if (unfinishedAction) return { kind: "actions-outstanding" as const };
+    }
+    // Action writers share this parent gate/row lock. Lock only unfinished
+    // children, in ID order, after the existing User and Ticket locks.
+    const cancelledActions = targetStatus === "CANCELLED"
+      ? await transaction.$queryRaw<Action[]>`
+          SELECT * FROM "Action"
+          WHERE "ticketId" = ${ticketId} AND "status" IN ('PLANNED', 'IN_PROGRESS')
+          ORDER BY "id" ASC FOR UPDATE`
+      : [];
+    const cancellationAt = targetStatus === "CANCELLED"
+      ? new Date(cancelledActions.reduce(
+          (latest, action) => Math.max(latest, action.updatedAt.getTime() + 1),
+          Math.max(Date.now(), ticket.updatedAt.getTime() + 1),
+        ))
+      : undefined;
     await transaction.ticket.update({
       where: { id: ticketId },
       data: {
         currentStatus: targetStatus,
+        ...(cancellationAt ? { updatedAt: cancellationAt } : {}),
         ...(targetStatus === "REOPENED" ? {
           requesterResolutionIndicatedAt: null,
           requesterResolutionIndicatedById: null,
         } : {}),
       },
     });
-    await transaction.ticketStatusHistory.create({
+    const statusEvent = await transaction.ticketStatusHistory.create({
       data: {
         ticketId,
         actorId,
         fromStatus: ticket.currentStatus,
         toStatus: targetStatus,
-        reason: targetStatus === "CANCELLED" ? reason : null,
+        reason,
+        ...(cancellationAt ? { createdAt: cancellationAt } : {}),
       },
     });
+    for (const previous of cancelledActions) {
+      const cancelled = await transaction.action.update({
+        where: { id: previous.id },
+        data: {
+          status: "CANCELLED", version: { increment: 1 }, cancellationReason: reason,
+          updatedAt: cancellationAt, cancelledAt: cancellationAt,
+          performedById: null, completedAt: null,
+        },
+      });
+      await transaction.actionHistory.create({ data: {
+        actionId: cancelled.id, actorId, event: "ACTION_CANCELLED_BY_TICKET",
+        actionVersion: cancelled.version, createdAt: cancellationAt,
+        before: toActionSnapshot(previous), after: toActionSnapshot(cancelled),
+        sourceTicketStatusHistoryId: statusEvent.id,
+      } });
+    }
     return { kind: "success" as const, ticket: await mutationSummary(transaction, ticketId) };
   }, undefined, [
     ...userIds.map((id) => ({ scope: 1 as const, id })),
     { scope: 2, id: ticketId },
-  ]);
+  ], targetStatus === "CANCELLED" ? { cascadeTicketId: ticketId } : {});
 }

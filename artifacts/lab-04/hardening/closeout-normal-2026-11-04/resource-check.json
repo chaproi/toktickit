@@ -1,0 +1,22 @@
+{
+  "checkedAt": "2026-11-04T10:28:07.976Z",
+  "normalListenersClosed": true,
+  "testRunnersDrained": true,
+  "zoomContextsClosed": true,
+  "routingRestored": true,
+  "ownedProfilesAfterScopedCleanup": 0,
+  "delayedProfile": "One failed-diagnostic profile created 2026-11-04T10:11:41.206Z was removed after no matching Edge process remained. A conservative private cleanup guard initially compared UTC with a locally parsed cutoff; explicit UTC-to-UTC comparison corrected the guard. No unowned path was removed.",
+  "windows": "11 Home Single Language 10.0.26200 build26200",
+  "installedNarratorVersion": "10.0.26100.8972",
+  "narratorQualification": "Installed binary version only; no speech heard/captured or historical session version inferred.",
+  "borrowedReviewSchemas": "Both preserved, not dropped/reset. Review runtime restored separately against the original schema after verification; no migrations/seed/password changes. Browser cookie/sign-in continuity not independently measured.",
+  "restoredRuntimePid": 42272,
+  "restoredRuntimePorts": [
+    4173,
+    3100
+  ],
+  "frontendOriginVerified": "http://127.0.0.1:3100",
+  "rootModuleJunctionRemoved": true,
+  "unrelatedDependenciesAndOriginalWorktreePreserved": true,
+  "finalOwnedZoomProfiles": 0
+}

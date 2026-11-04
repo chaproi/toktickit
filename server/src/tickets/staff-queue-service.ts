@@ -1,12 +1,8 @@
-import { Prisma, type PrismaClient } from "@prisma/client";
+import type { Prisma, PrismaClient } from "@prisma/client";
 import { getPrisma } from "../prisma.js";
-import {
-  compareStaffQueueTickets,
-  escapePostgresLikePattern,
-  type StaffQueueQuery,
-} from "./ticket-query.js";
+import type { StaffQueueQuery } from "./ticket-query.js";
 
-const queueTicketSelect = {
+export const queueTicketSelect = {
   id: true,
   ticketNumber: true,
   ticketDate: true,
@@ -26,35 +22,7 @@ export type StaffQueueItem = Prisma.TicketGetPayload<{
   select: typeof queueTicketSelect;
 }>;
 
-function baseWhere(query: StaffQueueQuery): Prisma.TicketWhereInput {
-  const literalSearch = escapePostgresLikePattern(query.search);
-  return {
-    ...(query.categoryId === null ? {} : { categoryId: query.categoryId }),
-    ...(query.relatedSystemId === null ? {} : { relatedSystemId: query.relatedSystemId }),
-    ...(query.requestedPriority === null ? {} : { requestedPriority: query.requestedPriority }),
-    ...(query.itPriority === null ? {} : { itPriority: query.itPriority }),
-    ...(query.currentStatus === null ? {} : { currentStatus: query.currentStatus }),
-    ...(query.search === "" ? {} : {
-      OR: [
-        { ticketNumber: { contains: literalSearch, mode: "insensitive" as const } },
-        { summary: { contains: literalSearch, mode: "insensitive" as const } },
-        { requester: { name: { contains: literalSearch, mode: "insensitive" as const } } },
-        { requester: { email: { contains: literalSearch, mode: "insensitive" as const } } },
-      ],
-    }),
-  };
-}
-
-function matchesOwner(item: StaffQueueItem, owner: StaffQueueQuery["owner"], actorId: number): boolean {
-  if (owner === null) return true;
-  if (owner === "unassigned") return item.owner === null;
-  if (owner === "me") return item.owner?.id === actorId;
-  return item.owner?.id === owner &&
-    item.owner.isActive &&
-    (item.owner.role === "IT_STAFF" || item.owner.role === "ADMINISTRATOR");
-}
-
-function publicItem(item: StaffQueueItem) {
+export function publicItem(item: StaffQueueItem) {
   return {
     ...item,
     owner: item.owner === null ? null : {
@@ -66,33 +34,11 @@ function publicItem(item: StaffQueueItem) {
 }
 
 export async function listStaffQueue(actorId: number, query: StaffQueueQuery) {
-  const allBaseItems = await getPrisma().ticket.findMany({
-    where: baseWhere(query),
-    select: queueTicketSelect,
-  });
-  const matchingItems = allBaseItems
-    .filter((item) => matchesOwner(item, query.owner, actorId))
-    .sort((left, right) => compareStaffQueueTickets(left, right, query.sortBy, query.sortOrder));
-  const totalItems = matchingItems.length;
-  const totalPages = totalItems === 0 ? 0 : Math.ceil(totalItems / query.pageSize);
-  const start = (query.page - 1) * query.pageSize;
-
-  return {
-    items: matchingItems.slice(start, start + query.pageSize).map(publicItem),
-    counts: {
-      matching: totalItems,
-      unassigned: allBaseItems.filter((item) => item.owner === null).length,
-      mine: allBaseItems.filter((item) => item.owner?.id === actorId).length,
-    },
-    pagination: {
-      page: query.page,
-      pageSize: query.pageSize,
-      totalItems,
-      totalPages,
-      hasPreviousPage: totalItems > 0 && query.page > 1,
-      hasNextPage: totalItems > 0 && query.page < totalPages,
-    },
-  };
+  // The shared SQL reader applies no Dashboard predicates unless extensions
+  // are present. Defer loading because it also consumes this module's safe
+  // projection; both ordinary and extended reads retain one pagination engine.
+  const { listStaffTicketDrilldown } = await import("./staff-ticket-drilldown-service.js");
+  return listStaffTicketDrilldown(actorId, query);
 }
 
 export async function listEligibleAssignees(

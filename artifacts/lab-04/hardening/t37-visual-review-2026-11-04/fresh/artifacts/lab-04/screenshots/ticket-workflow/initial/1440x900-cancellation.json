@@ -1,0 +1,23 @@
+{
+  "screenshot": "1440x900-cancellation.png",
+  "capturedAt": "2026-11-03T21:22:56.040Z",
+  "timezone": "Asia/Bangkok",
+  "executionHead": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+  "pendingProductionFiles": [],
+  "browser": "HeadlessChrome/153.0.8010.12",
+  "configuredViewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "actualCSSViewport": {
+    "width": 1440,
+    "height": 900,
+    "pinchScale": 1
+  },
+  "role": "IT_STAFF",
+  "state": "Cancellation explanation, required long reason and idle controls",
+  "zoomFactor": 1,
+  "zoomMethod": "unmodified tab zoom",
+  "syntheticDataOnly": true,
+  "visualInspection": "Pending visual inspection"
+}

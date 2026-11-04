@@ -1,0 +1,1742 @@
+{
+  "source": "complete-phases-2026-11-03-0c00b65a.json",
+  "sourceSha256": "93ca0f52a85e1665dbe3ed2e22f3647cb7ad04b80bde895e1d2c3bbb73228a75",
+  "executionHead": "99dc50cc6b49b930691d68bc0d8f23b2d3f6ff65",
+  "method": "Offline only; nearest rank ceil(p*n)-1; all diagnostic responses retained; no latency filtering",
+  "command": {
+    "from": "server/",
+    "text": "npm.cmd test -- tests/lab-04/complete-contention.integration.test.ts",
+    "startedAt": "2026-11-03T04:30:55.7417770Z",
+    "finishedAt": "2026-11-03T04:31:25.6910929Z",
+    "exitCode": 0,
+    "files": 1,
+    "collected": 1,
+    "executed": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "wallSeconds": 29.951943,
+    "frameworkSeconds": 28.71,
+    "caseSeconds": 23.551
+  },
+  "preparation": {
+    "identities": 50,
+    "realSessions": 30,
+    "detail200": 30,
+    "create201": 30,
+    "start200": 30
+  },
+  "observedHttp": {
+    "complete200": 30,
+    "baselineRead200": 4,
+    "overlapRead200": 20,
+    "unexpected": 0
+  },
+  "before": {
+    "tickets": 2050,
+    "actions": 8030,
+    "actionHistory": 24060,
+    "ticketHistory": 3800,
+    "receipts": 60,
+    "comments": 0,
+    "users": 50,
+    "sessions": 30
+  },
+  "after": {
+    "tickets": 2050,
+    "actions": 8030,
+    "actionHistory": 24090,
+    "ticketHistory": 3800,
+    "receipts": 90,
+    "comments": 0,
+    "users": 50,
+    "sessions": 30
+  },
+  "httpMs": {
+    "baseline-": {
+      "count": 4,
+      "minMs": 5.863,
+      "p50Ms": 11.7765,
+      "p95Ms": 47.1777,
+      "maxMs": 47.1777,
+      "sumMs": 79.1518
+    },
+    "overlap-": {
+      "count": 20,
+      "minMs": 337.7082,
+      "p50Ms": 468.3644,
+      "p95Ms": 555.5448,
+      "maxMs": 585.0429,
+      "sumMs": 9531.1771
+    },
+    "complete-": {
+      "count": 30,
+      "minMs": 555.1451,
+      "p50Ms": 1136.3679,
+      "p95Ms": 1418.9112,
+      "maxMs": 1436.1264,
+      "sumMs": 32188.145
+    }
+  },
+  "readOperationsMs": {
+    "detail": {
+      "baseline-": {
+        "count": 1,
+        "minMs": 5.863,
+        "p50Ms": 5.863,
+        "p95Ms": 5.863,
+        "maxMs": 5.863,
+        "sumMs": 5.863
+      },
+      "overlap-": {
+        "count": 5,
+        "minMs": 544.8743,
+        "p50Ms": 551.2788,
+        "p95Ms": 585.0429,
+        "maxMs": 585.0429,
+        "sumMs": 2788.0054
+      }
+    },
+    "dashboard": {
+      "baseline-": {
+        "count": 1,
+        "minMs": 47.1777,
+        "p50Ms": 47.1777,
+        "p95Ms": 47.1777,
+        "maxMs": 47.1777,
+        "sumMs": 47.1777
+      },
+      "overlap-": {
+        "count": 5,
+        "minMs": 451.0992,
+        "p50Ms": 523.854,
+        "p95Ms": 544.1605,
+        "maxMs": 544.1605,
+        "sumMs": 2535.6972
+      }
+    },
+    "tickets": {
+      "baseline-": {
+        "count": 1,
+        "minMs": 11.7765,
+        "p50Ms": 11.7765,
+        "p95Ms": 11.7765,
+        "maxMs": 11.7765,
+        "sumMs": 11.7765
+      },
+      "overlap-": {
+        "count": 5,
+        "minMs": 337.7082,
+        "p50Ms": 441.2601,
+        "p95Ms": 459.4075,
+        "maxMs": 459.4075,
+        "sumMs": 2053.475
+      }
+    },
+    "actions": {
+      "baseline-": {
+        "count": 1,
+        "minMs": 14.3346,
+        "p50Ms": 14.3346,
+        "p95Ms": 14.3346,
+        "maxMs": 14.3346,
+        "sumMs": 14.3346
+      },
+      "overlap-": {
+        "count": 5,
+        "minMs": 344.7419,
+        "p50Ms": 456.9225,
+        "p95Ms": 474.9051,
+        "maxMs": 474.9051,
+        "sumMs": 2153.9995
+      }
+    }
+  },
+  "completePhasesMs": {
+    "poolCheckout": {
+      "count": 30,
+      "minMs": 6.3359,
+      "p50Ms": 128.908,
+      "p95Ms": 406.087,
+      "maxMs": 467.6275,
+      "sumMs": 4861.6273
+    },
+    "admissionWait": {
+      "count": 30,
+      "minMs": 11.8477,
+      "p50Ms": 441.0676,
+      "p95Ms": 630.3625,
+      "maxMs": 638.2695,
+      "sumMs": 12728.706
+    },
+    "startupToCallback": {
+      "count": 30,
+      "minMs": 152.5112,
+      "p50Ms": 659.9433,
+      "p95Ms": 815.7586,
+      "maxMs": 831.2756,
+      "sumMs": 18168.7492
+    },
+    "adapterBegin": {
+      "count": 30,
+      "minMs": 0.2666,
+      "p50Ms": 0.8832,
+      "p95Ms": 7.4478,
+      "maxMs": 16.0399,
+      "sumMs": 54.17
+    },
+    "callback": {
+      "count": 30,
+      "minMs": 12.3031,
+      "p50Ms": 19.2013,
+      "p95Ms": 49.1395,
+      "maxMs": 129.8593,
+      "sumMs": 828.3059
+    },
+    "commit": {
+      "count": 30,
+      "minMs": 0.2678,
+      "p50Ms": 0.8058,
+      "p95Ms": 2.5854,
+      "maxMs": 3.6385,
+      "sumMs": 31.0097
+    },
+    "callbackDrainMarker": {
+      "count": 30,
+      "minMs": 0.0005,
+      "p50Ms": 0.0009,
+      "p95Ms": 0.0061,
+      "maxMs": 0.0077,
+      "sumMs": 0.054
+    },
+    "callbackExitToPhysicalRelease": {
+      "count": 30,
+      "minMs": 0.7519,
+      "p50Ms": 2.0409,
+      "p95Ms": 5.6837,
+      "maxMs": 13.4041,
+      "sumMs": 77.1153
+    },
+    "admissionHeldClientObserved": {
+      "count": 30,
+      "minMs": 14.7787,
+      "p50Ms": 25.337,
+      "p95Ms": 62.1187,
+      "maxMs": 167.8197,
+      "sumMs": 1019.1953
+    },
+    "publicTransaction": {
+      "count": 30,
+      "minMs": 295.8954,
+      "p50Ms": 692.4251,
+      "p95Ms": 829.4846,
+      "maxMs": 846.4794,
+      "sumMs": 19077.0794
+    }
+  },
+  "attempts": [
+    {
+      "request": "complete-0",
+      "attempt": 1,
+      "startMs": 22130.2851,
+      "endMs": 22426.180500000002,
+      "phaseMs": {
+        "poolCheckout": 89.7192,
+        "admissionWait": 11.8477,
+        "startupToCallback": 152.5112,
+        "adapterBegin": 16.0399,
+        "callback": 129.8593,
+        "commit": 0.4866,
+        "callbackDrainMarker": 0.0006,
+        "callbackExitToPhysicalRelease": 13.4041,
+        "admissionHeldClientObserved": 167.8197,
+        "publicTransaction": 295.8954
+      }
+    },
+    {
+      "request": "complete-1",
+      "attempt": 1,
+      "startMs": 22130.4938,
+      "endMs": 22455.415500000003,
+      "phaseMs": {
+        "poolCheckout": 92.5352,
+        "admissionWait": 178.8731,
+        "startupToCallback": 300.2802,
+        "adapterBegin": 1.0003,
+        "callback": 22.1376,
+        "commit": 0.5269,
+        "callbackDrainMarker": 0.0034,
+        "callbackExitToPhysicalRelease": 2.3471,
+        "admissionHeldClientObserved": 28.8515,
+        "publicTransaction": 324.9217
+      }
+    },
+    {
+      "request": "complete-2",
+      "attempt": 1,
+      "startMs": 22132.570000000003,
+      "endMs": 22557.0031,
+      "phaseMs": {
+        "poolCheckout": 115.7294,
+        "admissionWait": 227.2919,
+        "startupToCallback": 383.0466,
+        "adapterBegin": 0.8199,
+        "callback": 38.5953,
+        "commit": 1.2849,
+        "callbackDrainMarker": 0.0028,
+        "callbackExitToPhysicalRelease": 2.5612,
+        "admissionHeldClientObserved": 44.5539,
+        "publicTransaction": 424.4331
+      }
+    },
+    {
+      "request": "complete-3",
+      "attempt": 1,
+      "startMs": 22132.9386,
+      "endMs": 22610.1155,
+      "phaseMs": {
+        "poolCheckout": 127.7272,
+        "admissionWait": 262.1955,
+        "startupToCallback": 430.3031,
+        "adapterBegin": 0.8646,
+        "callback": 43.7136,
+        "commit": 1.4918,
+        "callbackDrainMarker": 0.0015,
+        "callbackExitToPhysicalRelease": 3.0205,
+        "admissionHeldClientObserved": 51.9954,
+        "publicTransaction": 477.1769
+      }
+    },
+    {
+      "request": "complete-4",
+      "attempt": 1,
+      "startMs": 22130.665,
+      "endMs": 22511.6015,
+      "phaseMs": {
+        "poolCheckout": 92.5827,
+        "admissionWait": 210.0983,
+        "startupToCallback": 332.4826,
+        "adapterBegin": 2.8346,
+        "callback": 44.143,
+        "commit": 1.9734,
+        "callbackDrainMarker": 0.0023,
+        "callbackExitToPhysicalRelease": 4.105,
+        "admissionHeldClientObserved": 53.0767,
+        "publicTransaction": 380.9365
+      }
+    },
+    {
+      "request": "complete-5",
+      "attempt": 1,
+      "startMs": 22457.727000000003,
+      "endMs": 23132.0243,
+      "phaseMs": {
+        "poolCheckout": 53.5561,
+        "admissionWait": 600.9684,
+        "startupToCallback": 659.9433,
+        "adapterBegin": 0.8832,
+        "callback": 13.4867,
+        "commit": 0.3046,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToPhysicalRelease": 0.8544,
+        "admissionHeldClientObserved": 16.0505,
+        "publicTransaction": 674.2973
+      }
+    },
+    {
+      "request": "complete-6",
+      "attempt": 1,
+      "startMs": 22457.266300000003,
+      "endMs": 23115.6614,
+      "phaseMs": {
+        "poolCheckout": 6.3359,
+        "admissionWait": 630.3625,
+        "startupToCallback": 639.8485,
+        "adapterBegin": 0.9174,
+        "callback": 17.0008,
+        "commit": 0.8058,
+        "callbackDrainMarker": 0.0021,
+        "callbackExitToPhysicalRelease": 1.5336,
+        "admissionHeldClientObserved": 19.7596,
+        "publicTransaction": 658.3951
+      }
+    },
+    {
+      "request": "complete-7",
+      "attempt": 1,
+      "startMs": 22458.1417,
+      "endMs": 23150.5668,
+      "phaseMs": {
+        "poolCheckout": 98.641,
+        "admissionWait": 569.7927,
+        "startupToCallback": 677.0611,
+        "adapterBegin": 1.6518,
+        "callback": 14.5998,
+        "commit": 0.2678,
+        "callbackDrainMarker": 0.0009,
+        "callbackExitToPhysicalRelease": 0.7519,
+        "admissionHeldClientObserved": 18.2735,
+        "publicTransaction": 692.4251
+      }
+    },
+    {
+      "request": "complete-8",
+      "attempt": 1,
+      "startMs": 22460.8178,
+      "endMs": 23189.3303,
+      "phaseMs": {
+        "poolCheckout": 179.9715,
+        "admissionWait": 525.1592,
+        "startupToCallback": 712.0538,
+        "adapterBegin": 2.4909,
+        "callback": 15.1964,
+        "commit": 0.3415,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToPhysicalRelease": 1.2485,
+        "admissionHeldClientObserved": 20.6556,
+        "publicTransaction": 728.5125
+      }
+    },
+    {
+      "request": "complete-9",
+      "attempt": 1,
+      "startMs": 22459.942000000003,
+      "endMs": 23168.335600000002,
+      "phaseMs": {
+        "poolCheckout": 150.711,
+        "admissionWait": 536.6244,
+        "startupToCallback": 692.3101,
+        "adapterBegin": 0.4715,
+        "callback": 14.9918,
+        "commit": 0.3576,
+        "callbackDrainMarker": 0.0006,
+        "callbackExitToPhysicalRelease": 1.0718,
+        "admissionHeldClientObserved": 17.5145,
+        "publicTransaction": 708.3936
+      }
+    },
+    {
+      "request": "complete-10",
+      "attempt": 1,
+      "startMs": 22462.0832,
+      "endMs": 23256.5469,
+      "phaseMs": {
+        "poolCheckout": 288.7058,
+        "admissionWait": 486.439,
+        "startupToCallback": 779.8865,
+        "adapterBegin": 0.2666,
+        "callback": 13.5725,
+        "commit": 0.3138,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToPhysicalRelease": 0.9925,
+        "admissionHeldClientObserved": 15.6724,
+        "publicTransaction": 794.4637
+      }
+    },
+    {
+      "request": "complete-11",
+      "attempt": 1,
+      "startMs": 22462.745400000003,
+      "endMs": 23292.230000000003,
+      "phaseMs": {
+        "poolCheckout": 406.087,
+        "admissionWait": 400.4049,
+        "startupToCallback": 815.7586,
+        "adapterBegin": 0.8662,
+        "callback": 12.8332,
+        "commit": 0.2903,
+        "callbackDrainMarker": 0.002,
+        "callbackExitToPhysicalRelease": 0.8782,
+        "admissionHeldClientObserved": 15.6913,
+        "publicTransaction": 829.4846
+      }
+    },
+    {
+      "request": "complete-12",
+      "attempt": 1,
+      "startMs": 22462.972400000002,
+      "endMs": 23309.451800000003,
+      "phaseMs": {
+        "poolCheckout": 467.6275,
+        "admissionWait": 359.355,
+        "startupToCallback": 831.2756,
+        "adapterBegin": 0.9419,
+        "callback": 13.0427,
+        "commit": 1.3644,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToPhysicalRelease": 2.1455,
+        "admissionHeldClientObserved": 16.9907,
+        "publicTransaction": 846.4794
+      }
+    },
+    {
+      "request": "complete-13",
+      "attempt": 1,
+      "startMs": 22461.3613,
+      "endMs": 23225.5563,
+      "phaseMs": {
+        "poolCheckout": 225.5283,
+        "admissionWait": 520.158,
+        "startupToCallback": 749.7072,
+        "adapterBegin": 0.9593,
+        "callback": 13.1551,
+        "commit": 0.6903,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToPhysicalRelease": 1.3219,
+        "admissionHeldClientObserved": 16.2833,
+        "publicTransaction": 764.195
+      }
+    },
+    {
+      "request": "complete-14",
+      "attempt": 1,
+      "startMs": 22461.818600000002,
+      "endMs": 23240.652100000003,
+      "phaseMs": {
+        "poolCheckout": 246.4882,
+        "admissionWait": 514.8178,
+        "startupToCallback": 765.6384,
+        "adapterBegin": 0.7639,
+        "callback": 12.3031,
+        "commit": 0.3317,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToPhysicalRelease": 0.88,
+        "admissionHeldClientObserved": 14.7787,
+        "publicTransaction": 778.8335
+      }
+    },
+    {
+      "request": "complete-15",
+      "attempt": 1,
+      "startMs": 22462.4866,
+      "endMs": 23276.156300000002,
+      "phaseMs": {
+        "poolCheckout": 347.4025,
+        "admissionWait": 441.0676,
+        "startupToCallback": 795.6873,
+        "adapterBegin": 0.2876,
+        "callback": 16.7674,
+        "commit": 0.451,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToPhysicalRelease": 1.1945,
+        "admissionHeldClientObserved": 19.3558,
+        "publicTransaction": 813.6697
+      }
+    },
+    {
+      "request": "complete-16",
+      "attempt": 1,
+      "startMs": 22461.115100000003,
+      "endMs": 23209.0413,
+      "phaseMs": {
+        "poolCheckout": 199.9112,
+        "admissionWait": 526.5415,
+        "startupToCallback": 730.5883,
+        "adapterBegin": 1.201,
+        "callback": 16.4935,
+        "commit": 0.3012,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToPhysicalRelease": 0.8303,
+        "admissionHeldClientObserved": 19.4666,
+        "publicTransaction": 747.9262
+      }
+    },
+    {
+      "request": "complete-17",
+      "attempt": 1,
+      "startMs": 22219.352600000002,
+      "endMs": 22750.9893,
+      "phaseMs": {
+        "poolCheckout": 128.908,
+        "admissionWait": 334.6754,
+        "startupToCallback": 491.9618,
+        "adapterBegin": 0.7648,
+        "callback": 35.8942,
+        "commit": 1.964,
+        "callbackDrainMarker": 0.0011,
+        "callbackExitToPhysicalRelease": 3.5874,
+        "admissionHeldClientObserved": 41.8773,
+        "publicTransaction": 531.6367
+      }
+    },
+    {
+      "request": "complete-18",
+      "attempt": 1,
+      "startMs": 22215.1093,
+      "endMs": 22708.515900000002,
+      "phaseMs": {
+        "poolCheckout": 122.2938,
+        "admissionWait": 320.5297,
+        "startupToCallback": 474.4823,
+        "adapterBegin": 0.7811,
+        "callback": 16.1278,
+        "commit": 0.8679,
+        "callbackDrainMarker": 0.0077,
+        "callbackExitToPhysicalRelease": 2.5929,
+        "admissionHeldClientObserved": 20.8262,
+        "publicTransaction": 493.4066
+      }
+    },
+    {
+      "request": "complete-19",
+      "attempt": 1,
+      "startMs": 22215.338900000002,
+      "endMs": 22661.156000000003,
+      "phaseMs": {
+        "poolCheckout": 131.3693,
+        "admissionWait": 275.1902,
+        "startupToCallback": 428.4587,
+        "adapterBegin": 0.3884,
+        "callback": 16.2008,
+        "commit": 0.3504,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToPhysicalRelease": 1.056,
+        "admissionHeldClientObserved": 19.6812,
+        "publicTransaction": 445.8171
+      }
+    },
+    {
+      "request": "complete-20",
+      "attempt": 1,
+      "startMs": 22215.554200000002,
+      "endMs": 22686.999600000003,
+      "phaseMs": {
+        "poolCheckout": 132.0478,
+        "admissionWait": 295.2895,
+        "startupToCallback": 447.5792,
+        "adapterBegin": 0.4055,
+        "callback": 21.2559,
+        "commit": 1.3547,
+        "callbackDrainMarker": 0.0009,
+        "callbackExitToPhysicalRelease": 2.5204,
+        "admissionHeldClientObserved": 25.337,
+        "publicTransaction": 471.4454
+      }
+    },
+    {
+      "request": "complete-21",
+      "attempt": 1,
+      "startMs": 22223.172000000002,
+      "endMs": 22869.0319,
+      "phaseMs": {
+        "poolCheckout": 126.838,
+        "admissionWait": 436.1967,
+        "startupToCallback": 593.8822,
+        "adapterBegin": 1.2383,
+        "callback": 48.6688,
+        "commit": 1.2499,
+        "callbackDrainMarker": 0.0026,
+        "callbackExitToPhysicalRelease": 3.0843,
+        "admissionHeldClientObserved": 56.7694,
+        "publicTransaction": 645.8599
+      }
+    },
+    {
+      "request": "complete-22",
+      "attempt": 1,
+      "startMs": 22219.629200000003,
+      "endMs": 22810.255100000002,
+      "phaseMs": {
+        "poolCheckout": 129.2644,
+        "admissionWait": 376.0977,
+        "startupToCallback": 535.204,
+        "adapterBegin": 1.0844,
+        "callback": 49.1395,
+        "commit": 2.5854,
+        "callbackDrainMarker": 0.0033,
+        "callbackExitToPhysicalRelease": 5.6837,
+        "admissionHeldClientObserved": 58.0762,
+        "publicTransaction": 590.6259
+      }
+    },
+    {
+      "request": "complete-23",
+      "attempt": 1,
+      "startMs": 22214.821600000003,
+      "endMs": 22640.941300000002,
+      "phaseMs": {
+        "poolCheckout": 121.9901,
+        "admissionWait": 246.4055,
+        "startupToCallback": 399.7812,
+        "adapterBegin": 0.4509,
+        "callback": 24.2417,
+        "commit": 0.8528,
+        "callbackDrainMarker": 0.0019,
+        "callbackExitToPhysicalRelease": 1.987,
+        "admissionHeldClientObserved": 28.5493,
+        "publicTransaction": 426.1197
+      }
+    },
+    {
+      "request": "complete-24",
+      "attempt": 1,
+      "startMs": 22335.5718,
+      "endMs": 23094.960300000002,
+      "phaseMs": {
+        "poolCheckout": 88.8945,
+        "admissionWait": 638.2695,
+        "startupToCallback": 738.1348,
+        "adapterBegin": 3.6327,
+        "callback": 19.2013,
+        "commit": 1.1597,
+        "callbackDrainMarker": 0.0005,
+        "callbackExitToPhysicalRelease": 2.0409,
+        "admissionHeldClientObserved": 26.0686,
+        "publicTransaction": 759.3885
+      }
+    },
+    {
+      "request": "complete-25",
+      "attempt": 1,
+      "startMs": 22348.664900000003,
+      "endMs": 23068.561700000002,
+      "phaseMs": {
+        "poolCheckout": 77.7039,
+        "admissionWait": 609.8245,
+        "startupToCallback": 695.0458,
+        "adapterBegin": 2.0244,
+        "callback": 23.2311,
+        "commit": 0.3804,
+        "callbackDrainMarker": 0.0007,
+        "callbackExitToPhysicalRelease": 1.6045,
+        "admissionHeldClientObserved": 28.1845,
+        "publicTransaction": 719.8968
+      }
+    },
+    {
+      "request": "complete-26",
+      "attempt": 1,
+      "startMs": 22219.868000000002,
+      "endMs": 22962.521,
+      "phaseMs": {
+        "poolCheckout": 129.8836,
+        "admissionWait": 545.4195,
+        "startupToCallback": 713.6802,
+        "adapterBegin": 0.5277,
+        "callback": 26.3968,
+        "commit": 1.4081,
+        "callbackDrainMarker": 0.0019,
+        "callbackExitToPhysicalRelease": 2.4224,
+        "admissionHeldClientObserved": 31.0764,
+        "publicTransaction": 742.653
+      }
+    },
+    {
+      "request": "complete-27",
+      "attempt": 1,
+      "startMs": 22223.3551,
+      "endMs": 22930.7302,
+      "phaseMs": {
+        "poolCheckout": 127.7865,
+        "admissionWait": 483.4751,
+        "startupToCallback": 654.4803,
+        "adapterBegin": 7.4478,
+        "callback": 47.4244,
+        "commit": 3.6385,
+        "callbackDrainMarker": 0.0042,
+        "callbackExitToPhysicalRelease": 5.3369,
+        "admissionHeldClientObserved": 62.1187,
+        "publicTransaction": 707.3751
+      }
+    },
+    {
+      "request": "complete-28",
+      "attempt": 1,
+      "startMs": 22223.542500000003,
+      "endMs": 23009.727700000003,
+      "phaseMs": {
+        "poolCheckout": 170.674,
+        "admissionWait": 568.3433,
+        "startupToCallback": 758.363,
+        "adapterBegin": 0.6095,
+        "callback": 24.3953,
+        "commit": 2.0462,
+        "callbackDrainMarker": 0.0061,
+        "callbackExitToPhysicalRelease": 3.396,
+        "admissionHeldClientObserved": 33.9552,
+        "publicTransaction": 786.1852
+      }
+    },
+    {
+      "request": "complete-29",
+      "attempt": 1,
+      "startMs": 22223.782700000003,
+      "endMs": 23040.0129,
+      "phaseMs": {
+        "poolCheckout": 184.7137,
+        "admissionWait": 596.9919,
+        "startupToCallback": 789.3133,
+        "adapterBegin": 1.5539,
+        "callback": 24.2365,
+        "commit": 1.5681,
+        "callbackDrainMarker": 0.0024,
+        "callbackExitToPhysicalRelease": 2.6619,
+        "admissionHeldClientObserved": 29.8856,
+        "publicTransaction": 816.2302
+      }
+    }
+  ],
+  "readCheckouts": [
+    {
+      "request": "baseline-0",
+      "attempt": 0,
+      "fromMs": 21795.6312,
+      "beforeMs": 21795.684800000003,
+      "durationMs": 0.0536,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "baseline-0",
+      "attempt": 0,
+      "fromMs": 21796.233900000003,
+      "beforeMs": 21796.2458,
+      "durationMs": 0.0119,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "baseline-0",
+      "attempt": 0,
+      "fromMs": 21797.7724,
+      "beforeMs": 21797.786300000003,
+      "durationMs": 0.0139,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "baseline-0",
+      "attempt": 0,
+      "fromMs": 21798.3028,
+      "beforeMs": 21798.3453,
+      "durationMs": 0.0425,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "baseline-0",
+      "attempt": 0,
+      "fromMs": 21798.315700000003,
+      "beforeMs": 21798.412500000002,
+      "durationMs": 0.0968,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "baseline-0",
+      "attempt": 0,
+      "fromMs": 21798.324,
+      "beforeMs": 21798.4477,
+      "durationMs": 0.1237,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "baseline-0",
+      "attempt": 0,
+      "fromMs": 21798.3318,
+      "beforeMs": 21798.4748,
+      "durationMs": 0.143,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "baseline-0",
+      "attempt": 0,
+      "fromMs": 21798.338900000002,
+      "beforeMs": 21798.534200000002,
+      "durationMs": 0.1953,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "baseline-0",
+      "attempt": 0,
+      "fromMs": 21798.860200000003,
+      "beforeMs": 21798.867100000003,
+      "durationMs": 0.0069,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "baseline-1",
+      "attempt": 0,
+      "fromMs": 21801.5014,
+      "beforeMs": 21801.5249,
+      "durationMs": 0.0235,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "baseline-1",
+      "attempt": 0,
+      "fromMs": 21802.057800000002,
+      "beforeMs": 21802.0691,
+      "durationMs": 0.0113,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "baseline-1",
+      "attempt": 1,
+      "fromMs": 21803.3148,
+      "beforeMs": 21803.333400000003,
+      "durationMs": 0.0186,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "baseline-2",
+      "attempt": 0,
+      "fromMs": 21848.930200000003,
+      "beforeMs": 21848.9455,
+      "durationMs": 0.0153,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "baseline-2",
+      "attempt": 0,
+      "fromMs": 21849.4294,
+      "beforeMs": 21849.441000000003,
+      "durationMs": 0.0116,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "baseline-2",
+      "attempt": 1,
+      "fromMs": 21850.359900000003,
+      "beforeMs": 21850.3718,
+      "durationMs": 0.0119,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "baseline-3",
+      "attempt": 0,
+      "fromMs": 21861.3555,
+      "beforeMs": 21861.3728,
+      "durationMs": 0.0173,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "baseline-3",
+      "attempt": 0,
+      "fromMs": 21861.869400000003,
+      "beforeMs": 21861.879500000003,
+      "durationMs": 0.0101,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "baseline-3",
+      "attempt": 1,
+      "fromMs": 21862.659600000003,
+      "beforeMs": 21862.671100000003,
+      "durationMs": 0.0115,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-0",
+      "attempt": 0,
+      "fromMs": 21953.1286,
+      "beforeMs": 22057.7259,
+      "durationMs": 104.5973,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-0",
+      "attempt": 0,
+      "fromMs": 22062.964,
+      "beforeMs": 22094.396,
+      "durationMs": 31.432,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-0",
+      "attempt": 0,
+      "fromMs": 22098.6558,
+      "beforeMs": 22129.089200000002,
+      "durationMs": 30.4334,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-0",
+      "attempt": 0,
+      "fromMs": 22130.848100000003,
+      "beforeMs": 22223.4353,
+      "durationMs": 92.5872,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-0",
+      "attempt": 0,
+      "fromMs": 22130.8594,
+      "beforeMs": 22223.602700000003,
+      "durationMs": 92.7433,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-0",
+      "attempt": 0,
+      "fromMs": 22130.867100000003,
+      "beforeMs": 22236.7415,
+      "durationMs": 105.8744,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-0",
+      "attempt": 0,
+      "fromMs": 22130.873600000003,
+      "beforeMs": 22237.6489,
+      "durationMs": 106.7753,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-0",
+      "attempt": 0,
+      "fromMs": 22130.881,
+      "beforeMs": 22247.856900000002,
+      "durationMs": 116.9759,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-0",
+      "attempt": 0,
+      "fromMs": 22260.9493,
+      "beforeMs": 22413.269500000002,
+      "durationMs": 152.3202,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-1",
+      "attempt": 0,
+      "fromMs": 21957.0031,
+      "beforeMs": 22059.131500000003,
+      "durationMs": 102.1284,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-1",
+      "attempt": 0,
+      "fromMs": 22063.3001,
+      "beforeMs": 22095.331700000002,
+      "durationMs": 32.0316,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-1",
+      "attempt": 1,
+      "fromMs": 22099.2834,
+      "beforeMs": 22129.5819,
+      "durationMs": 30.2985,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-10",
+      "attempt": 0,
+      "fromMs": 21994.2475,
+      "beforeMs": 22068.414800000002,
+      "durationMs": 74.1673,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-10",
+      "attempt": 0,
+      "fromMs": 22069.6755,
+      "beforeMs": 22103.9046,
+      "durationMs": 34.2291,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-10",
+      "attempt": 1,
+      "fromMs": 22106.2923,
+      "beforeMs": 22175.487800000003,
+      "durationMs": 69.1955,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-11",
+      "attempt": 0,
+      "fromMs": 21996.8293,
+      "beforeMs": 22068.8351,
+      "durationMs": 72.0058,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-11",
+      "attempt": 0,
+      "fromMs": 22072.3699,
+      "beforeMs": 22105.8836,
+      "durationMs": 33.5137,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-11",
+      "attempt": 1,
+      "fromMs": 22109.845,
+      "beforeMs": 22188.998000000003,
+      "durationMs": 79.153,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-12",
+      "attempt": 0,
+      "fromMs": 22002.343,
+      "beforeMs": 22069.1794,
+      "durationMs": 66.8364,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-12",
+      "attempt": 0,
+      "fromMs": 22072.7639,
+      "beforeMs": 22106.3807,
+      "durationMs": 33.6168,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-12",
+      "attempt": 0,
+      "fromMs": 22112.143,
+      "beforeMs": 22189.4467,
+      "durationMs": 77.3037,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-12",
+      "attempt": 0,
+      "fromMs": 22211.190000000002,
+      "beforeMs": 22333.6875,
+      "durationMs": 122.4975,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-12",
+      "attempt": 0,
+      "fromMs": 22211.259000000002,
+      "beforeMs": 22334.286500000002,
+      "durationMs": 123.0275,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-12",
+      "attempt": 0,
+      "fromMs": 22211.2897,
+      "beforeMs": 22335.1427,
+      "durationMs": 123.853,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-12",
+      "attempt": 0,
+      "fromMs": 22211.3139,
+      "beforeMs": 22335.9821,
+      "durationMs": 124.6682,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-12",
+      "attempt": 0,
+      "fromMs": 22211.4105,
+      "beforeMs": 22336.4504,
+      "durationMs": 125.0399,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-12",
+      "attempt": 0,
+      "fromMs": 22350.255200000003,
+      "beforeMs": 22455.284000000003,
+      "durationMs": 105.0288,
+      "saturatedSampleCount": 2
+    },
+    {
+      "request": "overlap-13",
+      "attempt": 0,
+      "fromMs": 22006.313700000002,
+      "beforeMs": 22069.474000000002,
+      "durationMs": 63.1603,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-13",
+      "attempt": 0,
+      "fromMs": 22073.2824,
+      "beforeMs": 22107.8034,
+      "durationMs": 34.521,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-13",
+      "attempt": 1,
+      "fromMs": 22112.7965,
+      "beforeMs": 22189.796100000003,
+      "durationMs": 76.9996,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-14",
+      "attempt": 0,
+      "fromMs": 22007.9023,
+      "beforeMs": 22070.0756,
+      "durationMs": 62.1733,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-14",
+      "attempt": 0,
+      "fromMs": 22073.7831,
+      "beforeMs": 22109.3953,
+      "durationMs": 35.6122,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-14",
+      "attempt": 1,
+      "fromMs": 22120.2219,
+      "beforeMs": 22193.416200000003,
+      "durationMs": 73.1943,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-15",
+      "attempt": 0,
+      "fromMs": 22018.7644,
+      "beforeMs": 22071.1088,
+      "durationMs": 52.3444,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-15",
+      "attempt": 0,
+      "fromMs": 22074.381400000002,
+      "beforeMs": 22109.934,
+      "durationMs": 35.5526,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-15",
+      "attempt": 1,
+      "fromMs": 22120.648400000002,
+      "beforeMs": 22193.672000000002,
+      "durationMs": 73.0236,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-16",
+      "attempt": 0,
+      "fromMs": 22025.020200000003,
+      "beforeMs": 22071.942600000002,
+      "durationMs": 46.9224,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-16",
+      "attempt": 0,
+      "fromMs": 22074.709000000003,
+      "beforeMs": 22112.307800000002,
+      "durationMs": 37.5988,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-16",
+      "attempt": 0,
+      "fromMs": 22122.189400000003,
+      "beforeMs": 22197.815400000003,
+      "durationMs": 75.626,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-16",
+      "attempt": 0,
+      "fromMs": 22200.3937,
+      "beforeMs": 22293.040200000003,
+      "durationMs": 92.6465,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-16",
+      "attempt": 0,
+      "fromMs": 22200.429500000002,
+      "beforeMs": 22294.3784,
+      "durationMs": 93.9489,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-16",
+      "attempt": 0,
+      "fromMs": 22200.466900000003,
+      "beforeMs": 22304.534900000002,
+      "durationMs": 104.068,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-16",
+      "attempt": 0,
+      "fromMs": 22200.5144,
+      "beforeMs": 22304.8053,
+      "durationMs": 104.2909,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-16",
+      "attempt": 0,
+      "fromMs": 22200.5468,
+      "beforeMs": 22311.692000000003,
+      "durationMs": 111.1452,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-16",
+      "attempt": 0,
+      "fromMs": 22325.932,
+      "beforeMs": 22423.6977,
+      "durationMs": 97.7657,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-17",
+      "attempt": 0,
+      "fromMs": 22026.203700000002,
+      "beforeMs": 22072.519200000002,
+      "durationMs": 46.3155,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-17",
+      "attempt": 0,
+      "fromMs": 22075.4536,
+      "beforeMs": 22114.6005,
+      "durationMs": 39.1469,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-17",
+      "attempt": 1,
+      "fromMs": 22123.357200000002,
+      "beforeMs": 22203.7261,
+      "durationMs": 80.3689,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-18",
+      "attempt": 0,
+      "fromMs": 22027.463300000003,
+      "beforeMs": 22072.8898,
+      "durationMs": 45.4265,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-18",
+      "attempt": 0,
+      "fromMs": 22074.9929,
+      "beforeMs": 22112.896500000003,
+      "durationMs": 37.9036,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-18",
+      "attempt": 1,
+      "fromMs": 22122.926300000003,
+      "beforeMs": 22200.133,
+      "durationMs": 77.2067,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-19",
+      "attempt": 0,
+      "fromMs": 22041.1909,
+      "beforeMs": 22073.4555,
+      "durationMs": 32.2646,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-19",
+      "attempt": 0,
+      "fromMs": 22075.9958,
+      "beforeMs": 22119.4761,
+      "durationMs": 43.4803,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-19",
+      "attempt": 1,
+      "fromMs": 22123.7393,
+      "beforeMs": 22207.410600000003,
+      "durationMs": 83.6713,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-2",
+      "attempt": 0,
+      "fromMs": 21962.33,
+      "beforeMs": 22061.3895,
+      "durationMs": 99.0595,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-2",
+      "attempt": 0,
+      "fromMs": 22063.5903,
+      "beforeMs": 22096.152000000002,
+      "durationMs": 32.5617,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-2",
+      "attempt": 1,
+      "fromMs": 22100.2111,
+      "beforeMs": 22130.1546,
+      "durationMs": 29.9435,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-3",
+      "attempt": 0,
+      "fromMs": 21965.424700000003,
+      "beforeMs": 22062.700200000003,
+      "durationMs": 97.2755,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-3",
+      "attempt": 0,
+      "fromMs": 22067.8462,
+      "beforeMs": 22099.505200000003,
+      "durationMs": 31.659,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-3",
+      "attempt": 1,
+      "fromMs": 22102.893500000002,
+      "beforeMs": 22130.750600000003,
+      "durationMs": 27.8571,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-4",
+      "attempt": 0,
+      "fromMs": 21969.7894,
+      "beforeMs": 22063.075500000003,
+      "durationMs": 93.2861,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-4",
+      "attempt": 0,
+      "fromMs": 22070.3757,
+      "beforeMs": 22104.7376,
+      "durationMs": 34.3619,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-4",
+      "attempt": 0,
+      "fromMs": 22107.6961,
+      "beforeMs": 22187.8807,
+      "durationMs": 80.1846,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-4",
+      "attempt": 0,
+      "fromMs": 22204.0707,
+      "beforeMs": 22312.294800000003,
+      "durationMs": 108.2241,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-4",
+      "attempt": 0,
+      "fromMs": 22204.0923,
+      "beforeMs": 22316.067900000002,
+      "durationMs": 111.9756,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-4",
+      "attempt": 0,
+      "fromMs": 22204.100400000003,
+      "beforeMs": 22317.491,
+      "durationMs": 113.3906,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-4",
+      "attempt": 0,
+      "fromMs": 22204.1078,
+      "beforeMs": 22318.891300000003,
+      "durationMs": 114.7835,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-4",
+      "attempt": 0,
+      "fromMs": 22204.1169,
+      "beforeMs": 22319.233600000003,
+      "durationMs": 115.1167,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-4",
+      "attempt": 0,
+      "fromMs": 22324.150800000003,
+      "beforeMs": 22422.004800000002,
+      "durationMs": 97.854,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-5",
+      "attempt": 0,
+      "fromMs": 21972.686,
+      "beforeMs": 22063.4029,
+      "durationMs": 90.7169,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-5",
+      "attempt": 0,
+      "fromMs": 22068.2569,
+      "beforeMs": 22100.330400000003,
+      "durationMs": 32.0735,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-5",
+      "attempt": 1,
+      "fromMs": 22103.763600000002,
+      "beforeMs": 22132.3273,
+      "durationMs": 28.5637,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-6",
+      "attempt": 0,
+      "fromMs": 21975.806,
+      "beforeMs": 22063.853900000002,
+      "durationMs": 88.0479,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-6",
+      "attempt": 0,
+      "fromMs": 22068.7118,
+      "beforeMs": 22101.2536,
+      "durationMs": 32.5418,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-6",
+      "attempt": 1,
+      "fromMs": 22104.609800000002,
+      "beforeMs": 22132.7304,
+      "durationMs": 28.1206,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-7",
+      "attempt": 0,
+      "fromMs": 21979.1489,
+      "beforeMs": 22065.2546,
+      "durationMs": 86.1057,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-7",
+      "attempt": 0,
+      "fromMs": 22069.076800000003,
+      "beforeMs": 22102.4706,
+      "durationMs": 33.3938,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-7",
+      "attempt": 1,
+      "fromMs": 22105.195200000002,
+      "beforeMs": 22158.542400000002,
+      "durationMs": 53.3472,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-8",
+      "attempt": 0,
+      "fromMs": 21983.022500000003,
+      "beforeMs": 22067.5535,
+      "durationMs": 84.531,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-8",
+      "attempt": 0,
+      "fromMs": 22071.5606,
+      "beforeMs": 22105.3192,
+      "durationMs": 33.7586,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-8",
+      "attempt": 0,
+      "fromMs": 22109.264700000003,
+      "beforeMs": 22188.4958,
+      "durationMs": 79.2311,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-8",
+      "attempt": 0,
+      "fromMs": 22209.153400000003,
+      "beforeMs": 22323.2642,
+      "durationMs": 114.1108,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-8",
+      "attempt": 0,
+      "fromMs": 22209.198500000002,
+      "beforeMs": 22323.696500000002,
+      "durationMs": 114.498,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-8",
+      "attempt": 0,
+      "fromMs": 22209.2124,
+      "beforeMs": 22324.2671,
+      "durationMs": 115.0547,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-8",
+      "attempt": 0,
+      "fromMs": 22209.2223,
+      "beforeMs": 22325.564100000003,
+      "durationMs": 116.3418,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-8",
+      "attempt": 0,
+      "fromMs": 22209.249,
+      "beforeMs": 22330.672300000002,
+      "durationMs": 121.4233,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-8",
+      "attempt": 0,
+      "fromMs": 22348.1381,
+      "beforeMs": 22426.0718,
+      "durationMs": 77.9337,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-9",
+      "attempt": 0,
+      "fromMs": 21986.2269,
+      "beforeMs": 22067.956400000003,
+      "durationMs": 81.7295,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-9",
+      "attempt": 0,
+      "fromMs": 22069.3784,
+      "beforeMs": 22102.9843,
+      "durationMs": 33.6059,
+      "saturatedSampleCount": 0
+    },
+    {
+      "request": "overlap-9",
+      "attempt": 1,
+      "fromMs": 22105.7494,
+      "beforeMs": 22158.7026,
+      "durationMs": 52.9532,
+      "saturatedSampleCount": 0
+    }
+  ],
+  "readCheckoutMs": {
+    "baseline-": {
+      "count": 18,
+      "minMs": 0.0069,
+      "p50Ms": 0.0153,
+      "p95Ms": 0.1953,
+      "maxMs": 0.1953,
+      "sumMs": 0.8187
+    },
+    "overlap-": {
+      "count": 90,
+      "minMs": 27.8571,
+      "p50Ms": 77.3037,
+      "p95Ms": 123.0275,
+      "maxMs": 152.3202,
+      "sumMs": 6704.3278
+    }
+  },
+  "poolAndDatabase": {
+    "sampleCount": 110,
+    "maxima": {
+      "total": 17,
+      "idle": 16,
+      "waiting": 51,
+      "waiters": 16,
+      "owners": 1
+    },
+    "saturatedSampleCount": 44,
+    "firstSaturated": {
+      "atMs": 22439.0373,
+      "total": 17,
+      "idle": 0,
+      "waiting": 14,
+      "waiters": 16,
+      "owners": 1
+    },
+    "lastSaturated": {
+      "atMs": 22956.3158,
+      "total": 17,
+      "idle": 0,
+      "waiting": 13,
+      "waiters": 16,
+      "owners": 1
+    }
+  },
+  "representativeRead": {
+    "request": "overlap-12",
+    "attempt": 0,
+    "fromMs": 22350.255200000003,
+    "beforeMs": 22455.284000000003,
+    "durationMs": 105.0288,
+    "saturatedSampleCount": 2,
+    "precedingRelease": {
+      "atMs": 22455.258700000002,
+      "request": "complete-1",
+      "attempt": 1,
+      "stage": "physical-release",
+      "total": 17,
+      "idle": 0,
+      "waiting": 14
+    },
+    "releaseToCheckoutMs": 0.0253
+  },
+  "errorEvents": [],
+  "observedP2028": 0,
+  "attribution": {
+    "exactlyOneReleaseInEachCompleteTransactionWindow": true,
+    "outsideCompleteWindowReleaseEventsExcluded": 59,
+    "checkoutResultsAfterPhysicalReleaseExcluded": 2,
+    "limitation": "Last-client-frame fallback can retain labels for later unscoped validation reads; do not count all globally labelled releases as transaction releases. Pair COMPLETE adapter phases only between public start and the single physical release; public result closes the outer window. Read checkout pairs use FIFO inside matching request/attempt frames."
+  },
+  "samplingLimitation": "Pool counters precede the separate native lock query; snapshots are not atomic and 10ms scheduling is approximate. Client lock-hold intervals include round trips, not exact server execution time.",
+  "callbackDrainLimitation": "The synchronous finally marker follows the awaited business callback; it does not independently measure arbitrary external background work.",
+  "stateLimitation": "Per-Action status/version/performer and parent advancement plus aggregate history/receipt deltas are inline assertions; this is not a per-receipt fingerprint/full-history-snapshot audit.",
+  "cleanup": {
+    "listenerClosed": true,
+    "checkedOut": 0,
+    "ownedSchemaRemoved": true
+  },
+  "independentCleanup": {
+    "probeExitCode": 0,
+    "ownedDisposableSchemas": 0,
+    "otherConnections": 0,
+    "idleTransactions": 0,
+    "advisoryLocks": 0
+  },
+  "conclusion": "Pool-slot occupation while waiting for database admission demonstrably delays reads; serial admission hold time also contributes. No P2028 observed; historical failures remain unclassified. Front queue is a next candidate only, not implemented or performance GREEN.",
+  "offlineAnalysisAttempts": [
+    {
+      "exitCode": 1,
+      "cause": "Initial analyzer expected one checkout-result through public result; two frames also label a later checkout after physical release."
+    },
+    {
+      "exitCode": 0,
+      "correction": "Bound adapter phases at physical release; retain public result separately. No raw events, business assertions or application source changed."
+    }
+  ]
+}

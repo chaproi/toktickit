@@ -1,0 +1,27 @@
+{
+    "screenshot":  "390x844-recent-records.png",
+    "capturedAt":  "2026-10-24T05:50:34.134Z",
+    "executionHead":  "0475989409d8d5ff73d69a6a05e379decfe05289",
+    "pendingProductionFiles":  [
+
+                               ],
+    "browser":  "HeadlessChrome/153.0.8010.12",
+    "configuredViewport":  {
+                               "width":  390,
+                               "height":  844
+                           },
+    "actualCSSViewport":  {
+                              "width":  390,
+                              "height":  844,
+                              "pinchScale":  1
+                          },
+    "role":  "REQUESTER",
+    "state":  "Long literal summary, owner name, textual status/priority and authoritative timestamps",
+    "zoomFactor":  1,
+    "zoomMethod":  "unmodified tab zoom",
+    "captureScope":  "native viewport",
+    "syntheticDataOnly":  true,
+    "visualInspection":  "Inspected by Codex at original PNG resolution on 2026-10-24; no certified accessibility claim.",
+    "inspectionObservation":  "Literal script-like and long unbroken text wraps within the card; long owner names/status/priority/time remain readable.",
+    "executionRun":  "Combined third attempt; 9/9 passed"
+}

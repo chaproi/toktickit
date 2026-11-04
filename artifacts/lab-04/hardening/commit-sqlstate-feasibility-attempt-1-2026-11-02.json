@@ -1,0 +1,79 @@
+{
+  "startingHead": "b487220a3b10de906e3d341a3477f00f1589cffa",
+  "executedSourceState": "starting HEAD plus pending standalone proof files; application unchanged",
+  "node": "v24.14.0",
+  "platform": "win32",
+  "stages": [
+    {
+      "phase": "live-target-verification",
+      "elapsedMs": 90.95629999999983,
+      "passed": true
+    },
+    {
+      "phase": "prepare-owned-directory-and-client-schema",
+      "elapsedMs": 10.742400000000089,
+      "passed": true
+    },
+    {
+      "phase": "install-exact-temporary-dependencies",
+      "elapsedMs": 15742.927899999999,
+      "passed": true
+    },
+    {
+      "phase": "generate-temporary-client",
+      "elapsedMs": 7242.911,
+      "passed": true
+    },
+    {
+      "phase": "typecheck-public-adapter-and-application-callback",
+      "elapsedMs": 1469.5979000000007,
+      "passed": false
+    }
+  ],
+  "approachLimit": 2,
+  "proof": null,
+  "cleanup": {
+    "schemaCreated": false,
+    "proofConnectionsRemaining": 0,
+    "nativeClientEnded": true,
+    "temporaryDirectoryRemoved": true
+  },
+  "database": {
+    "guard": true,
+    "liveIdentityMatches": true,
+    "distinctOperationalDatabase": true,
+    "postgresVersion": "PostgreSQL 18.6",
+    "otherNonIdleConnections": 0
+  },
+  "commands": [
+    {
+      "phase": "install-exact-temporary-dependencies",
+      "exit": 0
+    },
+    {
+      "phase": "generate-temporary-client",
+      "exit": 0
+    },
+    {
+      "phase": "typecheck-public-adapter-and-application-callback",
+      "exit": 2
+    }
+  ],
+  "versions": {
+    "@prisma/client": "5.22.0",
+    "@prisma/adapter-pg": "5.22.0",
+    "@prisma/driver-adapter-utils": "5.22.0",
+    "pg": "8.23.0",
+    "typescript": "5.7.2",
+    "tsx": "4.19.2",
+    "@types/node": "22.10.2",
+    "@types/pg": "8.23.1"
+  },
+  "prismaCli": "5.22.0",
+  "temporaryLockSha256": "624049b2d9b724960a6b5cc2c9481bdea5dde28b34169aca81ba0e2a5ca6f6c0",
+  "failure": {
+    "phase": "typecheck-public-adapter-and-application-callback",
+    "code": null,
+    "assertion": null
+  }
+}

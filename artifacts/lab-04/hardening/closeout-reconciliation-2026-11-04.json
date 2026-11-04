@@ -1,0 +1,1958 @@
+{
+  "dateBangkok": "2026-11-04",
+  "reviewedCandidateHead": "a7eb4ecef595824ca374c5d4dd1e3287bdcfd511",
+  "method": "Current contract/assertion-evidence reconciliation and immutable Git tree comparison. The 57 mapped current sources were read earlier in this continuing task; no application execution is introduced by this record.",
+  "counts": {
+    "scenarioRows": 55,
+    "evidenceReconciledReviewPending": 52,
+    "partialPhysicalObservation": 2,
+    "mixedPerformanceDecisionPending": 1,
+    "newScenarioPasses": 0
+  },
+  "sourceEquivalence": [
+    {
+      "reference": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "comparedBlobs": 304,
+      "differences": []
+    },
+    {
+      "reference": "84ef0ad91502a0c660998ddc13d0c7a163f1a169",
+      "comparedBlobs": 304,
+      "differences": []
+    }
+  ],
+  "fileInventory": {
+    "serverTests": 100,
+    "serverTestsExcludingOnlyT47": 99,
+    "clientTests": 24,
+    "e2eSpecs": 15
+  },
+  "carriedServerEvidence": {
+    "cases": 2110,
+    "files": 99,
+    "excludedOnly": "tests/lab-04/performance-smoke.integration.test.ts",
+    "exit": 0,
+    "frameworkSeconds": 994.45,
+    "outerSeconds": 997.0041177,
+    "started": "2026-11-03T20:12:26.0170337Z",
+    "finished": "2026-11-03T20:29:03.0711197Z",
+    "executionHead": "8e80cd458517baf0c270cafec0bd91edddd623c7",
+    "pendingProductionCommittedUnchanged": "0abd40d8e7762c5d7e55730bffccc1e0339cf296",
+    "serverBuild": "Prior07 passed; not rerun in this preparation batch",
+    "sourceHashCount": 215,
+    "sourceBytesMatchCurrent": true,
+    "originalLedger": "../patch-projection-commands-2026-11-04.json"
+  },
+  "carriedCommands": [
+    {
+      "label": "01-client-test",
+      "arguments": [
+        "test"
+      ],
+      "directoryRole": "client",
+      "head": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "started": "2026-11-03T21:16:23.2163974Z",
+      "finished": "2026-11-03T21:17:05.0394355Z",
+      "exit": 0,
+      "seconds": 41.7661935,
+      "files": 24,
+      "collected": 352,
+      "executed": 352,
+      "passed": 352,
+      "failed": 0,
+      "skipped": 0,
+      "frameworkSeconds": 38.41,
+      "privateOutputSha256": "6b4a8f654576cda757b30fd8daf5b3833f29e52578d1db6d673f234500e5c6b5",
+      "warningObservations": {
+        "ReactAct": 10,
+        "RouterFutureFlag": 2,
+        "JsdomNavigation": 1,
+        "ColorEnvironment": 0,
+        "PgQueuedQueryDeprecation": 0,
+        "PrismaPackageConfigurationDeprecation": 0,
+        "VitestUnhandledSummary": 0
+      }
+    },
+    {
+      "label": "02-client-build",
+      "arguments": [
+        "run",
+        "build"
+      ],
+      "directoryRole": "client",
+      "head": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "started": "2026-11-03T21:17:22.4781910Z",
+      "finished": "2026-11-03T21:17:27.8752349Z",
+      "exit": 0,
+      "seconds": 5.3365724,
+      "privateOutputSha256": "250edbe4231cdbd9e4c74124b86f7f310cf1b10f7c784f71a19111f3c50922b4",
+      "warningObservations": {
+        "ReactAct": 0,
+        "RouterFutureFlag": 0,
+        "JsdomNavigation": 0,
+        "ColorEnvironment": 0,
+        "PgQueuedQueryDeprecation": 0,
+        "PrismaPackageConfigurationDeprecation": 0,
+        "VitestUnhandledSummary": 0
+      }
+    },
+    {
+      "label": "03-root-requested-test",
+      "arguments": [
+        "run",
+        "test"
+      ],
+      "directoryRole": "repository root",
+      "head": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "started": "2026-11-03T21:17:27.9857876Z",
+      "finished": "2026-11-03T21:17:28.5601382Z",
+      "exit": 1,
+      "seconds": 0.5395993,
+      "collected": 0,
+      "executed": 0,
+      "classification": "npm missing script test; user explicitly clarified existing test:e2e command; no suite or business assertion executed",
+      "privateOutputSha256": "e7f365d50041aac4fbbc79c73a7c9a9b051789eb42df0a70972fe5f335fd3a43",
+      "warningObservations": {
+        "ReactAct": 0,
+        "RouterFutureFlag": 0,
+        "JsdomNavigation": 0,
+        "ColorEnvironment": 0,
+        "PgQueuedQueryDeprecation": 0,
+        "PrismaPackageConfigurationDeprecation": 0,
+        "VitestUnhandledSummary": 0
+      }
+    },
+    {
+      "label": "04-candidate-e2e",
+      "arguments": [
+        "run",
+        "test:e2e"
+      ],
+      "directoryRole": "repository root",
+      "head": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "started": "2026-11-03T21:18:21.1988589Z",
+      "finished": "2026-11-03T21:23:07.0272704Z",
+      "exit": 0,
+      "seconds": 285.78024089999997,
+      "files": 15,
+      "collected": 72,
+      "executed": 72,
+      "passed": 72,
+      "failed": 0,
+      "skipped": 0,
+      "workers": 1,
+      "retries": 0,
+      "configuredCaseTimeoutMs": 60000,
+      "configuredExpectTimeoutMs": 10000,
+      "browser": "Chromium153.0.8010.12",
+      "frameworkSummary": "72 passed (4.7m)",
+      "privateOutputSha256": "015b10618a501cdc67baf52344bc2005c9b1da783f5395c4fe829d62f99624a2",
+      "warningObservations": {
+        "ReactAct": 0,
+        "RouterFutureFlag": 0,
+        "JsdomNavigation": 0,
+        "ColorEnvironment": 2,
+        "PgQueuedQueryDeprecation": 1,
+        "PrismaPackageConfigurationDeprecation": 0,
+        "VitestUnhandledSummary": 0
+      }
+    }
+  ],
+  "performance": {
+    "ledger": "artifacts/lab-04/hardening/t47-abba-2026-11-04/comparison.md",
+    "workloadVerdicts": [
+      "pass",
+      "pass",
+      "fail",
+      "fail"
+    ],
+    "measuredP95Ms": [
+      390.214,
+      401.518,
+      441.08,
+      963.614
+    ],
+    "samples": 22000,
+    "acceptance": "Pending; no new workload execution"
+  },
+  "captureArchive": {
+    "testedHead": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+    "freshPngCount": 92,
+    "freshJsonCount": 73,
+    "freshOutputsArchivedPrivately": true,
+    "freshScreenshotsVisuallyInspected": false
+  },
+  "scenarios": [
+    {
+      "id": "T-01",
+      "ac": "AC-01",
+      "decisions": "D-18",
+      "plannedPaths": "`server/tests/lab-04/actions-authorization.api.test.ts`",
+      "assertions": "Missing/expired/revoked/inactive/forced-change sessions; missing/mismatched Origin/CSRF on every new write; preserve L 401/403, no rows/history/receipt.",
+      "contractStatus": "Planned",
+      "line": 27,
+      "actualPaths": [
+        "server/tests/lab-04/actions-authorization.api.test.ts",
+        "server/tests/lab-04/requester-dashboard-security.api.test.ts",
+        "server/tests/lab-04/staff-dashboard-security.api.test.ts",
+        "server/tests/lab-04/staff-actions.api.test.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/actions-authorization.api.test.ts": "e39530944a58a3d6e3b90be67551373f4d9354d4",
+        "server/tests/lab-04/requester-dashboard-security.api.test.ts": "869ff3f97bfe217354b649c2b6ead42809480d3c",
+        "server/tests/lab-04/staff-dashboard-security.api.test.ts": "c733b9a95f90027bf86e9b563ef53509c6b873c6",
+        "server/tests/lab-04/staff-actions.api.test.ts": "4dcecdc830f9a1663ea7f76a767553924d81507d"
+      },
+      "historicalExecution": "S + C/E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "ROLE_FORBIDDEN is inherited. Domain comparisons exclude legitimate session bookkeeping; final acceptance remains #49.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S",
+      "qualification": "ROLE_FORBIDDEN is inherited. Domain comparisons exclude legitimate session bookkeeping; final acceptance remains #49."
+    },
+    {
+      "id": "T-02",
+      "ac": "AC-02",
+      "decisions": "D-08, D-13, D-15",
+      "plannedPaths": "`server/tests/lab-04/actions-authorization.api.test.ts`",
+      "assertions": "Two Requesters, owned/other/missing parent and mismatched child; compare protected 404 envelopes, sanitized history/dashboard/receipt, no private Notes or cache identity leak.",
+      "contractStatus": "Planned",
+      "line": 28,
+      "actualPaths": [
+        "server/tests/lab-04/actions-authorization.api.test.ts",
+        "server/tests/lab-04/action-history.api.test.ts",
+        "server/tests/lab-04/requester-dashboard.api.test.ts",
+        "server/tests/lab-04/requester-dashboard-security.api.test.ts",
+        "server/tests/lab-04/staff-dashboard-security.api.test.ts",
+        "client/tests/lab-04/ActionsTaken.test.tsx",
+        "client/tests/lab-04/DashboardNavigation.test.tsx",
+        "e2e/lab-04/actions-taken-flow.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/actions-authorization.api.test.ts": "e39530944a58a3d6e3b90be67551373f4d9354d4",
+        "server/tests/lab-04/action-history.api.test.ts": "f41855148116b437f3d4a1262cf09e3b70d0ceda",
+        "server/tests/lab-04/requester-dashboard.api.test.ts": "7ccda276ea7d034c4aafe3f46e4d66dd3a965acc",
+        "server/tests/lab-04/requester-dashboard-security.api.test.ts": "869ff3f97bfe217354b649c2b6ead42809480d3c",
+        "server/tests/lab-04/staff-dashboard-security.api.test.ts": "c733b9a95f90027bf86e9b563ef53509c6b873c6",
+        "client/tests/lab-04/ActionsTaken.test.tsx": "2e4812dba0a3f605e258fa12fc0c42d3ca06b3ee",
+        "client/tests/lab-04/DashboardNavigation.test.tsx": "9a5a3906929c66fb2d8b396eb45181dc8a965a04",
+        "e2e/lab-04/actions-taken-flow.spec.ts": "6bb5ba11f43184bb76aa32cb5ab92a9bd96e2ae3"
+      },
+      "historicalExecution": "S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Scope uses immutable requesterId, not Ticket Owner. Current authorization is required before any stored replay DTO.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C+E",
+      "qualification": "Scope uses immutable requesterId, not Ticket Owner. Current authorization is required before any stored replay DTO."
+    },
+    {
+      "id": "T-03",
+      "ac": "AC-03",
+      "decisions": "D-02, D-04, D-09",
+      "plannedPaths": "`server/tests/lab-04/actions-authorization.api.test.ts`",
+      "assertions": "Requester read-only; Staff/Admin create/edit/reassign/start/complete/cancel independent of coordinator, with guards; role check before protected lookup.",
+      "contractStatus": "Planned",
+      "line": 29,
+      "actualPaths": [
+        "server/tests/lab-04/actions-authorization.api.test.ts",
+        "server/tests/lab-04/actions-taken.api.test.ts",
+        "server/tests/lab-04/action-eligibility.api.test.ts",
+        "client/tests/lab-04/ActionsTaken.test.tsx",
+        "e2e/lab-04/actions-taken-flow.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/actions-authorization.api.test.ts": "e39530944a58a3d6e3b90be67551373f4d9354d4",
+        "server/tests/lab-04/actions-taken.api.test.ts": "5ad02c68b21284d4c57f3ba01cb77a49dc184359",
+        "server/tests/lab-04/action-eligibility.api.test.ts": "6d5e866c8c3be418b3189857cddd11f0bf6973db",
+        "client/tests/lab-04/ActionsTaken.test.tsx": "2e4812dba0a3f605e258fa12fc0c42d3ca06b3ee",
+        "e2e/lab-04/actions-taken-flow.spec.ts": "6bb5ba11f43184bb76aa32cb5ab92a9bd96e2ae3"
+      },
+      "historicalExecution": "S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "D-03/D-04 stand; the PR51 assignee-only completion finding was explicitly withdrawn.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C+E",
+      "qualification": "D-03/D-04 stand; the PR51 assignee-only completion finding was explicitly withdrawn."
+    },
+    {
+      "id": "T-04",
+      "ac": "AC-04",
+      "decisions": "D-02, D-03, D-04, D-07, D-16",
+      "plannedPaths": "`server/tests/lab-04/actions-taken.api.test.ts`",
+      "assertions": "Create full/minimum fields on eligible parent; PLANNED, one parent, automatic creator/date, null performer, initial version/history, immutable server fields.",
+      "contractStatus": "Planned",
+      "line": 30,
+      "actualPaths": [
+        "server/tests/lab-04/actions-taken.api.test.ts",
+        "e2e/lab-04/actions-taken-flow.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/actions-taken.api.test.ts": "5ad02c68b21284d4c57f3ba01cb77a49dc184359",
+        "e2e/lab-04/actions-taken-flow.spec.ts": "6bb5ba11f43184bb76aa32cb5ab92a9bd96e2ae3"
+      },
+      "historicalExecution": "S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Read/seed fixtures are not claimed to traverse write endpoints; EA supplies actual endpoint evidence.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+E",
+      "qualification": "Read/seed fixtures are not claimed to traverse write endpoints; EA supplies actual endpoint evidence."
+    },
+    {
+      "id": "T-05",
+      "ac": "AC-05",
+      "decisions": "D-04, D-06, D-18",
+      "plannedPaths": "`server/tests/lab-04/action-validation.unit.test.ts`; `server/tests/lab-04/actions-taken.api.test.ts`",
+      "assertions": "Every min/max±1, trim/null/boolean/ID/UTC/UUID, merged-edit fields, unknown actor/status/time/attachment relation, inert malicious text, conditional note; verify 400/field shape and unchanged rows through API as well as pure validation.",
+      "contractStatus": "Planned",
+      "line": 31,
+      "actualPaths": [
+        "server/tests/lab-04/action-validation.unit.test.ts",
+        "server/tests/lab-04/actions-taken.api.test.ts",
+        "client/tests/lab-04/ActionsTaken.test.tsx"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/action-validation.unit.test.ts": "74224e575097f41dc5940fa42c6fd7718bce821f",
+        "server/tests/lab-04/actions-taken.api.test.ts": "5ad02c68b21284d4c57f3ba01cb77a49dc184359",
+        "client/tests/lab-04/ActionsTaken.test.tsx": "2e4812dba0a3f605e258fa12fc0c42d3ca06b3ee"
+      },
+      "historicalExecution": "S + C; E representative writes",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Count Action code points, not graphemes/NFC. Do not extend this policy into inherited Ticket reason validation.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C",
+      "qualification": "Count Action code points, not graphemes/NFC. Do not extend this policy into inherited Ticket reason validation."
+    },
+    {
+      "id": "T-06",
+      "ac": "AC-06",
+      "decisions": "D-03, D-04, D-11",
+      "plannedPaths": "`server/tests/lab-04/actions-taken.api.test.ts`",
+      "assertions": "Distinct owner A/creator B/assignee C/completer D; reassignment affects worker only; terminal identities preserved; no owner rewrite.",
+      "contractStatus": "Planned",
+      "line": 32,
+      "actualPaths": [
+        "server/tests/lab-04/actions-taken.api.test.ts",
+        "server/tests/lab-04/action-history.api.test.ts",
+        "server/tests/lab-04/action-eligibility.api.test.ts",
+        "client/tests/lab-04/ActionsTaken.test.tsx",
+        "e2e/lab-04/actions-taken-flow.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/actions-taken.api.test.ts": "5ad02c68b21284d4c57f3ba01cb77a49dc184359",
+        "server/tests/lab-04/action-history.api.test.ts": "f41855148116b437f3d4a1262cf09e3b70d0ceda",
+        "server/tests/lab-04/action-eligibility.api.test.ts": "6d5e866c8c3be418b3189857cddd11f0bf6973db",
+        "client/tests/lab-04/ActionsTaken.test.tsx": "2e4812dba0a3f605e258fa12fc0c42d3ca06b3ee",
+        "e2e/lab-04/actions-taken-flow.spec.ts": "6bb5ba11f43184bb76aa32cb5ab92a9bd96e2ae3"
+      },
+      "historicalExecution": "S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Historical snapshot IDs remain scalar IDs; current identity names must not be invented as frozen historical names.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C+E",
+      "qualification": "Historical snapshot IDs remain scalar IDs; current identity names must not be invented as frozen historical names."
+    },
+    {
+      "id": "T-07",
+      "ac": "AC-07",
+      "decisions": "D-11, D-12",
+      "plannedPaths": "`server/tests/lab-04/action-eligibility.api.test.ts`",
+      "assertions": "Inactive/Requester/nonexistent targets and assignment-versus-demotion both orders; 400 initial invalid or 409 lost eligibility, no committed invalid open assignment.",
+      "contractStatus": "Planned",
+      "line": 33,
+      "actualPaths": [
+        "server/tests/lab-04/action-eligibility.api.test.ts",
+        "client/tests/lab-04/ActionsTaken.test.tsx"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/action-eligibility.api.test.ts": "6d5e866c8c3be418b3189857cddd11f0bf6973db",
+        "client/tests/lab-04/ActionsTaken.test.tsx": "2e4812dba0a3f605e258fa12fc0c42d3ca06b3ee"
+      },
+      "historicalExecution": "S + C",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Backend pairs use real PostgreSQL overlap. The initial real-browser late-picker gap was not supplied by HTTP fixtures; V-B49 now covers it separately under T-48, without relabelling the backend overlap.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C",
+      "qualification": "Backend pairs use real PostgreSQL overlap. The initial real-browser late-picker gap was not supplied by HTTP fixtures; V-B49 now covers it separately under T-48, without relabelling the backend overlap."
+    },
+    {
+      "id": "T-08",
+      "ac": "AC-08",
+      "decisions": "D-04, D-07, D-08, D-12",
+      "plannedPaths": "`server/tests/lab-04/actions-taken.api.test.ts`",
+      "assertions": "Edit subset/merged follow-up/reassign/no-op; mutable values only, immutable parent/creator/time, unique new history/version and monotonic parent time including same-ms clock.",
+      "contractStatus": "Planned",
+      "line": 34,
+      "actualPaths": [
+        "server/tests/lab-04/actions-taken.api.test.ts",
+        "server/tests/lab-04/action-history.api.test.ts",
+        "client/tests/lab-04/ActionsTaken.test.tsx"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/actions-taken.api.test.ts": "5ad02c68b21284d4c57f3ba01cb77a49dc184359",
+        "server/tests/lab-04/action-history.api.test.ts": "f41855148116b437f3d4a1262cf09e3b70d0ceda",
+        "client/tests/lab-04/ActionsTaken.test.tsx": "2e4812dba0a3f605e258fa12fc0c42d3ca06b3ee"
+      },
+      "historicalExecution": "S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "No-op/rejection produces no history/receipt/time/version mutation; material writes retain parent/creator/creation time.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C",
+      "qualification": "No-op/rejection produces no history/receipt/time/version mutation; material writes retain parent/creator/creation time."
+    },
+    {
+      "id": "T-09",
+      "ac": "AC-09",
+      "decisions": "D-02, D-09",
+      "plannedPaths": "`server/tests/lab-04/actions-taken.api.test.ts`",
+      "assertions": "All 4×4 state pairs and parent states; allowed edges only; no PLANNED→COMPLETED shortcut or terminal reopening.",
+      "contractStatus": "Planned",
+      "line": 35,
+      "actualPaths": [
+        "server/tests/lab-04/actions-taken.api.test.ts",
+        "client/tests/lab-04/ActionsTaken.test.tsx",
+        "e2e/lab-04/actions-taken-flow.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/actions-taken.api.test.ts": "5ad02c68b21284d4c57f3ba01cb77a49dc184359",
+        "client/tests/lab-04/ActionsTaken.test.tsx": "2e4812dba0a3f605e258fa12fc0c42d3ca06b3ee",
+        "e2e/lab-04/actions-taken-flow.spec.ts": "6bb5ba11f43184bb76aa32cb5ab92a9bd96e2ae3"
+      },
+      "historicalExecution": "S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Enabled controls alone are not proof of successful mutation; backend and browser assertions are distinct.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C+E",
+      "qualification": "Enabled controls alone are not proof of successful mutation; backend and browser assertions are distinct."
+    },
+    {
+      "id": "T-10",
+      "ac": "AC-10",
+      "decisions": "D-03, D-04, D-06",
+      "plannedPaths": "`server/tests/lab-04/actions-taken.api.test.ts`",
+      "assertions": "Completion result/confirm bounds, automatic actual performer/completedAt, follow-up=true with note succeeds, false never required implicitly.",
+      "contractStatus": "Planned",
+      "line": 36,
+      "actualPaths": [
+        "server/tests/lab-04/actions-taken.api.test.ts",
+        "server/tests/lab-04/action-eligibility.api.test.ts",
+        "e2e/lab-04/actions-taken-flow.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/actions-taken.api.test.ts": "5ad02c68b21284d4c57f3ba01cb77a49dc184359",
+        "server/tests/lab-04/action-eligibility.api.test.ts": "6d5e866c8c3be418b3189857cddd11f0bf6973db",
+        "e2e/lab-04/actions-taken-flow.spec.ts": "6bb5ba11f43184bb76aa32cb5ab92a9bd96e2ae3"
+      },
+      "historicalExecution": "S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "No assignee-only completion or implicit follow-up=false guard.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+E",
+      "qualification": "No assignee-only completion or implicit follow-up=false guard."
+    },
+    {
+      "id": "T-11",
+      "ac": "AC-11",
+      "decisions": "D-02, D-04, D-08",
+      "plannedPaths": "`server/tests/lab-04/actions-taken.api.test.ts`",
+      "assertions": "Cancel PLANNED/IN_PROGRESS, valid reason/confirm; boundary rejection; retained content and reason/time/event, no performer attribution.",
+      "contractStatus": "Planned",
+      "line": 37,
+      "actualPaths": [
+        "server/tests/lab-04/actions-taken.api.test.ts",
+        "client/tests/lab-04/ActionsTaken.test.tsx",
+        "e2e/lab-04/ticket-resolution.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/actions-taken.api.test.ts": "5ad02c68b21284d4c57f3ba01cb77a49dc184359",
+        "client/tests/lab-04/ActionsTaken.test.tsx": "2e4812dba0a3f605e258fa12fc0c42d3ca06b3ee",
+        "e2e/lab-04/ticket-resolution.spec.ts": "6b9e782074dfc92937ee837da994071e96ebacaa"
+      },
+      "historicalExecution": "S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Ticket cancellation uses its inherited reason convention and is independently verified by TW/DM.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C+E",
+      "qualification": "Ticket cancellation uses its inherited reason convention and is independently verified by TW/DM."
+    },
+    {
+      "id": "T-12",
+      "ac": "AC-12",
+      "decisions": "D-08, D-09",
+      "plannedPaths": "`server/tests/lab-04/actions-taken.api.test.ts`",
+      "assertions": "Every write against RESOLVED/CLOSED/CANCELLED parent and terminal Action rejects; authorized reads/history remain; prior L features unaffected.",
+      "contractStatus": "Planned",
+      "line": 38,
+      "actualPaths": [
+        "server/tests/lab-04/actions-authorization.api.test.ts",
+        "server/tests/lab-04/actions-taken.api.test.ts",
+        "client/tests/lab-04/ActionsTaken.test.tsx",
+        "client/tests/lab-04/TicketWorkflow.test.tsx",
+        "server/tests/lab-04/action-history.api.test.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/actions-authorization.api.test.ts": "e39530944a58a3d6e3b90be67551373f4d9354d4",
+        "server/tests/lab-04/actions-taken.api.test.ts": "5ad02c68b21284d4c57f3ba01cb77a49dc184359",
+        "client/tests/lab-04/ActionsTaken.test.tsx": "2e4812dba0a3f605e258fa12fc0c42d3ca06b3ee",
+        "client/tests/lab-04/TicketWorkflow.test.tsx": "83a98f635960060c9302f50302931dce6130e47c",
+        "server/tests/lab-04/action-history.api.test.ts": "f41855148116b437f3d4a1262cf09e3b70d0ceda"
+      },
+      "historicalExecution": "S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Constructed frozen parents are direct guard fixtures, not evidence workflow created them; ET/AX separately exercise real transitions.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C",
+      "qualification": "Constructed frozen parents are direct guard fixtures, not evidence workflow created them; ET/AX separately exercise real transitions."
+    },
+    {
+      "id": "T-13",
+      "ac": "AC-13",
+      "decisions": "D-08, D-12, D-13",
+      "plannedPaths": "`server/tests/lab-04/action-history.api.test.ts`",
+      "assertions": "Before/after/actor/event/version chronological history; fail between row/history/receipt/parent steps and prove rollback; existing Comments/Notes/TicketStatusHistory unchanged.",
+      "contractStatus": "Planned",
+      "line": 39,
+      "actualPaths": [
+        "server/tests/lab-04/actions-taken.api.test.ts",
+        "server/tests/lab-04/action-history.api.test.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/actions-taken.api.test.ts": "5ad02c68b21284d4c57f3ba01cb77a49dc184359",
+        "server/tests/lab-04/action-history.api.test.ts": "f41855148116b437f3d4a1262cf09e3b70d0ceda"
+      },
+      "historicalExecution": "S; E representative history",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Controlled late SQL failures are not natural races. Earlier communications and status histories remain preserved.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S",
+      "qualification": "Controlled late SQL failures are not natural races. Earlier communications and status histories remain preserved."
+    },
+    {
+      "id": "T-14",
+      "ac": "AC-14",
+      "decisions": "D-13",
+      "plannedPaths": "`server/tests/lab-04/action-idempotency.api.test.ts`",
+      "assertions": "Every new write replay after lost response and later edits; same original input 200, changed reuse 409, current auth needed, one row/event/receipt/time update.",
+      "contractStatus": "Planned",
+      "line": 40,
+      "actualPaths": [
+        "server/tests/lab-04/action-idempotency.api.test.ts",
+        "server/tests/lab-04/actions-concurrency.api.test.ts",
+        "client/tests/lab-04/ActionsTaken.test.tsx"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/action-idempotency.api.test.ts": "5088a63cf85486f8e6c0112252c3ab2eaee8eda9",
+        "server/tests/lab-04/actions-concurrency.api.test.ts": "c76cf03a38110338e19fc636a75853295abe2744",
+        "client/tests/lab-04/ActionsTaken.test.tsx": "2e4812dba0a3f605e258fa12fc0c42d3ca06b3ee"
+      },
+      "historicalExecution": "S + C",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Component HTTP simulations are distinct from real server receipt/race evidence. Do not manufacture cooperating-writer insertion collisions.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C",
+      "qualification": "Component HTTP simulations are distinct from real server receipt/race evidence. Do not manufacture cooperating-writer insertion collisions."
+    },
+    {
+      "id": "T-15",
+      "ac": "AC-15",
+      "decisions": "D-07, D-12",
+      "plannedPaths": "`server/tests/lab-04/actions-concurrency.api.test.ts`",
+      "assertions": "Two editors/current-versus-stale parent/action tokens including same timestamp precision under ordered RC resource/row protection; stale 409 and no overwrite; safe refresh.",
+      "contractStatus": "Planned",
+      "line": 41,
+      "actualPaths": [
+        "server/tests/lab-04/actions-concurrency.api.test.ts",
+        "client/tests/lab-04/ActionsTaken.test.tsx"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/actions-concurrency.api.test.ts": "c76cf03a38110338e19fc636a75853295abe2744",
+        "client/tests/lab-04/ActionsTaken.test.tsx": "2e4812dba0a3f605e258fa12fc0c42d3ca06b3ee"
+      },
+      "historicalExecution": "S + C",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Promise.all alone is not overlap evidence. UI refresh tests do not themselves prove database concurrency.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C",
+      "qualification": "Current AX uses amended RC coordination while retaining both stale/token outcomes. Ordinary waiting is not manufactured40001."
+    },
+    {
+      "id": "T-16",
+      "ac": "AC-16",
+      "decisions": "D-05, D-09, D-12",
+      "plannedPaths": "`server/tests/lab-04/actions-concurrency.api.test.ts`",
+      "assertions": "Create/start/edit/reassign against resolve/close in both resource-winning orders under D-12 RC coordination; direct API; inspect no unfinished child under RESOLVED/CLOSED and atomic histories, including initially empty child sets.",
+      "contractStatus": "Planned",
+      "line": 42,
+      "actualPaths": [
+        "server/tests/lab-04/actions-concurrency.api.test.ts",
+        "server/tests/lab-04/workflow-race-test-helpers.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/actions-concurrency.api.test.ts": "c76cf03a38110338e19fc636a75853295abe2744",
+        "server/tests/lab-04/workflow-race-test-helpers.ts": "1e537bc7e3e64d420aea60d1f97be65b2a5f56fb"
+      },
+      "historicalExecution": "S-W + S",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Close uses genuinely resolved parents with terminal siblings; Action commands are legally frozen in both orders, not eligible work on frozen parents.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S",
+      "qualification": "Both resource-winning orders remain covered in AX/TW, including initially empty child sets; genuine SERIALIZABLE COMMIT proof stays separate."
+    },
+    {
+      "id": "T-17",
+      "ac": "AC-17",
+      "decisions": "D-01, D-05, D-20",
+      "plannedPaths": "`server/tests/lab-04/ticket-workflow.api.test.ts`",
+      "assertions": "All 8×8 pairs, all roles, legacy null and active/inactive owners, confirmation; exact L allowed/same/forbidden/terminal errors; student-accepted D-20 preserves validated reasons on successful edges, separately detailed in T-53.",
+      "contractStatus": "Planned",
+      "line": 43,
+      "actualPaths": [
+        "server/tests/lab-04/ticket-workflow.api.test.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/ticket-workflow.api.test.ts": "c3885b22269dede0164ee4ded416100fafe4290b"
+      },
+      "historicalExecution": "S-W + S + C/E subset",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Matrix expansion passed immediately: verification, not invented RED. Direct source-state fixtures do not prove an end-to-end path.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S",
+      "qualification": "Matrix expansion passed immediately: verification, not invented RED. Direct source-state fixtures do not prove an end-to-end path."
+    },
+    {
+      "id": "T-18",
+      "ac": "AC-18",
+      "decisions": "D-05",
+      "plannedPaths": "`server/tests/lab-04/ticket-workflow.api.test.ts`; `client/tests/lab-04/TicketWorkflow.test.tsx`",
+      "assertions": "PLANNED/IN_PROGRESS block resolve/close via API even with hidden/forged UI; 409 ACTIONS_OUTSTANDING, state/history unchanged, UI blocker links to actions.",
+      "contractStatus": "Planned",
+      "line": 44,
+      "actualPaths": [
+        "server/tests/lab-04/ticket-workflow.api.test.ts",
+        "client/tests/lab-04/TicketWorkflow.test.tsx",
+        "e2e/lab-04/ticket-resolution.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/ticket-workflow.api.test.ts": "c3885b22269dede0164ee4ded416100fafe4290b",
+        "client/tests/lab-04/TicketWorkflow.test.tsx": "83a98f635960060c9302f50302931dce6130e47c",
+        "e2e/lab-04/ticket-resolution.spec.ts": "6b9e782074dfc92937ee837da994071e96ebacaa"
+      },
+      "historicalExecution": "S-W + S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Backend transaction remains authoritative even with forged/hidden controls; no minimum-completion substitute.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C+E",
+      "qualification": "Backend transaction remains authoritative even with forged/hidden controls; no minimum-completion substitute."
+    },
+    {
+      "id": "T-19",
+      "ac": "AC-19",
+      "decisions": "D-05, D-06",
+      "plannedPaths": "`server/tests/lab-04/ticket-workflow.api.test.ts`",
+      "assertions": "Zero/all-cancelled/completed-with-follow-up cases pass only otherwise-valid edges/owner/confirm; no workCycle or positive-completion rule.",
+      "contractStatus": "Planned",
+      "line": 45,
+      "actualPaths": [
+        "server/tests/lab-04/ticket-workflow.api.test.ts",
+        "server/tests/lab-04/legacy-actions.integration.test.ts",
+        "e2e/lab-04/ticket-resolution.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/ticket-workflow.api.test.ts": "c3885b22269dede0164ee4ded416100fafe4290b",
+        "server/tests/lab-04/legacy-actions.integration.test.ts": "ce06700934d0b6f3851840b0959c55175866139e",
+        "e2e/lab-04/ticket-resolution.spec.ts": "6b9e782074dfc92937ee837da994071e96ebacaa"
+      },
+      "historicalExecution": "S-W + S + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Owner/token/confirmation remain required. Follow-up is informative; no positive completion or workCycle rule.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+E",
+      "qualification": "Owner/token/confirmation remain required. Follow-up is informative; no positive completion or workCycle rule."
+    },
+    {
+      "id": "T-20",
+      "ac": "AC-20",
+      "decisions": "D-01, D-05",
+      "plannedPaths": "`server/tests/lab-04/ticket-workflow.api.test.ts`",
+      "assertions": "Requester own advisory eligibility and idempotence; only RESOLVED reopen, paired fields clear; earlier completed actions stay historical.",
+      "contractStatus": "Planned",
+      "line": 46,
+      "actualPaths": [
+        "server/tests/lab-04/ticket-workflow.api.test.ts",
+        "server/tests/lab-03/resolution-indication.api.test.ts",
+        "server/tests/lab-04/legacy-actions.integration.test.ts",
+        "e2e/lab-04/ticket-resolution.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/ticket-workflow.api.test.ts": "c3885b22269dede0164ee4ded416100fafe4290b",
+        "server/tests/lab-03/resolution-indication.api.test.ts": "0e62cab798f4d48c867ebcca5ba371b7b26279bb",
+        "server/tests/lab-04/legacy-actions.integration.test.ts": "ce06700934d0b6f3851840b0959c55175866139e",
+        "e2e/lab-04/ticket-resolution.spec.ts": "6b9e782074dfc92937ee837da994071e96ebacaa"
+      },
+      "historicalExecution": "S-W + S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Only RESOLVED formally reopens. Advisory indication changes neither formal status history nor Actions.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+E",
+      "qualification": "Only RESOLVED formally reopens. Advisory indication changes neither formal status history nor Actions."
+    },
+    {
+      "id": "T-21",
+      "ac": "AC-21",
+      "decisions": "D-10, D-12",
+      "plannedPaths": "`server/tests/lab-04/ticket-workflow.api.test.ts`",
+      "assertions": "Mixed action statuses cancel Ticket; same reason on unfinished cascade, terminal rows untouched, rollback injected failure, versions/events atomic.",
+      "contractStatus": "Planned",
+      "line": 47,
+      "actualPaths": [
+        "server/tests/lab-04/ticket-workflow.api.test.ts",
+        "e2e/lab-04/ticket-resolution.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/ticket-workflow.api.test.ts": "c3885b22269dede0164ee4ded416100fafe4290b",
+        "e2e/lab-04/ticket-resolution.spec.ts": "6b9e782074dfc92937ee837da994071e96ebacaa"
+      },
+      "historicalExecution": "S-W + S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Controlled late-write rollback is separate from actual overlapping workflow races in AX.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+E",
+      "qualification": "Controlled late-write rollback is separate from actual overlapping workflow races in AX."
+    },
+    {
+      "id": "T-22",
+      "ac": "AC-22",
+      "decisions": "D-11, D-12",
+      "plannedPaths": "`server/tests/lab-04/action-eligibility.api.test.ts`",
+      "assertions": "Open versus only-terminal assignments, Ticket-owner conflict priority, self/last-admin/revocation guards, eligible Staff↔Admin role changes and preserved FK references.",
+      "contractStatus": "Planned",
+      "line": 48,
+      "actualPaths": [
+        "server/tests/lab-04/action-eligibility.api.test.ts",
+        "server/tests/lab-03/users-admin.api.test.ts",
+        "server/tests/lab-03/admin-concurrency.api.test.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/action-eligibility.api.test.ts": "6d5e866c8c3be418b3189857cddd11f0bf6973db",
+        "server/tests/lab-03/users-admin.api.test.ts": "96ef7f64314e8ee1c5f52062268f32a1de5aa0ae",
+        "server/tests/lab-03/admin-concurrency.api.test.ts": "fa7586f93f3de318fd9dc172a43af3c35f08970b"
+      },
+      "historicalExecution": "S",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "No automatic unassignment/cancellation; historical FKs and current authorization/revocation are preserved.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S",
+      "qualification": "No automatic unassignment/cancellation; historical FKs and current authorization/revocation are preserved."
+    },
+    {
+      "id": "T-23",
+      "ac": "AC-23",
+      "decisions": "D-14, D-15",
+      "plannedPaths": "`server/tests/lab-04/requester-dashboard.api.test.ts`",
+      "assertions": "Two owners and each status; outstanding/attention counts match independently scoped DB queries; no other-requester rows/identities.",
+      "contractStatus": "Planned",
+      "line": 49,
+      "actualPaths": [
+        "server/tests/lab-04/requester-dashboard.api.test.ts",
+        "client/tests/lab-04/RequesterDashboard.test.tsx",
+        "e2e/lab-04/dashboards.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/requester-dashboard.api.test.ts": "7ccda276ea7d034c4aafe3f46e4d66dd3a965acc",
+        "client/tests/lab-04/RequesterDashboard.test.tsx": "b7faff8f1e502a0d94d67dbb90c3d52dc64e9dc8",
+        "e2e/lab-04/dashboards.spec.ts": "9694102117ac7fa24a9259a7acb83513dcd8b5ed"
+      },
+      "historicalExecution": "S-R + S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Ownership precedes aggregation; no requester/actor/asOf/timezone selector. Label correction does not alter formulas.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C+E",
+      "qualification": "Ownership precedes aggregation; no requester/actor/asOf/timezone selector. Label correction does not alter formulas."
+    },
+    {
+      "id": "T-24",
+      "ac": "AC-24",
+      "decisions": "D-07, D-14",
+      "plannedPaths": "`server/tests/lab-04/requester-dashboard.api.test.ts`; `server/tests/lab-04/staff-dashboard.api.test.ts`",
+      "assertions": "Repeated resolution events, currently reopened, closed, missing historical events; distinct latest qualifying event, action-triggered updatedAt versus unchanged Note-only timestamp.",
+      "contractStatus": "Planned",
+      "line": 50,
+      "actualPaths": [
+        "server/tests/lab-04/requester-dashboard.api.test.ts",
+        "server/tests/lab-04/staff-dashboard.api.test.ts",
+        "server/tests/lab-04/dashboard-drilldown.api.test.ts",
+        "server/tests/lab-03/comments-notes.api.test.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/requester-dashboard.api.test.ts": "7ccda276ea7d034c4aafe3f46e4d66dd3a965acc",
+        "server/tests/lab-04/staff-dashboard.api.test.ts": "f8889f844282e10e9188b1818a0102c0bde762c4",
+        "server/tests/lab-04/dashboard-drilldown.api.test.ts": "4ef4dce1f80e7ba3610c73f599216bf42a667df0",
+        "server/tests/lab-03/comments-notes.api.test.ts": "4f77aab5adec6b73422eec40de0f750d2f6c6054"
+      },
+      "historicalExecution": "S-R + S + E subset; V-T24",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "The initial audit classified this P+I because CN did not prove Note-only versus Action activity. V-T24 now reaches those explicit assertions on both surfaces. Sequential create checks do not prove every Action operation, nonempty prior Action-cohort preservation or final integrated scenario acceptance.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S",
+      "qualification": "The initial audit classified this P+I because CN did not prove Note-only versus Action activity. V-T24 now reaches those explicit assertions on both surfaces. Sequential create checks do not prove every Action operation, nonempty prior Action-cohort preservation or final integrated scenario acceptance."
+    },
+    {
+      "id": "T-25",
+      "ac": "AC-25",
+      "decisions": "D-14, D-15",
+      "plannedPaths": "`server/tests/lab-04/staff-dashboard.api.test.ts`",
+      "assertions": "All eight zero/nonzero bins, all priorities, requested≠IT, active includes legacy RESOLVED/unassigned excludes terminals; Admin parity; independently computed DB counts.",
+      "contractStatus": "Planned",
+      "line": 51,
+      "actualPaths": [
+        "server/tests/lab-04/staff-dashboard.api.test.ts",
+        "client/tests/lab-04/StaffDashboard.test.tsx",
+        "e2e/lab-04/staff-dashboard.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/staff-dashboard.api.test.ts": "f8889f844282e10e9188b1818a0102c0bde762c4",
+        "client/tests/lab-04/StaffDashboard.test.tsx": "ac4cb5a0584f1ad9eef4402f8acadfe1d0bfa597",
+        "e2e/lab-04/staff-dashboard.spec.ts": "1ab6bc717dcbd24291c4340b458a84e64b1c5145"
+      },
+      "historicalExecution": "S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Zero actor assignments is not an empty global Dashboard. Equivalence uses pagination.totalItems, not legacy owner-replacement counters.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C+E",
+      "qualification": "Zero actor assignments is not an empty global Dashboard. Equivalence uses pagination.totalItems, not legacy owner-replacement counters."
+    },
+    {
+      "id": "T-26",
+      "ac": "AC-26",
+      "decisions": "D-03, D-14, D-15",
+      "plannedPaths": "`server/tests/lab-04/staff-dashboard.api.test.ts`; `client/tests/lab-04/StaffDashboard.test.tsx`",
+      "assertions": "Actor owns/authors/performs others' assignments; only assignee=actor counts; all four bins, unfinished top 5 order, link predicates and empty UI.",
+      "contractStatus": "Planned",
+      "line": 52,
+      "actualPaths": [
+        "server/tests/lab-04/staff-dashboard.api.test.ts",
+        "server/tests/lab-04/staff-actions.api.test.ts",
+        "server/tests/lab-04/dashboard-drilldown.api.test.ts",
+        "client/tests/lab-04/StaffDashboard.test.tsx",
+        "client/tests/lab-04/MyActions.test.tsx",
+        "e2e/lab-04/staff-dashboard.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/staff-dashboard.api.test.ts": "f8889f844282e10e9188b1818a0102c0bde762c4",
+        "server/tests/lab-04/staff-actions.api.test.ts": "4dcecdc830f9a1663ea7f76a767553924d81507d",
+        "server/tests/lab-04/dashboard-drilldown.api.test.ts": "4ef4dce1f80e7ba3610c73f599216bf42a667df0",
+        "client/tests/lab-04/StaffDashboard.test.tsx": "ac4cb5a0584f1ad9eef4402f8acadfe1d0bfa597",
+        "client/tests/lab-04/MyActions.test.tsx": "61214d7c0ef4dc54960885568cffd1df76da1fe1",
+        "e2e/lab-04/staff-dashboard.spec.ts": "1ab6bc717dcbd24291c4340b458a84e64b1c5145"
+      },
+      "historicalExecution": "S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Historical terminal assignments remain readable; no client-selected other assignee or inferred assignment.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C+E",
+      "qualification": "Historical terminal assignments remain readable; no client-selected other assignee or inferred assignment."
+    },
+    {
+      "id": "T-27",
+      "ac": "AC-27",
+      "decisions": "D-07, D-14",
+      "plannedPaths": "`server/tests/lab-04/dashboard-dates.unit.test.ts`; `server/tests/lab-04/requester-dashboard.api.test.ts`",
+      "assertions": "Frozen asOf around UTC/local midnight/year/month/leap day, exact start/end/future exclusion, 6+today versus rolling hours, equal time IDs and page stability.",
+      "contractStatus": "Planned",
+      "line": 53,
+      "actualPaths": [
+        "server/tests/lab-04/dashboard-dates.unit.test.ts",
+        "server/tests/lab-04/requester-dashboard.api.test.ts",
+        "server/tests/lab-04/staff-dashboard.api.test.ts",
+        "server/tests/lab-04/dashboard-drilldown.api.test.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/dashboard-dates.unit.test.ts": "d3ff4aa7125c27321076f51188f75f1fdbe15499",
+        "server/tests/lab-04/requester-dashboard.api.test.ts": "7ccda276ea7d034c4aafe3f46e4d66dd3a965acc",
+        "server/tests/lab-04/staff-dashboard.api.test.ts": "f8889f844282e10e9188b1818a0102c0bde762c4",
+        "server/tests/lab-04/dashboard-drilldown.api.test.ts": "4ef4dce1f80e7ba3610c73f599216bf42a667df0"
+      },
+      "historicalExecution": "S-R + S",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Mocked public-service clock proves arithmetic only. Controlled SQL-clock and real PostgreSQL timezone cases provide distinct predicate evidence; no global fake auth clock.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S",
+      "qualification": "Mocked public-service clock proves arithmetic only. Controlled SQL-clock and real PostgreSQL timezone cases provide distinct predicate evidence; no global fake auth clock."
+    },
+    {
+      "id": "T-28",
+      "ac": "AC-28",
+      "decisions": "D-15, D-18",
+      "plannedPaths": "`server/tests/lab-04/dashboard-drilldown.api.test.ts`",
+      "assertions": "Filter intersections including owner/status/priority contradictions encoded with dashboardWidget and validated bucket keys, not duplicate parameters; descriptors execute on list routes with equivalent DB state; compare pagination.totalItems, retain old queue counter owner-replacement behavior; explicit new Requester itPriority filter, sortBy/date bounds; unknown/repeated/unsupported-role widget parameters 400.",
+      "contractStatus": "Planned",
+      "line": 54,
+      "actualPaths": [
+        "server/tests/lab-04/dashboard-drilldown.api.test.ts",
+        "server/tests/lab-04/requester-dashboard.api.test.ts",
+        "server/tests/lab-04/staff-dashboard.api.test.ts",
+        "server/tests/lab-04/staff-actions.api.test.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/dashboard-drilldown.api.test.ts": "4ef4dce1f80e7ba3610c73f599216bf42a667df0",
+        "server/tests/lab-04/requester-dashboard.api.test.ts": "7ccda276ea7d034c4aafe3f46e4d66dd3a965acc",
+        "server/tests/lab-04/staff-dashboard.api.test.ts": "f8889f844282e10e9188b1818a0102c0bde762c4",
+        "server/tests/lab-04/staff-actions.api.test.ts": "4dcecdc830f9a1663ea7f76a767553924d81507d"
+      },
+      "historicalExecution": "S-R + S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Later HTTP reads use new snapshots; equivalence requires unchanged data or explicitly accounts for committed writers.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S",
+      "qualification": "Later HTTP reads use new snapshots; equivalence requires unchanged data or explicitly accounts for committed writers."
+    },
+    {
+      "id": "T-29",
+      "ac": "AC-29",
+      "decisions": "D-14, D-15",
+      "plannedPaths": "`client/tests/lab-04/RequesterDashboard.test.tsx`; `client/tests/lab-04/StaffDashboard.test.tsx`",
+      "assertions": "Zero overall/filtered/current-user-action cohorts; accurate Create/Clear filters options; failures not zeros; backend empty response checked in dashboard API tests.",
+      "contractStatus": "Planned",
+      "line": 55,
+      "actualPaths": [
+        "server/tests/lab-04/requester-dashboard.api.test.ts",
+        "server/tests/lab-04/staff-dashboard.api.test.ts",
+        "client/tests/lab-04/RequesterDashboard.test.tsx",
+        "client/tests/lab-04/StaffDashboard.test.tsx",
+        "e2e/lab-04/dashboards.spec.ts",
+        "e2e/lab-04/staff-dashboard.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/requester-dashboard.api.test.ts": "7ccda276ea7d034c4aafe3f46e4d66dd3a965acc",
+        "server/tests/lab-04/staff-dashboard.api.test.ts": "f8889f844282e10e9188b1818a0102c0bde762c4",
+        "client/tests/lab-04/RequesterDashboard.test.tsx": "b7faff8f1e502a0d94d67dbb90c3d52dc64e9dc8",
+        "client/tests/lab-04/StaffDashboard.test.tsx": "ac4cb5a0584f1ad9eef4402f8acadfe1d0bfa597",
+        "e2e/lab-04/dashboards.spec.ts": "9694102117ac7fa24a9259a7acb83513dcd8b5ed",
+        "e2e/lab-04/staff-dashboard.spec.ts": "1ab6bc717dcbd24291c4340b458a84e64b1c5145"
+      },
+      "historicalExecution": "S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Zero widgets do not imply zero matching base Tickets; both review corrections and real list counterexample are retained.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C+E",
+      "qualification": "Zero widgets do not imply zero matching base Tickets; both review corrections and real list counterexample are retained."
+    },
+    {
+      "id": "T-30",
+      "ac": "AC-30",
+      "decisions": "D-16",
+      "plannedPaths": "`server/tests/lab-04/lab3-to-lab4.migration.test.ts`",
+      "assertions": "Clean database and populated baseline copies with every historical relation/credential/status/null owner; compare counts/IDs/values/time checksums; additive zero-action migration.",
+      "contractStatus": "Planned",
+      "line": 56,
+      "actualPaths": [
+        "server/tests/lab-04/lab3-to-lab4.migration.test.ts",
+        "server/tests/lab-04/ticket-reason-compatibility.migration.test.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/lab3-to-lab4.migration.test.ts": "0bbffee41ca7c7bb95770484f6da5eee28f7648f",
+        "server/tests/lab-04/ticket-reason-compatibility.migration.test.ts": "e1b1b697078e6b11ab9fb3702e6d641ce2edc1ab"
+      },
+      "historicalExecution": "S-44 + S-W + S",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Owned synthetic copies only. Existing migration bytes remain immutable; no operational database action in this audit.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S",
+      "qualification": "Owned synthetic copies only. Existing migration bytes remain immutable; no operational database action in this audit."
+    },
+    {
+      "id": "T-31",
+      "ac": "AC-31",
+      "decisions": "D-16",
+      "plannedPaths": "`server/tests/lab-04/migration-recovery.integration.test.ts`",
+      "assertions": "Isolated backup/restore rehearsal and forward-failure plan, RESTRICT/unique constraints, existing-index inventory and representative EXPLAIN evidence; no live destructive rollback.",
+      "contractStatus": "Planned",
+      "line": 57,
+      "actualPaths": [
+        "server/tests/lab-04/migration-recovery.integration.test.ts",
+        "server/tests/lab-04/attachment-recovery.integration.test.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/migration-recovery.integration.test.ts": "b64e621493a982daaa5c30080d72fba241280f6f",
+        "server/tests/lab-04/attachment-recovery.integration.test.ts": "1db40005bb3129f34a3202bb833c93e1fcb68930"
+      },
+      "historicalExecution": "S-44 + S; V-R31; V-CU; V-R31D",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Historical bounded recovery and the latest isolated instrumented confirmation passed. R2 remains a failed 30-second attempt with unestablished cause, not replaced by the earlier overlapping pass or called fixed. V-R31D completed every phase and unchanged assertion in 22,923 ms, including cleanup; no corrective change or budget increase. Cold expiry/compensation remains classified separately. Local logical export does not certify production storage disaster recovery; #50 handoff remains.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S",
+      "qualification": "Historical bounded recovery and the latest isolated instrumented confirmation passed. R2 remains a failed 30-second attempt with unestablished cause, not replaced by the earlier overlapping pass or called fixed. V-R31D completed every phase and unchanged assertion in 22,923 ms, including cleanup; no corrective change or budget increase. Cold expiry/compensation remains classified separately. Local logical export does not certify production storage disaster recovery; #50 handoff remains."
+    },
+    {
+      "id": "T-32",
+      "ac": "AC-32",
+      "decisions": "D-17",
+      "plannedPaths": "`server/tests/lab-04/seed.integration.test.ts`",
+      "assertions": "Clean/run/run/interrupted-run/resume; stable fixture keys, all required status/priority/owner/action cohorts, no duplicate history/receipts/sequence artifacts.",
+      "contractStatus": "Planned",
+      "line": 58,
+      "actualPaths": [
+        "server/tests/lab-04/seed.integration.test.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/seed.integration.test.ts": "6a2eeb258571964a7682a735e46832c245de71a6"
+      },
+      "historicalExecution": "S-44 + S",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Controlled statement failure is the interruption model, not an abrupt process kill. Seed-specific 15s keeps atomicity/real Argon2; ordinary mutation limits unchanged.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S",
+      "qualification": "Controlled statement failure is the interruption model, not an abrupt process kill. Seed-specific 15s keeps atomicity/real Argon2; ordinary mutation limits unchanged."
+    },
+    {
+      "id": "T-33",
+      "ac": "AC-33",
+      "decisions": "D-17",
+      "plannedPaths": "`server/tests/lab-04/seed.integration.test.ts`",
+      "assertions": "After seed, make legitimate operational edits to user name/email/role/isActive/password/mustChangePassword, references activation, Ticket/action status/owner/assignee/content/times (reassign open work before deactivation); seed twice, assert exact preservation of edits/credentials/sessions/history/unrelated data. Registry prevents original-email duplicate after email edit; ambiguous legacy mapping or illegal missing dependent fixture is reported/skipped without reactivation/reopening.",
+      "contractStatus": "Planned",
+      "line": 59,
+      "actualPaths": [
+        "server/tests/lab-04/seed.integration.test.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/seed.integration.test.ts": "6a2eeb258571964a7682a735e46832c245de71a6"
+      },
+      "historicalExecution": "S-44 + S",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Preservation fixtures respect assignment invariants; direct valid edits here are not Admin endpoint/race evidence.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S",
+      "qualification": "Preservation fixtures respect assignment invariants; direct valid edits here are not Admin endpoint/race evidence."
+    },
+    {
+      "id": "T-34",
+      "ac": "AC-34",
+      "decisions": "D-12, D-13, D-18",
+      "plannedPaths": "`server/tests/lab-04/actions-taken.api.test.ts`; `server/tests/lab-04/action-history.api.test.ts`; `server/tests/lab-04/actions-authorization.api.test.ts`; `server/tests/lab-04/actions-concurrency.api.test.ts`; `server/tests/lab-04/action-idempotency-recovery.integration.test.ts`; `server/tests/lab-03/safe-errors.api.test.ts`; `server/tests/lab-02/error-handling.api.test.ts`",
+      "assertions": "Known unavailable DB/storage path, unexpected failure and rollback failpoints; correct L codes/400 versus409, sanitized shape, no SQL/stack/secrets and no mutation receipt on failed transaction.",
+      "contractStatus": "Planned",
+      "line": 60,
+      "actualPaths": [
+        "server/tests/lab-04/actions-authorization.api.test.ts",
+        "server/tests/lab-04/actions-taken.api.test.ts",
+        "server/tests/lab-04/action-history.api.test.ts",
+        "server/tests/lab-04/actions-concurrency.api.test.ts",
+        "server/tests/lab-04/action-idempotency-recovery.integration.test.ts",
+        "server/tests/lab-04/receipt-recovery.unit.test.ts",
+        "server/tests/lab-04/requester-dashboard-security.api.test.ts",
+        "server/tests/lab-04/staff-dashboard-security.api.test.ts",
+        "server/tests/lab-03/safe-errors.api.test.ts",
+        "server/tests/lab-02/error-handling.api.test.ts",
+        "server/tests/lab-03/auth.api.test.ts",
+        "server/tests/lab-03/password-verification-outage.api.test.ts",
+        "server/tests/lab-04/attachment-cold-upload.integration.test.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/actions-authorization.api.test.ts": "e39530944a58a3d6e3b90be67551373f4d9354d4",
+        "server/tests/lab-04/actions-taken.api.test.ts": "5ad02c68b21284d4c57f3ba01cb77a49dc184359",
+        "server/tests/lab-04/action-history.api.test.ts": "f41855148116b437f3d4a1262cf09e3b70d0ceda",
+        "server/tests/lab-04/actions-concurrency.api.test.ts": "c76cf03a38110338e19fc636a75853295abe2744",
+        "server/tests/lab-04/action-idempotency-recovery.integration.test.ts": "485a490480186cdfa6edbe7b342d66ab907d46ba",
+        "server/tests/lab-04/receipt-recovery.unit.test.ts": "89d27d5ec1a083d05d5f81315fe8d81c21c2950a",
+        "server/tests/lab-04/requester-dashboard-security.api.test.ts": "869ff3f97bfe217354b649c2b6ead42809480d3c",
+        "server/tests/lab-04/staff-dashboard-security.api.test.ts": "c733b9a95f90027bf86e9b563ef53509c6b873c6",
+        "server/tests/lab-03/safe-errors.api.test.ts": "7149b4824b71674974af2fd6313f706077fc4977",
+        "server/tests/lab-02/error-handling.api.test.ts": "d6973c86ea286586a610162213ae9d351db38f50",
+        "server/tests/lab-03/auth.api.test.ts": "9725a633e6cdc6e1b5ad7ec491aee2c84657faef",
+        "server/tests/lab-03/password-verification-outage.api.test.ts": "8e65ff285646da81d097123a4473ccbc7f4a4c1f",
+        "server/tests/lab-04/attachment-cold-upload.integration.test.ts": "e46e7408efdd01834c3d7c8a4ee5c30b135063d9"
+      },
+      "historicalExecution": "S + C/E presentation; V-CU",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Distributed suites replace a planned standalone name. Classification injections are not real outages; conditional/cache branches inspected only in code must not be called executed tests.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S",
+      "qualification": "Distributed suites replace a planned standalone name. Classification injections are not real outages; conditional/cache branches inspected only in code must not be called executed tests."
+    },
+    {
+      "id": "T-35",
+      "ac": "AC-35",
+      "decisions": "D-19",
+      "plannedPaths": "`client/tests/lab-04/DashboardNavigation.test.tsx`",
+      "assertions": "Each role login/direct route/password gate, active nav and retained earlier routes, unauthorized controls, session/role cache clearing.",
+      "contractStatus": "Planned",
+      "line": 61,
+      "actualPaths": [
+        "client/tests/lab-04/DashboardNavigation.test.tsx",
+        "e2e/lab-04/dashboards.spec.ts",
+        "e2e/lab-04/actions-taken-flow.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "client/tests/lab-04/DashboardNavigation.test.tsx": "9a5a3906929c66fb2d8b396eb45181dc8a965a04",
+        "e2e/lab-04/dashboards.spec.ts": "9694102117ac7fa24a9259a7acb83513dcd8b5ed",
+        "e2e/lab-04/actions-taken-flow.spec.ts": "6bb5ba11f43184bb76aa32cb5ab92a9bd96e2ae3"
+      },
+      "historicalExecution": "C + E; F historical",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "PR57 approved/merged. Original 69/69 lacked detail-active assertions; new RED/correction and 352/70 confirmation are not staging-merge executions.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "C+E",
+      "qualification": "Current C/E counts are352/72. Earlier navigation failures and their original unknown causes remain preserved."
+    },
+    {
+      "id": "T-36",
+      "ac": "AC-36",
+      "decisions": "D-13, D-19",
+      "plannedPaths": "`client/tests/lab-04/ActionsTaken.test.tsx`; `client/tests/lab-04/RequesterDashboard.test.tsx`; `client/tests/lab-04/StaffDashboard.test.tsx`",
+      "assertions": "Loading/busy/success/field error/empty/no-results/401/403/404/409/503; repeated click, uncertain network outcome, same-key replay, preserved input and explicit refresh/reselect.",
+      "contractStatus": "Planned",
+      "line": 62,
+      "actualPaths": [
+        "client/tests/lab-04/ActionsTaken.test.tsx",
+        "client/tests/lab-04/MyActions.test.tsx",
+        "client/tests/lab-04/RequesterDashboard.test.tsx",
+        "client/tests/lab-04/StaffDashboard.test.tsx",
+        "client/tests/lab-04/TicketWorkflow.test.tsx",
+        "client/tests/lab-04/DashboardNavigation.test.tsx",
+        "e2e/lab-04/actions-taken-flow.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "client/tests/lab-04/ActionsTaken.test.tsx": "2e4812dba0a3f605e258fa12fc0c42d3ca06b3ee",
+        "client/tests/lab-04/MyActions.test.tsx": "61214d7c0ef4dc54960885568cffd1df76da1fe1",
+        "client/tests/lab-04/RequesterDashboard.test.tsx": "b7faff8f1e502a0d94d67dbb90c3d52dc64e9dc8",
+        "client/tests/lab-04/StaffDashboard.test.tsx": "ac4cb5a0584f1ad9eef4402f8acadfe1d0bfa597",
+        "client/tests/lab-04/TicketWorkflow.test.tsx": "83a98f635960060c9302f50302931dce6130e47c",
+        "client/tests/lab-04/DashboardNavigation.test.tsx": "9a5a3906929c66fb2d8b396eb45181dc8a965a04",
+        "e2e/lab-04/actions-taken-flow.spec.ts": "6bb5ba11f43184bb76aa32cb5ab92a9bd96e2ae3"
+      },
+      "historicalExecution": "C + E subset; V-B49",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "The initial audit gap was a real committed-write response drop/replay. V-B49 now verifies one real EDIT commit followed by controlled delivery loss and byte-identical UUID/version/parent-token retry, actual 200 replay, authoritative refresh and exact no-second-write state. This is not a natural outage or all browser failure combinations; final integrated acceptance remains.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "C+E",
+      "qualification": "The initial audit gap was a real committed-write response drop/replay. V-B49 now verifies one real EDIT commit followed by controlled delivery loss and byte-identical UUID/version/parent-token retry, actual 200 replay, authoritative refresh and exact no-second-write state. This is not a natural outage or all browser failure combinations; final integrated acceptance remains."
+    },
+    {
+      "id": "T-37",
+      "ac": "AC-37",
+      "decisions": "D-19",
+      "plannedPaths": "`client/tests/lab-04/UiStyleAccessibility.test.tsx`; `e2e/lab-04/responsive.spec.ts`",
+      "assertions": "Shared Zen Green tokens and readable long text/cards/forms at 390×844,834×1112,1440×900; no overflow; new plus earlier major screens, screenshots only after execution.",
+      "contractStatus": "Planned",
+      "line": 63,
+      "actualPaths": [
+        "e2e/lab-04/responsive.spec.ts",
+        "e2e/lab-04/ticket-workflow-layout.spec.ts",
+        "e2e/lab-04/requester-dashboard-layout.spec.ts",
+        "e2e/lab-04/staff-dashboard.spec.ts",
+        "e2e/lab-02/requester-ticket-flow.spec.ts",
+        "e2e/lab-03/responsive.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "e2e/lab-04/responsive.spec.ts": "8c3c2b163a8c730588ffd9373ecab05849c6af02",
+        "e2e/lab-04/ticket-workflow-layout.spec.ts": "8809157d85e81e793bd2f0dfdb858058232caff6",
+        "e2e/lab-04/requester-dashboard-layout.spec.ts": "f0ef3dda3620423181993cc699ed32f376afbb9e",
+        "e2e/lab-04/staff-dashboard.spec.ts": "1ab6bc717dcbd24291c4340b458a84e64b1c5145",
+        "e2e/lab-02/requester-ticket-flow.spec.ts": "a8a6955e2f767ba7cfde2e2e89dba094877dff3c",
+        "e2e/lab-03/responsive.spec.ts": "1490e3d05b3bc0deb567c618b9063e0d793aa007"
+      },
+      "historicalExecution": "E + V",
+      "historicalClassification": "**P + I**",
+      "historicalQualification": "Earlier Login/password/Create/list/detail/Queue/Admin checks already exist. Finish current integrated screen/state visual review: regenerated full-run images were not newly inspected. Missing UiStyleAccessibility filename alone is not a code gap.",
+      "assessment": "Partial: current visual inspection missing",
+      "execution": "E",
+      "qualification": "Current E passed automated geometry. The fresh92PNG archive was explicitly not inspected; inspect the actual images with source/hash provenance."
+    },
+    {
+      "id": "T-38",
+      "ac": "AC-38",
+      "decisions": "D-19",
+      "plannedPaths": "`client/tests/lab-04/UiStyleAccessibility.test.tsx`; `e2e/lab-04/accessibility.spec.ts`",
+      "assertions": "Native labels/required/error semantics, role/status announcements, chart text alternatives, keyboard focus trap/return/inert background and genuine 200% browser zoom.",
+      "contractStatus": "Planned",
+      "line": 64,
+      "actualPaths": [
+        "e2e/lab-04/accessibility.spec.ts",
+        "e2e/lab-04/ticket-workflow-layout.spec.ts",
+        "e2e/lab-04/requester-dashboard-layout.spec.ts",
+        "e2e/lab-04/staff-dashboard.spec.ts",
+        "e2e/lab-03/responsive.spec.ts",
+        "client/tests/lab-04/DashboardNavigation.test.tsx"
+      ],
+      "sourceBlobIds": {
+        "e2e/lab-04/accessibility.spec.ts": "9dbead852c0a5b38e37ca8e2686728e45bcfcecb",
+        "e2e/lab-04/ticket-workflow-layout.spec.ts": "8809157d85e81e793bd2f0dfdb858058232caff6",
+        "e2e/lab-04/requester-dashboard-layout.spec.ts": "f0ef3dda3620423181993cc699ed32f376afbb9e",
+        "e2e/lab-04/staff-dashboard.spec.ts": "1ab6bc717dcbd24291c4340b458a84e64b1c5145",
+        "e2e/lab-03/responsive.spec.ts": "1490e3d05b3bc0deb567c618b9063e0d793aa007",
+        "client/tests/lab-04/DashboardNavigation.test.tsx": "9a5a3906929c66fb2d8b396eb45181dc8a965a04"
+      },
+      "historicalExecution": "C + E + V subset",
+      "historicalClassification": "**P + I**",
+      "historicalQualification": "Actual screen-reader operation and broader supported-browser evidence remain unexecuted; sampled contrast/native controls/compositing limits persist. No certified WCAG or invented cross-browser pass.",
+      "assessment": "Partial: actual screen-reader/additional-browser observation missing",
+      "execution": "C+E",
+      "qualification": "ARIA/keyboard/zoom assertions do not establish actual spoken output or additional supported-browser operation. Those observations remain open."
+    },
+    {
+      "id": "T-39",
+      "ac": "AC-39",
+      "decisions": "D-04",
+      "plannedPaths": "`server/tests/lab-04/action-validation.unit.test.ts`; `server/tests/lab-04/actions-taken.api.test.ts`; `server/tests/lab-04/action-history.api.test.ts`; `server/tests/lab-02/attachments.api.test.ts`; `server/tests/lab-03/attachments.api.test.ts`; `client/tests/lab-04/ActionsTaken.test.tsx`",
+      "assertions": "Literal script-like Attachment Notes, other/removed-file mentions, no fabricated hyperlink/binary leak; approved MIME/size/count/soft-removal/410/ownership remain.",
+      "contractStatus": "Planned",
+      "line": 65,
+      "actualPaths": [
+        "server/tests/lab-04/action-validation.unit.test.ts",
+        "server/tests/lab-04/actions-taken.api.test.ts",
+        "server/tests/lab-04/action-history.api.test.ts",
+        "client/tests/lab-04/ActionsTaken.test.tsx",
+        "server/tests/lab-02/attachments.api.test.ts",
+        "server/tests/lab-03/attachments.api.test.ts",
+        "e2e/lab-04/actions-taken-flow.spec.ts",
+        "e2e/lab-02/requester-ticket-flow.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/action-validation.unit.test.ts": "74224e575097f41dc5940fa42c6fd7718bce821f",
+        "server/tests/lab-04/actions-taken.api.test.ts": "5ad02c68b21284d4c57f3ba01cb77a49dc184359",
+        "server/tests/lab-04/action-history.api.test.ts": "f41855148116b437f3d4a1262cf09e3b70d0ceda",
+        "client/tests/lab-04/ActionsTaken.test.tsx": "2e4812dba0a3f605e258fa12fc0c42d3ca06b3ee",
+        "server/tests/lab-02/attachments.api.test.ts": "0f6c9e73d2c12a9e6c5631f69745226dc5b9df81",
+        "server/tests/lab-03/attachments.api.test.ts": "0afb8577dad8bc5758c55a6f2e1cee2b936f6ab9",
+        "e2e/lab-04/actions-taken-flow.spec.ts": "6bb5ba11f43184bb76aa32cb5ab92a9bd96e2ae3",
+        "e2e/lab-02/requester-ticket-flow.spec.ts": "a8a6955e2f767ba7cfde2e2e89dba094877dff3c"
+      },
+      "historicalExecution": "S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Distributed coverage is real; absent attachment-regression filename is a planned-path mismatch, not a demonstrated defect. Reuse existing paths instead of duplicate backend suites.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C+E",
+      "qualification": "Distributed coverage is real; absent attachment-regression filename is a planned-path mismatch, not a demonstrated defect. Reuse existing paths instead of duplicate backend suites."
+    },
+    {
+      "id": "T-40",
+      "ac": "AC-40",
+      "decisions": "D-01, D-02, D-03, D-04, D-05, D-06, D-07, D-08, D-09, D-10, D-11, D-12, D-13, D-14, D-15, D-16, D-17, D-18, D-19, D-20",
+      "plannedPaths": "`server/tests/lab-04/earlier-labs-regression.api.test.ts`",
+      "assertions": "Execute full existing server/client/E2E suites as regression plus new route checks; documentation/decision/traceability review is a separate human gate, with completed contract review evidenced independently; no invented peer sign-off.",
+      "contractStatus": "Planned",
+      "line": 66,
+      "actualPaths": [
+        "server/tests/lab-04/actions-authorization.api.test.ts",
+        "server/tests/lab-04/actions-taken.api.test.ts",
+        "server/tests/lab-04/ticket-workflow.api.test.ts",
+        "server/tests/lab-04/requester-dashboard.api.test.ts",
+        "server/tests/lab-04/staff-dashboard.api.test.ts",
+        "client/tests/lab-04/ActionsTaken.test.tsx",
+        "client/tests/lab-04/RequesterDashboard.test.tsx",
+        "client/tests/lab-04/StaffDashboard.test.tsx",
+        "client/tests/lab-04/DashboardNavigation.test.tsx",
+        "e2e/lab-04/actions-taken-flow.spec.ts",
+        "e2e/lab-04/ticket-resolution.spec.ts",
+        "e2e/lab-04/dashboards.spec.ts",
+        "e2e/lab-02/requester-ticket-flow.spec.ts",
+        "e2e/lab-03/responsive.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/actions-authorization.api.test.ts": "e39530944a58a3d6e3b90be67551373f4d9354d4",
+        "server/tests/lab-04/actions-taken.api.test.ts": "5ad02c68b21284d4c57f3ba01cb77a49dc184359",
+        "server/tests/lab-04/ticket-workflow.api.test.ts": "c3885b22269dede0164ee4ded416100fafe4290b",
+        "server/tests/lab-04/requester-dashboard.api.test.ts": "7ccda276ea7d034c4aafe3f46e4d66dd3a965acc",
+        "server/tests/lab-04/staff-dashboard.api.test.ts": "f8889f844282e10e9188b1818a0102c0bde762c4",
+        "client/tests/lab-04/ActionsTaken.test.tsx": "2e4812dba0a3f605e258fa12fc0c42d3ca06b3ee",
+        "client/tests/lab-04/RequesterDashboard.test.tsx": "b7faff8f1e502a0d94d67dbb90c3d52dc64e9dc8",
+        "client/tests/lab-04/StaffDashboard.test.tsx": "ac4cb5a0584f1ad9eef4402f8acadfe1d0bfa597",
+        "client/tests/lab-04/DashboardNavigation.test.tsx": "9a5a3906929c66fb2d8b396eb45181dc8a965a04",
+        "e2e/lab-04/actions-taken-flow.spec.ts": "6bb5ba11f43184bb76aa32cb5ab92a9bd96e2ae3",
+        "e2e/lab-04/ticket-resolution.spec.ts": "6b9e782074dfc92937ee837da994071e96ebacaa",
+        "e2e/lab-04/dashboards.spec.ts": "9694102117ac7fa24a9259a7acb83513dcd8b5ed",
+        "e2e/lab-02/requester-ticket-flow.spec.ts": "a8a6955e2f767ba7cfde2e2e89dba094877dff3c",
+        "e2e/lab-03/responsive.spec.ts": "1490e3d05b3bc0deb567c618b9063e0d793aa007"
+      },
+      "historicalExecution": "S + C + E; F retained",
+      "historicalClassification": "**I**",
+      "historicalQualification": "No command executed at dd8eafb in this audit. Final #49 integrated acceptance follows gap work;#50 release/Parts1-9 separate. No mirror earlier-labs-regression suite needed.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C+E",
+      "qualification": "S2110 excluding onlyT47, C352 and E72 have unchanged source bytes. Final product acceptance still depends on T37/T38/T47 and actual review."
+    },
+    {
+      "id": "T-41",
+      "ac": "AC-14",
+      "decisions": "D-13",
+      "plannedPaths": "`server/tests/lab-04/action-idempotency.api.test.ts`",
+      "assertions": "Simultaneous equal-key create/complete/cancel serialized by actor gate; same original input replay after terminal state, different operation/parent409, one event only; do not assert unreachable cooperating-writer unique collision. T-52 isolates cross-Ticket protocol cases.",
+      "contractStatus": "Planned",
+      "line": 67,
+      "actualPaths": [
+        "server/tests/lab-04/action-idempotency.api.test.ts",
+        "server/tests/lab-04/actions-concurrency.api.test.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/action-idempotency.api.test.ts": "5088a63cf85486f8e6c0112252c3ab2eaee8eda9",
+        "server/tests/lab-04/actions-concurrency.api.test.ts": "c76cf03a38110338e19fc636a75853295abe2744"
+      },
+      "historicalExecution": "S",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Real cooperating-writer races are distinct from defensive unique insertion faults; do not weaken gates to cause collision.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S",
+      "qualification": "Real cooperating-writer races are distinct from defensive unique insertion faults; do not weaken gates to cause collision."
+    },
+    {
+      "id": "T-42",
+      "ac": "AC-16",
+      "decisions": "D-05, D-09, D-12",
+      "plannedPaths": "`server/tests/lab-04/actions-concurrency.api.test.ts`",
+      "assertions": "Confirmed structured40001 retry≤3 complete mutation attempts; exhausted409; P2034-only/P2028/P2002/deadlock/message-only are not serialization retry proof. Reacquire footprint and current authorization/receipt/eligibility/tokens in each fresh transaction; no partial history/receipt. Ordinary RC gate waiting requires no snapshot-refresh retry. Genuine SERIALIZABLE COMMIT-error proof is separate from controlled RC retry tests. Receipt-specific one-read recovery is separate T-51, not a fourth mutation attempt.",
+      "contractStatus": "Planned",
+      "line": 68,
+      "actualPaths": [
+        "server/tests/lab-04/actions-concurrency.api.test.ts",
+        "server/tests/lab-04/action-retry-test-helpers.ts",
+        "server/src/auth/eligibility-transaction.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/actions-concurrency.api.test.ts": "c76cf03a38110338e19fc636a75853295abe2744",
+        "server/tests/lab-04/action-retry-test-helpers.ts": "8f61785c54144c8ca4fb6ed3984657a990af377a",
+        "server/src/auth/eligibility-transaction.ts": "c9cdc2bdd2209d3c7ef8925797bcb9259685bbf9"
+      },
+      "historicalExecution": "S-44 + S",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Controlled SQL fault and synthetic classifier boundaries are labelled. Shared protocol already serves workflow; do not duplicate T-42 merely for another filename. No fourth mutation attempt.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S",
+      "qualification": "Max3 complete confirmed structured40001 attempts retained. Controlled RC fault tests are separate from genuine SERIALIZABLE COMMIT rejection."
+    },
+    {
+      "id": "T-43",
+      "ac": "AC-19",
+      "decisions": "D-05, D-06",
+      "plannedPaths": "`server/tests/lab-04/legacy-actions.integration.test.ts`",
+      "assertions": "Migrated zero-action RESOLVED closes with eligible owner, zero-action active resolves, reopened later work uses existing history without a new-cycle completion gate; null-owner L guard still rejects when required.",
+      "contractStatus": "Planned",
+      "line": 69,
+      "actualPaths": [
+        "server/tests/lab-04/legacy-actions.integration.test.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/legacy-actions.integration.test.ts": "ce06700934d0b6f3851840b0959c55175866139e"
+      },
+      "historicalExecution": "S-W + S",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Not newly constructed rows renamed legacy. No workCycle, new-cycle or positive-completion rule.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S",
+      "qualification": "Not newly constructed rows renamed legacy. No workCycle, new-cycle or positive-completion rule."
+    },
+    {
+      "id": "T-44",
+      "ac": "AC-21",
+      "decisions": "D-10, D-12",
+      "plannedPaths": "`server/tests/lab-04/actions-concurrency.api.test.ts`",
+      "assertions": "Ticket cancel versus complete/start/create/edit in both lock orders; completed action retained if completion wins, otherwise terminal/frozen conflict or authorized committed replay; coherent event versions.",
+      "contractStatus": "Planned",
+      "line": 70,
+      "actualPaths": [
+        "server/tests/lab-04/actions-concurrency.api.test.ts",
+        "server/tests/lab-04/workflow-race-test-helpers.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/actions-concurrency.api.test.ts": "c76cf03a38110338e19fc636a75853295abe2744",
+        "server/tests/lab-04/workflow-race-test-helpers.ts": "1e537bc7e3e64d420aea60d1f97be65b2a5f56fb"
+      },
+      "historicalExecution": "S-W + S",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Database-observed overlap, not Promise.all alone. Separate refreshed commands are not automatic retries of stale requests.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S",
+      "qualification": "Database-observed overlap, not Promise.all alone. Separate refreshed commands are not automatic retries of stale requests."
+    },
+    {
+      "id": "T-45",
+      "ac": "AC-22",
+      "decisions": "D-11, D-12",
+      "plannedPaths": "`server/tests/lab-04/action-eligibility.api.test.ts`",
+      "assertions": "Admin deactivation/demotion versus create/reassign/complete, both orders; completion can release block, no open ineligible assignee; current authorization/revocation reapplied.",
+      "contractStatus": "Planned",
+      "line": 71,
+      "actualPaths": [
+        "server/tests/lab-04/action-eligibility.api.test.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/action-eligibility.api.test.ts": "6d5e866c8c3be418b3189857cddd11f0bf6973db"
+      },
+      "historicalExecution": "S-44 + S",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Real shared eligibility gate; completion releases block without erasing historical references or touching unrelated accounts.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S",
+      "qualification": "Real shared eligibility gate; completion releases block without erasing historical references or touching unrelated accounts."
+    },
+    {
+      "id": "T-46",
+      "ac": "AC-28",
+      "decisions": "D-15, D-18",
+      "plannedPaths": "`server/tests/lab-04/dashboard-snapshot.integration.test.ts`",
+      "assertions": "Controlled writer between aggregate queries; all widgets/lists in one response see one read snapshot; later HTTP drill-down sees newer authorized snapshot, not a false retained-snapshot promise.",
+      "contractStatus": "Planned",
+      "line": 72,
+      "actualPaths": [
+        "server/tests/lab-04/dashboard-snapshot.integration.test.ts",
+        "server/tests/lab-04/staff-dashboard.api.test.ts",
+        "server/tests/lab-04/dashboard-drilldown.api.test.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/dashboard-snapshot.integration.test.ts": "eb21ee8cc4dac726a922c7d5ea1f1bade74e1802",
+        "server/tests/lab-04/staff-dashboard.api.test.ts": "f8889f844282e10e9188b1818a0102c0bde762c4",
+        "server/tests/lab-04/dashboard-drilldown.api.test.ts": "4ef4dce1f80e7ba3610c73f599216bf42a667df0"
+      },
+      "historicalExecution": "S-R + S",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Pauses/writers are controlled, not natural races. No retained snapshot or fixed total is promised across separate HTTP requests.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S",
+      "qualification": "Pauses/writers are controlled, not natural races. No retained snapshot or fixed total is promised across separate HTTP requests."
+    },
+    {
+      "id": "T-47",
+      "ac": "AC-40",
+      "decisions": "D-01, D-14, D-15, D-16",
+      "plannedPaths": "`server/tests/lab-04/performance-smoke.integration.test.ts`",
+      "assertions": "Representative indexed Tickets/actions, 50 active test users, 100 warm-up and 10 measured requests per user to normal detail/dashboard/list/CRUD (exclude uploads); record p50/p95/error rate/query plans/host/fixture size. SDS p95<500ms target is part of the reviewed contract; do not invent measurement.",
+      "contractStatus": "Planned",
+      "line": 73,
+      "actualPaths": [
+        "server/tests/lab-04/performance-smoke.integration.test.ts",
+        "server/tests/lab-04/performance-test-helpers.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/performance-smoke.integration.test.ts": "8b36d3393787b9f9cf645b285275855e8994642a",
+        "server/tests/lab-04/performance-test-helpers.ts": "b6c121ff6a9c17d39b0392c31e228d0266f5e04f"
+      },
+      "historicalExecution": "V-P47 at8053570; V-P47C at36f86b8; each1 test failed",
+      "historicalClassification": "**Complete passing B observation; variability; acceptance pending + I**",
+      "historicalQualification": "**Current candidate evidence:** ABBA A1 and B2 pass every inline assertion; B3/A4 fail, all retained. B2 at84ef0ad is a complete passing specified workload observation; measured p95 401.518ms, zero errors, exact state. Acceptance remains pending with observed run/time variability, not a new four-of-four requirement. See sections43-44 and the candidate review package. **Historical evidence, unchanged:** Measured p50 224.886 ms, p95 749.008 ms, 112/500 errors (22.4%); four zero-error successful-read buckets fail p95. Real P2034s have no confirmed SQLSTATE; dependent failures retained. Exact post-write count assertion failed; later inline latency assertions unreached, independently recomputed from samples. [Full results/limits](../../artifacts/lab-04/hardening/t47-performance-results-2026-11-01.md). V-P47D reconstructs 511 real 500s versus 846 dependent responses, reproduces commit-time serialization evidence with time-only-log attribution limits, and profiles actual route SQL. Ordinary Queue fetches 2,052 rows for 25; [bounded diagnosis/proposals](../../artifacts/lab-04/hardening/t47-diagnosis-2026-11-01.md). Diagnosis made no production change. Section 17 records Queue pagination RED/GREEN; section 18 proves preview-adapter COMMIT transport; section 19 quantifies the 5.22 retention blocker. Section 20 records the 6.19.3 COMMIT release RED; section 21 verifies a public release remedy but stops at a demonstrated maxWait acquisition regression. Section 22 verifies a public startup-deadline composition while retaining a failed-start bookkeeping lifecycle gate. These proof/adoption sections did not rerun the benchmark. Section25 subsequently records one unchanged confirmation at36f86b8:5000 warm-up/500 measured,794/71 errors, measured p50 235.370ms/p95 590.303ms,165.622req/s andpeak50. Persisted count assertion again fails; subsequent inline counts/error/latency assertions remain unreached and separately checked from every sample. [Complete confirmation and next diagnosis](../../artifacts/lab-04/hardening/t47-confirmation-2026-11-02.md). No performance GREEN or per-request conflict attribution is claimed.",
+      "assessment": "Mixed measured results; acceptance decision Pending",
+      "execution": "ABBA",
+      "qualification": "B2 passes all inline assertions on current B application bytes. B3 fails CREATE; A4 fails aggregate. No stable-capacity or new four-of-four requirement."
+    },
+    {
+      "id": "T-48",
+      "ac": "AC-40",
+      "decisions": "D-01, D-02, D-03, D-04, D-05, D-06, D-07, D-08, D-09, D-10, D-11, D-12, D-13, D-14, D-15, D-16, D-17, D-18, D-19, D-20",
+      "plannedPaths": "`e2e/lab-04/actions-taken-flow.spec.ts`; `e2e/lab-04/ticket-resolution.spec.ts`; `e2e/lab-04/dashboards.spec.ts`",
+      "assertions": "Authenticated delegated action create/edit/assign/start/complete/cancel/inactive rejection, Requester read-only, direct gate/legacy scenario and both dashboard/current-user-action drill-down; no console errors or broken links.",
+      "contractStatus": "Planned",
+      "line": 74,
+      "actualPaths": [
+        "e2e/lab-04/actions-taken-flow.spec.ts",
+        "e2e/lab-04/ticket-resolution.spec.ts",
+        "e2e/lab-04/dashboards.spec.ts",
+        "e2e/lab-04/staff-dashboard.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "e2e/lab-04/actions-taken-flow.spec.ts": "6bb5ba11f43184bb76aa32cb5ab92a9bd96e2ae3",
+        "e2e/lab-04/ticket-resolution.spec.ts": "6b9e782074dfc92937ee837da994071e96ebacaa",
+        "e2e/lab-04/dashboards.spec.ts": "9694102117ac7fa24a9259a7acb83513dcd8b5ed",
+        "e2e/lab-04/staff-dashboard.spec.ts": "1ab6bc717dcbd24291c4340b458a84e64b1c5145"
+      },
+      "historicalExecution": "E + S invariants; V-B49",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "The initial late-picker gap is now covered by real Admin deactivation before POST, real 400 INVALID_ASSIGNEE, exact rejection preservation, retained draft/identity and explicit reload/reselection leading to one creation. This is initial-read rejection, not the distinct 409 eligibility race. Whole shared scenario and final integrated acceptance remain outstanding.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "E",
+      "qualification": "Current E72 includes real late-picker rejection and lost-response replay; affected S724 separately verifies domain invariants. Final acceptance remains open."
+    },
+    {
+      "id": "T-49",
+      "ac": "AC-41",
+      "decisions": "D-04, D-06, D-08, D-12, D-13, D-18",
+      "plannedPaths": "`server/tests/lab-04/action-validation.unit.test.ts`; `server/tests/lab-04/actions-taken.api.test.ts`",
+      "assertions": "Create false with omitted/null/empty/whitespace note→null; false nonempty/wrong-type400. True note1/2000 accepted; omitted/null/empty/2001 invalid. Compare unchanged existing rows/parent time/history/version and no receipt after every rejected request.",
+      "contractStatus": "Planned",
+      "line": 75,
+      "actualPaths": [
+        "server/tests/lab-04/action-validation.unit.test.ts",
+        "server/tests/lab-04/actions-taken.api.test.ts",
+        "client/tests/lab-04/ActionsTaken.test.tsx",
+        "e2e/lab-04/actions-taken-flow.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/action-validation.unit.test.ts": "74224e575097f41dc5940fa42c6fd7718bce821f",
+        "server/tests/lab-04/actions-taken.api.test.ts": "5ad02c68b21284d4c57f3ba01cb77a49dc184359",
+        "client/tests/lab-04/ActionsTaken.test.tsx": "2e4812dba0a3f605e258fa12fc0c42d3ca06b3ee",
+        "e2e/lab-04/actions-taken-flow.spec.ts": "6bb5ba11f43184bb76aa32cb5ab92a9bd96e2ae3"
+      },
+      "historicalExecution": "S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "False omitted/null/trim-empty ->null, false nonempty400; true requires valid note; no rejected receipt or partial domain change.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C+E",
+      "qualification": "False omitted/null/trim-empty ->null, false nonempty400; true requires valid note; no rejected receipt or partial domain change."
+    },
+    {
+      "id": "T-50",
+      "ac": "AC-41",
+      "decisions": "D-04, D-06, D-08, D-12, D-13, D-18",
+      "plannedPaths": "`server/tests/lab-04/actions-taken.api.test.ts`; `client/tests/lab-04/ActionsTaken.test.tsx`",
+      "assertions": "Partial edit retains omitted note; true→false omission/empty/nonempty400, explicit null succeeds after UI clear confirmation. Cancelling confirmation retains checkbox/text/no request; false→true requires final valid note; clearing note while true rejects. Success history.before keeps old note; failures/no-op produce no data/time/version/history/receipt change.",
+      "contractStatus": "Planned",
+      "line": 76,
+      "actualPaths": [
+        "server/tests/lab-04/actions-taken.api.test.ts",
+        "server/tests/lab-04/action-history.api.test.ts",
+        "client/tests/lab-04/ActionsTaken.test.tsx",
+        "e2e/lab-04/actions-taken-flow.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/actions-taken.api.test.ts": "5ad02c68b21284d4c57f3ba01cb77a49dc184359",
+        "server/tests/lab-04/action-history.api.test.ts": "f41855148116b437f3d4a1262cf09e3b70d0ceda",
+        "client/tests/lab-04/ActionsTaken.test.tsx": "2e4812dba0a3f605e258fa12fc0c42d3ca06b3ee",
+        "e2e/lab-04/actions-taken-flow.spec.ts": "6bb5ba11f43184bb76aa32cb5ab92a9bd96e2ae3"
+      },
+      "historicalExecution": "S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Stale refresh preserves intended field presence; no automatic clearing of omitted values.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C+E",
+      "qualification": "Stale refresh preserves intended field presence; no automatic clearing of omitted values."
+    },
+    {
+      "id": "T-51",
+      "ac": "AC-42",
+      "decisions": "D-12, D-13",
+      "plannedPaths": "`server/tests/lab-04/action-idempotency-recovery.integration.test.ts`; `server/tests/lab-04/receipt-recovery.unit.test.ts`",
+      "assertions": "Isolated staged writes then duplicate insert against a previously committed receipt yields positively identified receipt constraint error; verify full rollback before one fresh authorized read. Same original input200, changed operation/target/input409. Revoked/inactive/demoted auth denies replay. Simulated missing receipt→409, read dependency error safe; no polling/mutation re-execution. Unknown P2002/23505/nonreceipt constraint/deadlock never enters recovery. This defensive entry-point exercise is not a normal gated production race.",
+      "contractStatus": "Planned",
+      "line": 77,
+      "actualPaths": [
+        "server/tests/lab-04/action-idempotency-recovery.integration.test.ts",
+        "server/tests/lab-04/receipt-recovery.unit.test.ts",
+        "server/tests/lab-04/receipt-recovery-test-helpers.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/action-idempotency-recovery.integration.test.ts": "485a490480186cdfa6edbe7b342d66ab907d46ba",
+        "server/tests/lab-04/receipt-recovery.unit.test.ts": "89d27d5ec1a083d05d5f81315fe8d81c21c2950a",
+        "server/tests/lab-04/receipt-recovery-test-helpers.ts": "d9f291c133ee9a07eb8d6e1a374739f9f4f56512"
+      },
+      "historicalExecution": "S-44 + S",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Boundary harness deliberately stages defensive fault even on replay. Missing receipt/dependency/read serialization are simulated read outcomes; not natural gated collision, no polling or mutation restart.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S",
+      "qualification": "Known-constraint rollback plus one authorized read remains a deliberately staged defensive path, not an ordinary cooperating receipt collision."
+    },
+    {
+      "id": "T-52",
+      "ac": "AC-42",
+      "decisions": "D-12, D-13",
+      "plannedPaths": "`server/tests/lab-04/action-idempotency.api.test.ts`; `server/tests/lab-04/actions-concurrency.api.test.ts`",
+      "assertions": "Real cooperating same actor+key across two Tickets in both winning orders acquires the actor User resource gate before BEGIN and holds it through transaction/callback drain: exactly one target mutation/receipt; waiting RC command reads the committed receipt without ordinary-wait40001, changed target409 and same target/input200 replay. Changed operation/input409, different actors same key are independent. Assert no duplicate history/failed-target row or receipt and explain why normal receipt insertion collision cannot occur.",
+      "contractStatus": "Planned",
+      "line": 78,
+      "actualPaths": [
+        "server/tests/lab-04/actions-concurrency.api.test.ts",
+        "server/tests/lab-04/action-idempotency.api.test.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/actions-concurrency.api.test.ts": "c76cf03a38110338e19fc636a75853295abe2744",
+        "server/tests/lab-04/action-idempotency.api.test.ts": "5088a63cf85486f8e6c0112252c3ab2eaee8eda9"
+      },
+      "historicalExecution": "S-44 + S",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Actor gates prevent normal insertion collision. Permitted fresh 40001 attempts or bounded exhaustion are distinct from T-51 recovery.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S",
+      "qualification": "Actor User coordination precedes BEGIN. Waiting RC command reads committed receipt; changed target409 / identical original replay200 without ordinary-wait40001."
+    },
+    {
+      "id": "T-53",
+      "ac": "AC-43",
+      "decisions": "D-05, D-20",
+      "plannedPaths": "`server/tests/lab-04/ticket-workflow.api.test.ts`; `client/tests/lab-04/TicketWorkflow.test.tsx`",
+      "assertions": "Every allowed edge with trimmed reason; noncancel1/500 accepted, omitted/null→null, empty/whitespace→empty string. Wrong type/501 gives400; cancel missing/blank/4/501 rejects,5/500 accepted. Forbidden/same/stale/ineligible/unconfirmed/gated transition adds no history even with valid reason; historical rows byte-for-byte unchanged/no backfill. UI optional/required labels and retained rejected input.",
+      "contractStatus": "Planned",
+      "line": 79,
+      "actualPaths": [
+        "server/tests/lab-04/ticket-workflow.api.test.ts",
+        "server/tests/lab-04/ticket-reason-compatibility.migration.test.ts",
+        "client/tests/lab-04/TicketWorkflow.test.tsx",
+        "e2e/lab-04/ticket-resolution.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/ticket-workflow.api.test.ts": "c3885b22269dede0164ee4ded416100fafe4290b",
+        "server/tests/lab-04/ticket-reason-compatibility.migration.test.ts": "e1b1b697078e6b11ab9fb3702e6d641ce2edc1ab",
+        "client/tests/lab-04/TicketWorkflow.test.tsx": "83a98f635960060c9302f50302931dce6130e47c",
+        "e2e/lab-04/ticket-resolution.spec.ts": "6b9e782074dfc92937ee837da994071e96ebacaa"
+      },
+      "historicalExecution": "S-W + S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Forward CHECK-only compatibility retains VARCHAR(500)/null historical cancellations, no backfill. Ticket reason convention stays inherited, not Action code-point policy.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C+E",
+      "qualification": "Forward CHECK-only compatibility retains VARCHAR(500)/null historical cancellations, no backfill. Ticket reason convention stays inherited, not Action code-point policy."
+    },
+    {
+      "id": "T-54",
+      "ac": "AC-44",
+      "decisions": "D-03, D-14, D-15, D-18, D-19",
+      "plannedPaths": "`client/tests/lab-04/MyActions.test.tsx`; `server/tests/lab-04/staff-actions.api.test.ts`; `e2e/lab-04/dashboards.spec.ts`",
+      "assertions": "Dashboard View my actions→/staff/actions unfinished, status bins map single Action status; Staff/Admin guards/password gate and Requester denial. API-07 same-name AND parent filters/assignee=me, page10/25/50, stable createdAt ASC,id ASC ties and final-page correction. Unknown/repeated/other-assignee query rejected; Back to Dashboard keeps only base filters; direct/detail links and scoped empty/error states.",
+      "contractStatus": "Planned",
+      "line": 80,
+      "actualPaths": [
+        "server/tests/lab-04/staff-actions.api.test.ts",
+        "server/tests/lab-04/dashboard-drilldown.api.test.ts",
+        "client/tests/lab-04/MyActions.test.tsx",
+        "client/tests/lab-04/StaffDashboard.test.tsx",
+        "e2e/lab-04/actions-taken-flow.spec.ts",
+        "e2e/lab-04/dashboards.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/staff-actions.api.test.ts": "4dcecdc830f9a1663ea7f76a767553924d81507d",
+        "server/tests/lab-04/dashboard-drilldown.api.test.ts": "4ef4dce1f80e7ba3610c73f599216bf42a667df0",
+        "client/tests/lab-04/MyActions.test.tsx": "61214d7c0ef4dc54960885568cffd1df76da1fe1",
+        "client/tests/lab-04/StaffDashboard.test.tsx": "ac4cb5a0584f1ad9eef4402f8acadfe1d0bfa597",
+        "e2e/lab-04/actions-taken-flow.spec.ts": "6bb5ba11f43184bb76aa32cb5ab92a9bd96e2ae3",
+        "e2e/lab-04/dashboards.spec.ts": "9694102117ac7fa24a9259a7acb83513dcd8b5ed"
+      },
+      "historicalExecution": "S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Reviewed return screen is real after PR57; reject arbitrary destinations and other assignees. Keep authoritative pagination separate from off-page selected row.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C+E",
+      "qualification": "Reviewed return screen is real after PR57; reject arbitrary destinations and other assignees. Keep authoritative pagination separate from off-page selected row."
+    },
+    {
+      "id": "T-55",
+      "ac": "AC-45",
+      "decisions": "D-02, D-03, D-04, D-07, D-08, D-10, D-12, D-13, D-16, D-18",
+      "plannedPaths": "`server/tests/lab-04/action-history.api.test.ts`; `client/tests/lab-04/ActionsTaken.test.tsx`",
+      "assertions": "Every named event/full snapshot/null key, create before=null/version1, later n→n+1, one combined reassignment event, start/completion/cancel fields, old note retained. Cascade actor/reason/source TicketStatusHistory ID match same transaction/Ticket, terminal children unchanged. Owned Requester projection includes only allowlist/no Notes/email/secrets/receipts; UI literal/null labels. Failed/no-op/replay writes append no events.",
+      "contractStatus": "Planned",
+      "line": 81,
+      "actualPaths": [
+        "server/tests/lab-04/action-history.api.test.ts",
+        "server/tests/lab-04/actions-taken.api.test.ts",
+        "server/tests/lab-04/ticket-workflow.api.test.ts",
+        "client/tests/lab-04/ActionsTaken.test.tsx",
+        "e2e/lab-04/actions-taken-flow.spec.ts",
+        "e2e/lab-04/ticket-resolution.spec.ts"
+      ],
+      "sourceBlobIds": {
+        "server/tests/lab-04/action-history.api.test.ts": "f41855148116b437f3d4a1262cf09e3b70d0ceda",
+        "server/tests/lab-04/actions-taken.api.test.ts": "5ad02c68b21284d4c57f3ba01cb77a49dc184359",
+        "server/tests/lab-04/ticket-workflow.api.test.ts": "c3885b22269dede0164ee4ded416100fafe4290b",
+        "client/tests/lab-04/ActionsTaken.test.tsx": "2e4812dba0a3f605e258fa12fc0c42d3ca06b3ee",
+        "e2e/lab-04/actions-taken-flow.spec.ts": "6bb5ba11f43184bb76aa32cb5ab92a9bd96e2ae3",
+        "e2e/lab-04/ticket-resolution.spec.ts": "6b9e782074dfc92937ee837da994071e96ebacaa"
+      },
+      "historicalExecution": "S + C + E",
+      "historicalClassification": "**C + I**",
+      "historicalQualification": "Constructed cascade read fixtures establish rendering only; TW/ET provide actual cascade. No private Notes, receipt or User secrets.",
+      "assessment": "Evidence reconciled; human acceptance Pending",
+      "execution": "S+C+E",
+      "qualification": "Current S/C/E plus PATCH projection verification retain full snapshots, current safe names, null performer, cascade safety and no duplicate events."
+    }
+  ],
+  "currentSourceRegistry": [
+    {
+      "code": "AA",
+      "path": "server/tests/lab-04/actions-authorization.api.test.ts",
+      "gitBlobSha": "e39530944a58a3d6e3b90be67551373f4d9354d4"
+    },
+    {
+      "code": "RS",
+      "path": "server/tests/lab-04/requester-dashboard-security.api.test.ts",
+      "gitBlobSha": "869ff3f97bfe217354b649c2b6ead42809480d3c"
+    },
+    {
+      "code": "SS",
+      "path": "server/tests/lab-04/staff-dashboard-security.api.test.ts",
+      "gitBlobSha": "c733b9a95f90027bf86e9b563ef53509c6b873c6"
+    },
+    {
+      "code": "SA",
+      "path": "server/tests/lab-04/staff-actions.api.test.ts",
+      "gitBlobSha": "4dcecdc830f9a1663ea7f76a767553924d81507d"
+    },
+    {
+      "code": "AH",
+      "path": "server/tests/lab-04/action-history.api.test.ts",
+      "gitBlobSha": "f41855148116b437f3d4a1262cf09e3b70d0ceda"
+    },
+    {
+      "code": "RD",
+      "path": "server/tests/lab-04/requester-dashboard.api.test.ts",
+      "gitBlobSha": "7ccda276ea7d034c4aafe3f46e4d66dd3a965acc"
+    },
+    {
+      "code": "CA",
+      "path": "client/tests/lab-04/ActionsTaken.test.tsx",
+      "gitBlobSha": "2e4812dba0a3f605e258fa12fc0c42d3ca06b3ee"
+    },
+    {
+      "code": "CV",
+      "path": "client/tests/lab-04/DashboardNavigation.test.tsx",
+      "gitBlobSha": "9a5a3906929c66fb2d8b396eb45181dc8a965a04"
+    },
+    {
+      "code": "EA",
+      "path": "e2e/lab-04/actions-taken-flow.spec.ts",
+      "gitBlobSha": "6bb5ba11f43184bb76aa32cb5ab92a9bd96e2ae3"
+    },
+    {
+      "code": "AT",
+      "path": "server/tests/lab-04/actions-taken.api.test.ts",
+      "gitBlobSha": "5ad02c68b21284d4c57f3ba01cb77a49dc184359"
+    },
+    {
+      "code": "AE",
+      "path": "server/tests/lab-04/action-eligibility.api.test.ts",
+      "gitBlobSha": "6d5e866c8c3be418b3189857cddd11f0bf6973db"
+    },
+    {
+      "code": "AV",
+      "path": "server/tests/lab-04/action-validation.unit.test.ts",
+      "gitBlobSha": "74224e575097f41dc5940fa42c6fd7718bce821f"
+    },
+    {
+      "code": "ET",
+      "path": "e2e/lab-04/ticket-resolution.spec.ts",
+      "gitBlobSha": "6b9e782074dfc92937ee837da994071e96ebacaa"
+    },
+    {
+      "code": "CT",
+      "path": "client/tests/lab-04/TicketWorkflow.test.tsx",
+      "gitBlobSha": "83a98f635960060c9302f50302931dce6130e47c"
+    },
+    {
+      "code": "AI",
+      "path": "server/tests/lab-04/action-idempotency.api.test.ts",
+      "gitBlobSha": "5088a63cf85486f8e6c0112252c3ab2eaee8eda9"
+    },
+    {
+      "code": "AX",
+      "path": "server/tests/lab-04/actions-concurrency.api.test.ts",
+      "gitBlobSha": "c76cf03a38110338e19fc636a75853295abe2744"
+    },
+    {
+      "code": "RACE",
+      "path": "server/tests/lab-04/workflow-race-test-helpers.ts",
+      "gitBlobSha": "1e537bc7e3e64d420aea60d1f97be65b2a5f56fb"
+    },
+    {
+      "code": "TW",
+      "path": "server/tests/lab-04/ticket-workflow.api.test.ts",
+      "gitBlobSha": "c3885b22269dede0164ee4ded416100fafe4290b"
+    },
+    {
+      "code": "LG",
+      "path": "server/tests/lab-04/legacy-actions.integration.test.ts",
+      "gitBlobSha": "ce06700934d0b6f3851840b0959c55175866139e"
+    },
+    {
+      "code": "RI",
+      "path": "server/tests/lab-03/resolution-indication.api.test.ts",
+      "gitBlobSha": "0e62cab798f4d48c867ebcca5ba371b7b26279bb"
+    },
+    {
+      "code": "UA",
+      "path": "server/tests/lab-03/users-admin.api.test.ts",
+      "gitBlobSha": "96ef7f64314e8ee1c5f52062268f32a1de5aa0ae"
+    },
+    {
+      "code": "AC",
+      "path": "server/tests/lab-03/admin-concurrency.api.test.ts",
+      "gitBlobSha": "fa7586f93f3de318fd9dc172a43af3c35f08970b"
+    },
+    {
+      "code": "CR",
+      "path": "client/tests/lab-04/RequesterDashboard.test.tsx",
+      "gitBlobSha": "b7faff8f1e502a0d94d67dbb90c3d52dc64e9dc8"
+    },
+    {
+      "code": "ED",
+      "path": "e2e/lab-04/dashboards.spec.ts",
+      "gitBlobSha": "9694102117ac7fa24a9259a7acb83513dcd8b5ed"
+    },
+    {
+      "code": "SD",
+      "path": "server/tests/lab-04/staff-dashboard.api.test.ts",
+      "gitBlobSha": "f8889f844282e10e9188b1818a0102c0bde762c4"
+    },
+    {
+      "code": "DD",
+      "path": "server/tests/lab-04/dashboard-drilldown.api.test.ts",
+      "gitBlobSha": "4ef4dce1f80e7ba3610c73f599216bf42a667df0"
+    },
+    {
+      "code": "CN",
+      "path": "server/tests/lab-03/comments-notes.api.test.ts",
+      "gitBlobSha": "4f77aab5adec6b73422eec40de0f750d2f6c6054"
+    },
+    {
+      "code": "CS",
+      "path": "client/tests/lab-04/StaffDashboard.test.tsx",
+      "gitBlobSha": "ac4cb5a0584f1ad9eef4402f8acadfe1d0bfa597"
+    },
+    {
+      "code": "ES",
+      "path": "e2e/lab-04/staff-dashboard.spec.ts",
+      "gitBlobSha": "1ab6bc717dcbd24291c4340b458a84e64b1c5145"
+    },
+    {
+      "code": "CM",
+      "path": "client/tests/lab-04/MyActions.test.tsx",
+      "gitBlobSha": "61214d7c0ef4dc54960885568cffd1df76da1fe1"
+    },
+    {
+      "code": "DT",
+      "path": "server/tests/lab-04/dashboard-dates.unit.test.ts",
+      "gitBlobSha": "d3ff4aa7125c27321076f51188f75f1fdbe15499"
+    },
+    {
+      "code": "MG",
+      "path": "server/tests/lab-04/lab3-to-lab4.migration.test.ts",
+      "gitBlobSha": "0bbffee41ca7c7bb95770484f6da5eee28f7648f"
+    },
+    {
+      "code": "DM",
+      "path": "server/tests/lab-04/ticket-reason-compatibility.migration.test.ts",
+      "gitBlobSha": "e1b1b697078e6b11ab9fb3702e6d641ce2edc1ab"
+    },
+    {
+      "code": "MR",
+      "path": "server/tests/lab-04/migration-recovery.integration.test.ts",
+      "gitBlobSha": "b64e621493a982daaa5c30080d72fba241280f6f"
+    },
+    {
+      "code": "A-R",
+      "path": "server/tests/lab-04/attachment-recovery.integration.test.ts",
+      "gitBlobSha": "1db40005bb3129f34a3202bb833c93e1fcb68930"
+    },
+    {
+      "code": "SE",
+      "path": "server/tests/lab-04/seed.integration.test.ts",
+      "gitBlobSha": "6a2eeb258571964a7682a735e46832c245de71a6"
+    },
+    {
+      "code": "AR",
+      "path": "server/tests/lab-04/action-idempotency-recovery.integration.test.ts",
+      "gitBlobSha": "485a490480186cdfa6edbe7b342d66ab907d46ba"
+    },
+    {
+      "code": "RU",
+      "path": "server/tests/lab-04/receipt-recovery.unit.test.ts",
+      "gitBlobSha": "89d27d5ec1a083d05d5f81315fe8d81c21c2950a"
+    },
+    {
+      "code": "SF",
+      "path": "server/tests/lab-03/safe-errors.api.test.ts",
+      "gitBlobSha": "7149b4824b71674974af2fd6313f706077fc4977"
+    },
+    {
+      "code": "EF",
+      "path": "server/tests/lab-02/error-handling.api.test.ts",
+      "gitBlobSha": "d6973c86ea286586a610162213ae9d351db38f50"
+    },
+    {
+      "code": "AB",
+      "path": "server/tests/lab-03/auth.api.test.ts",
+      "gitBlobSha": "9725a633e6cdc6e1b5ad7ec491aee2c84657faef"
+    },
+    {
+      "code": "PW",
+      "path": "server/tests/lab-03/password-verification-outage.api.test.ts",
+      "gitBlobSha": "8e65ff285646da81d097123a4473ccbc7f4a4c1f"
+    },
+    {
+      "code": "CU",
+      "path": "server/tests/lab-04/attachment-cold-upload.integration.test.ts",
+      "gitBlobSha": "e46e7408efdd01834c3d7c8a4ee5c30b135063d9"
+    },
+    {
+      "code": "ER",
+      "path": "e2e/lab-04/responsive.spec.ts",
+      "gitBlobSha": "8c3c2b163a8c730588ffd9373ecab05849c6af02"
+    },
+    {
+      "code": "EL",
+      "path": "e2e/lab-04/ticket-workflow-layout.spec.ts",
+      "gitBlobSha": "8809157d85e81e793bd2f0dfdb858058232caff6"
+    },
+    {
+      "code": "EDL",
+      "path": "e2e/lab-04/requester-dashboard-layout.spec.ts",
+      "gitBlobSha": "f0ef3dda3620423181993cc699ed32f376afbb9e"
+    },
+    {
+      "code": "E2",
+      "path": "e2e/lab-02/requester-ticket-flow.spec.ts",
+      "gitBlobSha": "a8a6955e2f767ba7cfde2e2e89dba094877dff3c"
+    },
+    {
+      "code": "E3",
+      "path": "e2e/lab-03/responsive.spec.ts",
+      "gitBlobSha": "1490e3d05b3bc0deb567c618b9063e0d793aa007"
+    },
+    {
+      "code": "EX",
+      "path": "e2e/lab-04/accessibility.spec.ts",
+      "gitBlobSha": "9dbead852c0a5b38e37ca8e2686728e45bcfcecb"
+    },
+    {
+      "code": "A2",
+      "path": "server/tests/lab-02/attachments.api.test.ts",
+      "gitBlobSha": "0f6c9e73d2c12a9e6c5631f69745226dc5b9df81"
+    },
+    {
+      "code": "A3",
+      "path": "server/tests/lab-03/attachments.api.test.ts",
+      "gitBlobSha": "0afb8577dad8bc5758c55a6f2e1cee2b936f6ab9"
+    },
+    {
+      "code": "RETRY",
+      "path": "server/tests/lab-04/action-retry-test-helpers.ts",
+      "gitBlobSha": "8f61785c54144c8ca4fb6ed3984657a990af377a"
+    },
+    {
+      "code": "GATE",
+      "path": "server/src/auth/eligibility-transaction.ts",
+      "gitBlobSha": "c9cdc2bdd2209d3c7ef8925797bcb9259685bbf9"
+    },
+    {
+      "code": "DS",
+      "path": "server/tests/lab-04/dashboard-snapshot.integration.test.ts",
+      "gitBlobSha": "eb21ee8cc4dac726a922c7d5ea1f1bade74e1802"
+    },
+    {
+      "code": "P47",
+      "path": "server/tests/lab-04/performance-smoke.integration.test.ts",
+      "gitBlobSha": "8b36d3393787b9f9cf645b285275855e8994642a"
+    },
+    {
+      "code": "helper",
+      "path": "server/tests/lab-04/performance-test-helpers.ts",
+      "gitBlobSha": "b6c121ff6a9c17d39b0392c31e228d0266f5e04f"
+    },
+    {
+      "code": "RECOVERY",
+      "path": "server/tests/lab-04/receipt-recovery-test-helpers.ts",
+      "gitBlobSha": "d9f291c133ee9a07eb8d6e1a374739f9f4f56512"
+    }
+  ],
+  "outstanding": [
+    "T-37 actual current-capture visual inspection",
+    "T-38 actual screen-reader and additional-supported-browser observation",
+    "Student/peer T-47 acceptance disposition",
+    "Human D-12/D-13 amendment and implementation review",
+    "Reviewed integration and #50 release/report work"
+  ],
+  "noApplicationCommandExecuted": true,
+  "noBenchmarkRepeated": true,
+  "noAcceptanceGranted": true,
+  "historicalIssue49BodyUpdatedOnlyForCurrentProgress": false,
+  "limitations": [
+    "Lab-only failed-start bookkeeping retention until disconnect; no growth bound",
+    "15 untriaged dependency findings",
+    "A1 interval telemetry lost; PostgreSQL process CPU unavailable",
+    "Historical unknown timeout/error causes stay unknown"
+  ]
+}

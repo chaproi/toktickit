@@ -1,0 +1,152 @@
+{
+  "executionHead": "4a8829c1e2ccfb1ffc824ab0d49b19740fb4df5b",
+  "startedAt": "2026-11-01T19:21:57.686Z",
+  "stages": [
+    {
+      "name": "guarded-live-target-verification",
+      "elapsedMs": 80.6474,
+      "passed": true
+    },
+    {
+      "name": "prepare-owned-directory",
+      "elapsedMs": 19.503499999999974,
+      "passed": true
+    },
+    {
+      "name": "install-pinned-temporary-dependencies",
+      "elapsedMs": 2778.6031,
+      "passed": true
+    },
+    {
+      "name": "generate-temporary-client",
+      "elapsedMs": 937.5041000000001,
+      "passed": true
+    },
+    {
+      "name": "typecheck-assessment",
+      "elapsedMs": 1059.9167999999995,
+      "passed": true
+    },
+    {
+      "name": "bounded-lifecycle-and-retention",
+      "elapsedMs": 2223.718,
+      "passed": true
+    }
+  ],
+  "commands": [
+    {
+      "name": "install-pinned-temporary-dependencies",
+      "exit": 0
+    },
+    {
+      "name": "generate-temporary-client",
+      "exit": 0
+    },
+    {
+      "name": "typecheck-assessment",
+      "exit": 0
+    },
+    {
+      "name": "bounded-lifecycle-and-retention",
+      "exit": 0
+    }
+  ],
+  "sourceDigests": {
+    "assessment.ts": "9f13a718f821bd2443c1d43a7cb66ae18080992f97a9186d20722cc1caf64698",
+    "run.mjs": "d6a670df57d29a367fa36cfd4a0ed1a0ebdeba5b72dca347a0989d91716d503b",
+    "plan.md": "32418ee89332a85104ae449852bbd0becfda663dc06a7eeb2e5913a311c4c37d"
+  },
+  "applicationChanged": false,
+  "node": "v24.14.0",
+  "platform": "win32",
+  "isolation": {
+    "liveTargetMatchesGuard": true,
+    "distinctOperationalDatabase": true,
+    "otherNonIdleConnections": 0,
+    "postgresVersion": "PostgreSQL 18.6"
+  },
+  "localUrlOptionNames": [
+    "schema"
+  ],
+  "ambientPgEnvironmentNames": [],
+  "sourceCopies": [
+    {
+      "path": "server/src/prisma.ts",
+      "sha256": "1f01de52f7cc1ccb09fbe84cc2b61167452b79afc3060aa6adcd9de6117d81d8"
+    },
+    {
+      "path": "server/src/testing/test-database.ts",
+      "sha256": "b6d0d470aace9b62f9e30e3f09b7288c7f82dae6184c8366c8528113e7deefe9"
+    }
+  ],
+  "versions": {
+    "@prisma/client": "5.22.0",
+    "@prisma/adapter-pg": "5.22.0",
+    "@prisma/driver-adapter-utils": "5.22.0",
+    "pg": "8.23.0",
+    "typescript": "5.7.2",
+    "tsx": "4.19.2",
+    "@types/node": "22.10.2",
+    "@types/pg": "8.23.1"
+  },
+  "temporaryLockSha256": "612a5489ed2bc018b6a2c5aed5951699f84ce2d1cd4453448034717ed68bd9b6",
+  "prismaCli": "5.22.0",
+  "assessment": {
+    "nativeLifecycle": {
+      "noConnectionAtImportOrConstruction": true,
+      "sameGetterInstance": true,
+      "missingTestTargetRejected": true,
+      "disconnectReleasedConnections": true,
+      "reconnectSameSettings": true
+    },
+    "nativeObservedPoolMax": 17,
+    "nativeNameResultType": {
+      "accepted": false,
+      "kind": "UnsupportedNativeDataType",
+      "type": "name"
+    },
+    "adapterLifecycle": {
+      "lazy": true,
+      "effectiveMaxMatchesObservedNative": true,
+      "observedMax": 17,
+      "poolOpenAfterPrismaDisconnect": 1,
+      "poolEndedByPrismaDisconnect": false,
+      "reconnectBeforePoolEndWorks": true,
+      "callerOwnedPoolEndRequired": true,
+      "reconnectAfterPoolEndRejected": true
+    },
+    "localSettings": {
+      "sameDatabaseAndSchema": true,
+      "timezone": "Asia/Bangkok",
+      "sslUsed": false,
+      "readOnly": "on",
+      "deploymentTlsVariantsTested": false
+    },
+    "registry": {
+      "syntheticComponentOnly": true,
+      "diagnosticStrongErrorOrScopeArrays": 0,
+      "batches": [
+        {
+          "generated": 1000,
+          "retainedAfterConsumption": 1000,
+          "retainedAfterRepeatedConsumption": 1000
+        },
+        {
+          "generated": 2000,
+          "retainedAfterConsumption": 2000,
+          "retainedAfterRepeatedConsumption": 2000
+        }
+      ],
+      "publicClearOrDisposeMethodInRegistryInterface": false,
+      "heapBytesMeasured": false,
+      "productionLeakRateMeasured": false
+    },
+    "taggedConnectionsRemaining": 0
+  },
+  "cleanup": {
+    "taggedConnections": 0,
+    "observerEnded": true,
+    "ownedDirectoryRemoved": true
+  },
+  "finishedAt": "2026-11-01T19:22:04.867Z"
+}

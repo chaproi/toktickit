@@ -1,0 +1,193 @@
+{
+  "files": [
+    {
+      "path": "attempt-2.txt",
+      "bytes": 4372,
+      "sha256": "54d0220eb8256c01c546ee2aedf643c9ba66b9219c30f6ad9a021417eb1cf8b6"
+    },
+    {
+      "path": "attempt-3.txt",
+      "bytes": 4091,
+      "sha256": "0de0d8d4e98971efd6908c6ffb26395fea7440120cd86268c309cc510c2bae54"
+    },
+    {
+      "path": "attempt-4.txt",
+      "bytes": 5675,
+      "sha256": "c709e76f34157fdd9921e0f9af532eab99aea30314f5f4351ae5c0e65a466cbd"
+    },
+    {
+      "path": "attempt-5.txt",
+      "bytes": 2618,
+      "sha256": "a467a0be485ac384a283a6e6447838717736fe1c8672c5df41987df2dcc9bb41"
+    },
+    {
+      "path": "attempt-6.txt",
+      "bytes": 771,
+      "sha256": "8b269f3ae7bc7ced23af2221fc06bb03103e80a692d434ff5b1b1475be351978"
+    },
+    {
+      "path": "captures/gap-390x844-create-ticket.json",
+      "bytes": 7396,
+      "sha256": "e75c10fdb72f9a6ab88498395f883c1db88ce5dd23f182d535d860f4b7626ea1",
+      "capturedWindowsWorkingCopySha256": "65febf8f5d80383d6d81d972e769d657efd884ff38a32c17f173f829b7b22627",
+      "capturedWindowsWorkingCopyBytes": 7422
+    },
+    {
+      "path": "captures/gap-390x844-create-ticket.png",
+      "bytes": 79891,
+      "sha256": "3b2e26a79de5cf7d794b0346638feaca14f727f3da3b3bc541f5f56c15455f19"
+    },
+    {
+      "path": "captures/gap-390x844-my-tickets.json",
+      "bytes": 7411,
+      "sha256": "6544261f7892e3f88101a3e02d5643f0f810de0b8d910a82c3ab74b86791af21",
+      "capturedWindowsWorkingCopySha256": "2563af31dcdb149d60beac79907dd2fd513a625ad888e4327c62d3b655e2c7d0",
+      "capturedWindowsWorkingCopyBytes": 7437
+    },
+    {
+      "path": "captures/gap-390x844-my-tickets.png",
+      "bytes": 77542,
+      "sha256": "8641a9f29dc405afaedbb5bf1046a3e97953be181f320ef2f47891f85f1eaaec"
+    },
+    {
+      "path": "captures/gap-834x1112-create-ticket.json",
+      "bytes": 7397,
+      "sha256": "c1fa6814aed8b1262d04bb80b4620636011740861c49ce39483ab773977755cd",
+      "capturedWindowsWorkingCopySha256": "b22eb4c801018b78685ffd4ccbde2c1c2ca3a2bc6cfacfd8f2dfab64dac82f1b",
+      "capturedWindowsWorkingCopyBytes": 7423
+    },
+    {
+      "path": "captures/gap-834x1112-create-ticket.png",
+      "bytes": 83196,
+      "sha256": "3923f4bfd8eb38be3be1d33c2527c66c235286b18e880ca71298f660b506a4e0"
+    },
+    {
+      "path": "captures/gap-834x1112-my-tickets.json",
+      "bytes": 7412,
+      "sha256": "06608274bad2f045467af4f97ab470e2f1e2abf76a822eb14231338f961304a5",
+      "capturedWindowsWorkingCopySha256": "b673c1b9421e4094afad7d3a67369f3b91f2a2fcab96f8b7155c398133f0e024",
+      "capturedWindowsWorkingCopyBytes": 7438
+    },
+    {
+      "path": "captures/gap-834x1112-my-tickets.png",
+      "bytes": 66730,
+      "sha256": "e8e465fc0a529ff6f86b5249cbbbd8dd0e35a34e504a43ff4e79a3cd5f303409"
+    },
+    {
+      "path": "cleanup-after-diagnostics.json",
+      "bytes": 352,
+      "sha256": "14a28d9c2119871001002b8be47ef2276c274b49b683076891c40d091c4d5b2b"
+    },
+    {
+      "path": "cleanup-run-2.json",
+      "bytes": 352,
+      "sha256": "6b334fe51d3125a2ed7060450a6a4e42498c6a6f668267f4b420adc0385346f0"
+    },
+    {
+      "path": "comprehensive-confirmation.json",
+      "bytes": 2028,
+      "sha256": "5c237f233249ec7d0d68f974ae807e22efc0594879e65fee3f9370dbec4d8655",
+      "capturedWindowsWorkingCopySha256": "54130807913ec5756c7712ff83c44f0d8837525198149a17d97984e3ccb8371c",
+      "capturedWindowsWorkingCopyBytes": 2079
+    },
+    {
+      "path": "comprehensive-confirmation.txt",
+      "bytes": 38348,
+      "sha256": "7ca4b76f35bedc0f8d67812bfad5acdb91544d484af48309465d3dd26b2f5410"
+    },
+    {
+      "path": "comprehensive-e2e.txt",
+      "bytes": 43787,
+      "sha256": "2a1c4358966240b8d4e7ca924957d012d822c8dbcacdd045891d59207a154e59"
+    },
+    {
+      "path": "earlier-attempts.json",
+      "bytes": 5687,
+      "sha256": "45c129b32de0c8855c711ee7e7dd73fc79ee8093b489116ab13391cf57070f49",
+      "capturedWindowsWorkingCopySha256": "6a008d19b55706d64156799c210f63c916a53d766c3df18bd50d3c270288744b",
+      "capturedWindowsWorkingCopyBytes": 5834
+    },
+    {
+      "path": "first-cleanup-observation.json",
+      "bytes": 412,
+      "sha256": "0bac7608428af9a4f830e654fab0d045eb9deaaa87e6c2aa3f3faf4337b48326",
+      "capturedWindowsWorkingCopySha256": "a560197655b98ddd4d5cf9e5fff9b46bfafec680f598baebfcd16b6567bde943",
+      "capturedWindowsWorkingCopyBytes": 423
+    },
+    {
+      "path": "observations/attempt-3/gap-390-geometry.json",
+      "bytes": 2292,
+      "sha256": "c3715e12eb4f7ecfd65b191b4832cd9dad843abf7eebbc91b30875a0ba16460b"
+    },
+    {
+      "path": "observations/attempt-3/gap-834-geometry.json",
+      "bytes": 2312,
+      "sha256": "0dede30ea0027a0be21e7ebc337940fa609feb6a23cce5a68e4f90d604969a39"
+    },
+    {
+      "path": "observations/attempt-4/edge-navigation-pre-detail.json",
+      "bytes": 1307,
+      "sha256": "a840b02acabc7fda0ae21550e089a7e68313b399e16fe4fcf1c8def8c2c5834a"
+    },
+    {
+      "path": "observations/attempt-4/gap-390-geometry.json",
+      "bytes": 2292,
+      "sha256": "c3715e12eb4f7ecfd65b191b4832cd9dad843abf7eebbc91b30875a0ba16460b"
+    },
+    {
+      "path": "observations/attempt-4/gap-834-geometry.json",
+      "bytes": 2312,
+      "sha256": "0dede30ea0027a0be21e7ebc337940fa609feb6a23cce5a68e4f90d604969a39"
+    },
+    {
+      "path": "observations/attempt-5/gap-390-geometry.json",
+      "bytes": 2292,
+      "sha256": "c3715e12eb4f7ecfd65b191b4832cd9dad843abf7eebbc91b30875a0ba16460b"
+    },
+    {
+      "path": "observations/attempt-5/gap-834-geometry.json",
+      "bytes": 2312,
+      "sha256": "0dede30ea0027a0be21e7ebc337940fa609feb6a23cce5a68e4f90d604969a39"
+    },
+    {
+      "path": "observations/attempt-6/gap-834-geometry.json",
+      "bytes": 2312,
+      "sha256": "0dede30ea0027a0be21e7ebc337940fa609feb6a23cce5a68e4f90d604969a39"
+    },
+    {
+      "path": "preservation-run-1.json",
+      "bytes": 14579,
+      "sha256": "dd9ec1b5a5c5e6c96a6e65a673d96f92ac790c17abc888383adcf118cf32c0f7",
+      "capturedWindowsWorkingCopySha256": "0401d3dccf7b3b425075b7dc3763e0636828622ae489dc05445b3699520cb46e",
+      "capturedWindowsWorkingCopyBytes": 14763
+    },
+    {
+      "path": "preservation-run-2.json",
+      "bytes": 16333,
+      "sha256": "1602516ff2412e5ebe4d630a6fbbb8ffa58df2d4eb54101e57db294d9434026d",
+      "capturedWindowsWorkingCopySha256": "79279c55101b3c1de40b71e914dea0ba44a7e9fcdd7a4a3fa4a6050260c7c5cd",
+      "capturedWindowsWorkingCopyBytes": 16535
+    },
+    {
+      "path": "recovered-originals.json",
+      "bytes": 6715,
+      "sha256": "c56011e4b0f3f6f2629759226c06f1327ad6d3971d02cfba7dee8c0e79949825",
+      "capturedWindowsWorkingCopySha256": "07563a8710c06180851310d3b7f3120d500cb37fcb19759ec959efebdc9fa24b",
+      "capturedWindowsWorkingCopyBytes": 6807
+    },
+    {
+      "path": "resource-check.json",
+      "bytes": 1265,
+      "sha256": "851e9494040335e5d74a8b6410893d683f25bac7d1285f13ca962cabb1a682fa",
+      "capturedWindowsWorkingCopySha256": "1fc7886d8ffb43f895e29736197ef99f3a5ed9b4266bf1e604fd5a282f470222",
+      "capturedWindowsWorkingCopyBytes": 1287
+    }
+  ],
+  "count": 32,
+  "newPngs": 4,
+  "historicalArtifactHashesPreserved": 747,
+  "normalConfirmationSource": "65f4bb1b1c5f4ec9f4f87b2b410ff62fbdb2cd29",
+  "noBenchmarkExecution": true,
+  "publicationFormatting": "New redacted text exports normalized to LF without trailing whitespace in a separate corrective commit. All raw private outputs and recorded results remain unchanged; historical artifacts untouched.",
+  "sha256Meaning": "Exact published Git-blob bytes, including LF-normalized text. Where different, capturedWindowsWorkingCopySha256/Bytes retain original Windows working-copy provenance (CRLF). Binary PNG hashes are identical in both forms."
+}

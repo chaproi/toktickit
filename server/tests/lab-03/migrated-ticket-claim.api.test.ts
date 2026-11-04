@@ -1,3 +1,4 @@
+import { createPrismaClient } from "../../src/prisma-client.js";
 import { randomBytes, randomUUID } from "node:crypto";
 import { PrismaClient } from "@prisma/client";
 import request from "supertest";
@@ -103,7 +104,7 @@ describe("MIG-06/API-23 migration-produced Queue and claim compatibility", () =>
     });
     expect((await verifyLab3Migration(fixture.databaseUrl, fixture.before)).preserved).toBe(true);
 
-    const prisma = new PrismaClient({ datasources: { db: { url: fixture.databaseUrl } } });
+    const prisma = createPrismaClient({ datasources: { db: { url: fixture.databaseUrl } } });
     testDatabase.client = prisma;
     const staffPassword = `Aa1!staff-${randomBytes(18).toString("base64url")}`;
     const adminPassword = `Aa1!admin-${randomBytes(18).toString("base64url")}`;

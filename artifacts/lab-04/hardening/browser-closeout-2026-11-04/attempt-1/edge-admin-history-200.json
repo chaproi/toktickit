@@ -1,0 +1,24 @@
+{
+  "capturedAt": "2026-11-04T09:37:48.362Z",
+  "timezone": "Asia/Bangkok",
+  "sourceHead": "57f04bd5313c443ffcf00ec6abc16da149753d20",
+  "dirtyState": "?? e2e/lab-04/review-closeout.spec.ts",
+  "role": "ADMINISTRATOR",
+  "state": "Real safe History; keyboard containment and readable reflow at genuine tab zoom 2",
+  "browser": "Edg/156.0.4314.58",
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0",
+  "zoom": 2,
+  "nativeViewport": {
+    "width": 708,
+    "height": 404,
+    "pinchScale": 1
+  },
+  "syntheticDataOnly": true,
+  "visualInspection": "AI visually inspected the complete application-only PNG at native resolution on 2026-11-04; readable captured text/controls, visible focus where applicable, no clearly blocking captured-pixel clipping. This is not human sign-off or a full scroll-content inspection.",
+  "verifiedTabZoom": 2,
+  "windows": {
+    "caption": "Microsoft Windows 11 Home Single Language",
+    "version": "10.0.26200",
+    "buildNumber": "26200"
+  }
+}

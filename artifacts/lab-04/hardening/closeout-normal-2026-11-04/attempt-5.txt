@@ -1,0 +1,55 @@
+
+Running 2 tests using 1 worker
+
+
+
+
+[1/2] e2e\lab-04\review-closeout.spec.ts:94:3 › T-37 missing Create Ticket and owned-list pixels at 390x844
+e2e\lab-04\review-closeout.spec.ts:94:3 › T-37 missing Create Ticket and owned-list pixels at 390x844
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+[2/2] e2e\lab-04\review-closeout.spec.ts:94:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
+e2e\lab-04\review-closeout.spec.ts:94:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
+Safe control geometry: {"visible":true,"unobscured":false,"clips":[],"debug":{"target":"A","hit":"TD","width":834,"height":1112,"box":{"left":101,"top":901.4375,"right":206.5625,"bottom":945.4375},"scale":1,"offsetLeft":0,"offsetTop":0}}
+
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+  1) e2e\lab-04\review-closeout.spec.ts:94:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
+
+    Error: Control is reachable and unobscured
+
+    expect(received).toMatchObject(expected)
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "clips": Array [],
+    -   "unobscured": true,
+    +   "unobscured": false,
+        "visible": true,
+      }
+
+       at lab-04\action-layout-helpers.ts:84
+
+      82 |   });
+      83 |   if (!result.visible || !result.unobscured || result.clips.length) console.info(`Safe control geometry: ${JSON.stringify(result)}`);
+    > 84 |   expect(result, "Control is reachable and unobscured").toMatchObject({ visible: true, unobscured: true, clips: [] });
+         |                                                         ^
+      85 | }
+      86 |
+      87 | export async function keyboardFocus(page: Page, target: Locator) {
+        at reachable (<candidate-worktree>\e2e\lab-04\action-layout-helpers.ts:84:57)
+        at <candidate-worktree>\e2e\lab-04\review-closeout.spec.ts:133:5
+
+    Error Context: <private-run-directory>\attempt-5-results\lab-04-review-closeout-T-3-ca4dc-ned-list-pixels-at-834x1112\error-context.md
+
+
+  1 failed
+    e2e\lab-04\review-closeout.spec.ts:94:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
+  1 passed (14.9s)
+
+warning: in the working copy of 'e2e/lab-04/review-closeout.spec.ts', LF will be replaced by CRLF the next time Git touches it
+(node:53228) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+warning: in the working copy of 'e2e/lab-04/review-closeout.spec.ts', LF will be replaced by CRLF the next time Git touches it

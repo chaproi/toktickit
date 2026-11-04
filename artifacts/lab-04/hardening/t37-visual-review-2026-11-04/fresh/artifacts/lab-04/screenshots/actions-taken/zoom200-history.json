@@ -1,0 +1,20 @@
+{
+  "screenshot": "zoom200-history.png",
+  "date": "2026-11-04 04:19:48",
+  "timezone": "Asia/Bangkok",
+  "testedCommit": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+  "browser": "Chromium",
+  "browserVersion": "Chrome/153.0.8010.12",
+  "viewport": {
+    "width": 712,
+    "height": 402
+  },
+  "viewportMeaning": "Native CSS viewport after real browser tab zoom; no emulated viewport",
+  "role": "IT_STAFF",
+  "screenState": "Genuine 2.0 tab zoom: full safe history",
+  "zoomFactor": 2,
+  "zoomMethod": "chrome.tabs.setZoom/getZoom via existing tab-zoom extension",
+  "syntheticDataOnly": true,
+  "visualInspection": "Pending manual inspection",
+  "verifiedTabZoom": 2
+}

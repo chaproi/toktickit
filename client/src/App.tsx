@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import {
   BrowserRouter,
   Link,
+  matchPath,
   Navigate,
   Route,
   Routes,
@@ -21,7 +22,10 @@ import ChangePassword from "./components/ChangePassword.js";
 import CreateTicket from "./components/CreateTicket.js";
 import Login from "./components/Login.js";
 import MyTickets from "./components/MyTickets.js";
+import MyActions from "./components/MyActions.js";
 import RequesterTicketDetail from "./components/RequesterTicketDetail.js";
+import RequesterDashboard from "./components/RequesterDashboard.js";
+import StaffDashboard from "./components/StaffDashboard.js";
 import StaffTicketQueue from "./components/StaffTicketQueue.js";
 import StaffTicketDetail from "./components/StaffTicketDetail.js";
 import UserManagement from "./components/UserManagement.js";
@@ -29,9 +33,17 @@ import UserManagement from "./components/UserManagement.js";
 const MOBILE_NAVIGATION_QUERY = "(max-width: 767.98px)";
 
 function roleHome(user: AuthUser): string {
-  if (user.role === "REQUESTER") return "/tickets";
-  if (user.role === "IT_STAFF") return "/staff/tickets";
-  return "/admin/users";
+  return user.role === "REQUESTER" ? "/dashboard" : "/staff/dashboard";
+}
+
+function navigationDestination(pathname: string): string {
+  for (const parent of ["/tickets", "/staff/tickets"]) {
+    const ticketId = matchPath(`${parent}/:ticketId`, pathname)?.params.ticketId;
+    if (ticketId && /^[1-9]\d*$/.test(ticketId) && Number(ticketId) <= 2_147_483_647) {
+      return parent;
+    }
+  }
+  return pathname;
 }
 
 function roleLabel(user: AuthUser): string {
@@ -109,15 +121,16 @@ function AppShell({
   children: ReactNode;
 }) {
   const location = useLocation();
+  const activeDestination = navigationDestination(location.pathname);
   const mobile = useMediaQuery(MOBILE_NAVIGATION_QUERY);
   const [open, setOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   useEffect(() => setOpen(false), [location.pathname, mobile]);
-  const nav = user.role === "REQUESTER"
+  const nav = [[roleHome(user), "Dashboard"], ...(user.role === "REQUESTER"
     ? [["/tickets", "My Tickets"], ["/tickets/new", "Create Ticket"]]
     : user.role === "IT_STAFF"
-      ? [["/staff/tickets", "Ticket Queue"]]
-      : [["/admin/users", "User Management"], ["/staff/tickets", "Ticket Queue"]];
+      ? [["/staff/tickets", "Ticket Queue"], ["/staff/actions", "My assigned Actions"]]
+      : [["/admin/users", "User Management"], ["/staff/tickets", "Ticket Queue"], ["/staff/actions", "My assigned Actions"]])];
 
   async function handleLogout() {
     if (loggingOut) return;
@@ -147,16 +160,19 @@ function AppShell({
             hidden={mobile && !open}
             aria-label="Primary navigation"
           >
-            {nav.map(([to, label]) => (
-              <Link
-                key={to}
-                className={`link-light ${location.pathname === to ? "active fw-semibold" : ""}`}
-                aria-current={location.pathname === to ? "page" : undefined}
-                to={to}
-              >
-                {label}
-              </Link>
-            ))}
+            {nav.map(([to, label]) => {
+              const active = activeDestination === to;
+              return (
+                <Link
+                  key={to}
+                  className={`link-light ${active ? "active fw-semibold" : ""}`}
+                  aria-current={active ? "page" : undefined}
+                  to={to}
+                >
+                  {label}
+                </Link>
+              );
+            })}
             <Link className="link-light" to="/change-password">Change Password</Link>
           </nav>
         </div>
@@ -229,8 +245,10 @@ function AuthenticatedRoutes() {
       setState("signed-out");
       navigate("/login", { replace: true });
     };
+    const refresh = () => { setUser(null); setState("loading"); setRetry((value) => value + 1); };
+    window.addEventListener("toktickit:auth-refresh", refresh);
     window.addEventListener("toktickit:auth-expired", expire);
-    return () => window.removeEventListener("toktickit:auth-expired", expire);
+    return () => { window.removeEventListener("toktickit:auth-expired", expire); window.removeEventListener("toktickit:auth-refresh", refresh); };
   }, [navigate]);
 
   function authenticated(response: AuthenticationResponse) {
@@ -319,6 +337,10 @@ function AuthenticatedRoutes() {
         )}
       />
       <Route
+        path="/dashboard"
+        element={user.role === "REQUESTER" ? shell(<RequesterDashboard key={`${user.id}:${user.role}`} />) : shell(<Forbidden user={user} />)}
+      />
+      <Route
         path="/tickets"
         element={user.role === "REQUESTER" ? shell(<MyTickets />) : shell(<Forbidden user={user} />)}
       />
@@ -328,7 +350,15 @@ function AuthenticatedRoutes() {
       />
       <Route
         path="/tickets/:ticketId"
-        element={user.role === "REQUESTER" ? shell(<RequesterTicketDetail />) : shell(<Forbidden user={user} />)}
+        element={user.role === "REQUESTER" ? shell(<RequesterTicketDetail user={user} />) : shell(<Forbidden user={user} />)}
+      />
+      <Route
+        path="/staff/actions"
+        element={user.role !== "REQUESTER" ? shell(<MyActions key={`${user.id}:${user.role}`} user={user} />) : shell(<Forbidden user={user} />)}
+      />
+      <Route
+        path="/staff/dashboard"
+        element={user.role !== "REQUESTER" ? shell(<StaffDashboard key={`${user.id}:${user.role}`} user={user} />) : shell(<Forbidden user={user} />)}
       />
       <Route
         path="/staff/tickets"
@@ -338,7 +368,7 @@ function AuthenticatedRoutes() {
       />
       <Route
         path="/staff/tickets/:ticketId"
-        element={user.role !== "REQUESTER" ? shell(<StaffTicketDetail key={location.pathname} />) : shell(<Forbidden user={user} />)}
+        element={user.role !== "REQUESTER" ? shell(<StaffTicketDetail key={location.pathname} user={user} />) : shell(<Forbidden user={user} />)}
       />
       <Route
         path="/admin/users"

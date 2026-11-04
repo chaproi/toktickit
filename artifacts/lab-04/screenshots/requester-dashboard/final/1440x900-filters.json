@@ -1,0 +1,27 @@
+{
+    "screenshot":  "1440x900-filters.png",
+    "capturedAt":  "2026-10-24T05:50:48.790Z",
+    "executionHead":  "0475989409d8d5ff73d69a6a05e379decfe05289",
+    "pendingProductionFiles":  [
+
+                               ],
+    "browser":  "HeadlessChrome/153.0.8010.12",
+    "configuredViewport":  {
+                               "width":  1440,
+                               "height":  900
+                           },
+    "actualCSSViewport":  {
+                              "width":  1440,
+                              "height":  900,
+                              "pinchScale":  1
+                          },
+    "role":  "REQUESTER",
+    "state":  "All six labelled filters",
+    "zoomFactor":  1,
+    "zoomMethod":  "unmodified tab zoom",
+    "captureScope":  "Dashboard filter form",
+    "syntheticDataOnly":  true,
+    "visualInspection":  "Inspected by Codex at original PNG resolution on 2026-10-24; no certified accessibility claim.",
+    "inspectionObservation":  "All six associated labels and controls fit; Apply/Clear remain readable. Form-only capture, not a substituted viewport.",
+    "executionRun":  "Combined third attempt; 9/9 passed"
+}

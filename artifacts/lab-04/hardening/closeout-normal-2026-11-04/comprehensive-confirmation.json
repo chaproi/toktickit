@@ -1,0 +1,51 @@
+{
+  "command": "npm.cmd run test:e2e",
+  "executionHead": "65f4bb1b1c5f4ec9f4f87b2b410ff62fbdb2cd29",
+  "startedAt": "2026-11-04T10:20:20.3600548+00:00",
+  "finishedAt": "2026-11-04T10:27:50.3116612+00:00",
+  "elapsedSeconds": 449.8962949,
+  "exitCode": 0,
+  "normalSetup": true,
+  "workers": 1,
+  "retries": 0,
+  "pendingProductionFiles": [],
+  "pendingDocumentation": "docs/lab-04/t37-t38-decision-checklist.md",
+  "reason": "One confirmation after concrete new-test oracle, scrolling, query and readiness corrections; original full-run failure retained",
+  "environmentRestored": true,
+  "files": 16,
+  "collected": 77,
+  "executed": 77,
+  "passed": 77,
+  "failed": 0,
+  "skipped": 0,
+  "allIndicesIndependentlyVerified": true,
+  "testFiles": [
+    "e2e/lab-02/requester-ticket-flow.spec.ts",
+    "e2e/lab-03/authentication.spec.ts",
+    "e2e/lab-03/authorization.spec.ts",
+    "e2e/lab-03/requester-regression.spec.ts",
+    "e2e/lab-03/responsive.spec.ts",
+    "e2e/lab-03/staff-ticket-flow.spec.ts",
+    "e2e/lab-03/user-administration.spec.ts",
+    "e2e/lab-04/accessibility.spec.ts",
+    "e2e/lab-04/actions-taken-flow.spec.ts",
+    "e2e/lab-04/dashboards.spec.ts",
+    "e2e/lab-04/requester-dashboard-layout.spec.ts",
+    "e2e/lab-04/responsive.spec.ts",
+    "e2e/lab-04/review-closeout.spec.ts",
+    "e2e/lab-04/staff-dashboard.spec.ts",
+    "e2e/lab-04/ticket-resolution.spec.ts",
+    "e2e/lab-04/ticket-workflow-layout.spec.ts"
+  ],
+  "frameworkSummary": "77 passed (7.5m)",
+  "typeScript": {
+    "command": "node server/node_modules/typescript/bin/tsc --noEmit --target ES2022 --module ES2022 --moduleResolution bundler --esModuleInterop --strict --skipLibCheck --jsx react-jsx --typeRoots server/node_modules/@types e2e/lab-04/review-closeout.spec.ts client/src/vite-env.d.ts",
+    "exitCode": 0,
+    "qualification": "Checked after final source changes; no application build or client/server regression rerun."
+  },
+  "warnings": {
+    "colorEnvironment": 1,
+    "pgQueuedQuery": 1
+  },
+  "noBenchmarkRun": true
+}

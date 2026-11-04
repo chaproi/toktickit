@@ -1,0 +1,156 @@
+{
+  "baselineHead": "a5e1ab4d78d24125050a3cb5be9ed0ccdcf75033",
+  "executionHead": "61be356757e1619425666d8aab2e20fc98586a23",
+  "startedAt": "2026-11-02T04:01:09.554Z",
+  "sourceDigests": {
+    "deadline.ts": "a857d9ac6248103ef4909ac92ddf5a6fee4089acbf50316f1cc768914b25a81c",
+    "deadlines.ts": "fb5cb77336e3fd6f0a0a3765969a25969fa42d59ab2dab928df9c386d32a849f",
+    "configuration.ts": "f3b21a5ad7bebd9d4354737528e32896b00e198c50602d4c9865e41dc6a099e6",
+    "diagnostic.ts": "3a26a22e07cbc7e3be276e6fea03fd4afc4364587e107287a19fabba9780bdb9",
+    "retention.ts": "d5610da471a20be4a9ded64cbca46e253f1fdc5953ab7e803d98cf15528e4764",
+    "evaluate.ts": "bbfd452fb16f604f1cce5b2ce56367f73fb8151bdca096d328bbe84dc2d55766",
+    "run.mjs": "4fa2a81418dbbdcdef413e0283e88fdb53826dfa2096d05ddb8c324b68fd9567",
+    "checklist.md": "bd4ee68958642204cb8372f84a55224078b1baf37d15275c08e5fe6907efd2e9"
+  },
+  "executedSourceState": "recorded execution HEAD plus any source bytes identified by sourceDigests; application unchanged",
+  "node": "v24.14.0",
+  "platform": "win32",
+  "stages": [
+    {
+      "phase": "live-target-verification",
+      "elapsedMs": 58.54369999999997,
+      "passed": true
+    },
+    {
+      "phase": "prepare-owned-directory-and-client-schema",
+      "elapsedMs": 17.456700000000012,
+      "passed": true
+    },
+    {
+      "phase": "install-exact-temporary-dependencies",
+      "elapsedMs": 6459.5502,
+      "passed": true
+    },
+    {
+      "phase": "generate-temporary-client",
+      "elapsedMs": 1773.8842999999988,
+      "passed": true
+    },
+    {
+      "phase": "typecheck-public-adapter-and-application-callback",
+      "elapsedMs": 1547.9339,
+      "passed": true
+    },
+    {
+      "phase": "owned-schema-and-committed-migrations",
+      "elapsedMs": 377.16320000000087,
+      "passed": true
+    },
+    {
+      "phase": "bounded-client-engine-gates",
+      "elapsedMs": 11988.187300000001,
+      "passed": true
+    }
+  ],
+  "evaluatedPrismaVersion": "6.19.3",
+  "proof": {
+    "mode": "one-real-late-pool-rejection-retention-diagnostic",
+    "failures": 1,
+    "callerElapsedMs": 74.0510999999999,
+    "drainElapsedMs": 10008.783599999999,
+    "callbacks": 0,
+    "pending": 0,
+    "checkedOutAfterHolderRelease": 0
+  },
+  "cleanup": {
+    "schemasRemaining": 0,
+    "proofConnectionsRemaining": 0,
+    "nativeClientEnded": true,
+    "temporaryDirectoryRemoved": true
+  },
+  "database": {
+    "guard": true,
+    "liveIdentityMatches": true,
+    "distinctOperationalDatabase": true,
+    "postgresVersion": "PostgreSQL 18.6",
+    "otherNonIdleConnections": 0
+  },
+  "applicationSourceCopies": [
+    {
+      "path": "server/src/auth/eligibility-transaction.ts",
+      "sha256": "8142bee26facc105fd1749de8ff771fb5863484e87e08fd1c09d9346a0b1ba3c"
+    },
+    {
+      "path": "server/src/prisma.ts",
+      "sha256": "1f01de52f7cc1ccb09fbe84cc2b61167452b79afc3060aa6adcd9de6117d81d8"
+    },
+    {
+      "path": "server/src/testing/test-database.ts",
+      "sha256": "b6d0d470aace9b62f9e30e3f09b7288c7f82dae6184c8366c8528113e7deefe9"
+    }
+  ],
+  "commands": [
+    {
+      "phase": "install-exact-temporary-dependencies",
+      "exit": 0
+    },
+    {
+      "phase": "generate-temporary-client",
+      "exit": 0
+    },
+    {
+      "phase": "typecheck-public-adapter-and-application-callback",
+      "exit": 0
+    },
+    {
+      "phase": "bounded-client-engine-gates",
+      "exit": 0
+    }
+  ],
+  "versions": {
+    "prisma": "6.19.3",
+    "@prisma/client": "6.19.3",
+    "@prisma/adapter-pg": "6.19.3",
+    "@prisma/driver-adapter-utils": "6.19.3",
+    "pg": "8.23.0",
+    "typescript": "5.7.2",
+    "tsx": "4.19.2",
+    "@types/node": "22.10.2",
+    "@types/pg": "8.23.1"
+  },
+  "prismaCli": "6.19.3",
+  "packageRequirements": {
+    "prisma": {
+      "version": "6.19.3",
+      "engines": {
+        "node": ">=18.18"
+      },
+      "peerDependencies": {
+        "typescript": ">=5.1.0"
+      }
+    },
+    "@prisma/client": {
+      "version": "6.19.3",
+      "engines": {
+        "node": ">=18.18"
+      },
+      "peerDependencies": {
+        "prisma": "*",
+        "typescript": ">=5.1.0"
+      }
+    },
+    "@prisma/adapter-pg": {
+      "version": "6.19.3",
+      "engines": {},
+      "peerDependencies": {}
+    }
+  },
+  "temporaryLockSha256": "0ab4f56efa203d5295a35d28275cfdd38d49e1b217eb184dcba3c1a34c397485",
+  "migrationsApplied": 6,
+  "retentionLogObservation": {
+    "diagnosticOnlyNotRetryMechanism": true,
+    "closingBeforeDisconnect": 0,
+    "closingDuringDisconnect": 1,
+    "discardedRawDebugText": true
+  }
+}

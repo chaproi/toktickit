@@ -1,0 +1,18 @@
+{
+  "screenshot": "390x844-staff-actions.png",
+  "date": "2026-10-10 12:48:10",
+  "timezone": "Asia/Bangkok",
+  "testedCommit": "31333243042a21be29442de1e0dcd3a92e958356",
+  "browser": "Chromium",
+  "browserVersion": "HeadlessChrome/153.0.8010.12",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "role": "IT_STAFF",
+  "screenState": "Ticket Actions long content and distinct identities",
+  "zoomFactor": 1,
+  "zoomMethod": "unmodified browser zoom",
+  "syntheticDataOnly": true,
+  "visualInspection": "Inspected original viewport image during diagnosis; preserved pre-correction evidence, not a passing layout claim"
+}

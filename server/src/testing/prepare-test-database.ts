@@ -57,11 +57,11 @@ export async function prepareTestDatabase(
     environment,
   );
 
-  const [{ PrismaClient }, { seedDatabase }] = await Promise.all([
-    import("@prisma/client"),
+  const [{ createPrismaClient }, { seedDatabase }] = await Promise.all([
+    import("../prisma-client.js"),
     import("../../prisma/seed.js"),
   ]);
-  const prisma = new PrismaClient();
+  const prisma = createPrismaClient();
   try {
     await seedDatabase(prisma);
   } finally {

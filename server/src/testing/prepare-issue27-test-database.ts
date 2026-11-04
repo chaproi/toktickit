@@ -1,10 +1,13 @@
+import { createPrismaClient } from "../prisma-client.js";
 import { randomBytes, randomUUID } from "node:crypto";
+import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { PrismaClient } from "@prisma/client";
 import { Client } from "pg";
-import { LAB3_SEEDED_USERS, seedDatabase } from "../../prisma/seed.js";
+import { LAB3_SEEDED_USERS, seedDatabase, seedReferenceFixtureKey, seedUserFixtureKey } from "../../prisma/seed.js";
 import {
   buildSafeLegacySnapshot,
+  LAB3_MIGRATION_NAME,
   migrateLab3Database,
 } from "../migration/lab3-migration.js";
 import { configureTestDatabaseEnvironment } from "./test-database.js";
@@ -50,6 +53,38 @@ export async function prepareIssue27TestDatabase(
       markPrismaMigration: false,
     });
 
+    // This deliberately constructed fixture has no Prisma deployment ledger.
+    // Apply only committed increments AFTER the Lab 3 boundary, to its exact
+    // owned schema, before invoking the current seed. Historical SQL is intact.
+    const client = new Client({ connectionString: fixture.databaseUrl });
+    try {
+      await client.connect();
+      await client.query(`SET search_path TO "${schema}"`);
+      const migrations = join(serverDirectory, "prisma", "migrations");
+      const later = readdirSync(migrations, { withFileTypes: true })
+        .filter((entry) => entry.isDirectory() && entry.name > LAB3_MIGRATION_NAME)
+        .map((entry) => entry.name).sort();
+      for (const migration of later) {
+        await client.query(readFileSync(join(migrations, migration, "migration.sql"), "utf8"));
+      }
+      // Explicit identity mappings from THIS known fixture constructor, not
+      // generic production guesses using mutable names/emails. Existing IDs,
+      // credential state, reference activation and all domain rows stay intact.
+      for (const [index, id] of fixture.requesterIds.entries()) {
+        await client.query('INSERT INTO "SeedFixture" ("fixtureKey","userId") VALUES ($1,$2)',
+          [seedUserFixtureKey(LAB3_SEEDED_USERS[index]!.email), id]);
+      }
+      for (const [table, field] of [["Category", "categoryId"], ["RelatedSystem", "relatedSystemId"]] as const) {
+        const references = await client.query<{ id: number; name: string }>(`SELECT id,name FROM "${table}" ORDER BY id`);
+        for (const reference of references.rows) {
+          await client.query(`INSERT INTO "SeedFixture" ("fixtureKey","${field}") VALUES ($1,$2)`,
+            [seedReferenceFixtureKey(field, reference.name), reference.id]);
+        }
+      }
+    } finally {
+      await client.end();
+    }
+
     process.env.TEST_DATABASE_URL = fixture.databaseUrl;
     process.env.DATABASE_URL = fixture.databaseUrl;
     process.env.AUTH_ALLOWED_ORIGINS =
@@ -65,7 +100,7 @@ export async function prepareIssue27TestDatabase(
       ),
     );
 
-    const prisma = new PrismaClient({
+    const prisma = createPrismaClient({
       datasources: { db: { url: fixture.databaseUrl } },
     });
     try {

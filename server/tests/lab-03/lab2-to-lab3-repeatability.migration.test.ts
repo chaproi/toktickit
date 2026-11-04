@@ -1,3 +1,4 @@
+import { createPrismaClient } from "../../src/prisma-client.js";
 import { randomBytes, randomUUID } from "node:crypto";
 import { PrismaClient } from "@prisma/client";
 import { afterEach, describe, expect, it } from "vitest";
@@ -41,7 +42,7 @@ describe("MIG-06 repeatable populated Lab 2 migration", () => {
         markPrismaMigration: false,
       });
       const verified = await verifyLab3Migration(fixture.databaseUrl, fixture.before);
-      const prisma = new PrismaClient({ datasources: { db: { url: fixture.databaseUrl } } });
+      const prisma = createPrismaClient({ datasources: { db: { url: fixture.databaseUrl } } });
       try {
         const tickets = await prisma.ticket.findMany({
           orderBy: { id: "asc" },
@@ -96,5 +97,5 @@ describe("MIG-06 repeatable populated Lab 2 migration", () => {
     expect(runs[0]!.verified.ownerIds).toEqual(Array(7).fill(null));
     expect(runs[1]!.verified.ownerIds).toEqual(Array(7).fill(null));
     expect(runs[0]!.visibleStatuses).toEqual(runs[1]!.visibleStatuses);
-  });
+  }, 10_000); // Two real migration/hash batches; loaded run exceeded the default 5s.
 });

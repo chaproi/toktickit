@@ -1,0 +1,9 @@
+{
+  "executionHead": "20eec1e97da5eac65ee118ca117920cf80555c72",
+  "observations": [],
+  "cleanup": {
+    "fixturesRemoved": true,
+    "prismaDisconnected": true,
+    "observersRestored": true
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "executionHead": "92256c1a2fb83705527a249a588de13856638e37",
+  "recordedAt": "2026-11-03T04:49:25.145Z",
+  "observations": [
+    {
+      "check": "read-under-admission-pressure",
+      "read": 7,
+      "readElapsedMs": 2082.6245,
+      "settledBeforeExternalUnlock": [
+        0,
+        1,
+        2
+      ],
+      "callbacksBeforeExternalUnlock": [],
+      "checkedOut": 0,
+      "actualAdmissionWaiters": 0
+    },
+    {
+      "check": "queued-deadlines",
+      "configuredMs": [
+        120,
+        70,
+        190
+      ],
+      "elapsedMs": [
+        131.2194999999997,
+        84.26890000000003,
+        192.02649999999994
+      ],
+      "extraPhysicalCheckouts": 1,
+      "callbacks": []
+    },
+    {
+      "check": "FIFO-with-cancelled-middle",
+      "order": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "check": "execution-expired-callback-undrained",
+      "extraCheckouts": 1,
+      "callbacks": 0,
+      "admissionOwners": 1
+    }
+  ],
+  "cleanup": {
+    "poolsDisconnected": true,
+    "admissionLocks": 0,
+    "ownedSchemaRemoved": true
+  }
+}

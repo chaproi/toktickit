@@ -113,7 +113,7 @@ test("E2E-02 retains the complete Requester workflow under session identity", as
     await otherPage.getByLabel("New Password", { exact: true }).fill(otherReplacement);
     await otherPage.getByLabel("Confirm New Password").fill(otherReplacement);
     await otherPage.getByRole("button", { name: "Save Password" }).click();
-    await expect(otherPage.getByRole("heading", { name: "My Tickets" })).toBeVisible();
+    await expect(otherPage.getByRole("heading", { name: "Requester Dashboard" })).toBeVisible();
     await otherPage.goto(`/tickets/${ticket.id}`);
     await expect(otherPage.getByText("Ticket not found.")).toBeVisible();
     await expect(otherPage.getByText(marker)).toHaveCount(0);

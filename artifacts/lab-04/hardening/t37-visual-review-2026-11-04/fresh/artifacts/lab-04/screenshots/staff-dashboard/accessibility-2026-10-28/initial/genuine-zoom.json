@@ -1,0 +1,29 @@
+{
+  "executionHead": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+  "pendingSourcePaths": [],
+  "factors": [
+    1,
+    2,
+    1
+  ],
+  "configuredNativeWindow": {
+    "width": 1440,
+    "height": 900
+  },
+  "before": {
+    "width": 1424,
+    "height": 805,
+    "pinchScale": 1
+  },
+  "zoomed": {
+    "width": 712,
+    "height": 402,
+    "pinchScale": 1
+  },
+  "restored": {
+    "width": 1424,
+    "height": 805,
+    "pinchScale": 1
+  },
+  "method": "chrome.tabs.setZoom/getZoom through unchanged helper/extension"
+}

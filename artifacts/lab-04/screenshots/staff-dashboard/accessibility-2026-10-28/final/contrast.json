@@ -1,0 +1,382 @@
+{
+  "executionHead": "725e1445697484f5e6efa7d5b6ab9634b75ff1ca",
+  "pendingSourcePaths": [
+    "client/src/components/StaffDashboard.tsx",
+    "client/src/lab2.css"
+  ],
+  "thresholds": "Normal text 4.5:1; large text and meaningful control/state cues 3:1; unrounded comparisons",
+  "samples": {
+    "heading": {
+      "kind": "text",
+      "indicator": "text",
+      "sourceColor": "rgb(23, 53, 42)",
+      "effectiveBackgrounds": [
+        [
+          245,
+          247,
+          246
+        ]
+      ],
+      "ratios": [
+        12.359880335964997
+      ],
+      "threshold": 3,
+      "fontSize": 32,
+      "fontWeight": "500",
+      "enabled": true,
+      "selectArrowExcludedFromSolidTextAndBorderSample": false,
+      "outlineStyle": "none",
+      "outlineWidth": "3px",
+      "borderStyle": "none",
+      "borderWidth": "0px"
+    },
+    "label": {
+      "kind": "text",
+      "indicator": "text",
+      "sourceColor": "rgb(33, 37, 41)",
+      "effectiveBackgrounds": [
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "ratios": [
+        15.426285095510265
+      ],
+      "threshold": 4.5,
+      "fontSize": 16,
+      "fontWeight": "400",
+      "enabled": true,
+      "selectArrowExcludedFromSolidTextAndBorderSample": false,
+      "outlineStyle": "none",
+      "outlineWidth": "3px",
+      "borderStyle": "none",
+      "borderWidth": "0px"
+    },
+    "inputText": {
+      "kind": "text",
+      "indicator": "text",
+      "sourceColor": "rgb(33, 37, 41)",
+      "effectiveBackgrounds": [
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "ratios": [
+        15.426285095510265
+      ],
+      "threshold": 4.5,
+      "fontSize": 16,
+      "fontWeight": "400",
+      "enabled": true,
+      "selectArrowExcludedFromSolidTextAndBorderSample": false,
+      "outlineStyle": "none",
+      "outlineWidth": "3px",
+      "borderStyle": "solid",
+      "borderWidth": "1px"
+    },
+    "inputBoundary": {
+      "kind": "boundary",
+      "indicator": "border",
+      "sourceColor": "rgb(102, 112, 133)",
+      "effectiveBackgrounds": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "ratios": [
+        4.974752735406439,
+        4.974752735406439
+      ],
+      "threshold": 3,
+      "fontSize": 16,
+      "fontWeight": "400",
+      "enabled": true,
+      "selectArrowExcludedFromSolidTextAndBorderSample": false,
+      "outlineStyle": "none",
+      "outlineWidth": "3px",
+      "borderStyle": "solid",
+      "borderWidth": "1px"
+    },
+    "selectText": {
+      "kind": "text",
+      "indicator": "text",
+      "sourceColor": "rgb(33, 37, 41)",
+      "effectiveBackgrounds": [
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "ratios": [
+        15.426285095510265
+      ],
+      "threshold": 4.5,
+      "fontSize": 16,
+      "fontWeight": "400",
+      "enabled": true,
+      "selectArrowExcludedFromSolidTextAndBorderSample": true,
+      "outlineStyle": "none",
+      "outlineWidth": "3px",
+      "borderStyle": "solid",
+      "borderWidth": "1px"
+    },
+    "selectBoundary": {
+      "kind": "boundary",
+      "indicator": "border",
+      "sourceColor": "rgb(102, 112, 133)",
+      "effectiveBackgrounds": [
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "ratios": [
+        4.974752735406439,
+        4.974752735406439
+      ],
+      "threshold": 3,
+      "fontSize": 16,
+      "fontWeight": "400",
+      "enabled": true,
+      "selectArrowExcludedFromSolidTextAndBorderSample": true,
+      "outlineStyle": "none",
+      "outlineWidth": "3px",
+      "borderStyle": "solid",
+      "borderWidth": "1px"
+    },
+    "applyText": {
+      "kind": "text",
+      "indicator": "text",
+      "sourceColor": "rgb(255, 255, 255)",
+      "effectiveBackgrounds": [
+        [
+          0,
+          107,
+          60
+        ]
+      ],
+      "ratios": [
+        6.628103938980884
+      ],
+      "threshold": 4.5,
+      "fontSize": 16,
+      "fontWeight": "400",
+      "enabled": true,
+      "selectArrowExcludedFromSolidTextAndBorderSample": false,
+      "outlineStyle": "none",
+      "outlineWidth": "3px",
+      "borderStyle": "solid",
+      "borderWidth": "1px"
+    },
+    "clearText": {
+      "kind": "text",
+      "indicator": "text",
+      "sourceColor": "rgb(108, 117, 125)",
+      "effectiveBackgrounds": [
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "ratios": [
+        4.689301797380369
+      ],
+      "threshold": 4.5,
+      "fontSize": 16,
+      "fontWeight": "400",
+      "enabled": true,
+      "selectArrowExcludedFromSolidTextAndBorderSample": false,
+      "outlineStyle": "none",
+      "outlineWidth": "3px",
+      "borderStyle": "solid",
+      "borderWidth": "1px"
+    },
+    "metricText": {
+      "kind": "text",
+      "indicator": "text",
+      "sourceColor": "rgb(0, 107, 60)",
+      "effectiveBackgrounds": [
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "ratios": [
+        6.628103938980884
+      ],
+      "threshold": 4.5,
+      "fontSize": 16,
+      "fontWeight": "400",
+      "enabled": true,
+      "selectArrowExcludedFromSolidTextAndBorderSample": false,
+      "outlineStyle": "none",
+      "outlineWidth": "3px",
+      "borderStyle": "none",
+      "borderWidth": "0px"
+    },
+    "metricNumber": {
+      "kind": "text",
+      "indicator": "text",
+      "sourceColor": "rgb(0, 107, 60)",
+      "effectiveBackgrounds": [
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "ratios": [
+        6.628103938980884
+      ],
+      "threshold": 3,
+      "fontSize": 32,
+      "fontWeight": "700",
+      "enabled": true,
+      "selectArrowExcludedFromSolidTextAndBorderSample": false,
+      "outlineStyle": "none",
+      "outlineWidth": "3px",
+      "borderStyle": "none",
+      "borderWidth": "0px"
+    },
+    "statusText": {
+      "kind": "text",
+      "indicator": "text",
+      "sourceColor": "rgb(0, 107, 60)",
+      "effectiveBackgrounds": [
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "ratios": [
+        6.628103938980884
+      ],
+      "threshold": 4.5,
+      "fontSize": 16,
+      "fontWeight": "400",
+      "enabled": true,
+      "selectArrowExcludedFromSolidTextAndBorderSample": false,
+      "outlineStyle": "none",
+      "outlineWidth": "3px",
+      "borderStyle": "none",
+      "borderWidth": "0px"
+    },
+    "previewText": {
+      "kind": "text",
+      "indicator": "text",
+      "sourceColor": "rgb(33, 37, 41)",
+      "effectiveBackgrounds": [
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "ratios": [
+        15.426285095510265
+      ],
+      "threshold": 4.5,
+      "fontSize": 16,
+      "fontWeight": "400",
+      "enabled": true,
+      "selectArrowExcludedFromSolidTextAndBorderSample": false,
+      "outlineStyle": "none",
+      "outlineWidth": "3px",
+      "borderStyle": "none",
+      "borderWidth": "0px"
+    },
+    "searchFocus": {
+      "kind": "focus",
+      "indicator": "focused border",
+      "sourceColor": "rgb(11, 122, 70)",
+      "effectiveBackgrounds": [
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "ratios": [
+        5.403343902425746
+      ],
+      "threshold": 3,
+      "fontSize": 16,
+      "fontWeight": "400",
+      "enabled": true,
+      "selectArrowExcludedFromSolidTextAndBorderSample": false,
+      "outlineStyle": "none",
+      "outlineWidth": "0px",
+      "borderStyle": "solid",
+      "borderWidth": "1px"
+    },
+    "metricFocus": {
+      "kind": "focus",
+      "indicator": "outline",
+      "sourceColor": "rgb(16, 16, 16)",
+      "effectiveBackgrounds": [
+        [
+          245,
+          247,
+          246
+        ]
+      ],
+      "ratios": [
+        17.684875799422358
+      ],
+      "threshold": 3,
+      "fontSize": 16,
+      "fontWeight": "400",
+      "enabled": true,
+      "selectArrowExcludedFromSolidTextAndBorderSample": false,
+      "outlineStyle": "auto",
+      "outlineWidth": "1px",
+      "borderStyle": "solid",
+      "borderWidth": "1px"
+    },
+    "applyFocus": {
+      "kind": "focus",
+      "indicator": "focused border",
+      "sourceColor": "rgb(11, 122, 70)",
+      "effectiveBackgrounds": [
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "ratios": [
+        5.403343902425746
+      ],
+      "threshold": 3,
+      "fontSize": 16,
+      "fontWeight": "400",
+      "enabled": true,
+      "selectArrowExcludedFromSolidTextAndBorderSample": false,
+      "outlineStyle": "none",
+      "outlineWidth": "0px",
+      "borderStyle": "solid",
+      "borderWidth": "1px"
+    }
+  }
+}

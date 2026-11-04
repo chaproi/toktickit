@@ -1,0 +1,23 @@
+{
+  "screenshot": "1440x900-filters.png",
+  "capturedAt": "2026-11-03T21:21:13.869Z",
+  "executionHead": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+  "pendingProductionFiles": [],
+  "browser": "HeadlessChrome/153.0.8010.12",
+  "configuredViewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "actualCSSViewport": {
+    "width": 1440,
+    "height": 900,
+    "pinchScale": 1
+  },
+  "role": "REQUESTER",
+  "state": "All six labelled filters",
+  "zoomFactor": 1,
+  "zoomMethod": "unmodified tab zoom",
+  "captureScope": "Dashboard filter form",
+  "syntheticDataOnly": true,
+  "visualInspection": "Pending visual inspection"
+}

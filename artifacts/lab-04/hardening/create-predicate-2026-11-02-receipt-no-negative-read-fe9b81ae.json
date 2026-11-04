@@ -1,0 +1,26 @@
+{
+  "mode": "minimal-SQL-mechanism-not-application-GREEN",
+  "variant": "receipt-no-negative-read",
+  "startedAt": "2026-11-02T19:03:00.965Z",
+  "outcomes": [
+    {
+      "command": 0,
+      "committed": true
+    },
+    {
+      "command": 1,
+      "committed": true
+    }
+  ],
+  "predicateLocks": [],
+  "cleanup": {
+    "connectionsClosed": true
+  },
+  "fixtureScale": {
+    "tickets": 44,
+    "actions": 85,
+    "receipts": 5
+  },
+  "persistenceVerified": true,
+  "finishedAt": "2026-11-02T19:03:01.205Z"
+}

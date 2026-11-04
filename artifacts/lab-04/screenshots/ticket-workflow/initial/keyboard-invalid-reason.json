@@ -1,0 +1,23 @@
+{
+  "screenshot": "keyboard-invalid-reason.png",
+  "capturedAt": "2026-10-22T20:17:43.832Z",
+  "timezone": "Asia/Bangkok",
+  "executionHead": "430a019c8aa69d5e3140ea1fe7d1d05c87cd012c",
+  "pendingProductionFiles": [],
+  "browser": "HeadlessChrome/153.0.8010.12",
+  "configuredViewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "actualCSSViewport": {
+    "width": 1440,
+    "height": 900,
+    "pinchScale": 1
+  },
+  "role": "IT_STAFF",
+  "state": "Required/invalid reason association; retained draft",
+  "zoomFactor": 1,
+  "zoomMethod": "unmodified tab zoom",
+  "syntheticDataOnly": true,
+  "visualInspection": "Pending visual inspection"
+}

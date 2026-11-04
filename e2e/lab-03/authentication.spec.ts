@@ -44,9 +44,9 @@ test("E2E-01 authenticates, forces rotation, preserves reload, and logs out", as
   await page.getByLabel("New Password", { exact: true }).fill(replacement);
   await page.getByLabel("Confirm New Password").fill(replacement);
   await page.getByRole("button", { name: "Save Password" }).click();
-  await expect(page.getByRole("heading", { name: "My Tickets" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Requester Dashboard" })).toBeVisible();
   await page.reload();
-  await expect(page.getByRole("heading", { name: "My Tickets" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Requester Dashboard" })).toBeVisible();
   const sessionCookie = (await page.context().cookies())
     .find((cookie) => cookie.name === "toktickit_session");
   expect(sessionCookie).toBeDefined();

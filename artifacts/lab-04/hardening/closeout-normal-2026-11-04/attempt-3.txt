@@ -1,0 +1,92 @@
+
+Running 3 tests using 1 worker
+
+
+
+[1/3] e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844
+e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+  1) e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844
+
+    Error: Visible text and controls wrap within their containers
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "FORM ",
+    + ]
+
+       at lab-04\action-layout-helpers.ts:62
+
+      60 |        !["INPUT", "TEXTAREA", "SELECT"].includes(element.tagName) && element.scrollWidth > element.clientWidth + 1);
+      61 |   }).map((element) => `${element.tagName} ${element.id}`));
+    > 62 |   expect(overflow, "Visible text and controls wrap within their containers").toEqual([]);
+         |                                                                              ^
+      63 | }
+      64 |
+      65 | export async function reachable(control: Locator) {
+        at geometry (<candidate-worktree>\e2e\lab-04\action-layout-helpers.ts:62:78)
+        at <candidate-worktree>\e2e\lab-04\review-closeout.spec.ts:115:5
+
+    Error Context: <private-run-directory>\attempt-3-results\lab-04-review-closeout-T-3-a7abd-wned-list-pixels-at-390x844\error-context.md
+
+
+
+
+[2/3] e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
+e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+  2) e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
+
+    Error: Visible text and controls wrap within their containers
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "FORM ",
+    + ]
+
+       at lab-04\action-layout-helpers.ts:62
+
+      60 |        !["INPUT", "TEXTAREA", "SELECT"].includes(element.tagName) && element.scrollWidth > element.clientWidth + 1);
+      61 |   }).map((element) => `${element.tagName} ${element.id}`));
+    > 62 |   expect(overflow, "Visible text and controls wrap within their containers").toEqual([]);
+         |                                                                              ^
+      63 | }
+      64 |
+      65 | export async function reachable(control: Locator) {
+        at geometry (<candidate-worktree>\e2e\lab-04\action-layout-helpers.ts:62:78)
+        at <candidate-worktree>\e2e\lab-04\review-closeout.spec.ts:115:5
+
+    Error Context: <private-run-directory>\attempt-3-results\lab-04-review-closeout-T-3-ca4dc-ned-list-pixels-at-834x1112\error-context.md
+
+
+
+
+[3/3] e2e\lab-04\review-closeout.spec.ts:172:1 › T-37/T-38 real Microsoft Edge Admin navigation and History at genuine 200% tab zoom
+e2e\lab-04\review-closeout.spec.ts:172:1 › T-37/T-38 real Microsoft Edge Admin navigation and History at genuine 200% tab zoom
+Owned Edge context closed, zoom restored and profile removed.
+
+Issue45 owned fixture/domain/session cleanup verified; client disconnect follows.
+
+  2 failed
+    e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 390x844
+    e2e\lab-04\review-closeout.spec.ts:93:3 › T-37 missing Create Ticket and owned-list pixels at 834x1112
+  1 passed (23.5s)
+
+(node:49348) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34512) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6376) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

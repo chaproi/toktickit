@@ -141,6 +141,9 @@ async function signInRequester(
   await page.getByLabel("Email").fill(selected.requester.email!);
   await page.getByLabel("Password", { exact: true }).fill(selected.password);
   await page.getByRole("button", { name: "Sign in" }).click();
+  await expect(page).toHaveURL(/\/dashboard$/u);
+  await expect(page.getByRole("heading", { name: "Requester Dashboard", exact: true })).toBeVisible();
+  await page.goto("/tickets");
   await expect(page).toHaveURL(/\/tickets$/u);
   await expect(page.getByText(requesterName)).toBeVisible();
 }
@@ -365,9 +368,15 @@ test("E2E-01 authenticates and restores a Requester session, creates an owned Ti
     page.getByText("Corporate Laptop", { exact: true }),
   ).toBeVisible();
   await expect(page.getByText(createdAttachmentFilename)).toBeVisible();
+  const actions = page.getByRole("region", { name: "Actions Taken", exact: true });
+  await expect(actions).toBeVisible();
+  await expect(actions).toHaveAttribute("aria-busy", "false");
+  await expect(actions.getByText("No Actions Taken yet.", { exact: true })).toBeVisible();
+  for (const mutationControl of ["Create Action", "Edit", "Reassign", "Start", "Complete", "Cancel"]) {
+    await expect(actions.getByRole("button", { name: mutationControl, exact: true })).toHaveCount(0);
+  }
   for (const prohibitedControl of [
     "Internal Notes",
-    "Actions Taken",
     "Claim Ticket",
     "Assign Ticket",
   ]) {
@@ -429,8 +438,34 @@ test("E2E-01 exercises applied search, filters, sorting, pagination, and reset b
   await expect(page.getByText("Page 2 of 2")).toBeVisible();
   await expect(table.locator("tbody tr")).toHaveCount(2);
 
-  await page.getByLabel("Sort Field").selectOption("ticketNumber");
-  await page.getByLabel("Sort Direction").selectOption("asc");
+  async function sortAndWaitForRenderedPage(
+    control: "Sort Field" | "Sort Direction",
+    value: string,
+    sortOrder: "asc" | "desc",
+  ) {
+    const [response] = await Promise.all([
+      page.waitForResponse((candidate) => {
+        const url = new URL(candidate.url());
+        return candidate.request().method() === "GET" &&
+          url.origin === API_URL && url.pathname === "/api/tickets" &&
+          url.searchParams.get("search") === `${RUN_MARKER} fixture` &&
+          url.searchParams.get("sortBy") === "ticketNumber" &&
+          url.searchParams.get("sortOrder") === sortOrder &&
+          url.searchParams.get("page") === "1" &&
+          url.searchParams.get("pageSize") === "10";
+      }),
+      page.getByLabel(control).selectOption(value),
+    ]);
+    expect(response.status()).toBe(200);
+    const body = await response.json() as { items: Array<{ ticketNumber: string }> };
+    expect(body.items).toHaveLength(10);
+    const numbers = table.locator("tbody tr td:first-child a");
+    await expect(numbers).toHaveCount(10);
+    await expect(numbers).toHaveText(body.items.map((ticket) => ticket.ticketNumber));
+  }
+
+  await sortAndWaitForRenderedPage("Sort Field", "ticketNumber", "desc");
+  await sortAndWaitForRenderedPage("Sort Direction", "asc", "asc");
   await expect(page.getByText("Page 1 of 2")).toBeVisible();
   const ascendingNumbers = await table
     .locator("tbody tr td:first-child a")
@@ -439,7 +474,7 @@ test("E2E-01 exercises applied search, filters, sorting, pagination, and reset b
     [...ascendingNumbers].sort((left, right) => left.localeCompare(right)),
   );
 
-  await page.getByLabel("Sort Direction").selectOption("desc");
+  await sortAndWaitForRenderedPage("Sort Direction", "desc", "desc");
   const descendingNumbers = await table
     .locator("tbody tr td:first-child a")
     .allTextContents();
@@ -685,7 +720,7 @@ test("E2E-04 keeps every Lab 2 screen usable at desktop, tablet, and mobile size
       if (route.name === "obsolete-selector-redirect") {
         await expect(
           page.getByRole("heading", {
-            name: "My Tickets",
+            name: "Requester Dashboard",
           }),
         ).toBeVisible();
       } else if (route.name === "create-ticket") {

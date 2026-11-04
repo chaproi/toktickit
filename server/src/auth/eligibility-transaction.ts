@@ -1,10 +1,13 @@
 import { Prisma, type UserRole } from "@prisma/client";
 import { getPrisma } from "../prisma.js";
+import { withCommandCoordination, type CommandPlan } from "../database/write-admission.js";
+import { validateCommandSession } from "./command-session.js";
 
 export type LockedActor = {
   id: number;
   role: UserRole;
   isActive: boolean;
+  mustChangePassword: boolean;
 };
 
 export class ConcurrentUpdateError extends Error {
@@ -15,7 +18,7 @@ export class ConcurrentUpdateError extends Error {
 }
 
 export type MutationGateKey = {
-  scope: 1 | 2 | 3;
+  scope: 1 | 2 | 3 | 1002 | 1003 | 1004;
   id: number;
 };
 
@@ -74,16 +77,19 @@ export async function runSerializableMutation<T>(
   operation: (transaction: Prisma.TransactionClient) => Promise<T>,
   onAttemptFailure?: (error: unknown) => Promise<void>,
   gateKeys: readonly MutationGateKey[] = [],
+  admitted = false,
+  planOptions: Omit<CommandPlan, "keys"> = {},
 ): Promise<T> {
   const prisma = getPrisma();
   for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
-      return await prisma.$transaction(async (transaction) => {
-        await acquireMutationGates(transaction, gateKeys);
+      const execute = () => prisma.$transaction(async (transaction) => {
+        if (!admitted) await acquireMutationGates(transaction, gateKeys);
         return operation(transaction);
       }, {
-          isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+          isolationLevel: admitted ? Prisma.TransactionIsolationLevel.ReadCommitted : Prisma.TransactionIsolationLevel.Serializable,
       });
+      return await withCommandCoordination({ keys: admitted ? gateKeys : [], ...planOptions }, execute);
     } catch (error) {
       await onAttemptFailure?.(error);
       if (!hasConfirmedPostgresSqlState(error, "40001")) throw error;
@@ -93,17 +99,29 @@ export async function runSerializableMutation<T>(
   throw new Error("Serializable mutation retry loop exhausted unexpectedly.");
 }
 
+// Explicit domain-writer opt-in. Existing Comments/Notes/Attachment callers of
+// the shared executor retain their old behavior; read transactions never opt in.
+export function runAdmittedSerializableMutation<T>(
+  operation: (transaction: Prisma.TransactionClient) => Promise<T>,
+  onAttemptFailure?: (error: unknown) => Promise<void>,
+  gateKeys: readonly MutationGateKey[] = [],
+  planOptions: Omit<CommandPlan, "keys"> = {},
+): Promise<T> {
+  return runSerializableMutation(operation, onAttemptFailure, gateKeys, true, planOptions);
+}
+
 export async function lockCurrentActor(
   transaction: Prisma.TransactionClient,
   userId: number,
   expectedRole: UserRole,
 ): Promise<LockedActor | null> {
   const [actor] = await transaction.$queryRaw<LockedActor[]>`
-    SELECT "id", "role", "isActive"
+    SELECT "id", "role", "isActive", "mustChangePassword"
     FROM "User"
     WHERE "id" = ${userId}
     FOR UPDATE
   `;
   if (!actor || !actor.isActive || actor.role !== expectedRole) return null;
+  await validateCommandSession(transaction, userId, true, actor.mustChangePassword);
   return actor;
 }

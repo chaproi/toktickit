@@ -1,0 +1,13 @@
+{
+  "mode": "public-interface-proof-not-application-GREEN",
+  "recordedAt": "2026-11-02T18:24:17.526Z",
+  "executionHead": "23e76cb53f22a10a200ad969099c0d9484fdba50",
+  "observations": [],
+  "cleanup": {
+    "childrenExited": true,
+    "poolsDisconnected": true,
+    "grantedOrWaitingAdmissionLocks": 0,
+    "taggedConnections": 0,
+    "ownedSchemasRemoved": true
+  }
+}

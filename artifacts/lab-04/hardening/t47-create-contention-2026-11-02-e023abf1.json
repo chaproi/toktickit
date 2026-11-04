@@ -1,0 +1,5552 @@
+{
+  "mode": "bounded-create-diagnosis-not-T47",
+  "startedAt": "2026-11-02T17:07:23.452Z",
+  "executionHead": "a6239227bd175aa17aa2d3c805f6c87fa2693e4c",
+  "node": "v24.14.0",
+  "commands": [
+    {
+      "label": "concurrent-1",
+      "phase": "concurrent",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 4.595699999999852
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 1.9706999999998516
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 0.7425999999995838
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 2.590199999998731
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 2.2467000000015105
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 5.983000000000175
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 7.823099999999613
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 9.266599999999016
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 10.330300000001444
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 11.949400000001333
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 14.290299999998751
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 8.364400000000387
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 4.327500000001237
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 7.6833000000005995
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 2.660599999999249
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 5.487199999999575
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 7.864099999998871
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 10.63260000000082
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 41.03930000000037,
+              "sqlState": "40001"
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": false,
+          "backend": 8872,
+          "xid": "444024",
+          "isolation": "serializable",
+          "missingReceipt": true,
+          "rejection": {
+            "sqlStates": [
+              "40001"
+            ],
+            "prismaCodes": [],
+            "boundary": "callback-query"
+          },
+          "rollbackExact": true
+        },
+        {
+          "number": 2,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 6.42529999999897
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 5.254100000000108
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 9.341200000000754
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 28.6796000000013
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 11.37249999999949
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 14.047699999999168
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 7.157900000000154
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 6.204999999999927
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 2.408400000000256
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 3.264000000001033
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 7.0966000000007625
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 15.913800000000265,
+              "sqlState": "40001"
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": false,
+          "backend": 28248,
+          "xid": "444039",
+          "isolation": "serializable",
+          "missingReceipt": true,
+          "rejection": {
+            "sqlStates": [
+              "40001"
+            ],
+            "prismaCodes": [],
+            "boundary": "callback-query"
+          },
+          "rollbackExact": true
+        },
+        {
+          "number": 3,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 0.9133999999994558
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 0.4728000000013708
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 0.45019999999931315
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 1.340699999998833
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 0.9642000000003463
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 1.0851000000002387
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 1.1291999999994005
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 0.5626000000011118
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.45570000000043365
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 2.0590999999985797
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 2.169400000000678
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 2.083699999999226
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 37612,
+          "xid": "444042",
+          "isolation": "serializable",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "concurrent-2",
+      "phase": "concurrent",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 4.004100000000108
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 0.7070999999996275
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 9.893600000001243
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 4.419800000001487
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 11.966899999999441
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 6.284900000000562
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 18.440300000000207,
+              "sqlState": "40001"
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": false,
+          "backend": 37024,
+          "xid": "444023",
+          "isolation": "serializable",
+          "missingReceipt": true,
+          "rejection": {
+            "sqlStates": [
+              "40001"
+            ],
+            "prismaCodes": [],
+            "boundary": "callback-query"
+          },
+          "rollbackExact": true
+        },
+        {
+          "number": 2,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 3.4250000000010914
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 8.125299999999697
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 2.965299999999843
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 7.76510000000053
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 5.058199999999488
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 4.194999999999709
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 5.496299999998882
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 6.007299999999304
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 4.5692999999992026
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 8.100999999998749
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 9.89140000000043
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 13.612900000000081
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 35876,
+          "xid": "444031",
+          "isolation": "serializable",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "concurrent-3",
+      "phase": "concurrent",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 4.20470000000023
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 1.3885000000009313
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 1.2335000000002765
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 6.390599999998813
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 9.88630000000012
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 1.4786999999996624
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 4.584600000000137
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 3.8914000000004307,
+              "sqlState": "40001"
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 31.60689999999886,
+              "sqlState": "25P02"
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 31.91070000000036,
+              "sqlState": "25P02"
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": false,
+          "backend": 20824,
+          "xid": "444025",
+          "isolation": "serializable",
+          "missingReceipt": true,
+          "rejection": {
+            "sqlStates": [
+              "40001"
+            ],
+            "prismaCodes": [],
+            "boundary": "callback-query"
+          },
+          "rollbackExact": true
+        },
+        {
+          "number": 2,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 11.956200000000536
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 3.5535999999992782
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 3.3315999999995256
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 10.94210000000021
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 4.610599999999977,
+              "sqlState": "40001"
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": false,
+          "backend": 37612,
+          "xid": "444035",
+          "isolation": "serializable",
+          "missingReceipt": true,
+          "rejection": {
+            "sqlStates": [
+              "40001"
+            ],
+            "prismaCodes": [],
+            "boundary": "callback-query"
+          },
+          "rollbackExact": true
+        },
+        {
+          "number": 3,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 11.088799999999537
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 7.22899999999936
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 1.5802999999996246
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 7.635199999998804
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 10.788699999999153,
+              "sqlState": "40001"
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": false,
+          "backend": 37612,
+          "xid": "444041",
+          "isolation": "serializable",
+          "missingReceipt": true,
+          "rejection": {
+            "sqlStates": [
+              "40001"
+            ],
+            "prismaCodes": [],
+            "boundary": "callback-query"
+          },
+          "rollbackExact": true
+        }
+      ],
+      "status": 409,
+      "errorCode": "CONCURRENT_UPDATE",
+      "exactPersistence": true
+    },
+    {
+      "label": "concurrent-4",
+      "phase": "concurrent",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 0.6437999999998283
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 0.7330000000001746
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 0.8327000000008411
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 3.565100000001621
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 4.578299999999217
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 4.5164999999997235
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 2.264499999999316
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.7659999999996217
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 6.733000000000175
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 8.302600000000893
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 70.23099999999977,
+              "sqlState": "40001"
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": false,
+          "backend": 37664,
+          "xid": "444026",
+          "isolation": "serializable",
+          "missingReceipt": true,
+          "rejection": {
+            "sqlStates": [
+              "40001"
+            ],
+            "prismaCodes": [],
+            "boundary": "callback-query"
+          },
+          "rollbackExact": true
+        },
+        {
+          "number": 2,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 3.98450000000048
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 7.806499999998778
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 3.3765000000003056
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 8.727100000000064
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 3.8015999999988708
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 3.9508999999998196
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 5.231700000000274
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 4.678099999999176
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 4.677999999999884
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 8.121000000001004
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 10.762799999998606
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 13.636400000001231
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 20824,
+          "xid": "444032",
+          "isolation": "serializable",
+          "missingReceipt": true,
+          "rejection": {
+            "sqlStates": [
+              "40001"
+            ],
+            "prismaCodes": [],
+            "boundary": "transaction-completion"
+          },
+          "rollbackExact": true
+        },
+        {
+          "number": 3,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 2.285600000001068
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 2.5442999999995664
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 3.897899999999936
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 9.5583000000006
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 15.765000000001237
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 2.536000000000058
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 3.489400000000387
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 14.134400000000824
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 10.56880000000092
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 18.893200000000434
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 27.02729999999974
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 11.556699999999182
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 8872,
+          "xid": "444036",
+          "isolation": "serializable",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "concurrent-5",
+      "phase": "concurrent",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 2.0197000000007392
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 1.92909999999938
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 9.22609999999986
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 6.3641999999999825
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 13.310499999999593
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 6.566899999999805
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 6.477100000000064
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 8.961900000000242
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 13.83259999999973
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 5.7062000000005355,
+              "sqlState": "40001"
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": false,
+          "backend": 30356,
+          "xid": "444027",
+          "isolation": "serializable",
+          "missingReceipt": true,
+          "rejection": {
+            "sqlStates": [
+              "40001"
+            ],
+            "prismaCodes": [],
+            "boundary": "callback-query"
+          },
+          "rollbackExact": true
+        },
+        {
+          "number": 2,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 2.7467000000015105
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 1.8125
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 2.827400000000125
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 14.10189999999966
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 5.827599999998711
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 2.914699999999357
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 2.154099999999744
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 1.8695999999999913
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 4.316999999999098
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 6.613400000000183
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 9.514400000000023
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 9.944999999999709,
+              "sqlState": "40001"
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": false,
+          "backend": 37664,
+          "xid": "444033",
+          "isolation": "serializable",
+          "missingReceipt": true,
+          "rejection": {
+            "sqlStates": [
+              "40001"
+            ],
+            "prismaCodes": [],
+            "boundary": "callback-query"
+          },
+          "rollbackExact": true
+        },
+        {
+          "number": 3,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 4.86869999999908
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 5.400200000000041
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 22.41439999999966
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 16.08259999999973
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 11.305699999998978
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 7.237100000000282
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 11.768899999999121
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 9.391499999999724
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 2.7867999999998574
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 4.448099999999613
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 5.320499999999811
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 13.464499999998225,
+              "sqlState": "40001"
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": false,
+          "backend": 37884,
+          "xid": "444038",
+          "isolation": "serializable",
+          "missingReceipt": true,
+          "rejection": {
+            "sqlStates": [
+              "40001"
+            ],
+            "prismaCodes": [],
+            "boundary": "callback-query"
+          },
+          "rollbackExact": true
+        }
+      ],
+      "status": 409,
+      "errorCode": "CONCURRENT_UPDATE",
+      "exactPersistence": true
+    },
+    {
+      "label": "concurrent-6",
+      "phase": "concurrent",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 4.134799999999814
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 2.2832999999991443
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 8.032400000000052
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 2.7912000000014814
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 13.029999999998836
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 6.948500000000422
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 4.889900000000125
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 7.137300000000323
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 13.1903999999995
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 17.724299999999857
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 10.475800000000163
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 41508,
+          "xid": "444028",
+          "isolation": "serializable",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "concurrent-7",
+      "phase": "concurrent",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 1.1671000000005733
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 1.3906999999999243
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 7.002800000000207
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 4.56420000000071
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 11.85950000000048
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 8.236299999998664
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 8.037399999999252
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 5.800500000001193
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 11.322799999999916
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 13.515600000000632
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 10.695799999999508
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 35876,
+          "xid": "444029",
+          "isolation": "serializable",
+          "missingReceipt": true,
+          "rejection": {
+            "sqlStates": [
+              "40001"
+            ],
+            "prismaCodes": [],
+            "boundary": "transaction-completion"
+          },
+          "rollbackExact": true
+        },
+        {
+          "number": 2,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 4.352199999999357
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 6.320999999999913
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 21.803499999999985
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 22.579999999999927
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 13.351599999999962
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 12.768700000000536
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 7.4466999999986
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 2.686999999999898
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 2.171699999998964
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 2.994700000001103
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 7.703499999999622
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 16.08729999999923,
+              "sqlState": "40001"
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": false,
+          "backend": 34636,
+          "xid": "444037",
+          "isolation": "serializable",
+          "missingReceipt": true,
+          "rejection": {
+            "sqlStates": [
+              "40001"
+            ],
+            "prismaCodes": [],
+            "boundary": "callback-query"
+          },
+          "rollbackExact": true
+        },
+        {
+          "number": 3,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 3.2633999999998196
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 4.681000000000495
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 2.1666000000004715
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 2.8693999999995867
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 2.1352999999999156
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 1.7846000000008644,
+              "sqlState": "40001"
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": false,
+          "backend": 39884,
+          "xid": "444043",
+          "isolation": "serializable",
+          "missingReceipt": true,
+          "rejection": {
+            "sqlStates": [
+              "40001"
+            ],
+            "prismaCodes": [],
+            "boundary": "callback-query"
+          },
+          "rollbackExact": true
+        }
+      ],
+      "status": 409,
+      "errorCode": "CONCURRENT_UPDATE",
+      "exactPersistence": true
+    },
+    {
+      "label": "concurrent-8",
+      "phase": "concurrent",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 1.4215000000003783
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 2.09690000000046
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 9.580100000001039
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 3.0336999999999534
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 11.994800000000396
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 7.434799999999086
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 5.0767999999989115
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 9.247299999999086
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 11.727300000000469
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 14.745899999999892
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 4.998100000000704,
+              "sqlState": "40001"
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": false,
+          "backend": 41716,
+          "xid": "444030",
+          "isolation": "serializable",
+          "missingReceipt": true,
+          "rejection": {
+            "sqlStates": [
+              "40001"
+            ],
+            "prismaCodes": [],
+            "boundary": "callback-query"
+          },
+          "rollbackExact": true
+        },
+        {
+          "number": 2,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 4.966300000000047
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 5.609099999999671
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 3.943199999999706
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 11.09979999999996
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 3.271099999999933
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 4.444900000000416
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 4.255700000001525
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 3.425999999999476,
+              "sqlState": "40001"
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": false,
+          "backend": 30356,
+          "xid": "444034",
+          "isolation": "serializable",
+          "missingReceipt": true,
+          "rejection": {
+            "sqlStates": [
+              "40001"
+            ],
+            "prismaCodes": [],
+            "boundary": "callback-query"
+          },
+          "rollbackExact": true
+        },
+        {
+          "number": 3,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 5.6740999999983615
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 5.683800000000701
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 8.8791999999994
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 22.006000000001222
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 12.244800000000396
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 10.82929999999942
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 10.135400000001027
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 8.477699999999459
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 2.310699999999997
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 4.001800000000003
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 6.39259999999922
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 14.833699999999226,
+              "sqlState": "40001"
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": false,
+          "backend": 12500,
+          "xid": "444040",
+          "isolation": "serializable",
+          "missingReceipt": true,
+          "rejection": {
+            "sqlStates": [
+              "40001"
+            ],
+            "prismaCodes": [],
+            "boundary": "callback-query"
+          },
+          "rollbackExact": true
+        }
+      ],
+      "status": 409,
+      "errorCode": "CONCURRENT_UPDATE",
+      "exactPersistence": true
+    },
+    {
+      "label": "serial-1",
+      "phase": "serial",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 0.4644000000007509
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 0.3368000000009488
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 0.4236000000000786
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 1.0916999999990367
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 1.954199999998309
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 0.7173000000002503
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 0.6345000000001164
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 0.7330000000001746
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.5635000000002037
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.6152000000001863
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.7896999999993568
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 1.1942999999992026
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 41716,
+          "xid": "444044",
+          "isolation": "serializable",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "serial-2",
+      "phase": "serial",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 0.332300000000032
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 0.3456000000005588
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 0.31899999999950523
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 0.7559999999994034
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 0.7758999999987282
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 0.8673999999991793
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 1.1885999999994965
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 0.5586999999995896
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.45460000000093714
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.6069999999999709
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.7459999999991851
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 1.7755999999990308
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 28248,
+          "xid": "444045",
+          "isolation": "serializable",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "serial-3",
+      "phase": "serial",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 0.4513999999999214
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 0.3091000000003987
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 0.45240000000012515
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 0.8401999999987311
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 1.1705000000001746
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 0.8996999999999389
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 0.6277000000009139
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 0.6815000000005966
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.6849999999994907
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.5753999999997177
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.7516999999988911
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 1.2001000000000204
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 41716,
+          "xid": "444046",
+          "isolation": "serializable",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "serial-4",
+      "phase": "serial",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 0.36789999999928114
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 0.3562000000001717
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 0.3415000000004511
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 0.8328000000001339
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 0.6656000000002678
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 0.6650999999983469
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 0.5308999999997468
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 0.5388000000002648
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.4120999999995547
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.5321999999996478
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.6898000000001048
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 2.1194999999988795
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 28248,
+          "xid": "444047",
+          "isolation": "serializable",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "serial-5",
+      "phase": "serial",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 0.30859999999847787
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 0.47700000000077125
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 0.4583999999995285
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 0.9203999999990629
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 0.8568000000013853
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 0.8688999999994849
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 0.6142999999992753
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 0.6424000000006345
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.33699999999953434
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.4750000000003638
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.5867999999991298
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 0.908900000000358
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 41716,
+          "xid": "444048",
+          "isolation": "serializable",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "serial-6",
+      "phase": "serial",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 0.4709000000002561
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 0.40539999999964493
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 0.4904000000005908
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 0.7556000000004133
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 1.7189000000016676
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 0.9613999999983207
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 0.8770999999997002
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 0.539600000000064
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.5532000000002881
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.6104000000013912
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.7716000000000349
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 1.210399999999936
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 14180,
+          "xid": "444049",
+          "isolation": "serializable",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "serial-7",
+      "phase": "serial",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 0.20859999999993306
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 0.1926999999996042
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 0.2080999999998312
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 0.9052000000010594
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 0.690599999999904
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 0.4771999999993568
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 0.37440000000060536
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 0.3716999999996915
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.32159999999930733
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.3834000000006199
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.4422999999987951
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 1.0551999999988766
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 28248,
+          "xid": "444050",
+          "isolation": "serializable",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    },
+    {
+      "label": "serial-8",
+      "phase": "serial",
+      "attempts": [
+        {
+          "number": 1,
+          "gates": [
+            true,
+            true
+          ],
+          "queries": [
+            {
+              "operation": "User.SELECT.lock",
+              "elapsedMs": 0.25929999999971187
+            },
+            {
+              "operation": "AuthSession.SELECT",
+              "elapsedMs": 0.19700000000011642
+            },
+            {
+              "operation": "Ticket.SELECT.lock",
+              "elapsedMs": 0.27009999999972933
+            },
+            {
+              "operation": "MutationReceipt.SELECT",
+              "elapsedMs": 0.3706999999994878
+            },
+            {
+              "operation": "Action.INSERT",
+              "elapsedMs": 1.7348999999994703
+            },
+            {
+              "operation": "ActionHistory.INSERT",
+              "elapsedMs": 1.7374999999992724
+            },
+            {
+              "operation": "Ticket.UPDATE",
+              "elapsedMs": 0.6013000000002648
+            },
+            {
+              "operation": "Action.SELECT",
+              "elapsedMs": 0.7240000000001601
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.5378999999993539
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.41530000000057044
+            },
+            {
+              "operation": "User.SELECT",
+              "elapsedMs": 0.45609999999942374
+            },
+            {
+              "operation": "MutationReceipt.INSERT",
+              "elapsedMs": 0.9228000000002794
+            }
+          ],
+          "gateRestartExecuted": false,
+          "callbackReturned": true,
+          "backend": 41716,
+          "xid": "444051",
+          "isolation": "serializable",
+          "missingReceipt": true
+        }
+      ],
+      "status": 201,
+      "exactPersistence": true
+    }
+  ],
+  "cleanup": {
+    "operationsDrained": true,
+    "transactionObserverRestored": true,
+    "ownedFixturesRemoved": true,
+    "applicationDisconnected": true,
+    "idleTransactions": 0,
+    "observerDisconnected": true
+  },
+  "businessRequestsPlanned": 16,
+  "postgresVersionNumber": "180006",
+  "queryPlans": [
+    {
+      "operation": "User.SELECT.lock",
+      "plannerIntervention": false,
+      "sqlShape": "fa7ce1730f1a006bc36b3f966b64ed62b7ee4f1d524b4f2d7afcd087c6bdfa88",
+      "plan": {
+        "node": "LockRows",
+        "index": null,
+        "rows": 1,
+        "children": [
+          {
+            "node": "Seq Scan",
+            "index": null,
+            "rows": 1,
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "operation": "AuthSession.SELECT",
+      "plannerIntervention": false,
+      "sqlShape": "fbfc143e6ee7c68ca995b075407283a4de5f6bb804decea145092b955d304407",
+      "plan": {
+        "node": "LockRows",
+        "index": null,
+        "rows": 1,
+        "children": [
+          {
+            "node": "Seq Scan",
+            "index": null,
+            "rows": 1,
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "operation": "Ticket.SELECT.lock",
+      "plannerIntervention": false,
+      "sqlShape": "4022fa8ec87f966923ab45ad0a0bc49755cadead4277e677d9e349cd860bf192",
+      "plan": {
+        "node": "LockRows",
+        "index": null,
+        "rows": 1,
+        "children": [
+          {
+            "node": "Seq Scan",
+            "index": null,
+            "rows": 1,
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "operation": "MutationReceipt.SELECT",
+      "plannerIntervention": true,
+      "sqlShape": "e18d45e751de23843eb641d34cfc41c44cd5b3dc10c325b42948e6c59d5c8c46",
+      "plan": {
+        "node": "Limit",
+        "index": null,
+        "rows": 1,
+        "children": [
+          {
+            "node": "Index Scan",
+            "index": "MutationReceipt_actorId_clientMutationId_key",
+            "rows": 1,
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "operation": "Action.INSERT",
+      "plannerIntervention": false,
+      "sqlShape": "df700a23287e3ede34df33a278a05bbee8565b46d586b4a7b21df757b0688571",
+      "plan": {
+        "node": "ModifyTable",
+        "index": null,
+        "rows": 1,
+        "children": [
+          {
+            "node": "Result",
+            "index": null,
+            "rows": 1,
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "operation": "ActionHistory.INSERT",
+      "plannerIntervention": false,
+      "sqlShape": "60ae00acbbef2e456e7186d3ff5a8799bc73c0fa0e481a5efa737585fe1b679c",
+      "plan": {
+        "node": "ModifyTable",
+        "index": null,
+        "rows": 1,
+        "children": [
+          {
+            "node": "Result",
+            "index": null,
+            "rows": 1,
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "operation": "Ticket.UPDATE",
+      "plannerIntervention": false,
+      "sqlShape": "c054a23b5b2bc8250f87ab3e02b448bcfde87eaa470f74d1208ddb257b0906c4",
+      "plan": {
+        "node": "ModifyTable",
+        "index": null,
+        "rows": 1,
+        "children": [
+          {
+            "node": "Seq Scan",
+            "index": null,
+            "rows": 1,
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "operation": "Action.SELECT",
+      "plannerIntervention": false,
+      "sqlShape": "8f7737b133a7a60c27c5baf767944ed394672c667f608a5a7c66a675913eab52",
+      "plan": {
+        "node": "Limit",
+        "index": null,
+        "rows": 1,
+        "children": [
+          {
+            "node": "Index Scan",
+            "index": "Action_pkey",
+            "rows": 1,
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "operation": "User.SELECT",
+      "plannerIntervention": false,
+      "sqlShape": "c106e47dabb16fba60253878245b7be23b462fb461577121f4c7d7e0fa4e1ff8",
+      "plan": {
+        "node": "Seq Scan",
+        "index": null,
+        "rows": 1,
+        "children": []
+      }
+    },
+    {
+      "operation": "MutationReceipt.INSERT",
+      "plannerIntervention": true,
+      "sqlShape": "480df35ad148a90496f8a9d24653c866a99c98cd4f8de754cbbe1e1df832536b",
+      "plan": {
+        "node": "ModifyTable",
+        "index": null,
+        "rows": 1,
+        "children": [
+          {
+            "node": "Result",
+            "index": null,
+            "rows": 1,
+            "children": []
+          }
+        ]
+      }
+    }
+  ],
+  "operationLocks": [
+    {
+      "command": "concurrent-3",
+      "operation": "Ticket.SELECT.lock",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "concurrent-4",
+      "operation": "Ticket.SELECT.lock",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "concurrent-1",
+      "operation": "Ticket.SELECT.lock",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "concurrent-2",
+      "operation": "Ticket.SELECT.lock",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "concurrent-1",
+      "operation": "MutationReceipt.SELECT",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "page",
+          "mode": "SIReadLock",
+          "relation": "MutationReceipt_actorId_clientMutationId_key",
+          "page": 4,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "concurrent-4",
+      "operation": "MutationReceipt.SELECT",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "page",
+          "mode": "SIReadLock",
+          "relation": "MutationReceipt_actorId_clientMutationId_key",
+          "page": 4,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "concurrent-3",
+      "operation": "MutationReceipt.SELECT",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "page",
+          "mode": "SIReadLock",
+          "relation": "MutationReceipt_actorId_clientMutationId_key",
+          "page": 4,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "concurrent-2",
+      "operation": "MutationReceipt.SELECT",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "page",
+          "mode": "SIReadLock",
+          "relation": "MutationReceipt_actorId_clientMutationId_key",
+          "page": 4,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "concurrent-5",
+      "operation": "Ticket.SELECT.lock",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "concurrent-5",
+      "operation": "MutationReceipt.SELECT",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "page",
+          "mode": "SIReadLock",
+          "relation": "MutationReceipt_actorId_clientMutationId_key",
+          "page": 4,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "concurrent-6",
+      "operation": "Ticket.SELECT.lock",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "concurrent-6",
+      "operation": "MutationReceipt.SELECT",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "page",
+          "mode": "SIReadLock",
+          "relation": "MutationReceipt_actorId_clientMutationId_key",
+          "page": 4,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "concurrent-7",
+      "operation": "Ticket.SELECT.lock",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "concurrent-8",
+      "operation": "Ticket.SELECT.lock",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "concurrent-7",
+      "operation": "MutationReceipt.SELECT",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "page",
+          "mode": "SIReadLock",
+          "relation": "MutationReceipt_actorId_clientMutationId_key",
+          "page": 4,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "concurrent-8",
+      "operation": "MutationReceipt.SELECT",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "page",
+          "mode": "SIReadLock",
+          "relation": "MutationReceipt_actorId_clientMutationId_key",
+          "page": 4,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "serial-1",
+      "operation": "Ticket.SELECT.lock",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "serial-1",
+      "operation": "MutationReceipt.SELECT",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "page",
+          "mode": "SIReadLock",
+          "relation": "MutationReceipt_actorId_clientMutationId_key",
+          "page": 4,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "serial-2",
+      "operation": "Ticket.SELECT.lock",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "serial-2",
+      "operation": "MutationReceipt.SELECT",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "page",
+          "mode": "SIReadLock",
+          "relation": "MutationReceipt_actorId_clientMutationId_key",
+          "page": 4,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "serial-3",
+      "operation": "Ticket.SELECT.lock",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "serial-3",
+      "operation": "MutationReceipt.SELECT",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "page",
+          "mode": "SIReadLock",
+          "relation": "MutationReceipt_actorId_clientMutationId_key",
+          "page": 4,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "serial-4",
+      "operation": "Ticket.SELECT.lock",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "serial-4",
+      "operation": "MutationReceipt.SELECT",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "page",
+          "mode": "SIReadLock",
+          "relation": "MutationReceipt_actorId_clientMutationId_key",
+          "page": 4,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "serial-5",
+      "operation": "Ticket.SELECT.lock",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "serial-5",
+      "operation": "MutationReceipt.SELECT",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "page",
+          "mode": "SIReadLock",
+          "relation": "MutationReceipt_actorId_clientMutationId_key",
+          "page": 4,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "serial-6",
+      "operation": "Ticket.SELECT.lock",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "serial-6",
+      "operation": "MutationReceipt.SELECT",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "page",
+          "mode": "SIReadLock",
+          "relation": "MutationReceipt_actorId_clientMutationId_key",
+          "page": 4,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "serial-7",
+      "operation": "Ticket.SELECT.lock",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "serial-7",
+      "operation": "MutationReceipt.SELECT",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "page",
+          "mode": "SIReadLock",
+          "relation": "MutationReceipt_actorId_clientMutationId_key",
+          "page": 4,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "serial-8",
+      "operation": "Ticket.SELECT.lock",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    },
+    {
+      "command": "serial-8",
+      "operation": "MutationReceipt.SELECT",
+      "locks": [
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "AuthSession",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "page",
+          "mode": "SIReadLock",
+          "relation": "MutationReceipt_actorId_clientMutationId_key",
+          "page": 4,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "Ticket",
+          "page": null,
+          "tuple": null
+        },
+        {
+          "locktype": "relation",
+          "mode": "SIReadLock",
+          "relation": "User",
+          "page": null,
+          "tuple": null
+        }
+      ]
+    }
+  ],
+  "plannerMode": "receipt-index",
+  "fixtureScale": {
+    "tickets": 40,
+    "receipts": 2,
+    "users": 28,
+    "sessions": 17
+  },
+  "independentActorAssigneeTicketKeysVerified": true,
+  "locksAtMissingReceiptBarrier": [
+    {
+      "backend": 8872,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "page",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": 4,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_expiresAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_tokenHash_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_userId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_categoryId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_itPriority_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ownerId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_relatedSystemId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requestedPriority_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_clientSubmissionId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ticketNumber_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_updatedAt_id_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_email_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_role_isActive_name_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "transactionid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 8872,
+      "locktype": "virtualxid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "page",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": 4,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_expiresAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_tokenHash_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_userId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_categoryId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_itPriority_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ownerId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_relatedSystemId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requestedPriority_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_clientSubmissionId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ticketNumber_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_updatedAt_id_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_email_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_role_isActive_name_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "transactionid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 20824,
+      "locktype": "virtualxid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "page",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": 4,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_expiresAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_tokenHash_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_userId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_categoryId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_itPriority_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ownerId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_relatedSystemId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requestedPriority_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_clientSubmissionId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ticketNumber_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_updatedAt_id_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_email_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_role_isActive_name_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "transactionid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 30356,
+      "locktype": "virtualxid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "page",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": 4,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_expiresAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_tokenHash_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_userId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_categoryId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_itPriority_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ownerId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_relatedSystemId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requestedPriority_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_clientSubmissionId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ticketNumber_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_updatedAt_id_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_email_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_role_isActive_name_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "transactionid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 35876,
+      "locktype": "virtualxid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "page",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": 4,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_expiresAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_tokenHash_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_userId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_categoryId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_itPriority_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ownerId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_relatedSystemId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requestedPriority_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_clientSubmissionId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ticketNumber_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_updatedAt_id_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_email_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_role_isActive_name_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "transactionid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37024,
+      "locktype": "virtualxid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "page",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": 4,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_expiresAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_tokenHash_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_userId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_categoryId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_itPriority_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ownerId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_relatedSystemId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requestedPriority_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_clientSubmissionId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ticketNumber_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_updatedAt_id_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_email_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_role_isActive_name_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "transactionid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 37664,
+      "locktype": "virtualxid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "page",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": 4,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_expiresAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_tokenHash_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_userId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_categoryId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_itPriority_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ownerId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_relatedSystemId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requestedPriority_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_clientSubmissionId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ticketNumber_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_updatedAt_id_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_email_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_role_isActive_name_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "transactionid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41508,
+      "locktype": "virtualxid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "page",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": 4,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_actorId_clientMutationId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "AccessShareLock",
+      "granted": true,
+      "relation": "MutationReceipt_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_expiresAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_tokenHash_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "AuthSession_userId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_categoryId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_currentStatus_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_itPriority_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ownerId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_relatedSystemId_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requestedPriority_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_clientSubmissionId_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_requesterId_updatedAt_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_ticketNumber_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "Ticket_updatedAt_id_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_email_key",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_pkey",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "RowShareLock",
+      "granted": true,
+      "relation": "User_role_isActive_name_idx",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "AuthSession",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "Ticket",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "relation",
+      "mode": "SIReadLock",
+      "granted": true,
+      "relation": "User",
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "transactionid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    },
+    {
+      "backend": 41716,
+      "locktype": "virtualxid",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "page": null,
+      "tuple": null
+    }
+  ],
+  "observationCompleted": true,
+  "concurrentExhaustions": 4,
+  "finishedAt": "2026-11-02T17:07:29.920Z"
+}

@@ -1,0 +1,377 @@
+{
+  "artifact": "t47-performance-2026-11-03-measurement-7bc549d5.json",
+  "sha256": "8d43eb057607e5fbf2b4e9dcf4174a05f3b36f46aebbe3b489cd04ea212504dc",
+  "executionHead": "b31c67b39c4eea4fc2d56e4b0ad78060bd13b7d6",
+  "actualStartedAt": "2026-11-02T19:38:43.458Z",
+  "sourceTrackedClean": true,
+  "sampleCount": 5500,
+  "phases": {
+    "warmup": {
+      "count": 5000,
+      "errors": 2,
+      "errorRate": 0.0004,
+      "p50Ms": 376.88119999999617,
+      "p95Ms": 1179.418899999997,
+      "all50UserSequencesExact": true,
+      "operations": {
+        "action.cancel": {
+          "count": 150,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 865.5861999999906,
+          "p95Ms": 1807.6582000000053
+        },
+        "action.complete": {
+          "count": 150,
+          "errors": 2,
+          "errorRate": 0.013333333333333334,
+          "p50Ms": 1038.972099999999,
+          "p95Ms": 1860.7783000000054
+        },
+        "action.create": {
+          "count": 300,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 933.8338000000003,
+          "p95Ms": 1590.1733000000022
+        },
+        "action.detail": {
+          "count": 300,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 221.5940999999948,
+          "p95Ms": 489.23229999999603
+        },
+        "action.edit": {
+          "count": 300,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 848.0907999999908,
+          "p95Ms": 1257.9212999999982
+        },
+        "action.history": {
+          "count": 300,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 200.5691999999981,
+          "p95Ms": 411.7730999999985
+        },
+        "action.start": {
+          "count": 300,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 877.9985000000015,
+          "p95Ms": 1476.0989999999947
+        },
+        "comments.create": {
+          "count": 200,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 306.4994000000006,
+          "p95Ms": 428.9857999999949
+        },
+        "comments.list": {
+          "count": 400,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 338.9305000000022,
+          "p95Ms": 456.71039999999994
+        },
+        "requester.dashboard": {
+          "count": 400,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 374.9999000000025,
+          "p95Ms": 670.0768000000025
+        },
+        "requester.ticket.detail": {
+          "count": 400,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 370.1923999999999,
+          "p95Ms": 649.1009999999987
+        },
+        "requester.tickets.filtered-list": {
+          "count": 200,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 479.37690000000293,
+          "p95Ms": 602.9017000000022
+        },
+        "requester.tickets.list": {
+          "count": 200,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 484.65559999999823,
+          "p95Ms": 707.7466999999997
+        },
+        "staff.actions.list": {
+          "count": 300,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 243.6840000000011,
+          "p95Ms": 538.8437000000013
+        },
+        "staff.dashboard": {
+          "count": 300,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 309.7019,
+          "p95Ms": 816.0895999999993
+        },
+        "staff.ticket.detail": {
+          "count": 300,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 331.37049999999726,
+          "p95Ms": 628.1252000000022
+        },
+        "staff.tickets.list": {
+          "count": 300,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 264.80659999999625,
+          "p95Ms": 662.857600000003
+        },
+        "ticket.actions.list": {
+          "count": 200,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 230.86480000000302,
+          "p95Ms": 362.0571999999993
+        }
+      },
+      "peakHttpInFlight": 50,
+      "finalHttpInFlight": 0,
+      "elapsedMs": 56286.9374,
+      "timeWeightedHttpInFlight": 43.275957186826915,
+      "throughputPerSecond": 88.83055698105898,
+      "reportedPercentilesMatch": true,
+      "allOperationPercentilesMatch": true
+    },
+    "measured": {
+      "count": 500,
+      "errors": 0,
+      "errorRate": 0.0,
+      "p50Ms": 440.96940000000177,
+      "p95Ms": 973.9070999999967,
+      "all50UserSequencesExact": true,
+      "operations": {
+        "action.cancel": {
+          "count": 15,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 555.8928000000014,
+          "p95Ms": 620.658500000005
+        },
+        "action.complete": {
+          "count": 15,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 628.6733999999997,
+          "p95Ms": 782.5017999999982
+        },
+        "action.create": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 587.2588000000105,
+          "p95Ms": 966.401600000012
+        },
+        "action.detail": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 288.05560000000696,
+          "p95Ms": 449.4459999999963
+        },
+        "action.edit": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 866.4591999999975,
+          "p95Ms": 1056.739300000001
+        },
+        "action.history": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 29.072099999990314,
+          "p95Ms": 225.5789999999979
+        },
+        "action.start": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 750.190300000002,
+          "p95Ms": 970.6646000000037
+        },
+        "comments.create": {
+          "count": 20,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 277.1085000000021,
+          "p95Ms": 417.40009999999893
+        },
+        "comments.list": {
+          "count": 40,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 348.3680000000022,
+          "p95Ms": 458.65869999999995
+        },
+        "requester.dashboard": {
+          "count": 40,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 440.99039999999513,
+          "p95Ms": 1074.3266000000003
+        },
+        "requester.ticket.detail": {
+          "count": 40,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 348.8666999999987,
+          "p95Ms": 432.48180000000866
+        },
+        "requester.tickets.filtered-list": {
+          "count": 20,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 402.1033000000025,
+          "p95Ms": 543.9746000000014
+        },
+        "requester.tickets.list": {
+          "count": 20,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 552.367499999993,
+          "p95Ms": 932.7630999999965
+        },
+        "staff.actions.list": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 393.30539999999746,
+          "p95Ms": 486.57790000000386
+        },
+        "staff.dashboard": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 818.1622999999963,
+          "p95Ms": 1065.0665000000008
+        },
+        "staff.ticket.detail": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 285.0767000000051,
+          "p95Ms": 315.1441999999952
+        },
+        "staff.tickets.list": {
+          "count": 30,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 506.90409999999974,
+          "p95Ms": 739.0594000000128
+        },
+        "ticket.actions.list": {
+          "count": 20,
+          "errors": 0,
+          "errorRate": 0.0,
+          "p50Ms": 188.91670000000158,
+          "p95Ms": 340.88490000000456
+        }
+      },
+      "peakHttpInFlight": 50,
+      "finalHttpInFlight": 0,
+      "elapsedMs": 5615.930599999992,
+      "timeWeightedHttpInFlight": 43.143366871378426,
+      "throughputPerSecond": 89.03243925414617,
+      "reportedPercentilesMatch": true,
+      "allOperationPercentilesMatch": true
+    }
+  },
+  "checks": {
+    "exact5500Samples": true,
+    "exact5000Warmups": true,
+    "exact500Measured": true,
+    "sequences": true,
+    "measuredMix": true,
+    "allPercentilesMatch": true,
+    "bothPeaks50": true
+  },
+  "limits": "Independent artifact calculations are not assertions executed by the original test; failed inline verdict remains authoritative.",
+  "persisted": {
+    "fixtureBefore": {
+      "tickets": 2050,
+      "actions": 8000,
+      "actionHistory": 24000,
+      "ticketHistory": 3800,
+      "receipts": 0,
+      "comments": 0,
+      "users": 50,
+      "sessions": 50
+    },
+    "fixtureAfter": {
+      "tickets": 2050,
+      "actions": 8330,
+      "actionHistory": 25318,
+      "ticketHistory": 3800,
+      "receipts": 1318,
+      "comments": 220,
+      "users": 50,
+      "sessions": 50
+    },
+    "expectedFixtureAfter": {
+      "tickets": 2050,
+      "actions": 8330,
+      "actionHistory": 25320,
+      "ticketHistory": 3800,
+      "receipts": 1320,
+      "comments": 220,
+      "users": 50,
+      "sessions": 50
+    },
+    "persistedCountsMatchExpected": false,
+    "receiptReplays": 0,
+    "target": {
+      "overallP95Below500": false,
+      "allOperationsP95Below500": false,
+      "zeroMeasuredErrors": true,
+      "zeroWarmupErrors": false
+    },
+    "cleanup": {
+      "listenerClosed": true,
+      "prismaDisconnected": true,
+      "ownedSchemaRemoved": true,
+      "environmentRestored": true,
+      "transactionObserverRestored": true
+    },
+    "cleanupFailure": null,
+    "primaryFailure": null,
+    "totalCaseElapsedMs": 88292.474
+  },
+  "transactionFailureCount": 2,
+  "firstUnexpectedByUser": {
+    "32": {
+      "phase": "warmup",
+      "sequence": 8,
+      "operation": "action.complete",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR",
+      "transportError": null,
+      "semanticError": null
+    },
+    "44": {
+      "phase": "warmup",
+      "sequence": 8,
+      "operation": "action.complete",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR",
+      "transportError": null,
+      "semanticError": null
+    }
+  }
+}

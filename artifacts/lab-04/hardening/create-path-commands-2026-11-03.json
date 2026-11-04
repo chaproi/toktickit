@@ -1,0 +1,323 @@
+{
+  "startingHead": "87a5a8bfe1ba3c50434d1f209c28e7d2f402eed4",
+  "preparedCommit": "28ab9841c536676a67b4b70765277c41c0392169",
+  "semanticRedCommit": "14b4148f783a44b437e16ce0532bb40f61bfb897",
+  "commands": [
+    {
+      "started": "2026-11-03T09:52:06.9583826Z",
+      "finished": "2026-11-03T09:52:51.2922791Z",
+      "exit": 0,
+      "seconds": 44.3388953,
+      "command": "npm.cmd test -- tests/lab-04/create-critical-path.integration.test.ts",
+      "summaryLines": [
+        "Test Files  1 passed (1)",
+        "Tests  1 passed (1)",
+        "Duration  42.34s (transform 617ms, setup 0ms, collect 5.74s, tests 24.67s, environment 0ms, prepare 301ms)"
+      ],
+      "frameworkSeconds": 42.34,
+      "source": "clean28ab9841c536676a67b4b70765277c41c0392169",
+      "label": "01-diagnosis",
+      "skippedCases": 0,
+      "executedFiles": 1,
+      "collectedCases": 1,
+      "executedCases": 1,
+      "passedCases": 1,
+      "failedCases": 0
+    },
+    {
+      "label": "02-red",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-04/action-create-projection.api.test.ts"
+      ],
+      "started": "2026-11-03T09:58:14.6502251Z",
+      "finished": "2026-11-03T09:58:31.8047317Z",
+      "exit": 1,
+      "seconds": 17.162508499999998,
+      "summaryLines": [
+        "Test Files  1 failed (1)",
+        "Tests  2 failed (2)",
+        "Duration  15.92s (transform 806ms, setup 0ms, collect 3.10s, tests 7.69s, environment 0ms, prepare 81ms)"
+      ],
+      "frameworkSeconds": 15.92,
+      "source": "28ab984 plus only new projection test; production unchanged",
+      "command": "npm.cmd test -- tests/lab-04/action-create-projection.api.test.ts",
+      "skippedCases": 0,
+      "executedFiles": 1,
+      "collectedCases": 2,
+      "executedCases": 2,
+      "passedCases": 0,
+      "failedCases": 2
+    },
+    {
+      "label": "03-green",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-04/action-create-projection.api.test.ts"
+      ],
+      "started": "2026-11-03T09:59:37.6538428Z",
+      "finished": "2026-11-03T09:59:53.1746196Z",
+      "exit": 0,
+      "seconds": 15.5297734,
+      "summaryLines": [
+        "Test Files  1 passed (1)",
+        "Tests  2 passed (2)",
+        "Duration  14.39s (transform 882ms, setup 0ms, collect 3.05s, tests 7.36s, environment 0ms, prepare 76ms)"
+      ],
+      "frameworkSeconds": 14.39,
+      "source": "14b4148 plus pending narrow production; new test metadata correction not yet applied",
+      "command": "npm.cmd test -- tests/lab-04/action-create-projection.api.test.ts",
+      "skippedCases": 0,
+      "executedFiles": 1,
+      "collectedCases": 2,
+      "executedCases": 2,
+      "passedCases": 2,
+      "failedCases": 0
+    },
+    {
+      "label": "04-affected",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-04/action-create-projection.api.test.ts",
+        "tests/lab-04/write-admission-front-queue.integration.test.ts",
+        "tests/lab-04/write-admission-feasibility.integration.test.ts",
+        "tests/lab-04/actions-taken.api.test.ts",
+        "tests/lab-04/actions-authorization.api.test.ts",
+        "tests/lab-04/action-idempotency.api.test.ts",
+        "tests/lab-04/action-idempotency-recovery.integration.test.ts",
+        "tests/lab-04/actions-concurrency.api.test.ts",
+        "tests/lab-04/action-eligibility.api.test.ts",
+        "tests/lab-04/action-commit-recovery.api.test.ts",
+        "tests/lab-04/independent-action-create.api.test.ts"
+      ],
+      "started": "2026-11-03T10:01:08.3504259Z",
+      "finished": "2026-11-03T10:04:38.8241158Z",
+      "exit": 1,
+      "seconds": 210.4766874,
+      "summaryLines": [
+        "Test Files  1 failed | 10 passed (11)",
+        "Tests  1 failed | 486 passed (487)",
+        "Duration  209.52s (transform 1.04s, setup 0ms, collect 18.22s, tests 184.02s, environment 2ms, prepare 855ms)"
+      ],
+      "frameworkSeconds": 209.52,
+      "source": "14b4148 plus pending narrow production; cleanup observation changed during04 before projection file executes; substantive assertions unchanged",
+      "command": "npm.cmd test -- tests/lab-04/action-create-projection.api.test.ts tests/lab-04/write-admission-front-queue.integration.test.ts tests/lab-04/write-admission-feasibility.integration.test.ts tests/lab-04/actions-taken.api.test.ts tests/lab-04/actions-authorization.api.test.ts tests/lab-04/action-idempotency.api.test.ts tests/lab-04/action-idempotency-recovery.integration.test.ts tests/lab-04/actions-concurrency.api.test.ts tests/lab-04/action-eligibility.api.test.ts tests/lab-04/action-commit-recovery.api.test.ts tests/lab-04/independent-action-create.api.test.ts",
+      "skippedCases": 0,
+      "executedFiles": 11,
+      "collectedCases": 487,
+      "executedCases": 487,
+      "passedCases": 486,
+      "failedCases": 1
+    },
+    {
+      "label": "05-workflow",
+      "arguments": [
+        "test",
+        "--",
+        "tests/lab-04/ticket-workflow.api.test.ts",
+        "tests/lab-03/ownership-eligibility-races.api.test.ts",
+        "tests/lab-03/admin-concurrency.api.test.ts",
+        "tests/lab-03/auth.api.test.ts",
+        "tests/lab-03/auth-security.api.test.ts",
+        "tests/lab-03/authorization.api.test.ts",
+        "tests/lab-03/password-change.api.test.ts"
+      ],
+      "started": "2026-11-03T10:05:29.8942177Z",
+      "finished": "2026-11-03T10:06:59.7148005Z",
+      "exit": 0,
+      "seconds": 89.82357859999999,
+      "summaryLines": [
+        "Test Files  7 passed (7)",
+        "Tests  272 passed (272)",
+        "Duration  88.82s (transform 537ms, setup 0ms, collect 5.78s, tests 77.61s, environment 1ms, prepare 604ms)"
+      ],
+      "frameworkSeconds": 88.82,
+      "source": "14b4148 plus pending production and new-test cleanup metadata; same source hashes as final committed bytes",
+      "command": "npm.cmd test -- tests/lab-04/ticket-workflow.api.test.ts tests/lab-03/ownership-eligibility-races.api.test.ts tests/lab-03/admin-concurrency.api.test.ts tests/lab-03/auth.api.test.ts tests/lab-03/auth-security.api.test.ts tests/lab-03/authorization.api.test.ts tests/lab-03/password-change.api.test.ts",
+      "skippedCases": 0,
+      "executedFiles": 7,
+      "collectedCases": 272,
+      "executedCases": 272,
+      "passedCases": 272,
+      "failedCases": 0
+    },
+    {
+      "label": "06-types",
+      "arguments": [
+        "exec",
+        "--",
+        "tsc",
+        "--noEmit"
+      ],
+      "started": "2026-11-03T10:07:16.7038174Z",
+      "finished": "2026-11-03T10:07:23.6326114Z",
+      "exit": 0,
+      "seconds": 6.9317777,
+      "summaryLines": [],
+      "frameworkSeconds": null,
+      "source": "14b4148 plus pending production and new-test cleanup metadata; same source hashes as final committed bytes",
+      "command": "npm.cmd exec -- tsc --noEmit"
+    },
+    {
+      "label": "07-server",
+      "arguments": [
+        "test",
+        "--",
+        "--exclude",
+        "tests/lab-04/performance-smoke.integration.test.ts"
+      ],
+      "started": "2026-11-03T10:07:44.4159276Z",
+      "finished": "2026-11-03T10:26:12.6062041Z",
+      "exit": 1,
+      "seconds": 1108.1992753,
+      "summaryLines": [
+        "Test Files  1 failed | 91 passed (92)",
+        "Tests  1 failed | 2082 passed (2083)",
+        "Duration  1107.02s (transform 2.46s, setup 0ms, collect 74.04s, tests 1002.85s, environment 14ms, prepare 8.21s)"
+      ],
+      "frameworkSeconds": 1107.02,
+      "source": "14b4148 plus pending production and new-test cleanup metadata; same source hashes as final committed bytes",
+      "command": "npm.cmd test -- --exclude tests/lab-04/performance-smoke.integration.test.ts",
+      "skippedCases": 0,
+      "executedFiles": 92,
+      "collectedCases": 2083,
+      "executedCases": 2083,
+      "passedCases": 2082,
+      "failedCases": 1,
+      "excludedFiles": [
+        "tests/lab-04/performance-smoke.integration.test.ts"
+      ],
+      "discoveredFilesBeforeExclusion": 93
+    },
+    {
+      "label": "08-build",
+      "arguments": [
+        "run",
+        "build"
+      ],
+      "started": "2026-11-03T10:26:37.6421530Z",
+      "finished": "2026-11-03T10:26:45.6519170Z",
+      "exit": 0,
+      "seconds": 8.0117623,
+      "summaryLines": [],
+      "frameworkSeconds": null,
+      "source": "14b4148 plus pending production and new-test cleanup metadata; same source hashes as final committed bytes",
+      "command": "npm.cmd run build"
+    }
+  ],
+  "pendingFullSourceHashes": [
+    {
+      "file": "action-create-service.ts",
+      "hash": "8b2bc034ebefdf26f0d79bd1805191f2e1631e90daf89cc3d538734c4bb7adb3"
+    },
+    {
+      "file": "action-create-projection.api.test.ts",
+      "hash": "6ba09b4e22e8215a6b826ad9cd0d67ede35b84018d0cfa214cd5ae3c9010e6ee"
+    },
+    {
+      "file": "create-phase-observer.ts",
+      "hash": "9b3e225b5a767f3a4dab6ac1441eb849c031ebec71f31ef30f3eee193c198c9b"
+    },
+    {
+      "file": "create-critical-path.integration.test.ts",
+      "hash": "d07618d30c92ebfbddba5b88af5ec0fd9b73547d47113c6f0777983db1e76d25"
+    },
+    {
+      "file": "performance-smoke.integration.test.ts",
+      "hash": "c9165e7e181562c5380f8d877d2bada26b82807bd99e860a2d567bffe3df77c4"
+    },
+    {
+      "file": "performance-test-helpers.ts",
+      "hash": "ff2f4fdf3c9a0cd7f28a8fe77338b88155ebe39927fbf889cf77cb7c738d35f0"
+    }
+  ],
+  "limitations": [
+    "Preparatory noEmit checks also passed; detailed timing not retained. Recorded06 is the current complete check.",
+    "Private raw command logs are retained locally; published summary excludes Prisma connection identifiers.",
+    "Attempt04 failed nested read TransactionStartDeadlineError P2028 maxWait150ms; finer startup stage unknown. No historical P2028 reclassification.",
+    "No claim of application execution on a later publication commit.",
+    "Attempt04 and07 actual error output names TransactionStartDeadlineError; no finer runtime metadata/stage retained.150ms is configured source value,not an engine-provided subtype."
+  ],
+  "productionCorrectionCommit": "365557c5d2c001c318e79c66126f959a2430ce06",
+  "testCleanupObservationCommit": "06eabeb5185009613a1e265c1887b865c1b16d46",
+  "failedResourceCheck": {
+    "case": "does not inherit writer admission into an unrelated read transaction inside a callback",
+    "path": "server/tests/lab-04/write-admission-feasibility.integration.test.ts",
+    "errorClassInOutput": "TransactionStartDeadlineError",
+    "codeDefinedByObservedClass": "P2028",
+    "configuredNestedMaxWaitMs": 150,
+    "runtimeMetadataRetained": false,
+    "observedActiveStartupStage": null,
+    "engineProvidedSubtype": null,
+    "cause": "unestablished; no load/pool/FIFO classification from elapsed time",
+    "attempts": [
+      "04-affected",
+      "07-server"
+    ]
+  },
+  "sourceEquivalence": [
+    {
+      "path": "server/src/actions/action-create-service.ts",
+      "sha256": "8b2bc034ebefdf26f0d79bd1805191f2e1631e90daf89cc3d538734c4bb7adb3",
+      "equalsPreFullExecutionBytes": true
+    },
+    {
+      "path": "server/tests/lab-04/action-create-projection.api.test.ts",
+      "sha256": "6ba09b4e22e8215a6b826ad9cd0d67ede35b84018d0cfa214cd5ae3c9010e6ee",
+      "equalsPreFullExecutionBytes": true
+    },
+    {
+      "path": "server/tests/lab-04/create-phase-observer.ts",
+      "sha256": "9b3e225b5a767f3a4dab6ac1441eb849c031ebec71f31ef30f3eee193c198c9b",
+      "equalsPreFullExecutionBytes": true
+    },
+    {
+      "path": "server/tests/lab-04/create-critical-path.integration.test.ts",
+      "sha256": "d07618d30c92ebfbddba5b88af5ec0fd9b73547d47113c6f0777983db1e76d25",
+      "equalsPreFullExecutionBytes": true
+    },
+    {
+      "path": "server/tests/lab-04/performance-smoke.integration.test.ts",
+      "sha256": "c9165e7e181562c5380f8d877d2bada26b82807bd99e860a2d567bffe3df77c4",
+      "equalsPreFullExecutionBytes": true
+    },
+    {
+      "path": "server/tests/lab-04/performance-test-helpers.ts",
+      "sha256": "ff2f4fdf3c9a0cd7f28a8fe77338b88155ebe39927fbf889cf77cb7c738d35f0",
+      "equalsPreFullExecutionBytes": true
+    }
+  ],
+  "finalCleanup": {
+    "at": "2026-11-03T10:28:07.659Z",
+    "guardVerified": true,
+    "liveIdentityMatches": true,
+    "databaseDistinctFromOperational": true,
+    "identityValuesWithheld": true,
+    "owned_schemas": 0,
+    "other_connections": 0,
+    "idle_transactions": 0,
+    "advisory_locks": 0,
+    "sessions": 0,
+    "fault_functions": 0,
+    "owned_relations": 0,
+    "owned_functions": 0
+  },
+  "benchmark": {
+    "executedThisBatch": false,
+    "reason": "Required resource regression remains failed",
+    "workloadUnchanged": true,
+    "latestVerdict": "historical failed e9510798; preserved"
+  },
+  "versions": {
+    "node": "24.14.0",
+    "postgresql": "18.6",
+    "prisma": "6.19.3",
+    "client": "6.19.3",
+    "adapter": "6.19.3",
+    "poolMax": 17,
+    "budgetsAndRetryPolicyChanged": false
+  }
+}

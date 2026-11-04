@@ -1,0 +1,28 @@
+{
+  "executionHead": "725e1445697484f5e6efa7d5b6ab9634b75ff1ca",
+  "pendingSourcePaths": [
+    "client/src/components/StaffDashboard.tsx",
+    "client/src/lab2.css"
+  ],
+  "screenshot": "zoom200-preview.png",
+  "browser": "Chrome/153.0.8010.12",
+  "date": "2026-10-28 11:53:36",
+  "timezone": "Asia/Bangkok",
+  "state": "Native tab zoom 2.0: long literal summaries and historical owners",
+  "role": "IT_STAFF",
+  "configuredViewport": null,
+  "nativeWindow": {
+    "width": 1440,
+    "height": 900
+  },
+  "cssViewport": {
+    "width": 712,
+    "height": 402,
+    "pinchScale": 1,
+    "devicePixelRatio": 2
+  },
+  "zoomFactor": 2,
+  "zoomMethod": "chrome.tabs.setZoom/getZoom; unchanged genuineZoom extension helper; native CDP capture",
+  "visualInspection": "Inspected at native capture resolution on 2026-10-28 Asia/Bangkok: readable reflow, literal content, visible focus, no obscured essential controls; viewport-fold content remains available by ordinary scrolling.",
+  "syntheticDataOnly": true
+}
