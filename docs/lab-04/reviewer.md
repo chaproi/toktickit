@@ -423,3 +423,7 @@ The student supplied requested-changes feedback identifying T-47,final55-scenari
 Specification section11 and the closeout table distinguish #49 verification/peer review from subsequent #50 release/main/PDF/reflection work; no requirement is waived or checkbox changed. Current-capture inspection can continue in this chat when the actual private archive is provided; screen-reader/browser operation requires real Windows observations. T-47 needs a real disposition of completeB2 together with B3/ABBA variability. D-12 adoption is not performance acceptance.
 
 PR58 remains Draft,Issue49 open,human amendment/implementation review Pending. Publication changes documentation and one new reconciliation JSON only. All historical artifacts,application/test/configuration/dependency/benchmark bytes and limitations remain preserved. No application command,benchmark,native cleanup,student reflection or peer approval is invented.
+
+## T-37 AI image review supplement, 4 November 2026
+
+[All92supplied originals and actual AI observations](t37-visual-review-2026-11-04.md) are now available for student/peer review,with all165artifact hashes verified. Human observation/sign-off must be recorded by the actual inspector;this AI review is not a fabricated student or peer inspection. Review OBS-01 and missing-state coverage before disposition. Human amendment/implementation review,T-38actual observations,T-47acceptance and Issue49acceptance remain Pending;PR58 stays Draft.

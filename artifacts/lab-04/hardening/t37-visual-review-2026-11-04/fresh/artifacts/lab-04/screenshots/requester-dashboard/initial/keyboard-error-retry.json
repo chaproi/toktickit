@@ -1,0 +1,27 @@
+{
+  "screenshot": "keyboard-error-retry.png",
+  "capturedAt": "2026-11-03T21:21:21.344Z",
+  "executionHead": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+  "pendingProductionFiles": [],
+  "browser": "HeadlessChrome/153.0.8010.12",
+  "configuredViewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "actualCSSViewport": {
+    "width": 1440,
+    "height": 900,
+    "pinchScale": 1
+  },
+  "role": "REQUESTER",
+  "state": "One held then aborted browser transport read; single honest alert and keyboard Retry",
+  "zoomFactor": 1,
+  "zoomMethod": "unmodified tab zoom",
+  "captureScope": "native viewport",
+  "syntheticDataOnly": true,
+  "visualInspection": "Pending visual inspection",
+  "sampledContrast": {
+    "error": 10.22,
+    "retry": 6.63
+  }
+}

@@ -1,0 +1,2911 @@
+{
+  "reviewDate": "2026-11-04",
+  "timezone": "Asia/Bangkok",
+  "reviewedCandidateHead": "8e259ce2b8222d733c34f8bdfda756c40a139593",
+  "captureSource": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+  "reviewer": "ChatGPT/Codex AI",
+  "method": "AI visual review of all 92 original PNGs; not human peer sign-off",
+  "zipSha256": "d5e2643119c2ea2cc333bdaaf73c18f2c6fda44a49657593abba79664d074d8b",
+  "archiveFileCount": 166,
+  "manifestArtifactCount": 165,
+  "pngCount": 92,
+  "metadataJsonCount": 73,
+  "all165FreshSha256Match": true,
+  "auxiliaryFiles": [
+    {
+      "path": "fresh-e2e-output/playwright-last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+      "bytes": 45,
+      "content": {
+        "status": "passed",
+        "failedTests": []
+      }
+    }
+  ],
+  "auxiliaryQualification": "Playwright last-run status is auxiliary; it is not another executed case or independent pass.",
+  "sourceEquivalence": [
+    {
+      "reference": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "protectedBlobCount": 304,
+      "identical": true
+    },
+    {
+      "reference": "84ef0ad91502a0c660998ddc13d0c7a163f1a169",
+      "protectedBlobCount": 304,
+      "identical": true
+    }
+  ],
+  "coverage": [
+    {
+      "surface": "Lab 2 forms, My Tickets, detail/attachments and safe states",
+      "ids": "V01–V15",
+      "qualification": "Login appears under historical requester-selection filename V09. Full-page mobile/tablet captures are Ticket detail, not every inherited screen."
+    },
+    {
+      "surface": "Lab 3 Requester/Staff detail, Queue and Admin",
+      "ids": "V16–V27",
+      "qualification": "Desktop/mobile/tablet viewport captures are often scrolled. Login/password PNG matrix is not included in this fresh archive."
+    },
+    {
+      "surface": "Actions, My Actions, dialogs/history and zoom/focus/error",
+      "ids": "V28–V50",
+      "qualification": "Three normal-zoom Create PNGs and mobile clear-confirmation PNG are referenced by metadata but absent. V44/V47 show Create validation/200% states, not those missing states."
+    },
+    {
+      "surface": "Role navigation and Requester Dashboard",
+      "ids": "V51–V67",
+      "qualification": "Desktop/mobile/tablet and zoom/error/focus regions; three filter images are component crops, not full-screen captures."
+    },
+    {
+      "surface": "Staff Dashboard and focused/error/zoom states",
+      "ids": "V68–V78",
+      "qualification": "V68–V70 reviewed as complete long pages; other captures are selected regions."
+    },
+    {
+      "surface": "Ticket workflow dialogs, history, blocker/validation/zoom",
+      "ids": "V79–V92",
+      "qualification": "Dialog text, wrapping and focus appearance observed; actual speech/focus trapping not established by screenshots."
+    }
+  ],
+  "metadataReferences": [
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/1440x900-cancel.json",
+      "sha256": "2b51af07a747cf19b1a9130ef5901b5db92810e852d95cd3adaaa6ec804a0f45",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/1440x900-cancel.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/1440x900-complete.json",
+      "sha256": "a765f40b46bf0d9b9bcd3befeb817017ce57ec5a87676082d55ed82c7801d555",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/1440x900-complete.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/1440x900-create.json",
+      "sha256": "8a3137a6e1dc50000ed7ca09ac6d211d0de66e45a61ef76ec564447ce3730840",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/1440x900-create.png",
+      "pngInUploadedArchive": false
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/1440x900-edit.json",
+      "sha256": "bc1c560d8c18e22aa5d7d472c6f49daf6426277564ddfb25ba1a0af5ba53cb0b",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/1440x900-edit.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/1440x900-history.json",
+      "sha256": "0cf0f8e9f84e7bce0ddf8689d63b13d54095b98d180f448b6fad28d6c6d3d9f1",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/1440x900-history.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/1440x900-my-actions.json",
+      "sha256": "b4cf1f703e4ad39938133a0e1c8e98a1d2a66ebe8bfcc2995a9ff158da16baf1",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/1440x900-my-actions.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/1440x900-reassign.json",
+      "sha256": "cb6fc1fde6dd80c907393f25abb9adb8a856789061312cee384d0544e58c4e83",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/1440x900-reassign.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/1440x900-requester-actions.json",
+      "sha256": "83aa33175a15a6edc1ebf9dfc53edb005a4474e4c30b991cc2b5357db033791e",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/1440x900-requester-actions.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/1440x900-staff-actions.json",
+      "sha256": "6f677006a232f65c6be5c5b0d13cdbdc2c6d54d78be1968f057cdcbc0d5938c6",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/1440x900-staff-actions.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/390x844-clear-confirmation.json",
+      "sha256": "22499f9875830167d844e4517794cd04a514f535130065e4ee57e8e97c1148d0",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/390x844-clear-confirmation.png",
+      "pngInUploadedArchive": false
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/390x844-create.json",
+      "sha256": "8f5490eb70e5ddd20733ebf33f85832440607fb8eb1ba9981cbc746ec59f410f",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/390x844-create.png",
+      "pngInUploadedArchive": false
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/390x844-history.json",
+      "sha256": "9ae934b975c7383ab36d756ea9bc9f64e08f170e58f4237e3a99a8862eaa275e",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/390x844-history.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/390x844-my-actions.json",
+      "sha256": "8486aa918f527039d89ee8b5f09a7a16152937b3a3638cf77485f90d1e51c2fb",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/390x844-my-actions.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/390x844-requester-actions.json",
+      "sha256": "ee02affbcf71947304c3d421914c8fb12399d09324f72f4dd35dca58c68decf0",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/390x844-requester-actions.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/390x844-staff-actions.json",
+      "sha256": "72829b1fbb3bd1bcf6bd5202054637fd3b32102b0892912c5fd3930e2b048f88",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/390x844-staff-actions.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/834x1112-create.json",
+      "sha256": "026e8dc6d15b806b7979639a2000bc38a79eaa74ae8e632b4cf55a725ebd82b8",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/834x1112-create.png",
+      "pngInUploadedArchive": false
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/834x1112-history.json",
+      "sha256": "59aa7081dbcac22d78f18792e79c4f3c518361891ae738289579ad7ba1f2f94a",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/834x1112-history.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/834x1112-my-actions.json",
+      "sha256": "79cb00548e28028b9bc451783086a6db066616b975d2236a81e4b7c939dc4cf9",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/834x1112-my-actions.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/834x1112-requester-actions.json",
+      "sha256": "9c99305637dec3ec82f5528e8d790a74911c05945708151a247c959a94460d30",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/834x1112-requester-actions.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/834x1112-staff-actions.json",
+      "sha256": "0737536d46e56c1d09b6864f7bc0189a50d763920cc972b832868580a323323a",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/834x1112-staff-actions.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/accessibility-create-errors.json",
+      "sha256": "b6ccc992c4bcf315d43a0c19d4e9c23c7e24067f124ff3bae5f62dd634f55c48",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/accessibility-create-errors.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/accessibility-history-error.json",
+      "sha256": "59d0813a25c1c40df52aa810dc5061e6ead9b66084e52cebf50717c4505cc549",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/accessibility-history-error.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/accessibility-my-actions-focus.json",
+      "sha256": "4ce0a19a2abe4ed05a42f999fd0c0d7d51f3519c71ac84e84a5709a16a781570",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/accessibility-my-actions-focus.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/zoom200-create.json",
+      "sha256": "06f5a0ebe80b1389131b027785076bf6974d8e0163f38b37cfe4b998a7788fd8",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/zoom200-create.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/zoom200-history.json",
+      "sha256": "c6dc9cbbd519cd1fe714c9ff105fbf0886536f86029eed37cbd0cd1ca1426b53",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/zoom200-history.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/zoom200-my-actions.json",
+      "sha256": "0ed0cfc6b7c45ea44df29f3e87b2949a8393f3852cdd266f266d74cc67363606",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/zoom200-my-actions.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/zoom200-staff-actions.json",
+      "sha256": "ed075f0548e8c9e049833ff9f3fac28bb2146d49ac30d031f7f0c2ced7e1f1cf",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/zoom200-staff-actions.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/dashboard-navigation/admin-zoom-200.json",
+      "sha256": "b494ba594e5da9f3969e62acd39ec9e9140a3b25f948a12a0fc34b8db0dbd8cc",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/dashboard-navigation/admin-zoom-200.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/dashboard-navigation/requester-desktop.json",
+      "sha256": "bd183d2733b34be2e767cfa25b2b1df95af36ed18112b7a2995fc8aeb5da89c1",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/dashboard-navigation/requester-desktop.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/dashboard-navigation/staff-mobile-menu.json",
+      "sha256": "2120fabb44cb80883b3f557c5f0e291e1398fef62c1d0f7bb5941441f5c799e0",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/dashboard-navigation/staff-mobile-menu.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-filters.json",
+      "sha256": "21e08917bd45c3bdee97b5e0b870a51b7b58e14bf6b18a1df07e2e020754fdff",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-filters.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-metrics-lists.json",
+      "sha256": "628a43fb08cbb1aea86da060ce50a9b1e12754612499be80678b851882039fa4",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-metrics-lists.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-recent-records.json",
+      "sha256": "66c8b3bb279a3ca84a5197294c8b826645c17afbb724cbc7d06598daa11207a5",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-recent-records.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-filters.json",
+      "sha256": "29e58456b3e6db44f3edb8adfa36b1d02f738e08252e7049586cdd39e29f198e",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-filters.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-metrics-lists.json",
+      "sha256": "7012b424234f01fe6decaf9178aea5085517f0aa5fc8b35f7350e97886de5423",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-metrics-lists.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-recent-records.json",
+      "sha256": "b2eb5041bc79069aaadb213cf654f91c58fd09d00b34c8aac71fbe8d6af26da7",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-recent-records.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-filters.json",
+      "sha256": "404a2016cfa43741f9c6159608b48b5527bbf4061d355c8ba7d80ac4709a796a",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-filters.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-metrics-lists.json",
+      "sha256": "2fdd99e32c9152e981a8b5eb6af087ab2d9a6e42a05551f8f8401e3abf7a846d",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-metrics-lists.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-recent-records.json",
+      "sha256": "12d967cbfaa74a1b77677df192ff7f38dbc1c2a5136b09d7620f604f261d5655",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-recent-records.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/keyboard-error-retry.json",
+      "sha256": "d6b9c2d55da60ea8d026d66fa0325ae8d03a835823c46134ef620b4fd126f6c5",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/requester-dashboard/initial/keyboard-error-retry.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-drilldown.json",
+      "sha256": "6ce4d41c2ecc4f31edf0287bfb0dea01a9c3222cb24978732ab988db61ea225a",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-drilldown.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-error-retry.json",
+      "sha256": "3bdd4ebb194eecec0c9b67795dfac79d7b0831d032df165398b3a75d7695d735",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-error-retry.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-metrics-lists.json",
+      "sha256": "a3a3fe8dd4d06e1b7ed1d8799716b53276128494583937250a91cf3f9e90cabc",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-metrics-lists.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-recent-records.json",
+      "sha256": "b984e73f7c5551b59200f16a46e9eb6680dd3a0935adde047d59941b31bae9a4",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-recent-records.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/dashboard-1440.json",
+      "sha256": "2722400b020d6834e085af907532a94facd503aa095c1a004650aabf27b84c2f",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/staff-dashboard/dashboard-1440.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/dashboard-390.json",
+      "sha256": "b425598b56abdb391ec0fb561d2858da33a86488a9a2bfdd76989c9f8c93c907",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/staff-dashboard/dashboard-390.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/dashboard-834.json",
+      "sha256": "3a89ce5a7b6bcf8c983d583119a4e5bbd6f8de37d42d6e41b0a12a52bcd17eec",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/staff-dashboard/dashboard-834.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/error-retry-1.json",
+      "sha256": "6dee4e7185a7098c7145ec336278138c9529adfda7c83fad33c3d438afbcc0f7",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/error-retry-1.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/error-retry-2.json",
+      "sha256": "54acb8c5b437bb687dd3911cec789bd62c49f4cb134923e4ab0e02647fd53a6f",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/error-retry-2.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/keyboard-focus.json",
+      "sha256": "02b38e2f8bc88105f45a1e241ffc300bc48f121616f5341a936a4d2552765530",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/keyboard-focus.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-cards.json",
+      "sha256": "7e308abf8c64054b96f7bc5cec769b00136f023981be20b4d23d70e361cafabf",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-cards.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-filters.json",
+      "sha256": "e5aaeb6f243d6e4673a6485d2205dd9554858d5108b258f3e951d00bfcd65f86",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-filters.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-pagination.json",
+      "sha256": "4a152107e3f6902fc3d26157e75a169b463848a8d1821e9558cced0a289758fb",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-pagination.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-preview.json",
+      "sha256": "4ca8ce24d65adf428af877b40e9195b99f159acf5ebb86330c90edc8c0ff2aa7",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-preview.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-selected-action.json",
+      "sha256": "7ff9391081ff5b04560387120e05f922851029e35f1d3f8544506fef22157368",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-selected-action.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-cancellation.json",
+      "sha256": "9abe4bcbfdb87d24e91e56c0c7875d785656390bd1120474ebbb4fd711d74346",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-cancellation.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-history.json",
+      "sha256": "a8fb505386b2e849c13b84bf693747e8c79e748813cbc3b06162d9b0f557ddad",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-history.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-resolution.json",
+      "sha256": "0189f84290a40fdb3bcf2412d00296db3dd24bb51da1762b4c1a35590f9717e6",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-resolution.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-cancellation.json",
+      "sha256": "1641a7ca546b7e6c723dc8e59baaf0926e646d8717c4250950516cb55d20d795",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-cancellation.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-history.json",
+      "sha256": "2f18502cc518d37bb0574ddfa8cfff8317cbf04a82efdcd364043d56da0d7420",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-history.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-resolution.json",
+      "sha256": "844b929ab5d087d784f21e48741805dcedfada32dfd16f750828092ff0a4e1b4",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-resolution.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-cancellation.json",
+      "sha256": "3f5c75593bf60070cd20463cb52dcee1313a09932866772b805ce2dda7dc2a12",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-cancellation.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-history.json",
+      "sha256": "f499b001b202d259b504d8ada48ff77ac0aa16503326dcbb79784b24c6088ed5",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-history.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-resolution.json",
+      "sha256": "64180a8605447f6c6a3d1adf1646090f97a5a80a39829489905d9de3ce49ddc5",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-resolution.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/keyboard-blocker.json",
+      "sha256": "aa2a77737f2f6ef138f94e167e68d5080f3ccf6cf8b360aeaa6a133051c8aaa2",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/ticket-workflow/initial/keyboard-blocker.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/keyboard-invalid-reason.json",
+      "sha256": "a8bcbded1c5ae36a4993f64176da6eb05350125daf768f0e109e9aff613ae0a5",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/ticket-workflow/initial/keyboard-invalid-reason.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-blocker.json",
+      "sha256": "90e51c01ea28519aa5b5225618c5f152eb601de8f1528ff4d0ece234127718dc",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-blocker.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-cancellation.json",
+      "sha256": "6c84cbc5adafb610bc279d521cde7f2e74038eb6ceda3faa01e393c0ae2da814",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-cancellation.png",
+      "pngInUploadedArchive": true
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-history.json",
+      "sha256": "d61ca43ee3237598d190e84d86e029bd1f6df6a8e8c74f1333897523f09d0d84",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-history.png",
+      "pngInUploadedArchive": true
+    }
+  ],
+  "metadataWithoutScreenshotReference": [
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/contrast.json",
+      "sha256": "706eee12b5a55d74f6dc0931b50c234f48bb02e3883a976fdeb57e095f5e188b",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/genuine-zoom.json",
+      "sha256": "db2e7a90b1111c1a2f65c74fe048cd29c0f46376deec6c18126667867d3a2070",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/recovery-1.json",
+      "sha256": "3b1ab4e75d55e63e4be7e425f9d63a6186ff24607d71761e30db93c50e5bd827",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/recovery-2.json",
+      "sha256": "3b1ab4e75d55e63e4be7e425f9d63a6186ff24607d71761e30db93c50e5bd827",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4"
+    }
+  ],
+  "missingReferencedPngs": [
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/1440x900-create.json",
+      "sha256": "8a3137a6e1dc50000ed7ca09ac6d211d0de66e45a61ef76ec564447ce3730840",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/1440x900-create.png",
+      "pngInUploadedArchive": false
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/390x844-clear-confirmation.json",
+      "sha256": "22499f9875830167d844e4517794cd04a514f535130065e4ee57e8e97c1148d0",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/390x844-clear-confirmation.png",
+      "pngInUploadedArchive": false
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/390x844-create.json",
+      "sha256": "8f5490eb70e5ddd20733ebf33f85832440607fb8eb1ba9981cbc746ec59f410f",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/390x844-create.png",
+      "pngInUploadedArchive": false
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/834x1112-create.json",
+      "sha256": "026e8dc6d15b806b7979639a2000bc38a79eaa74ae8e632b4cf55a725ebd82b8",
+      "source": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+      "screenshot": "artifacts/lab-04/screenshots/actions-taken/834x1112-create.png",
+      "pngInUploadedArchive": false
+    }
+  ],
+  "finding": {
+    "id": "OBS-01",
+    "reviewId": "V48",
+    "severity": "minor readability/spacing observation",
+    "actual": "Event count and History events per page label visually concatenate as eventsHistory at 200%. Text and controls remain visible.",
+    "disposition": "Recorded for human disposition; no production correction or severity-based acceptance waiver claimed."
+  },
+  "qualifications": [
+    "No clearly blocking visual defect was identified in the captured pixels; this is not a full T-37 pass.",
+    "AI inspection is distinct from the actual human visual observation requested by the reviewer. Human inspection/acceptance remains Pending.",
+    "Viewport and component captures do not establish unseen content, live reachability, speech output, browser interoperability or contrast certification.",
+    "V27 table left columns outside captured window are consistent with the source scrolling required controls before capture; carried geometry checks and visual observation are separate evidence.",
+    "Modal bottom reachability is separate carried automated evidence; V48 shows the History bottom/Close at 200%.",
+    "Four referenced PNGs are absent; their bytes, fresh provenance and actual appearance are not inferred from historical PNGs or metadata alone.",
+    "No application, database, live browser, screen-reader, test suite or performance command executed in this review."
+  ],
+  "status": {
+    "T-37": "92 PNGs AI-reviewed; human observation, missing coverage disposition and acceptance Pending",
+    "T-38": "Actual screen-reader/additional-browser observation Pending",
+    "T-47": "Mixed ABBA results retained; acceptance Pending",
+    "PR58": "Draft; no approval/merge/Issue closure"
+  },
+  "images": [
+    {
+      "path": "artifacts/lab-02/screenshots/attachment-active-and-removed.png",
+      "sha256": "81ba40aafdc435832de24a89b443db5b055b1e08358adf059510f2598123e545",
+      "bytes": 125089,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 2135,
+      "reviewId": "V01",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/attachment-active-and-removed.png",
+      "gitBlobSha": "f5445799bbb39db2afe76ef8e62f22542b40f290",
+      "observation": "Full-page attachment cards and active/removed labels fit the desktop container; long names and removal reason remain readable.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-02/screenshots/attachment-removed.png",
+      "sha256": "01bd348f14c98695f797977cbce23a262ba4ced9e102abdfb459f4aa928bd07d",
+      "bytes": 144413,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 2394,
+      "reviewId": "V02",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/attachment-removed.png",
+      "gitBlobSha": "93644778e9437c9995007d3ba03f353efa5c4b9e",
+      "observation": "Removal success message, remaining active controls and removed-item cards are readable without overlap.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-02/screenshots/create-ticket-desktop.png",
+      "sha256": "e376105c727c258b594e157c1c7d33173bfd6df46a2a955983dc9d2a5574c038",
+      "bytes": 69068,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 1421,
+      "reviewId": "V03",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/create-ticket-desktop.png",
+      "gitBlobSha": "0e6ecf1010eb8f65192d4c5b672c21050a90b480",
+      "observation": "Complete Create Ticket form shows aligned labels/controls, helper text and both bottom actions; no clipping observed.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-02/screenshots/create-ticket-success.png",
+      "sha256": "5830081ffeb109fb310e7077126b3a7e40fd4c517a20f06e3b1a0cd1809aecab",
+      "bytes": 38820,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V04",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/create-ticket-success.png",
+      "gitBlobSha": "57c47861b646c69593be7ea4fadb5424e4f5c8a8",
+      "observation": "Success panel, Ticket number and next actions are fully visible and readable.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-02/screenshots/create-ticket-validation.png",
+      "sha256": "e0e2b48c240ad90c644e98e53edad61e2416a774800ca0a0162a897757c0f84c",
+      "bytes": 81262,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 1595,
+      "reviewId": "V05",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/create-ticket-validation.png",
+      "gitBlobSha": "8ceab9b0a2442a3cbd4620c3271fac7921d8f646",
+      "observation": "Validation summary and field-specific red feedback fit without overlapping labels or controls.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-02/screenshots/my-tickets-desktop.png",
+      "sha256": "04473f283459bdba1f4d98dc59c544ccbfd48b1fb1e5aa2bab26842d6f639f0c",
+      "bytes": 70441,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 1813,
+      "reviewId": "V06",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/my-tickets-desktop.png",
+      "gitBlobSha": "f62fd042622f54478e1b5841e726d83208cc4800",
+      "observation": "My Tickets filters/table/pagination fit; Ticket number and long summary wrap rather than overlap. Green search focus indicator visible.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-02/screenshots/my-tickets-filtered-desktop.png",
+      "sha256": "af3337d7852bfbf7200c5a58fd1fa1b8fa6707acd3bd944ed7dfd8560cfdab78",
+      "bytes": 118588,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 1457,
+      "reviewId": "V07",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/my-tickets-filtered-desktop.png",
+      "gitBlobSha": "4716c67abb4e5688427a813ba6738b76288bea9b",
+      "observation": "Filtered multi-row table wraps long summaries and Ticket numbers; pagination remains visible below rows.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-02/screenshots/ownership-safe-not-found.png",
+      "sha256": "92de65ea855242d97eeba86322e534a519372261f9265292de0fbc91fb01285c",
+      "bytes": 25951,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V08",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/ownership-safe-not-found.png",
+      "gitBlobSha": "ce3334cd66ce8214c82c215c98918c29fa643760",
+      "observation": "Not-found state and Back action are readable in the card, without protected content disclosure visible.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-02/screenshots/requester-selection-desktop.png",
+      "sha256": "758b9b245f42ff3b61d5e8c7378e9c127e32d7de4d6cba4612a51176905ab1f2",
+      "bytes": 13896,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V09",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/requester-selection-desktop.png",
+      "gitBlobSha": "2cce28635e20d852ec8b01d0487cb230ea5c4ab3",
+      "observation": "Actual screenshot is the Sign in form despite its historical requester-selection filename; email/password labels, checkbox and submit fit the centered card.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-02/screenshots/safe-api-error.png",
+      "sha256": "ed7ac9ed49055f7c876579a693cf0642c22d265fb58d8777ee0eb11f422671b3",
+      "bytes": 47334,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 932,
+      "reviewId": "V10",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/safe-api-error.png",
+      "gitBlobSha": "f83cae72acc3af44844f7323e8f15513ec4383de",
+      "observation": "Safe-error panel, retry action and retained list filters are readable and separated.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-02/screenshots/ticket-detail-desktop.png",
+      "sha256": "8e75421d1be4b495e74b66ee6fb741de8e510dfcae9fcbd805409c1fee7f4a0d",
+      "bytes": 138739,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 2320,
+      "reviewId": "V11",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/ticket-detail-desktop.png",
+      "gitBlobSha": "8c2c5a17dc2bf48916cb80c2a7f2622d0d4532a5",
+      "observation": "Full-page Ticket detail and all attachment lifecycle cards remain aligned/readable on desktop.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-02/screenshots/ticket-detail-mobile.png",
+      "sha256": "a3cc0dac65c096435df647140425d7f273f7183217d80415c64c5f77569d8c45",
+      "bytes": 129757,
+      "kind": "overwritten-historical-restored",
+      "width": 390,
+      "height": 3451,
+      "reviewId": "V12",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/ticket-detail-mobile.png",
+      "gitBlobSha": "b9d765760172b397eaccf637d4426d32df5e0b9c",
+      "observation": "390px full-page detail uses a single column; summary/filenames/reasons wrap and attachment actions stack without horizontal clipping.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-02/screenshots/ticket-detail-tablet-boundary.png",
+      "sha256": "f21ba7379ccf3e084267221caf07d09f324482abcaf23c9bcb9957d7f5986422",
+      "bytes": 132334,
+      "kind": "overwritten-historical-restored",
+      "width": 768,
+      "height": 2548,
+      "reviewId": "V13",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/ticket-detail-tablet-boundary.png",
+      "gitBlobSha": "ca428768c74957092b4f58823ef0f20374970749",
+      "observation": "768px boundary uses two-column details; attachment filename wraps above separate controls without overlap.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-02/screenshots/ticket-detail-tablet-large.png",
+      "sha256": "721df586669486cf33eec64702b40696d233429068bd102bfe4dd00518b8483d",
+      "bytes": 133038,
+      "kind": "overwritten-historical-restored",
+      "width": 1024,
+      "height": 2317,
+      "reviewId": "V14",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/ticket-detail-tablet-large.png",
+      "gitBlobSha": "07160e41a307e40940f49ead0973a3bbe51c3360",
+      "observation": "1024px uses three-column details; attachment rows/actions and content remain contained.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-02/screenshots/ticket-detail-tablet.png",
+      "sha256": "62c4051832b7f669a326fa1cb79b947d35ac8ca743a41ac602e74f0797a2948c",
+      "bytes": 133208,
+      "kind": "overwritten-historical-restored",
+      "width": 820,
+      "height": 2549,
+      "reviewId": "V15",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/ticket-detail-tablet.png",
+      "gitBlobSha": "a6c8747ae27553a6d71ea128ccdec09c3d79d750",
+      "observation": "820px uses two-column details; long filename wraps and action buttons remain separated/readable.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-03/screenshots/desktop-1440x900/admin-user-management.png",
+      "sha256": "d1a7a9787bb3905142cdda3477d4450262591479dcebdf2c4f230e3412c5c3a5",
+      "bytes": 49992,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V16",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/desktop-1440x900/admin-user-management.png",
+      "gitBlobSha": "bdbff4c1057ab10d579b7927c826fb74ca18ac74",
+      "observation": "Scrolled desktop User Management viewport shows readable search/role controls, complete table columns and Edit buttons; top-edge crop is capture position, not proof of layout clipping.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-03/screenshots/desktop-1440x900/requester-ticket-detail.png",
+      "sha256": "81a30754e43b6f2c0a548a4816fcac1c5a50f7cd465517612040c48fd506f312",
+      "bytes": 38765,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V17",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/desktop-1440x900/requester-ticket-detail.png",
+      "gitBlobSha": "711a2c0fbd9cfcda9a0b061e0102a17d61f3068e",
+      "observation": "Scrolled public-comment and attachment region: labels, textarea, count and desktop upload row fit.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-03/screenshots/desktop-1440x900/staff-ticket-detail.png",
+      "sha256": "45ef8e400b93a0356484ffe8c2cdfeecc541d9def3552ae7125c5396e26ed537",
+      "bytes": 30331,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V18",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/desktop-1440x900/staff-ticket-detail.png",
+      "gitBlobSha": "4c84c1e9356b05c6db7a975b6d94c909abf12632",
+      "observation": "Scrolled staff detail: internal-note distinction, long actor name, note input and status-history panel readable.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-03/screenshots/desktop-1440x900/staff-ticket-queue.png",
+      "sha256": "4081da9bcf84070eb89aee5bdbc7bba6b7c6797a7ef515ea39962f0ce33e4161",
+      "bytes": 58411,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V19",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/desktop-1440x900/staff-ticket-queue.png",
+      "gitBlobSha": "9fd38b845c35c69283261e99a2f2d616a2c7f823",
+      "observation": "Scrolled desktop queue: filters, wrapped row fields, status/priority badges and pagination readable.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-03/screenshots/mobile-390x844/admin-user-management.png",
+      "sha256": "8f90e0c5a7567c9431d47a5868534d3c7114d55adc73b37d854c2588c62bdd66",
+      "bytes": 23678,
+      "kind": "overwritten-historical-restored",
+      "width": 390,
+      "height": 844,
+      "reviewId": "V20",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/mobile-390x844/admin-user-management.png",
+      "gitBlobSha": "fc2e8ead534000093170bf803e66b2cb6fe77406",
+      "observation": "Scrolled mobile admin: user cards stack with visible Email/Role/Status labels and Edit actions.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-03/screenshots/mobile-390x844/requester-ticket-detail.png",
+      "sha256": "093683640b2366d50e58cd5d9c884654fb33ba9b1a9f97fbd412ded12ad53e3c",
+      "bytes": 29982,
+      "kind": "overwritten-historical-restored",
+      "width": 390,
+      "height": 844,
+      "reviewId": "V21",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/mobile-390x844/requester-ticket-detail.png",
+      "gitBlobSha": "b68411724a2dc2dd52aa1a056f8dbb50cb004873",
+      "observation": "Scrolled mobile requester: comment author wraps; textarea and file upload controls stack inside cards.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-03/screenshots/mobile-390x844/staff-ticket-detail.png",
+      "sha256": "0c4f2563b5a523909538c398cdb8ee943d2b52e0f87094e23473267bcd7af399",
+      "bytes": 24660,
+      "kind": "overwritten-historical-restored",
+      "width": 390,
+      "height": 844,
+      "reviewId": "V22",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/mobile-390x844/staff-ticket-detail.png",
+      "gitBlobSha": "0eb4529dbca0edad3f86fd635be80cacdcc5e620",
+      "observation": "Scrolled mobile staff: private-note label, multilingual actor text, input and history panel fit.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-03/screenshots/mobile-390x844/staff-ticket-queue.png",
+      "sha256": "30c96facca72a46392f2be00fd015ad9d59a342520f7672c6db6baf8aba027bf",
+      "bytes": 32920,
+      "kind": "overwritten-historical-restored",
+      "width": 390,
+      "height": 844,
+      "reviewId": "V23",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/mobile-390x844/staff-ticket-queue.png",
+      "gitBlobSha": "0170f475587743844a150c45b738c3106a1f44a3",
+      "observation": "Mobile queue record uses stacked labeled fields; long identity/summary wrap and pagination buttons fit.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-03/screenshots/tablet-834x1112/admin-user-management.png",
+      "sha256": "921a4d76784508f56a770185d32604ab08b0e9262d43d4d8b57cea76a5808fd5",
+      "bytes": 57037,
+      "kind": "overwritten-historical-restored",
+      "width": 834,
+      "height": 1112,
+      "reviewId": "V24",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/tablet-834x1112/admin-user-management.png",
+      "gitBlobSha": "22c41790577f92bb7427725f319745f3a9daeadb",
+      "observation": "Tablet admin table fits its container; long emails wrap over multiple lines without covering adjacent columns.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-03/screenshots/tablet-834x1112/requester-ticket-detail.png",
+      "sha256": "2bbcf89a175ce210e6034d7e2412f9434a52b4c275e03b26aa731f6117613fb7",
+      "bytes": 41946,
+      "kind": "overwritten-historical-restored",
+      "width": 834,
+      "height": 1112,
+      "reviewId": "V25",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/tablet-834x1112/requester-ticket-detail.png",
+      "gitBlobSha": "71aa764a7e8073ca597bad9e8b117ca2c0e6aca4",
+      "observation": "Scrolled tablet requester detail: empty Actions, public comment and upload regions fit.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-03/screenshots/tablet-834x1112/staff-ticket-detail.png",
+      "sha256": "2eb4615161ed44e009e1a561f79b50fd930a35dad22b66390b0e22e0dc8cdb36",
+      "bytes": 36594,
+      "kind": "overwritten-historical-restored",
+      "width": 834,
+      "height": 1112,
+      "reviewId": "V26",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/tablet-834x1112/staff-ticket-detail.png",
+      "gitBlobSha": "bf4f35d983dcf3624effdfd457da56802ba12e38",
+      "observation": "Scrolled tablet staff detail: public/internal note separation, textareas and status history readable.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-03/screenshots/tablet-834x1112/staff-ticket-queue.png",
+      "sha256": "f38416fe9053b5d3ffebac8773aafefe0761b90ce9db22566e2cf8220ed43458",
+      "bytes": 51694,
+      "kind": "overwritten-historical-restored",
+      "width": 834,
+      "height": 1112,
+      "reviewId": "V27",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/tablet-834x1112/staff-ticket-queue.png",
+      "gitBlobSha": "01238f93a4e03d0d909171ba7cefbb2343af2ff6",
+      "observation": "Tablet queue: visible right-hand table columns and pagination fit; left columns are outside the captured table window. Verify horizontal scroll intent/reachability from source; screenshot alone cannot establish full row access.",
+      "visualResult": "Captured region readable; coverage qualification recorded",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/1440x900-cancel.png",
+      "sha256": "f9ef8475016e08e9e373381f7c42845df372e37298512dcbee9d5324abbcdd8c",
+      "bytes": 135542,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V28",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-cancel.png",
+      "gitBlobSha": "92d6d09f8fe4c7f235e82a6d778b22b2ffff4ed5",
+      "observation": "Cancel dialog fits desktop viewport with visible title, focused multiline reason, helper and both buttons; textarea content is internally scrolled.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/1440x900-complete.png",
+      "sha256": "ee25282e517302f0f73d3a27f91065310962714221f04e9c52a9f3e53de20d44",
+      "bytes": 129786,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V29",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-complete.png",
+      "gitBlobSha": "97d7061848f9025257d64bdd3a811a52b1fa44fa",
+      "observation": "Complete dialog title, focused result, helper and both buttons fit; textarea is internally scrolled.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/1440x900-edit.png",
+      "sha256": "25366b05a721654accc2bf13ec5274bd9c7e1f1db6fe0c9f551ea4ee3f1e3398",
+      "bytes": 133140,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V30",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-edit.png",
+      "gitBlobSha": "2215c0ce18558e057d92f26376c390864f1533ed",
+      "observation": "Edit dialog fits viewport; four text fields, checkbox, helper and both actions readable; textareas use internal scrolling.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/1440x900-history.png",
+      "sha256": "e6fd9b6c36438c976a9b04f5b6f41f1351a5fd783ef7ce214b55a19873b03423",
+      "bytes": 136129,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V31",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-history.png",
+      "gitBlobSha": "68bd3faec0a81c2de8f90fb1775afc604642854d",
+      "observation": "History dialog wraps actor/time/IDs in columns; content continues below modal viewport. Screenshot cannot establish access to bottom/Close.",
+      "visualResult": "Captured region readable; coverage qualification recorded",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/1440x900-my-actions.png",
+      "sha256": "b20d9592af8a1ec35cf1380d7d358aa3f93702768a4e81542768b2acee7b32b7",
+      "bytes": 59228,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V32",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-my-actions.png",
+      "gitBlobSha": "5cf96dcc6aef576bfbc5089982ea3581e4236eee",
+      "observation": "My assigned Actions desktop navigation/filter grid fit; results continue below capture.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/1440x900-reassign.png",
+      "sha256": "7982aa04d3dcf20043cd2ec9f0124c63e9d2f1bbe24211ddcc511b350f0f9997",
+      "bytes": 131829,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V33",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-reassign.png",
+      "gitBlobSha": "e31c48abc78d4adba7f9a89a331bac2c95eff6f6",
+      "observation": "Reassign dialog select has visible focus; eligibility helper and both actions fit.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/1440x900-requester-actions.png",
+      "sha256": "18d14d33d657bff9139aee387c1d3bc94c1344a3d2cab6b79ce7cf1b5c49c62f",
+      "bytes": 120283,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V34",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-requester-actions.png",
+      "gitBlobSha": "26edff95d16f6a17628582271dc5453111dce433",
+      "observation": "Requester Actions cards wrap long unbroken/multilingual description and identity text; read-only history action visible.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/1440x900-staff-actions.png",
+      "sha256": "6c7a23e0a6c51bbb08d62661a9e25866ed25800418631ee984cb43eec83baec2",
+      "bytes": 123427,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V35",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-staff-actions.png",
+      "gitBlobSha": "352ff0e75618440a9d78d3d8af1a648ae9903861",
+      "observation": "Staff Actions cards wrap long text and show separately spaced history/Edit/Reassign/Complete/Cancel controls.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/390x844-history.png",
+      "sha256": "5cd5208d6693bc1992d4ea9875b097c8bbd93af24fa4b77a94eb1d7b60bb2adb",
+      "bytes": 40072,
+      "kind": "overwritten-historical-restored",
+      "width": 390,
+      "height": 844,
+      "reviewId": "V36",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/390x844-history.png",
+      "gitBlobSha": "780d029e703cea3eebc8ae320b30aed24e1dd09b",
+      "observation": "Mobile history dialog reflows to one column; actor, time and IDs fit. Lower history/Close outside capture requires scrolling evidence.",
+      "visualResult": "Captured region readable; coverage qualification recorded",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/390x844-my-actions.png",
+      "sha256": "4fdc6d9ecb3e65d6d5139fd13869dc148cd91593011516b8d51089cd584b88e2",
+      "bytes": 28184,
+      "kind": "overwritten-historical-restored",
+      "width": 390,
+      "height": 844,
+      "reviewId": "V37",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/390x844-my-actions.png",
+      "gitBlobSha": "dc64d64a0bcbf1d09673961adc4ec95de16df866",
+      "observation": "Mobile My assigned Actions header/Back button and single-column filters fit; lower filters/results below viewport.",
+      "visualResult": "Captured region readable; coverage qualification recorded",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/390x844-requester-actions.png",
+      "sha256": "66ae95e757f58aba2e2c23a6a9659e9567439deee23448b7697b83073d6fcb80",
+      "bytes": 59863,
+      "kind": "overwritten-historical-restored",
+      "width": 390,
+      "height": 844,
+      "reviewId": "V38",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/390x844-requester-actions.png",
+      "gitBlobSha": "79c93160445b6490c42727d57b5df2f14531d9e7",
+      "observation": "Mobile requester card wraps literal markup, Thai/emoji and long notes; history button separated from next card.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/390x844-staff-actions.png",
+      "sha256": "8c6f8dbf36e6d2c993a09b43bc32ae5a14bf94a0726775be1c60996583e80301",
+      "bytes": 58601,
+      "kind": "overwritten-historical-restored",
+      "width": 390,
+      "height": 844,
+      "reviewId": "V39",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/390x844-staff-actions.png",
+      "gitBlobSha": "d9f96d9da7ae9d46295ec6c0f3648b0d008d49bf",
+      "observation": "Mobile staff card wraps notes; action buttons wrap into two rows without overlap.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/834x1112-history.png",
+      "sha256": "ab122ab8f86941d634e4a5843295431b000a78e4d7360550ab844b3d5495f87d",
+      "bytes": 81490,
+      "kind": "overwritten-historical-restored",
+      "width": 834,
+      "height": 1112,
+      "reviewId": "V40",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/834x1112-history.png",
+      "gitBlobSha": "8448bdb1e59bf6c9ec37022910bed9675a2c8e5c",
+      "observation": "Tablet history uses two columns with readable long actor/time/IDs; bottom remains outside captured modal viewport.",
+      "visualResult": "Captured region readable; coverage qualification recorded",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/834x1112-my-actions.png",
+      "sha256": "862e06bb0ce09cab76e2580a18963ecf2f6d3adb266378bc8240ebd999522420",
+      "bytes": 65349,
+      "kind": "overwritten-historical-restored",
+      "width": 834,
+      "height": 1112,
+      "reviewId": "V41",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/834x1112-my-actions.png",
+      "gitBlobSha": "a68c43750b52d59dbf0fd2289f69f668f617224b",
+      "observation": "Tablet My Actions two-column filter grid, header/navigation and buttons fit.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/834x1112-requester-actions.png",
+      "sha256": "16f78f66975b64dc2ff14f1f9c264d2072f1c90724e4f76659fe76bd92a03a2c",
+      "bytes": 128173,
+      "kind": "overwritten-historical-restored",
+      "width": 834,
+      "height": 1112,
+      "reviewId": "V42",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/834x1112-requester-actions.png",
+      "gitBlobSha": "094520732be349c52c1a9fc0fdf4a01265b90b9e",
+      "observation": "Tablet requester card uses two columns and wraps long description/notes within the card.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/834x1112-staff-actions.png",
+      "sha256": "5597d94ce984ee37b9c790b53d467ad7f73f3635ab3109417be310aaf8511b2e",
+      "bytes": 129116,
+      "kind": "overwritten-historical-restored",
+      "width": 834,
+      "height": 1112,
+      "reviewId": "V43",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/834x1112-staff-actions.png",
+      "gitBlobSha": "8b1d3d42c180d8f39d51f0dbaca157a15ec9070c",
+      "observation": "Tablet staff card fits its five visible buttons in one row and wraps long description.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/accessibility-create-errors.png",
+      "sha256": "a10d10735c2767dce1c1751501e5da59bdfe2d6cab0dcaae28be5cc0e460ec66",
+      "bytes": 112779,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V44",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/accessibility-create-errors.png",
+      "gitBlobSha": "212f3485a148bbaaf73acd7d7ff27dd7de4cd9f6",
+      "observation": "Create validation dialog shows red summary, field errors and visible focus; dialog is internally scrolled, title/submit outside captured position.",
+      "visualResult": "Captured region readable; coverage qualification recorded",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/accessibility-history-error.png",
+      "sha256": "6be4d8ea03edbc9799d6c0fe23788462085a52ba06a3125f79c4f75502f2a448",
+      "bytes": 132036,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V45",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/accessibility-history-error.png",
+      "gitBlobSha": "92766f4318d022680c0c38e7de0d9452ded54be3",
+      "observation": "History failure dialog shows safe alert, clearly visible Retry focus ring, pagination and Close.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/accessibility-my-actions-focus.png",
+      "sha256": "02969ff7332521e62eec8853203e879a8fb4d221c0e96f7f73e1da149d16581e",
+      "bytes": 60725,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V46",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/accessibility-my-actions-focus.png",
+      "gitBlobSha": "a09f96f2bbf028d7958d10062fb5069090d946fa",
+      "observation": "Desktop Apply filters has visible focus ring; filter grid/navigation labels readable.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/zoom200-create.png",
+      "sha256": "752425cb78fed2fb40946b432a6ed2e16a2554a2c011302a33032eb3460d65a6",
+      "bytes": 122774,
+      "kind": "overwritten-historical-restored",
+      "width": 1424,
+      "height": 805,
+      "reviewId": "V47",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/zoom200-create.png",
+      "gitBlobSha": "67d81327dd1b76b1c4ff77d4727803a37368238c",
+      "observation": "200% Create dialog heading/instructions/description fit width; modal continues vertically below capture.",
+      "visualResult": "Captured region readable; coverage qualification recorded",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/zoom200-history.png",
+      "sha256": "65ec52d50cf9d7c13321d3fb1f5755f01048af9007b3cef98166ca66847e4fb0",
+      "bytes": 55244,
+      "kind": "overwritten-historical-restored",
+      "width": 1424,
+      "height": 805,
+      "reviewId": "V48",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/zoom200-history.png",
+      "gitBlobSha": "8bc483fdea9e958e868a1fc2044fde1bed09d63b",
+      "observation": "200% History bottom shows page-size focus, stacked Previous/Next and Close fully visible. Minor spacing issue: event count and History events per page label visually concatenate (eventsHistory); no overlap/blockage demonstrated.",
+      "visualResult": "Minor spacing observation; no blocking defect established",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/zoom200-my-actions.png",
+      "sha256": "a2b2ad5eed94697b213bfce156c95791ad79ac054a5a2a9b4ad28a53335dbf32",
+      "bytes": 54958,
+      "kind": "overwritten-historical-restored",
+      "width": 1424,
+      "height": 805,
+      "reviewId": "V49",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/zoom200-my-actions.png",
+      "gitBlobSha": "1bdb1951d3ec97be03ce0dcb73ead5476fd8c0b1",
+      "observation": "200% My Actions header switches to collapsed navigation; title/Back button fit; filters continue below.",
+      "visualResult": "Captured region readable; coverage qualification recorded",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/actions-taken/zoom200-staff-actions.png",
+      "sha256": "ea81f42301ca5bbe98667da8227dd9737b7c69c2bab82c4bd32b7cf47083159e",
+      "bytes": 90002,
+      "kind": "overwritten-historical-restored",
+      "width": 1424,
+      "height": 805,
+      "reviewId": "V50",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/zoom200-staff-actions.png",
+      "gitBlobSha": "5de31059241eee0e3369a81fff4ef75b15e9354b",
+      "observation": "200% staff card wraps action controls with Cancel on a second row; text remains within card.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/dashboard-navigation/admin-zoom-200.png",
+      "sha256": "b3d34e445dc8b75dbf0f056c98ecff672ee0cac8153369fa6a05be2ac589e000",
+      "bytes": 62647,
+      "kind": "overwritten-historical-restored",
+      "width": 1424,
+      "height": 805,
+      "reviewId": "V51",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/dashboard-navigation/admin-zoom-200.png",
+      "gitBlobSha": "084c3d82bbfa015802f4d844ef2bc05a8a6087e5",
+      "observation": "200% admin expanded menu wraps multiword links, visible menu focus, identity and Dashboard heading fit.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/dashboard-navigation/requester-desktop.png",
+      "sha256": "f0512d1d2d3ffb04d0f1ef2955af5e6f84e5fffcd2d34ec0301624d59d2d7a11",
+      "bytes": 58510,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V52",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/dashboard-navigation/requester-desktop.png",
+      "gitBlobSha": "bd66a72ed9eb197ebebc15793f78e491108bb840",
+      "observation": "Requester desktop navigation/filter grid/as-of/metric cards fit in viewport; recent list starts below.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/dashboard-navigation/staff-mobile-menu.png",
+      "sha256": "c833f4502a17de477a6e221b10af633748692dad5835ddfe69e5534bccef7f0f",
+      "bytes": 29637,
+      "kind": "overwritten-historical-restored",
+      "width": 390,
+      "height": 844,
+      "reviewId": "V53",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/dashboard-navigation/staff-mobile-menu.png",
+      "gitBlobSha": "cbf6164727641ed30034952fe6f1965ddd5caddc",
+      "observation": "Mobile staff expanded menu links wrap visibly; focus ring visible and single-column Dashboard filters fit.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-filters.png",
+      "sha256": "66730bf7d877d0bbbd6434ce1ff63ffab80abda0c30fce946341e5b78bb78a09",
+      "bytes": 10875,
+      "kind": "new-generated-archived-removed",
+      "width": 1296,
+      "height": 261,
+      "reviewId": "V54",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-filters.png",
+      "gitBlobSha": "86711151eb84b30e612845f173863a50aeddb6b0",
+      "observation": "Desktop filter component crop: six labeled controls and Apply/Clear fit; outside component not observed.",
+      "visualResult": "Captured region readable; coverage qualification recorded",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-metrics-lists.png",
+      "sha256": "b3037e2bd1c0557f8250247db340fce05d344f5d3338d7797a902547933397f1",
+      "bytes": 61346,
+      "kind": "new-generated-archived-removed",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V55",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-metrics-lists.png",
+      "gitBlobSha": "01bed6e70fcbf9e280e12de3d7ac72e0ad619e7e",
+      "observation": "Requester desktop long multilingual identity, filters, as-of text and metric cards fit.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-recent-records.png",
+      "sha256": "116db00fd84f731227f907b74e92e5a637057321e7b6ba4efbe4e2f3d3b45987",
+      "bytes": 83621,
+      "kind": "new-generated-archived-removed",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V56",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-recent-records.png",
+      "gitBlobSha": "e8622a1fe08bda30d70032542fc41123205977e1",
+      "observation": "Desktop recent-record region: long descriptions/owner names, statuses and timestamps readable within separators.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-filters.png",
+      "sha256": "e2a56068b9a6a630e441f2597dd914e8ea5db5675aec014da1f8b571adcbc2e7",
+      "bytes": 14111,
+      "kind": "new-generated-archived-removed",
+      "width": 366,
+      "height": 629,
+      "reviewId": "V57",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-filters.png",
+      "gitBlobSha": "7ba963aca9739b16af09914080fc38273d02b211",
+      "observation": "Mobile filter component crop: six controls stack with full Apply/Clear buttons.",
+      "visualResult": "Captured region readable; coverage qualification recorded",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-metrics-lists.png",
+      "sha256": "e50e3126e2c7bf043b1f371602d2b6c044fc58ee48e39e708abc038d050b7dcd",
+      "bytes": 28755,
+      "kind": "new-generated-archived-removed",
+      "width": 390,
+      "height": 844,
+      "reviewId": "V58",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-metrics-lists.png",
+      "gitBlobSha": "c8f1f03b18a97b245218b7acb522beebf5e8dcb8",
+      "observation": "Mobile as-of/window explanation wraps above four separately spaced metric cards.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-recent-records.png",
+      "sha256": "23fe4d772627ec49f80bab2497d0a8f7fbefea7b81a994623834c99833763bce",
+      "bytes": 41780,
+      "kind": "new-generated-archived-removed",
+      "width": 390,
+      "height": 844,
+      "reviewId": "V59",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-recent-records.png",
+      "gitBlobSha": "da9944dcb6f3f43e4af6dd0232c1461c159189e8",
+      "observation": "Mobile recent records wrap unbroken description and long owner names within card; Ticket links remain visible.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-filters.png",
+      "sha256": "11d684f420d601508e7cc7a47525e8b4b5765c2fd6027c13874392301d762ccc",
+      "bytes": 11808,
+      "kind": "new-generated-archived-removed",
+      "width": 696,
+      "height": 353,
+      "reviewId": "V60",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-filters.png",
+      "gitBlobSha": "d49b03cda0205f0a32d3d02a98f500f7640b50c3",
+      "observation": "Tablet filter component crop: two-column labels/controls and action buttons fit.",
+      "visualResult": "Captured region readable; coverage qualification recorded",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-metrics-lists.png",
+      "sha256": "9a0f17b77b78f5a25361ab48a4973fb67cc45074829e5accacd851127dfa0ee2",
+      "bytes": 58566,
+      "kind": "new-generated-archived-removed",
+      "width": 834,
+      "height": 1112,
+      "reviewId": "V61",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-metrics-lists.png",
+      "gitBlobSha": "a2ddea801cbb4dc63ac5f059aae5ab548d9e9896",
+      "observation": "Tablet requester identity wraps role/logout onto separate rows; two-column filters/metrics and as-of paragraph fit.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-recent-records.png",
+      "sha256": "ac2f0683b5c00f222576dd5600255277c0fc71fe50e60822a00d0cfa0e4e4249",
+      "bytes": 78004,
+      "kind": "new-generated-archived-removed",
+      "width": 834,
+      "height": 1112,
+      "reviewId": "V62",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-recent-records.png",
+      "gitBlobSha": "0c9febe5b62f47e9097836cb4dfed082207dd5cd",
+      "observation": "Tablet recent records wrap long description/owner names without entering neighboring records.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/keyboard-error-retry.png",
+      "sha256": "6270188981c5fb88cdda5d292445daa48b93c9eac18daaf4616767a3a494e2f6",
+      "bytes": 42545,
+      "kind": "new-generated-archived-removed",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V63",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/keyboard-error-retry.png",
+      "gitBlobSha": "5338104690f2ab3828bb28e34acbfbaafb8d87a1",
+      "observation": "Requester error alert text and focused Retry readable; filter state retained visually.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-drilldown.png",
+      "sha256": "da46dbabb8ae52d135bf4e7020fcf54fc03478d831f0820faa98a0676aa02e17",
+      "bytes": 41968,
+      "kind": "new-generated-archived-removed",
+      "width": 1424,
+      "height": 805,
+      "reviewId": "V64",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-drilldown.png",
+      "gitBlobSha": "54a4b7337565d34873814f4f72f05ac9132d96db",
+      "observation": "200% drilldown My Tickets heading/search fits captured width; lower controls not captured.",
+      "visualResult": "Captured region readable; coverage qualification recorded",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-error-retry.png",
+      "sha256": "9b795c5f064c40a1eb070c3da050c1e0302cbb53308726ae968b38ec6c7e9d57",
+      "bytes": 34545,
+      "kind": "new-generated-archived-removed",
+      "width": 1424,
+      "height": 805,
+      "reviewId": "V65",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-error-retry.png",
+      "gitBlobSha": "3a9f2bbca790f948e0e5481b3045a8ca34a25463",
+      "observation": "200% error alert and focused Retry fit below filter actions.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-metrics-lists.png",
+      "sha256": "393064c7353f98344c5d1e5953eaf704cac40e581b30da89734b24121351123e",
+      "bytes": 78053,
+      "kind": "new-generated-archived-removed",
+      "width": 1424,
+      "height": 805,
+      "reviewId": "V66",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-metrics-lists.png",
+      "gitBlobSha": "3d2f7c4d66be7b7015be4accc6ea1d675f8b4ca6",
+      "observation": "200% as-of/window text wraps above two-column metric cards.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-recent-records.png",
+      "sha256": "14297a599e2e44f2ffac6ffb8dfa535e5475c8e05c5c201299d3193aef002c84",
+      "bytes": 99564,
+      "kind": "new-generated-archived-removed",
+      "width": 1424,
+      "height": 805,
+      "reviewId": "V67",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-recent-records.png",
+      "gitBlobSha": "04152811196c944cadbfb90bebe2f089cc3e3b8d",
+      "observation": "200% recent record long unbroken description/owner wraps within card and has readable timestamp.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/dashboard-1440.png",
+      "sha256": "95ebff38943416c9fd3970a07874a1afbd2f8dfef368b597b94fa1f5040d07de",
+      "bytes": 301397,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 4329,
+      "reviewId": "V68",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/dashboard-1440.png",
+      "gitBlobSha": "8777d174448858fe26636d7a4d28b3f8b7a5355d",
+      "observation": "Full desktop staff Dashboard reviewed from navigation through filters, metrics/status/priority/Actions cards, recent lists and all five unfinished-Action previews to View my actions; text and controls fit.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/dashboard-390.png",
+      "sha256": "ab2259b57b2700abc2d65e34a15118b1dc098b32eefdee71ae01175741aec03a",
+      "bytes": 294454,
+      "kind": "overwritten-historical-restored",
+      "width": 390,
+      "height": 6867,
+      "reviewId": "V69",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/dashboard-390.png",
+      "gitBlobSha": "1486bf8e2cdfc6402b0889cb1bab90ac4524d66e",
+      "observation": "Full mobile staff Dashboard reviewed through bottom View my actions: filters stack, metric/status grids reflow, long identities/descriptions/literal markup wrap; no horizontal cutoff seen.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/dashboard-834.png",
+      "sha256": "de64278c38a5d1ff5836c615183ef2ae2778920a89da41bf3acc45b0f07d5def",
+      "bytes": 311771,
+      "kind": "overwritten-historical-restored",
+      "width": 834,
+      "height": 5049,
+      "reviewId": "V70",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/dashboard-834.png",
+      "gitBlobSha": "3433f00fb35063034e2c9c89319a76274a85c2af",
+      "observation": "Full tablet staff Dashboard reviewed through all previews and bottom link: two-column filters/primary metrics, four-column status/priority cards and long list text fit.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/error-retry-1.png",
+      "sha256": "54f9b2b7b2cc4c1bbf0847b36a2043330f2c14de6163e8caeebafe278a9e67fd",
+      "bytes": 45280,
+      "kind": "new-generated-archived-removed",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V71",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/error-retry-1.png",
+      "gitBlobSha": "00ce3ca454f0f1b7c845b75ff78f4ddbdb4ddb97",
+      "observation": "Desktop staff safe error alert and focused Retry fit under filters.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/error-retry-2.png",
+      "sha256": "dcb8212f187e6519486b1a251dfd367cb50d601cd2a2cc29d7c604933771081d",
+      "bytes": 32617,
+      "kind": "new-generated-archived-removed",
+      "width": 1424,
+      "height": 805,
+      "reviewId": "V72",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/error-retry-2.png",
+      "gitBlobSha": "d06836772170e68e5e243e92fec6edad70e1dffd",
+      "observation": "200% staff safe error/Retry and preceding filters fit width.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/keyboard-focus.png",
+      "sha256": "d2feb65c520d4fc1b1b2e9af084f1d853592f435abbe60cb7e851d16adb6755c",
+      "bytes": 58570,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V73",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/keyboard-focus.png",
+      "gitBlobSha": "e3ae0ed7233271769af8d5e4d057f9d3ae0f8a68",
+      "observation": "Staff Apply Filters focus ring visible; as-of, active filter and metric area readable.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-cards.png",
+      "sha256": "aeb85afd5926b1479055369d536639b4fa3fcd476e5539467974309a86b2ae5d",
+      "bytes": 63588,
+      "kind": "new-generated-archived-removed",
+      "width": 1424,
+      "height": 805,
+      "reviewId": "V74",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-cards.png",
+      "gitBlobSha": "b7def98f29f2a51babd942a903f8cb53c3f7f989",
+      "observation": "200% staff cards in two columns; selected My active Tickets has visible outline; explanatory text wraps.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-filters.png",
+      "sha256": "f410c481acda050ccd3537f7c3f989c9ff24b288b1afd942a20614e0873cb211",
+      "bytes": 58778,
+      "kind": "new-generated-archived-removed",
+      "width": 1424,
+      "height": 805,
+      "reviewId": "V75",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-filters.png",
+      "gitBlobSha": "72aa42fcb9a0032d8d0c51cdc03117930932b41f",
+      "observation": "200% staff filters and Apply/Clear fit; as-of text continues below capture.",
+      "visualResult": "Captured region readable; coverage qualification recorded",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-pagination.png",
+      "sha256": "d646446671e6e76fe41a7de6aa3ba98769d6649517686927cb801bc3cdf4da31",
+      "bytes": 57939,
+      "kind": "new-generated-archived-removed",
+      "width": 1424,
+      "height": 805,
+      "reviewId": "V76",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-pagination.png",
+      "gitBlobSha": "c225c647f9d4510acc2aa5423149d98f342c4a5e",
+      "observation": "200% queue card wraps owner and shows Open Ticket, page summary and full Previous/Next; Next focus ring visible.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-preview.png",
+      "sha256": "4c0e9ba7bc1da946545b3e3464f09ef559288b411d67c256d8f5369de1e4ba4a",
+      "bytes": 78210,
+      "kind": "new-generated-archived-removed",
+      "width": 1424,
+      "height": 805,
+      "reviewId": "V77",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-preview.png",
+      "gitBlobSha": "b91dd2f66bad6ca6c3eab54cba45bf45ae3bf90b",
+      "observation": "200% unfinished-Action metric and recent-record preview wrap within card; lower preview continues below viewport.",
+      "visualResult": "Captured region readable; coverage qualification recorded",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-selected-action.png",
+      "sha256": "115ca6bfcc904da3d5bd7e802adcaefc2a9573252092cbd7946d0ce6303d181f",
+      "bytes": 70219,
+      "kind": "new-generated-archived-removed",
+      "width": 1424,
+      "height": 805,
+      "reviewId": "V78",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-selected-action.png",
+      "gitBlobSha": "c208320aadbb07be4596fabb4785221b2c16220f",
+      "observation": "200% selected Action visible outline; literal notes/update and all five action buttons fit; next long title wraps.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-cancellation.png",
+      "sha256": "eb258d4afb4693b68698de9241ddfecbcdc9fa0ba0fca1bba1cf356f64160edc",
+      "bytes": 62687,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V79",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-cancellation.png",
+      "gitBlobSha": "acd3edacd42ed4c90c95747ad7c6af1613ed5f70",
+      "observation": "Desktop Cancel Ticket dialog: title, explanatory text, focused reason and both buttons fit.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-history.png",
+      "sha256": "100050956fabb89932d2f7b08144a011c159820ecb3940a01babb4a54685448b",
+      "bytes": 44847,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V80",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-history.png",
+      "gitBlobSha": "188d004150556b91e053a27ba6ab256b5e731c39",
+      "observation": "Desktop Ticket Status History long unbroken reason and literal markup wrap below separated internal-note panel.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-resolution.png",
+      "sha256": "6e9fb3f4377fd14581a27e38c1cff81d0da3a6d2bf162941863492b9f496b3c3",
+      "bytes": 60014,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V81",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-resolution.png",
+      "gitBlobSha": "0ba6c4cc0f457f16f92576e80cecbb8578a36c34",
+      "observation": "Desktop Resolved Ticket dialog: optional reason field and both buttons fit; Cancel focus visible.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-cancellation.png",
+      "sha256": "bf3ef71b6c31615864c6fc00713c014140645a47501c794def8a7c52f2f0e942",
+      "bytes": 38735,
+      "kind": "new-generated-archived-removed",
+      "width": 390,
+      "height": 844,
+      "reviewId": "V82",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-cancellation.png",
+      "gitBlobSha": "4f6b771e9d99e166361c82aedb22d392f47ac10b",
+      "observation": "Mobile Cancel Ticket dialog wraps explanation; two buttons fit with multiline Confirm cancellation and visible reason focus.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-history.png",
+      "sha256": "3ae83930dfaad843bf1f84e7a8c40ef88e76588fedbbdb6f9ddd354a5de3bc66",
+      "bytes": 32808,
+      "kind": "new-generated-archived-removed",
+      "width": 390,
+      "height": 844,
+      "reviewId": "V83",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-history.png",
+      "gitBlobSha": "b9c94c101a1a04aa03d297f184a06e872e9020db",
+      "observation": "Mobile Status History wraps long unbroken reason and markup within card under internal-note area.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-resolution.png",
+      "sha256": "189dd723dc8320ea8eaceb8a87ab2b4b1175bb1a0756202eb4e09626b18fce06",
+      "bytes": 36522,
+      "kind": "new-generated-archived-removed",
+      "width": 390,
+      "height": 844,
+      "reviewId": "V84",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-resolution.png",
+      "gitBlobSha": "ee5dc720cfafca59d1eaa0e6ac8317f583125896",
+      "observation": "Mobile resolution dialog fits reason and side-by-side buttons; Cancel focus visible.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-cancellation.png",
+      "sha256": "a009ade9f08095bfd27443868d436f198e92005f7fbae09a8f0e8d17289168ef",
+      "bytes": 64073,
+      "kind": "new-generated-archived-removed",
+      "width": 834,
+      "height": 1112,
+      "reviewId": "V85",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-cancellation.png",
+      "gitBlobSha": "2e39ab13ca19b6bf020744c822fee3a3a16a706b",
+      "observation": "Tablet cancellation dialog fits focused reason, explanation and actions.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-history.png",
+      "sha256": "cb45c603bbddbed8a0646b1cb082d71fe786b0747e6af5a107b2e63efb0b9d48",
+      "bytes": 50687,
+      "kind": "new-generated-archived-removed",
+      "width": 834,
+      "height": 1112,
+      "reviewId": "V86",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-history.png",
+      "gitBlobSha": "aff550d7c5d2330a610b87fd24f17ac2f1fb17c0",
+      "observation": "Tablet history long unbroken reason wraps within panel; internal-note textarea and action readable.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-resolution.png",
+      "sha256": "2f7773a096683389ae8446c81278f4271256a18d2e92a7144eb69417a47077c6",
+      "bytes": 61232,
+      "kind": "new-generated-archived-removed",
+      "width": 834,
+      "height": 1112,
+      "reviewId": "V87",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-resolution.png",
+      "gitBlobSha": "d227ea860a502f3e4904cfe5a1d9e4e073310ca8",
+      "observation": "Tablet resolution dialog fits reason and actions; Cancel focus visible.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/keyboard-blocker.png",
+      "sha256": "8c0e0158e2eb3ffafa59cf5e24732dce720bc5d5ba63e1fdee7ad66522feba8f",
+      "bytes": 92188,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V88",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/keyboard-blocker.png",
+      "gitBlobSha": "0643f1d8383da229bb7e0a8291f8cd75ed9b08bd",
+      "observation": "Desktop unfinished-Action blocker alert, reason focus, explanatory count, Refresh/View Actions and bottom actions fit.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/keyboard-invalid-reason.png",
+      "sha256": "d6bb779a0b74679cdf39b3cecd30a3e7cc315bd618e74c9650802d584b2de658",
+      "bytes": 89222,
+      "kind": "overwritten-historical-restored",
+      "width": 1440,
+      "height": 900,
+      "reviewId": "V89",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/keyboard-invalid-reason.png",
+      "gitBlobSha": "fd553280c25210223129f7cb2781997ec9011ef3",
+      "observation": "Desktop invalid cancellation reason shows field error, visible Cancel focus and muted confirmation button; labels fit.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-blocker.png",
+      "sha256": "389f6b27805433ac12039704a40f9e206107ab9505165bc4eee669caaf872d57",
+      "bytes": 95237,
+      "kind": "new-generated-archived-removed",
+      "width": 1424,
+      "height": 805,
+      "reviewId": "V90",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-blocker.png",
+      "gitBlobSha": "d8c976365fc1f4a29cb0c71fd722fbde8c84fc73",
+      "observation": "200% blocker lower section fits reason, count explanation, stacked Refresh/View Actions and bottom actions; title/alert scrolled above.",
+      "visualResult": "Captured region readable; coverage qualification recorded",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-cancellation.png",
+      "sha256": "c2748b169c39ba1c48f93b057cb952d8d548e0e4d6ca55551a5ff136f8cf1d46",
+      "bytes": 101299,
+      "kind": "new-generated-archived-removed",
+      "width": 1424,
+      "height": 805,
+      "reviewId": "V91",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-cancellation.png",
+      "gitBlobSha": "2a896f9ac4c1e7e8edc4af0704a6adaa0ac6883b",
+      "observation": "200% cancellation dialog fits explanation, reason and side-by-side actions.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    },
+    {
+      "path": "artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-history.png",
+      "sha256": "2e1bbe08b355875f7cde1eb4aab406c4edf22abf4119d6672913451f78077387",
+      "bytes": 107192,
+      "kind": "new-generated-archived-removed",
+      "width": 1424,
+      "height": 805,
+      "reviewId": "V92",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-history.png",
+      "gitBlobSha": "91822ad409827e4f36c41d322f98ba5f06bebb89",
+      "observation": "200% Status History wraps long reason and literal markup within card; full visible entry readable.",
+      "visualResult": "No obvious visual defect in captured pixels",
+      "method": "AI visual review of original PNG; not human peer sign-off"
+    }
+  ],
+  "artifacts": [
+    {
+      "originalPath": "artifacts/lab-02/screenshots/attachment-active-and-removed.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/attachment-active-and-removed.png",
+      "sha256": "81ba40aafdc435832de24a89b443db5b055b1e08358adf059510f2598123e545",
+      "bytes": 125089
+    },
+    {
+      "originalPath": "artifacts/lab-02/screenshots/attachment-removed.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/attachment-removed.png",
+      "sha256": "01bd348f14c98695f797977cbce23a262ba4ced9e102abdfb459f4aa928bd07d",
+      "bytes": 144413
+    },
+    {
+      "originalPath": "artifacts/lab-02/screenshots/create-ticket-desktop.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/create-ticket-desktop.png",
+      "sha256": "e376105c727c258b594e157c1c7d33173bfd6df46a2a955983dc9d2a5574c038",
+      "bytes": 69068
+    },
+    {
+      "originalPath": "artifacts/lab-02/screenshots/create-ticket-success.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/create-ticket-success.png",
+      "sha256": "5830081ffeb109fb310e7077126b3a7e40fd4c517a20f06e3b1a0cd1809aecab",
+      "bytes": 38820
+    },
+    {
+      "originalPath": "artifacts/lab-02/screenshots/create-ticket-validation.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/create-ticket-validation.png",
+      "sha256": "e0e2b48c240ad90c644e98e53edad61e2416a774800ca0a0162a897757c0f84c",
+      "bytes": 81262
+    },
+    {
+      "originalPath": "artifacts/lab-02/screenshots/my-tickets-desktop.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/my-tickets-desktop.png",
+      "sha256": "04473f283459bdba1f4d98dc59c544ccbfd48b1fb1e5aa2bab26842d6f639f0c",
+      "bytes": 70441
+    },
+    {
+      "originalPath": "artifacts/lab-02/screenshots/my-tickets-filtered-desktop.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/my-tickets-filtered-desktop.png",
+      "sha256": "af3337d7852bfbf7200c5a58fd1fa1b8fa6707acd3bd944ed7dfd8560cfdab78",
+      "bytes": 118588
+    },
+    {
+      "originalPath": "artifacts/lab-02/screenshots/ownership-safe-not-found.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/ownership-safe-not-found.png",
+      "sha256": "92de65ea855242d97eeba86322e534a519372261f9265292de0fbc91fb01285c",
+      "bytes": 25951
+    },
+    {
+      "originalPath": "artifacts/lab-02/screenshots/requester-selection-desktop.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/requester-selection-desktop.png",
+      "sha256": "758b9b245f42ff3b61d5e8c7378e9c127e32d7de4d6cba4612a51176905ab1f2",
+      "bytes": 13896
+    },
+    {
+      "originalPath": "artifacts/lab-02/screenshots/safe-api-error.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/safe-api-error.png",
+      "sha256": "ed7ac9ed49055f7c876579a693cf0642c22d265fb58d8777ee0eb11f422671b3",
+      "bytes": 47334
+    },
+    {
+      "originalPath": "artifacts/lab-02/screenshots/ticket-detail-desktop.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/ticket-detail-desktop.png",
+      "sha256": "8e75421d1be4b495e74b66ee6fb741de8e510dfcae9fcbd805409c1fee7f4a0d",
+      "bytes": 138739
+    },
+    {
+      "originalPath": "artifacts/lab-02/screenshots/ticket-detail-mobile.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/ticket-detail-mobile.png",
+      "sha256": "a3cc0dac65c096435df647140425d7f273f7183217d80415c64c5f77569d8c45",
+      "bytes": 129757
+    },
+    {
+      "originalPath": "artifacts/lab-02/screenshots/ticket-detail-tablet-boundary.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/ticket-detail-tablet-boundary.png",
+      "sha256": "f21ba7379ccf3e084267221caf07d09f324482abcaf23c9bcb9957d7f5986422",
+      "bytes": 132334
+    },
+    {
+      "originalPath": "artifacts/lab-02/screenshots/ticket-detail-tablet-large.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/ticket-detail-tablet-large.png",
+      "sha256": "721df586669486cf33eec64702b40696d233429068bd102bfe4dd00518b8483d",
+      "bytes": 133038
+    },
+    {
+      "originalPath": "artifacts/lab-02/screenshots/ticket-detail-tablet.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-02/screenshots/ticket-detail-tablet.png",
+      "sha256": "62c4051832b7f669a326fa1cb79b947d35ac8ca743a41ac602e74f0797a2948c",
+      "bytes": 133208
+    },
+    {
+      "originalPath": "artifacts/lab-03/screenshots/desktop-1440x900/admin-user-management.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/desktop-1440x900/admin-user-management.png",
+      "sha256": "d1a7a9787bb3905142cdda3477d4450262591479dcebdf2c4f230e3412c5c3a5",
+      "bytes": 49992
+    },
+    {
+      "originalPath": "artifacts/lab-03/screenshots/desktop-1440x900/requester-ticket-detail.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/desktop-1440x900/requester-ticket-detail.png",
+      "sha256": "81a30754e43b6f2c0a548a4816fcac1c5a50f7cd465517612040c48fd506f312",
+      "bytes": 38765
+    },
+    {
+      "originalPath": "artifacts/lab-03/screenshots/desktop-1440x900/staff-ticket-detail.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/desktop-1440x900/staff-ticket-detail.png",
+      "sha256": "45ef8e400b93a0356484ffe8c2cdfeecc541d9def3552ae7125c5396e26ed537",
+      "bytes": 30331
+    },
+    {
+      "originalPath": "artifacts/lab-03/screenshots/desktop-1440x900/staff-ticket-queue.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/desktop-1440x900/staff-ticket-queue.png",
+      "sha256": "4081da9bcf84070eb89aee5bdbc7bba6b7c6797a7ef515ea39962f0ce33e4161",
+      "bytes": 58411
+    },
+    {
+      "originalPath": "artifacts/lab-03/screenshots/mobile-390x844/admin-user-management.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/mobile-390x844/admin-user-management.png",
+      "sha256": "8f90e0c5a7567c9431d47a5868534d3c7114d55adc73b37d854c2588c62bdd66",
+      "bytes": 23678
+    },
+    {
+      "originalPath": "artifacts/lab-03/screenshots/mobile-390x844/requester-ticket-detail.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/mobile-390x844/requester-ticket-detail.png",
+      "sha256": "093683640b2366d50e58cd5d9c884654fb33ba9b1a9f97fbd412ded12ad53e3c",
+      "bytes": 29982
+    },
+    {
+      "originalPath": "artifacts/lab-03/screenshots/mobile-390x844/staff-ticket-detail.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/mobile-390x844/staff-ticket-detail.png",
+      "sha256": "0c4f2563b5a523909538c398cdb8ee943d2b52e0f87094e23473267bcd7af399",
+      "bytes": 24660
+    },
+    {
+      "originalPath": "artifacts/lab-03/screenshots/mobile-390x844/staff-ticket-queue.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/mobile-390x844/staff-ticket-queue.png",
+      "sha256": "30c96facca72a46392f2be00fd015ad9d59a342520f7672c6db6baf8aba027bf",
+      "bytes": 32920
+    },
+    {
+      "originalPath": "artifacts/lab-03/screenshots/tablet-834x1112/admin-user-management.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/tablet-834x1112/admin-user-management.png",
+      "sha256": "921a4d76784508f56a770185d32604ab08b0e9262d43d4d8b57cea76a5808fd5",
+      "bytes": 57037
+    },
+    {
+      "originalPath": "artifacts/lab-03/screenshots/tablet-834x1112/requester-ticket-detail.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/tablet-834x1112/requester-ticket-detail.png",
+      "sha256": "2bbcf89a175ce210e6034d7e2412f9434a52b4c275e03b26aa731f6117613fb7",
+      "bytes": 41946
+    },
+    {
+      "originalPath": "artifacts/lab-03/screenshots/tablet-834x1112/staff-ticket-detail.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/tablet-834x1112/staff-ticket-detail.png",
+      "sha256": "2eb4615161ed44e009e1a561f79b50fd930a35dad22b66390b0e22e0dc8cdb36",
+      "bytes": 36594
+    },
+    {
+      "originalPath": "artifacts/lab-03/screenshots/tablet-834x1112/staff-ticket-queue.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-03/screenshots/tablet-834x1112/staff-ticket-queue.png",
+      "sha256": "f38416fe9053b5d3ffebac8773aafefe0761b90ce9db22566e2cf8220ed43458",
+      "bytes": 51694
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/1440x900-cancel.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-cancel.json",
+      "sha256": "2b51af07a747cf19b1a9130ef5901b5db92810e852d95cd3adaaa6ec804a0f45",
+      "bytes": 574
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/1440x900-cancel.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-cancel.png",
+      "sha256": "f9ef8475016e08e9e373381f7c42845df372e37298512dcbee9d5324abbcdd8c",
+      "bytes": 135542
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/1440x900-complete.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-complete.json",
+      "sha256": "a765f40b46bf0d9b9bcd3befeb817017ce57ec5a87676082d55ed82c7801d555",
+      "bytes": 578
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/1440x900-complete.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-complete.png",
+      "sha256": "ee25282e517302f0f73d3a27f91065310962714221f04e9c52a9f3e53de20d44",
+      "bytes": 129786
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/1440x900-create.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-create.json",
+      "sha256": "8a3137a6e1dc50000ed7ca09ac6d211d0de66e45a61ef76ec564447ce3730840",
+      "bytes": 600
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/1440x900-edit.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-edit.json",
+      "sha256": "bc1c560d8c18e22aa5d7d472c6f49daf6426277564ddfb25ba1a0af5ba53cb0b",
+      "bytes": 570
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/1440x900-edit.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-edit.png",
+      "sha256": "25366b05a721654accc2bf13ec5274bd9c7e1f1db6fe0c9f551ea4ee3f1e3398",
+      "bytes": 133140
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/1440x900-history.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-history.json",
+      "sha256": "0cf0f8e9f84e7bce0ddf8689d63b13d54095b98d180f448b6fad28d6c6d3d9f1",
+      "bytes": 593
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/1440x900-history.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-history.png",
+      "sha256": "e6fd9b6c36438c976a9b04f5b6f41f1351a5fd783ef7ce214b55a19873b03423",
+      "bytes": 136129
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/1440x900-my-actions.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-my-actions.json",
+      "sha256": "b4cf1f703e4ad39938133a0e1c8e98a1d2a66ebe8bfcc2995a9ff158da16baf1",
+      "bytes": 611
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/1440x900-my-actions.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-my-actions.png",
+      "sha256": "b20d9592af8a1ec35cf1380d7d358aa3f93702768a4e81542768b2acee7b32b7",
+      "bytes": 59228
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/1440x900-reassign.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-reassign.json",
+      "sha256": "cb6fc1fde6dd80c907393f25abb9adb8a856789061312cee384d0544e58c4e83",
+      "bytes": 578
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/1440x900-reassign.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-reassign.png",
+      "sha256": "7982aa04d3dcf20043cd2ec9f0124c63e9d2f1bbe24211ddcc511b350f0f9997",
+      "bytes": 131829
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/1440x900-requester-actions.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-requester-actions.json",
+      "sha256": "83aa33175a15a6edc1ebf9dfc53edb005a4474e4c30b991cc2b5357db033791e",
+      "bytes": 593
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/1440x900-requester-actions.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-requester-actions.png",
+      "sha256": "18d14d33d657bff9139aee387c1d3bc94c1344a3d2cab6b79ce7cf1b5c49c62f",
+      "bytes": 120283
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/1440x900-staff-actions.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-staff-actions.json",
+      "sha256": "6f677006a232f65c6be5c5b0d13cdbdc2c6d54d78be1968f057cdcbc0d5938c6",
+      "bytes": 606
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/1440x900-staff-actions.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/1440x900-staff-actions.png",
+      "sha256": "6c7a23e0a6c51bbb08d62661a9e25866ed25800418631ee984cb43eec83baec2",
+      "bytes": 123427
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/390x844-clear-confirmation.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/390x844-clear-confirmation.json",
+      "sha256": "22499f9875830167d844e4517794cd04a514f535130065e4ee57e8e97c1148d0",
+      "bytes": 586
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/390x844-create.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/390x844-create.json",
+      "sha256": "8f5490eb70e5ddd20733ebf33f85832440607fb8eb1ba9981cbc746ec59f410f",
+      "bytes": 598
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/390x844-history.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/390x844-history.json",
+      "sha256": "9ae934b975c7383ab36d756ea9bc9f64e08f170e58f4237e3a99a8862eaa275e",
+      "bytes": 591
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/390x844-history.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/390x844-history.png",
+      "sha256": "5cd5208d6693bc1992d4ea9875b097c8bbd93af24fa4b77a94eb1d7b60bb2adb",
+      "bytes": 40072
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/390x844-my-actions.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/390x844-my-actions.json",
+      "sha256": "8486aa918f527039d89ee8b5f09a7a16152937b3a3638cf77485f90d1e51c2fb",
+      "bytes": 609
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/390x844-my-actions.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/390x844-my-actions.png",
+      "sha256": "4fdc6d9ecb3e65d6d5139fd13869dc148cd91593011516b8d51089cd584b88e2",
+      "bytes": 28184
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/390x844-requester-actions.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/390x844-requester-actions.json",
+      "sha256": "ee02affbcf71947304c3d421914c8fb12399d09324f72f4dd35dca58c68decf0",
+      "bytes": 591
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/390x844-requester-actions.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/390x844-requester-actions.png",
+      "sha256": "66ae95e757f58aba2e2c23a6a9659e9567439deee23448b7697b83073d6fcb80",
+      "bytes": 59863
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/390x844-staff-actions.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/390x844-staff-actions.json",
+      "sha256": "72829b1fbb3bd1bcf6bd5202054637fd3b32102b0892912c5fd3930e2b048f88",
+      "bytes": 604
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/390x844-staff-actions.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/390x844-staff-actions.png",
+      "sha256": "8c6f8dbf36e6d2c993a09b43bc32ae5a14bf94a0726775be1c60996583e80301",
+      "bytes": 58601
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/834x1112-create.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/834x1112-create.json",
+      "sha256": "026e8dc6d15b806b7979639a2000bc38a79eaa74ae8e632b4cf55a725ebd82b8",
+      "bytes": 600
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/834x1112-history.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/834x1112-history.json",
+      "sha256": "59aa7081dbcac22d78f18792e79c4f3c518361891ae738289579ad7ba1f2f94a",
+      "bytes": 593
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/834x1112-history.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/834x1112-history.png",
+      "sha256": "ab122ab8f86941d634e4a5843295431b000a78e4d7360550ab844b3d5495f87d",
+      "bytes": 81490
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/834x1112-my-actions.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/834x1112-my-actions.json",
+      "sha256": "79cb00548e28028b9bc451783086a6db066616b975d2236a81e4b7c939dc4cf9",
+      "bytes": 611
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/834x1112-my-actions.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/834x1112-my-actions.png",
+      "sha256": "862e06bb0ce09cab76e2580a18963ecf2f6d3adb266378bc8240ebd999522420",
+      "bytes": 65349
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/834x1112-requester-actions.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/834x1112-requester-actions.json",
+      "sha256": "9c99305637dec3ec82f5528e8d790a74911c05945708151a247c959a94460d30",
+      "bytes": 593
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/834x1112-requester-actions.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/834x1112-requester-actions.png",
+      "sha256": "16f78f66975b64dc2ff14f1f9c264d2072f1c90724e4f76659fe76bd92a03a2c",
+      "bytes": 128173
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/834x1112-staff-actions.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/834x1112-staff-actions.json",
+      "sha256": "0737536d46e56c1d09b6864f7bc0189a50d763920cc972b832868580a323323a",
+      "bytes": 606
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/834x1112-staff-actions.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/834x1112-staff-actions.png",
+      "sha256": "5597d94ce984ee37b9c790b53d467ad7f73f3635ab3109417be310aaf8511b2e",
+      "bytes": 129116
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/accessibility-create-errors.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/accessibility-create-errors.json",
+      "sha256": "b6ccc992c4bcf315d43a0c19d4e9c23c7e24067f124ff3bae5f62dd634f55c48",
+      "bytes": 705
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/accessibility-create-errors.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/accessibility-create-errors.png",
+      "sha256": "a10d10735c2767dce1c1751501e5da59bdfe2d6cab0dcaae28be5cc0e460ec66",
+      "bytes": 112779
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/accessibility-history-error.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/accessibility-history-error.json",
+      "sha256": "59d0813a25c1c40df52aa810dc5061e6ead9b66084e52cebf50717c4505cc549",
+      "bytes": 633
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/accessibility-history-error.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/accessibility-history-error.png",
+      "sha256": "6be4d8ea03edbc9799d6c0fe23788462085a52ba06a3125f79c4f75502f2a448",
+      "bytes": 132036
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/accessibility-my-actions-focus.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/accessibility-my-actions-focus.json",
+      "sha256": "4ce0a19a2abe4ed05a42f999fd0c0d7d51f3519c71ac84e84a5709a16a781570",
+      "bytes": 700
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/accessibility-my-actions-focus.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/accessibility-my-actions-focus.png",
+      "sha256": "02969ff7332521e62eec8853203e879a8fb4d221c0e96f7f73e1da149d16581e",
+      "bytes": 60725
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/zoom200-create.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/zoom200-create.json",
+      "sha256": "06f5a0ebe80b1389131b027785076bf6974d8e0163f38b37cfe4b998a7788fd8",
+      "bytes": 690
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/zoom200-create.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/zoom200-create.png",
+      "sha256": "752425cb78fed2fb40946b432a6ed2e16a2554a2c011302a33032eb3460d65a6",
+      "bytes": 122774
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/zoom200-history.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/zoom200-history.json",
+      "sha256": "c6dc9cbbd519cd1fe714c9ff105fbf0886536f86029eed37cbd0cd1ca1426b53",
+      "bytes": 671
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/zoom200-history.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/zoom200-history.png",
+      "sha256": "65ec52d50cf9d7c13321d3fb1f5755f01048af9007b3cef98166ca66847e4fb0",
+      "bytes": 55244
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/zoom200-my-actions.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/zoom200-my-actions.json",
+      "sha256": "0ed0cfc6b7c45ea44df29f3e87b2949a8393f3852cdd266f266d74cc67363606",
+      "bytes": 687
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/zoom200-my-actions.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/zoom200-my-actions.png",
+      "sha256": "a2b2ad5eed94697b213bfce156c95791ad79ac054a5a2a9b4ad28a53335dbf32",
+      "bytes": 54958
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/zoom200-staff-actions.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/zoom200-staff-actions.json",
+      "sha256": "ed075f0548e8c9e049833ff9f3fac28bb2146d49ac30d031f7f0c2ced7e1f1cf",
+      "bytes": 698
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/actions-taken/zoom200-staff-actions.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/actions-taken/zoom200-staff-actions.png",
+      "sha256": "ea81f42301ca5bbe98667da8227dd9737b7c69c2bab82c4bd32b7cf47083159e",
+      "bytes": 90002
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/dashboard-navigation/admin-zoom-200.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/dashboard-navigation/admin-zoom-200.json",
+      "sha256": "b494ba594e5da9f3969e62acd39ec9e9140a3b25f948a12a0fc34b8db0dbd8cc",
+      "bytes": 4145
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/dashboard-navigation/admin-zoom-200.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/dashboard-navigation/admin-zoom-200.png",
+      "sha256": "b3d34e445dc8b75dbf0f056c98ecff672ee0cac8153369fa6a05be2ac589e000",
+      "bytes": 62647
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/dashboard-navigation/requester-desktop.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/dashboard-navigation/requester-desktop.json",
+      "sha256": "bd183d2733b34be2e767cfa25b2b1df95af36ed18112b7a2995fc8aeb5da89c1",
+      "bytes": 3730
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/dashboard-navigation/requester-desktop.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/dashboard-navigation/requester-desktop.png",
+      "sha256": "f0512d1d2d3ffb04d0f1ef2955af5e6f84e5fffcd2d34ec0301624d59d2d7a11",
+      "bytes": 58510
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/dashboard-navigation/staff-mobile-menu.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/dashboard-navigation/staff-mobile-menu.json",
+      "sha256": "2120fabb44cb80883b3f557c5f0e291e1398fef62c1d0f7bb5941441f5c799e0",
+      "bytes": 3867
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/dashboard-navigation/staff-mobile-menu.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/dashboard-navigation/staff-mobile-menu.png",
+      "sha256": "c833f4502a17de477a6e221b10af633748692dad5835ddfe69e5534bccef7f0f",
+      "bytes": 29637
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-filters.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-filters.json",
+      "sha256": "21e08917bd45c3bdee97b5e0b870a51b7b58e14bf6b18a1df07e2e020754fdff",
+      "bytes": 626
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-filters.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-filters.png",
+      "sha256": "66730bf7d877d0bbbd6434ce1ff63ffab80abda0c30fce946341e5b78bb78a09",
+      "bytes": 10875
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-metrics-lists.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-metrics-lists.json",
+      "sha256": "628a43fb08cbb1aea86da060ce50a9b1e12754612499be80678b851882039fa4",
+      "bytes": 675
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-metrics-lists.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-metrics-lists.png",
+      "sha256": "b3037e2bd1c0557f8250247db340fce05d344f5d3338d7797a902547933397f1",
+      "bytes": 61346
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-recent-records.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-recent-records.json",
+      "sha256": "66c8b3bb279a3ca84a5197294c8b826645c17afbb724cbc7d06598daa11207a5",
+      "bytes": 689
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-recent-records.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/1440x900-recent-records.png",
+      "sha256": "116db00fd84f731227f907b74e92e5a637057321e7b6ba4efbe4e2f3d3b45987",
+      "bytes": 83621
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-filters.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-filters.json",
+      "sha256": "29e58456b3e6db44f3edb8adfa36b1d02f738e08252e7049586cdd39e29f198e",
+      "bytes": 623
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-filters.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-filters.png",
+      "sha256": "e2a56068b9a6a630e441f2597dd914e8ea5db5675aec014da1f8b571adcbc2e7",
+      "bytes": 14111
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-metrics-lists.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-metrics-lists.json",
+      "sha256": "7012b424234f01fe6decaf9178aea5085517f0aa5fc8b35f7350e97886de5423",
+      "bytes": 672
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-metrics-lists.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-metrics-lists.png",
+      "sha256": "e50e3126e2c7bf043b1f371602d2b6c044fc58ee48e39e708abc038d050b7dcd",
+      "bytes": 28755
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-recent-records.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-recent-records.json",
+      "sha256": "b2eb5041bc79069aaadb213cf654f91c58fd09d00b34c8aac71fbe8d6af26da7",
+      "bytes": 686
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-recent-records.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/390x844-recent-records.png",
+      "sha256": "23fe4d772627ec49f80bab2497d0a8f7fbefea7b81a994623834c99833763bce",
+      "bytes": 41780
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-filters.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-filters.json",
+      "sha256": "404a2016cfa43741f9c6159608b48b5527bbf4061d355c8ba7d80ac4709a796a",
+      "bytes": 626
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-filters.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-filters.png",
+      "sha256": "11d684f420d601508e7cc7a47525e8b4b5765c2fd6027c13874392301d762ccc",
+      "bytes": 11808
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-metrics-lists.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-metrics-lists.json",
+      "sha256": "2fdd99e32c9152e981a8b5eb6af087ab2d9a6e42a05551f8f8401e3abf7a846d",
+      "bytes": 675
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-metrics-lists.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-metrics-lists.png",
+      "sha256": "9a0f17b77b78f5a25361ab48a4973fb67cc45074829e5accacd851127dfa0ee2",
+      "bytes": 58566
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-recent-records.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-recent-records.json",
+      "sha256": "12d967cbfaa74a1b77677df192ff7f38dbc1c2a5136b09d7620f604f261d5655",
+      "bytes": 689
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-recent-records.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/834x1112-recent-records.png",
+      "sha256": "ac2f0683b5c00f222576dd5600255277c0fc71fe50e60822a00d0cfa0e4e4249",
+      "bytes": 78004
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/keyboard-error-retry.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/keyboard-error-retry.json",
+      "sha256": "d6b9c2d55da60ea8d026d66fa0325ae8d03a835823c46134ef620b4fd126f6c5",
+      "bytes": 750
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/keyboard-error-retry.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/keyboard-error-retry.png",
+      "sha256": "6270188981c5fb88cdda5d292445daa48b93c9eac18daaf4616767a3a494e2f6",
+      "bytes": 42545
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-drilldown.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-drilldown.json",
+      "sha256": "6ce4d41c2ecc4f31edf0287bfb0dea01a9c3222cb24978732ab988db61ea225a",
+      "bytes": 694
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-drilldown.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-drilldown.png",
+      "sha256": "da46dbabb8ae52d135bf4e7020fcf54fc03478d831f0820faa98a0676aa02e17",
+      "bytes": 41968
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-error-retry.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-error-retry.json",
+      "sha256": "3bdd4ebb194eecec0c9b67795dfac79d7b0831d032df165398b3a75d7695d735",
+      "bytes": 753
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-error-retry.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-error-retry.png",
+      "sha256": "9b795c5f064c40a1eb070c3da050c1e0302cbb53308726ae968b38ec6c7e9d57",
+      "bytes": 34545
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-metrics-lists.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-metrics-lists.json",
+      "sha256": "a3a3fe8dd4d06e1b7ed1d8799716b53276128494583937250a91cf3f9e90cabc",
+      "bytes": 841
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-metrics-lists.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-metrics-lists.png",
+      "sha256": "393064c7353f98344c5d1e5953eaf704cac40e581b30da89734b24121351123e",
+      "bytes": 78053
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-recent-records.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-recent-records.json",
+      "sha256": "b984e73f7c5551b59200f16a46e9eb6680dd3a0935adde047d59941b31bae9a4",
+      "bytes": 699
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-recent-records.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/requester-dashboard/initial/zoom200-recent-records.png",
+      "sha256": "14297a599e2e44f2ffac6ffb8dfa535e5475c8e05c5c201299d3193aef002c84",
+      "bytes": 99564
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/dashboard-1440.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/dashboard-1440.json",
+      "sha256": "2722400b020d6834e085af907532a94facd503aa095c1a004650aabf27b84c2f",
+      "bytes": 516
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/dashboard-1440.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/dashboard-1440.png",
+      "sha256": "95ebff38943416c9fd3970a07874a1afbd2f8dfef368b597b94fa1f5040d07de",
+      "bytes": 301397
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/dashboard-390.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/dashboard-390.json",
+      "sha256": "b425598b56abdb391ec0fb561d2858da33a86488a9a2bfdd76989c9f8c93c907",
+      "bytes": 514
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/dashboard-390.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/dashboard-390.png",
+      "sha256": "ab2259b57b2700abc2d65e34a15118b1dc098b32eefdee71ae01175741aec03a",
+      "bytes": 294454
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/dashboard-834.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/dashboard-834.json",
+      "sha256": "3a89ce5a7b6bcf8c983d583119a4e5bbd6f8de37d42d6e41b0a12a52bcd17eec",
+      "bytes": 515
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/dashboard-834.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/dashboard-834.png",
+      "sha256": "de64278c38a5d1ff5836c615183ef2ae2778920a89da41bf3acc45b0f07d5def",
+      "bytes": 311771
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/contrast.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/contrast.json",
+      "sha256": "706eee12b5a55d74f6dc0931b50c234f48bb02e3883a976fdeb57e095f5e188b",
+      "bytes": 8691
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/error-retry-1.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/error-retry-1.json",
+      "sha256": "6dee4e7185a7098c7145ec336278138c9529adfda7c83fad33c3d438afbcc0f7",
+      "bytes": 2342
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/error-retry-1.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/error-retry-1.png",
+      "sha256": "54f9b2b7b2cc4c1bbf0847b36a2043330f2c14de6163e8caeebafe278a9e67fd",
+      "bytes": 45280
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/error-retry-2.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/error-retry-2.json",
+      "sha256": "54acb8c5b437bb687dd3911cec789bd62c49f4cb134923e4ab0e02647fd53a6f",
+      "bytes": 2393
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/error-retry-2.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/error-retry-2.png",
+      "sha256": "dcb8212f187e6519486b1a251dfd367cb50d601cd2a2cc29d7c604933771081d",
+      "bytes": 32617
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/genuine-zoom.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/genuine-zoom.json",
+      "sha256": "db2e7a90b1111c1a2f65c74fe048cd29c0f46376deec6c18126667867d3a2070",
+      "bytes": 516
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/keyboard-focus.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/keyboard-focus.json",
+      "sha256": "02b38e2f8bc88105f45a1e241ffc300bc48f121616f5341a936a4d2552765530",
+      "bytes": 9154
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/keyboard-focus.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/keyboard-focus.png",
+      "sha256": "d2feb65c520d4fc1b1b2e9af084f1d853592f435abbe60cb7e851d16adb6755c",
+      "bytes": 58570
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/recovery-1.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/recovery-1.json",
+      "sha256": "3b1ab4e75d55e63e4be7e425f9d63a6186ff24607d71761e30db93c50e5bd827",
+      "bytes": 1977
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/recovery-2.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/recovery-2.json",
+      "sha256": "3b1ab4e75d55e63e4be7e425f9d63a6186ff24607d71761e30db93c50e5bd827",
+      "bytes": 1977
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-cards.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-cards.json",
+      "sha256": "7e308abf8c64054b96f7bc5cec769b00136f023981be20b4d23d70e361cafabf",
+      "bytes": 741
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-cards.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-cards.png",
+      "sha256": "aeb85afd5926b1479055369d536639b4fa3fcd476e5539467974309a86b2ae5d",
+      "bytes": 63588
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-filters.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-filters.json",
+      "sha256": "e5aaeb6f243d6e4673a6485d2205dd9554858d5108b258f3e951d00bfcd65f86",
+      "bytes": 877
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-filters.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-filters.png",
+      "sha256": "f410c481acda050ccd3537f7c3f989c9ff24b288b1afd942a20614e0873cb211",
+      "bytes": 58778
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-pagination.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-pagination.json",
+      "sha256": "4a152107e3f6902fc3d26157e75a169b463848a8d1821e9558cced0a289758fb",
+      "bytes": 708
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-pagination.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-pagination.png",
+      "sha256": "d646446671e6e76fe41a7de6aa3ba98769d6649517686927cb801bc3cdf4da31",
+      "bytes": 57939
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-preview.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-preview.json",
+      "sha256": "4ca8ce24d65adf428af877b40e9195b99f159acf5ebb86330c90edc8c0ff2aa7",
+      "bytes": 723
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-preview.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-preview.png",
+      "sha256": "4c0e9ba7bc1da946545b3e3464f09ef559288b411d67c256d8f5369de1e4ba4a",
+      "bytes": 78210
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-selected-action.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-selected-action.json",
+      "sha256": "7ff9391081ff5b04560387120e05f922851029e35f1d3f8544506fef22157368",
+      "bytes": 727
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-selected-action.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/staff-dashboard/accessibility-2026-10-28/initial/zoom200-selected-action.png",
+      "sha256": "115ca6bfcc904da3d5bd7e802adcaefc2a9573252092cbd7946d0ce6303d181f",
+      "bytes": 70219
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-cancellation.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-cancellation.json",
+      "sha256": "9abe4bcbfdb87d24e91e56c0c7875d785656390bd1120474ebbb4fd711d74346",
+      "bytes": 657
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-cancellation.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-cancellation.png",
+      "sha256": "eb258d4afb4693b68698de9241ddfecbcdc9fa0ba0fca1bba1cf356f64160edc",
+      "bytes": 62687
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-history.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-history.json",
+      "sha256": "a8fb505386b2e849c13b84bf693747e8c79e748813cbc3b06162d9b0f557ddad",
+      "bytes": 648
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-history.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-history.png",
+      "sha256": "100050956fabb89932d2f7b08144a011c159820ecb3940a01babb4a54685448b",
+      "bytes": 44847
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-resolution.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-resolution.json",
+      "sha256": "0189f84290a40fdb3bcf2412d00296db3dd24bb51da1762b4c1a35590f9717e6",
+      "bytes": 634
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-resolution.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/1440x900-resolution.png",
+      "sha256": "6e9fb3f4377fd14581a27e38c1cff81d0da3a6d2bf162941863492b9f496b3c3",
+      "bytes": 60014
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-cancellation.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-cancellation.json",
+      "sha256": "1641a7ca546b7e6c723dc8e59baaf0926e646d8717c4250950516cb55d20d795",
+      "bytes": 654
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-cancellation.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-cancellation.png",
+      "sha256": "bf3ef71b6c31615864c6fc00713c014140645a47501c794def8a7c52f2f0e942",
+      "bytes": 38735
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-history.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-history.json",
+      "sha256": "2f18502cc518d37bb0574ddfa8cfff8317cbf04a82efdcd364043d56da0d7420",
+      "bytes": 645
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-history.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-history.png",
+      "sha256": "3ae83930dfaad843bf1f84e7a8c40ef88e76588fedbbdb6f9ddd354a5de3bc66",
+      "bytes": 32808
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-resolution.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-resolution.json",
+      "sha256": "844b929ab5d087d784f21e48741805dcedfada32dfd16f750828092ff0a4e1b4",
+      "bytes": 631
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-resolution.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/390x844-resolution.png",
+      "sha256": "189dd723dc8320ea8eaceb8a87ab2b4b1175bb1a0756202eb4e09626b18fce06",
+      "bytes": 36522
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-cancellation.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-cancellation.json",
+      "sha256": "3f5c75593bf60070cd20463cb52dcee1313a09932866772b805ce2dda7dc2a12",
+      "bytes": 657
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-cancellation.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-cancellation.png",
+      "sha256": "a009ade9f08095bfd27443868d436f198e92005f7fbae09a8f0e8d17289168ef",
+      "bytes": 64073
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-history.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-history.json",
+      "sha256": "f499b001b202d259b504d8ada48ff77ac0aa16503326dcbb79784b24c6088ed5",
+      "bytes": 648
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-history.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-history.png",
+      "sha256": "cb45c603bbddbed8a0646b1cb082d71fe786b0747e6af5a107b2e63efb0b9d48",
+      "bytes": 50687
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-resolution.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-resolution.json",
+      "sha256": "64180a8605447f6c6a3d1adf1646090f97a5a80a39829489905d9de3ce49ddc5",
+      "bytes": 634
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-resolution.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/834x1112-resolution.png",
+      "sha256": "2f7773a096683389ae8446c81278f4271256a18d2e92a7144eb69417a47077c6",
+      "bytes": 61232
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/keyboard-blocker.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/keyboard-blocker.json",
+      "sha256": "aa2a77737f2f6ef138f94e167e68d5080f3ccf6cf8b360aeaa6a133051c8aaa2",
+      "bytes": 656
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/keyboard-blocker.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/keyboard-blocker.png",
+      "sha256": "8c0e0158e2eb3ffafa59cf5e24732dce720bc5d5ba63e1fdee7ad66522feba8f",
+      "bytes": 92188
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/keyboard-invalid-reason.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/keyboard-invalid-reason.json",
+      "sha256": "a8bcbded1c5ae36a4993f64176da6eb05350125daf768f0e109e9aff613ae0a5",
+      "bytes": 646
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/keyboard-invalid-reason.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/keyboard-invalid-reason.png",
+      "sha256": "d6bb779a0b74679cdf39b3cecd30a3e7cc315bd618e74c9650802d584b2de658",
+      "bytes": 89222
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-blocker.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-blocker.json",
+      "sha256": "90e51c01ea28519aa5b5225618c5f152eb601de8f1528ff4d0ece234127718dc",
+      "bytes": 670
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-blocker.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-blocker.png",
+      "sha256": "389f6b27805433ac12039704a40f9e206107ab9505165bc4eee669caaf872d57",
+      "bytes": 95237
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-cancellation.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-cancellation.json",
+      "sha256": "6c84cbc5adafb610bc279d521cde7f2e74038eb6ceda3faa01e393c0ae2da814",
+      "bytes": 708
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-cancellation.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-cancellation.png",
+      "sha256": "c2748b169c39ba1c48f93b057cb952d8d548e0e4d6ca55551a5ff136f8cf1d46",
+      "bytes": 101299
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-history.json",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-history.json",
+      "sha256": "d61ca43ee3237598d190e84d86e029bd1f6df6a8e8c74f1333897523f09d0d84",
+      "bytes": 661
+    },
+    {
+      "originalPath": "artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-history.png",
+      "publishedPath": "artifacts/lab-04/hardening/t37-visual-review-2026-11-04/fresh/artifacts/lab-04/screenshots/ticket-workflow/initial/zoom200-history.png",
+      "sha256": "2e1bbe08b355875f7cde1eb4aab406c4edf22abf4119d6672913451f78077387",
+      "bytes": 107192
+    }
+  ]
+}

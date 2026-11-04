@@ -1,0 +1,16 @@
+{
+  "screenshot": "dashboard-834.png",
+  "executionHead": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+  "date": "2026-11-04 04:22:08",
+  "timezone": "Asia/Bangkok",
+  "browser": "153.0.8010.12",
+  "viewport": {
+    "width": 834,
+    "height": 1112
+  },
+  "state": "Populated seven-filter Dashboard; long literal summaries and worker name",
+  "role": "IT_STAFF",
+  "successfulReads": "Real React/Express/PostgreSQL",
+  "zoom": "Unmodified browser zoom; no genuine 200% zoom claim",
+  "visualInspection": "Pending"
+}

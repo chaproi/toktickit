@@ -1,0 +1,23 @@
+{
+  "screenshot": "accessibility-my-actions-focus.png",
+  "date": "2026-11-04 04:19:44",
+  "timezone": "Asia/Bangkok",
+  "testedCommit": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+  "browser": "Chromium",
+  "browserVersion": "HeadlessChrome/153.0.8010.12",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "viewportMeaning": "Configured CSS viewport at 100% zoom",
+  "role": "IT_STAFF",
+  "screenState": "Labelled filters, keyboard focus and textual identities/status",
+  "zoomFactor": 1,
+  "zoomMethod": "unmodified browser zoom",
+  "syntheticDataOnly": true,
+  "visualInspection": "Pending manual inspection",
+  "sampledContrast": {
+    "bodyText": 11.99,
+    "applyButton": 6.45
+  }
+}

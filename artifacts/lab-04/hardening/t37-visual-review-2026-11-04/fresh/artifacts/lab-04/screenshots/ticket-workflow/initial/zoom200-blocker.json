@@ -1,0 +1,21 @@
+{
+  "screenshot": "zoom200-blocker.png",
+  "capturedAt": "2026-11-03T21:23:04.633Z",
+  "timezone": "Asia/Bangkok",
+  "executionHead": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+  "pendingProductionFiles": [],
+  "browser": "Chrome/153.0.8010.12",
+  "configuredViewport": null,
+  "actualCSSViewport": {
+    "width": 712,
+    "height": 402,
+    "pinchScale": 1
+  },
+  "role": "IT_STAFF",
+  "state": "Genuine 2.0 tab zoom: real blocker and keyboard handoff",
+  "zoomFactor": 2,
+  "zoomMethod": "chrome.tabs.setZoom/getZoom via unchanged genuineZoom extension helper",
+  "syntheticDataOnly": true,
+  "visualInspection": "Pending visual inspection",
+  "verifiedTabZoom": 2
+}

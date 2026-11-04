@@ -1,0 +1,23 @@
+{
+  "screenshot": "390x844-recent-records.png",
+  "capturedAt": "2026-11-03T21:20:58.803Z",
+  "executionHead": "2671b3a2374bb10fe2cbaae50d6b844c66e7f0e4",
+  "pendingProductionFiles": [],
+  "browser": "HeadlessChrome/153.0.8010.12",
+  "configuredViewport": {
+    "width": 390,
+    "height": 844
+  },
+  "actualCSSViewport": {
+    "width": 390,
+    "height": 844,
+    "pinchScale": 1
+  },
+  "role": "REQUESTER",
+  "state": "Long literal summary, owner name, textual status/priority and authoritative timestamps",
+  "zoomFactor": 1,
+  "zoomMethod": "unmodified tab zoom",
+  "captureScope": "native viewport",
+  "syntheticDataOnly": true,
+  "visualInspection": "Pending visual inspection"
+}
