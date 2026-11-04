@@ -2,7 +2,7 @@
 
 สิริกร ฝันนิมิตร (ไทเกอร์) · Student ID 67070507215 · GitHub chaproi
 
-**DRAFT - reviewer decision and student reflection pending; not submitted**
+**DRAFT - scoped reviewer decision and final report approval pending; not submitted**
 
 Main integration: `040e13b78893ab8155bac89758334adf1a045b01`. Latest comprehensive server: **2,109 passed / 1 failed**, not a complete pass. The standalone PATCH pass is separate evidence.
 
@@ -50,21 +50,15 @@ Seven actual selected task prompts are recorded in ai-use.md: P-01 contract anal
 
 Human Narrator reports are attributed only to actual student statements. Playwright checks semantics/focus and AI inspects images; neither is described as hearing Narrator. This document does not fabricate personal experience, approval or transcripts.
 
-### Student-authored reflection
+### Student-approved reflection (AI-assisted drafting)
 
-**Not written by AI. Student to supply their own words.**
+The student accepted the following reflection on 5 November 2026. AI drafted it from the recorded activity; it is not represented as independently student-authored. This acceptance applies to the reflection, not the entire report or the pending peer decision.
 
-- What did you personally use AI for?
+ใน Lab นี้ ผมใช้ AI ช่วยอ่านข้อกำหนด วางแนวทางเขียนโค้ดและเทสต์ รวมถึงช่วยหาสาเหตุเวลาเจอปัญหา เพราะงานมีหลายส่วนที่เกี่ยวข้องกัน AI ช่วยให้ตามงานได้ง่ายขึ้น แต่บางครั้งก็ใช้เวลาตรวจละเอียดนานเกินไป จึงต้องกำหนดขอบเขตให้ชัดว่าตอนนี้กำลังแก้ปัญหาอะไร และจะหยุดตรวจเมื่อไหร่
 
-  [Student response]
+ส่วนที่ผมทดลองเองคือการใช้งานหน้าเว็บ ทั้งฝั่ง Requester และ IT Staff รวมถึงใช้ Narrator ตรวจการอ่านข้อความ ชื่อช่องกรอก ปุ่ม และข้อความแจ้งเตือน ผมลองขยายหน้าเว็บเป็น 200% และส่งภาพกับผลที่ได้กลับไปให้ AI ช่วยตรวจต่อ ส่วนการเปลี่ยนแปลงในโค้ดก็ให้เพื่อนช่วยรีวิวผ่าน PR ก่อนรวมงาน
 
-- What did you independently inspect or correct?
-
-  [Student response]
-
-- What did you learn, and what would you change next time?
-
-  [Student response]
+สิ่งที่ได้เรียนรู้คือ การมีหน้าเว็บที่ใช้งานได้กับการมีหลักฐานยืนยันผลเป็นคนละส่วนกัน และเทสต์ที่ผ่านเมื่อรันแยกไม่ได้แปลว่าผลรอบใหญ่ที่เคยล้มเหลวจะหายไป ครั้งหน้าผมจะเก็บหลักฐานไปพร้อมกับทำแต่ละส่วน และกำหนดเกณฑ์จบงานตั้งแต่ต้น เพื่อลดเวลาที่ต้องย้อนกลับมาตรวจและจัดเอกสารตอนท้าย
 
 Evidence: [Actual prompts/model/activity record](https://github.com/chaproi/toktickit/blob/040e13b78893ab8155bac89758334adf1a045b01/docs/lab-04/ai-use.md); [Student observation provenance](https://github.com/chaproi/toktickit/blob/040e13b78893ab8155bac89758334adf1a045b01/docs/lab-04/student-requester-observations-2026-11-04.md).
 
@@ -134,7 +128,7 @@ The peer accepted the recorded Lab-level T-37/T-38 evidence and Chrome/Chromium 
 
 T-47 retains all A-B-B-A outcomes: A 1 and B 2 passed every inline assertion; B 3 and A 4 failed. B 2 is one complete B observation with aggregate p 95=401.518 ms and 18/18 operation targets. B 3 CREATE p 95=506.970 ms and A 4 aggregate p 95=963.614 ms remain failed against unchanged p 95<500 ms. The peer accepted that limited Lab disposition, not stable capacity or production readiness.
 
-Other retained limits include failed-start bookkeeping metadata until disconnect without an established memory-growth bound, untriaged dependency-audit findings, and historical unknown causes. The new PATCH comprehensive failure still needs an explicit scoped reviewer disposition. Student reflection, final draft approval/PDF sign-off and actual submission are not completed by this report.
+Other retained limits include failed-start bookkeeping metadata until disconnect without an established memory-growth bound, untriaged dependency-audit findings, and historical unknown causes. The new PATCH comprehensive failure still needs an explicit scoped reviewer disposition. The student has accepted the AI-assisted reflection. Final draft approval/PDF sign-off and actual submission remain pending.
 
 ![F5](../../artifacts/lab-04/screenshots/actions-taken/390x844-my-actions.png)
 
@@ -167,9 +161,10 @@ All command records and cleanup retain their original provenance. No test, build
 ## Appendix B - Release fields still awaiting completion
 
 - New narrow harness/limitation review: Pending actual reviewer decision.
-- Student reflection: student-authored text not yet supplied.
+- Student reflection: AI-assisted draft accepted by the student on 5 November 2026; not represented as independently student-authored.
 - Final report approval: pending; this PDF is a draft.
 - Actual submission: not performed.
 - No Product DoD/scenario checkbox states changed.
 
 [PDF draft](../../output/pdf/toktickit-lab4-parts-1-9-draft.pdf). [Scoped review decision](final-main-review-2026-11-05.md).
+

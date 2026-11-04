@@ -2,7 +2,7 @@
   "pages": 13,
   "parts": 9,
   "rubricPoints": 60,
-  "pdfSha256": "241b60396221fc10e493293d8945a188858d05f4cde749617f82b50c1f5e48b0",
+  "pdfSha256": "007666125231d6f4f3ef29f53dc8e4085f9ce3d21bc89750a438e7a4d72a698e",
   "linkAnnotations": 33,
   "historicalFigures": [
     {
@@ -81,12 +81,12 @@
       "displayRegion": "Entire original image"
     }
   ],
-  "reflection": "Three student response fields left blank",
+  "reflection": "AI-assisted reflection accepted by the student on 5 November 2026; not independently student-authored; whole-report approval remains pending.",
   "sourceMain": "040e13b78893ab8155bac89758334adf1a045b01",
   "evidenceArchive": "458ffd72354e878e87d5d4b2498a7c24a17ee154",
   "applicationCommandsExecuted": 0,
-  "status": "draft; all 13 rendered pages visually inspected",
-  "inspection": "Page layout, headings, captions, page numbers, reflection blanks and absence of clipping checked on rendered pages; final contact sheet and detailed pages checked after typography corrections. No application UI or audio recapture.",
+  "status": "draft; student accepted reflection only; scoped peer disposition and final report approval remain pending; not submitted",
+  "inspection": "Reflection update: rendered and visually inspected changed pages 1, 5, 10 and 13; nine other pages are pixel-identical to the previous PDF. All five embedded historical images are unchanged. All 33 links remain. Thai font shaping and copy/search Unicode mappings checked. No application execution.",
   "authoringAttempts": [
     "Initial command stopped before PDF creation due to path-text decoding; explicit UTF-8 corrected.",
     "First rendered layout had orphan evidence links; image limits and line leading corrected.",
@@ -96,9 +96,40 @@
   "limits": [
     "Historical images are not final-main captures.",
     "Viewport excerpt is a derived PDF display crop; original image bytes are unchanged.",
-    "Student reflection and scoped peer decision remain open.",
-    "PDF generation checks are not application tests."
+    "PDF generation checks are not application tests.",
+    "Scoped peer decision, final report approval and submission remain open."
   ],
   "pdfPath": "output/pdf/toktickit-lab4-parts-1-9-draft.pdf",
-  "binarySerialization": "Native compressed PDF streams; binary marker within first 8 KiB; preserves PDF offsets and avoids Git text line-ending conversion."
+  "binarySerialization": "Native compressed PDF streams; binary marker within first 8 KiB; preserves PDF offsets and avoids Git text line-ending conversion.",
+  "previousPublication": {
+    "pdfSha256": "241b60396221fc10e493293d8945a188858d05f4cde749617f82b50c1f5e48b0",
+    "reflection": "Three student response fields left blank",
+    "status": "draft; all 13 rendered pages visually inspected",
+    "inspection": "Page layout, headings, captions, page numbers, reflection blanks and absence of clipping checked on rendered pages; final contact sheet and detailed pages checked after typography corrections. No application UI or audio recapture."
+  },
+  "reflectionUpdate": {
+    "dateBangkok": "2026-11-05",
+    "previousCommit": "77cbf05f207532843f6f0901330a9221c1756249",
+    "modifiedPdfPages": [
+      1,
+      5,
+      10,
+      13
+    ],
+    "unchangedPdfPages": [
+      2,
+      3,
+      4,
+      6,
+      7,
+      8,
+      9,
+      11,
+      12
+    ],
+    "applicationCommandsExecuted": 0,
+    "thaiFont": "Noto Sans Thai Regular, SIL Open Font License 1.1, google/fonts",
+    "thaiFontSource": "https://github.com/google/fonts/tree/main/ofl/notosansthai",
+    "reviewOrSubmissionAccepted": false
+  }
 }

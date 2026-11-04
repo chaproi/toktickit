@@ -19,13 +19,14 @@ This fixes repeated module-graph setup in the legacy harness. It does not change
 
 1. Is the small legacy fixture lifecycle diff correct, isolated and adequately supported by its actual RED/GREEN evidence?
 2. Is the retained server limitation (2,109 passes / 1 failure, standalone PATCH pass, historical holder unknown, no production fix) acceptable **for qualified Lab submission**, or is further scoped work required? Record the decision against the actual reviewed HEAD and identify any required follow-up.
-3. Does the Parts 1-9 draft accurately distinguish execution rounds, provenance and unfinished student reflection/submission?
+3. Does the Parts 1-9 draft accurately distinguish execution rounds, provenance and the student-approved AI-assisted reflection and unfinished submission?
 
 This requests review of the new diff and limitation only. It does not reopen accepted PR58, D-12/D-13, T-37/T-38 or the limited T-47 disposition, or ask for repeated benchmark/audio/visual evidence. Silence is not acceptance. No all-pass verdict, reviewer approval, Product DoD promotion, merge or submission is claimed.
 
 ## Report package and publication checks
 
-- [Parts 1-9 source](submission-report-draft.md) and [13-page PDF draft](../../output/pdf/toktickit-lab4-parts-1-9-draft.pdf): nine rubric parts, 60 available points; this is not an awarded score. Three student-reflection fields remain blank.
+- [Parts 1-9 source](submission-report-draft.md) and [13-page PDF draft](../../output/pdf/toktickit-lab4-parts-1-9-draft.pdf): nine rubric parts, 60 available points; this is not an awarded score. The student accepted the AI-assisted reflection on 5 November 2026. This is not independently student-authored text or approval of the entire report; peer disposition and submission remain pending.
 - [PDF provenance and inspection record](../../artifacts/lab-04/release/report-draft-2026-11-05/provenance.json): five unchanged historical images, 33 PDF link annotations, original capture sources and hashes. The Staff figure is explicitly a viewport excerpt of the historical full-page image. No new application screenshots or audio were taken.
 - Full original diagnostic evidence is preserved on a separate archive branch at pinned commit `458ffd72354e878e87d5d4b2498a7c24a17ee154`. Raw diagnostic output is not copied into this narrow PR.
 - Application tests, builds, E2E and benchmarks were not rerun for publication. Only document/PDF/Git scope, assertion preservation, links, encoding and whitespace checks were performed. No database/runtime resources were created by report preparation.
+

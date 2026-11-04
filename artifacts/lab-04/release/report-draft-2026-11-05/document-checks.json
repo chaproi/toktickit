@@ -23,5 +23,29 @@
     ]
   ],
   "stagedWhitespaceCheck": "passed including binary PDF",
-  "reviewScopeFiles": 6
+  "reviewScopeFiles": 6,
+  "reflectionUpdate": {
+    "pages": 13,
+    "linkAnnotations": 33,
+    "parts": 9,
+    "studentReflectionAccepted": true,
+    "peerDecision": "Pending",
+    "finalReportApproval": "Pending",
+    "submission": "Not performed",
+    "unchangedPagePixels": [
+      2,
+      3,
+      4,
+      6,
+      7,
+      8,
+      9,
+      11,
+      12
+    ],
+    "allFiveHistoricalImagesUnchanged": true,
+    "applicationCommandsExecuted": 0,
+    "thaiUnicodeCopySearch": "Checked",
+    "visualInspection": "Pages 1, 5, 10 and 13 inspected; no clipping or overlap"
+  }
 }
