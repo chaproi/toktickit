@@ -27,8 +27,10 @@
     },
     {
       "path": "captures/gap-390x844-create-ticket.json",
-      "bytes": 7422,
-      "sha256": "65febf8f5d80383d6d81d972e769d657efd884ff38a32c17f173f829b7b22627"
+      "bytes": 7396,
+      "sha256": "e75c10fdb72f9a6ab88498395f883c1db88ce5dd23f182d535d860f4b7626ea1",
+      "capturedWindowsWorkingCopySha256": "65febf8f5d80383d6d81d972e769d657efd884ff38a32c17f173f829b7b22627",
+      "capturedWindowsWorkingCopyBytes": 7422
     },
     {
       "path": "captures/gap-390x844-create-ticket.png",
@@ -37,8 +39,10 @@
     },
     {
       "path": "captures/gap-390x844-my-tickets.json",
-      "bytes": 7437,
-      "sha256": "2563af31dcdb149d60beac79907dd2fd513a625ad888e4327c62d3b655e2c7d0"
+      "bytes": 7411,
+      "sha256": "6544261f7892e3f88101a3e02d5643f0f810de0b8d910a82c3ab74b86791af21",
+      "capturedWindowsWorkingCopySha256": "2563af31dcdb149d60beac79907dd2fd513a625ad888e4327c62d3b655e2c7d0",
+      "capturedWindowsWorkingCopyBytes": 7437
     },
     {
       "path": "captures/gap-390x844-my-tickets.png",
@@ -47,8 +51,10 @@
     },
     {
       "path": "captures/gap-834x1112-create-ticket.json",
-      "bytes": 7423,
-      "sha256": "b22eb4c801018b78685ffd4ccbde2c1c2ca3a2bc6cfacfd8f2dfab64dac82f1b"
+      "bytes": 7397,
+      "sha256": "c1fa6814aed8b1262d04bb80b4620636011740861c49ce39483ab773977755cd",
+      "capturedWindowsWorkingCopySha256": "b22eb4c801018b78685ffd4ccbde2c1c2ca3a2bc6cfacfd8f2dfab64dac82f1b",
+      "capturedWindowsWorkingCopyBytes": 7423
     },
     {
       "path": "captures/gap-834x1112-create-ticket.png",
@@ -57,8 +63,10 @@
     },
     {
       "path": "captures/gap-834x1112-my-tickets.json",
-      "bytes": 7438,
-      "sha256": "b673c1b9421e4094afad7d3a67369f3b91f2a2fcab96f8b7155c398133f0e024"
+      "bytes": 7412,
+      "sha256": "06608274bad2f045467af4f97ab470e2f1e2abf76a822eb14231338f961304a5",
+      "capturedWindowsWorkingCopySha256": "b673c1b9421e4094afad7d3a67369f3b91f2a2fcab96f8b7155c398133f0e024",
+      "capturedWindowsWorkingCopyBytes": 7438
     },
     {
       "path": "captures/gap-834x1112-my-tickets.png",
@@ -77,8 +85,10 @@
     },
     {
       "path": "comprehensive-confirmation.json",
-      "bytes": 2079,
-      "sha256": "54130807913ec5756c7712ff83c44f0d8837525198149a17d97984e3ccb8371c"
+      "bytes": 2028,
+      "sha256": "5c237f233249ec7d0d68f974ae807e22efc0594879e65fee3f9370dbec4d8655",
+      "capturedWindowsWorkingCopySha256": "54130807913ec5756c7712ff83c44f0d8837525198149a17d97984e3ccb8371c",
+      "capturedWindowsWorkingCopyBytes": 2079
     },
     {
       "path": "comprehensive-confirmation.txt",
@@ -92,13 +102,17 @@
     },
     {
       "path": "earlier-attempts.json",
-      "bytes": 5834,
-      "sha256": "6a008d19b55706d64156799c210f63c916a53d766c3df18bd50d3c270288744b"
+      "bytes": 5687,
+      "sha256": "45c129b32de0c8855c711ee7e7dd73fc79ee8093b489116ab13391cf57070f49",
+      "capturedWindowsWorkingCopySha256": "6a008d19b55706d64156799c210f63c916a53d766c3df18bd50d3c270288744b",
+      "capturedWindowsWorkingCopyBytes": 5834
     },
     {
       "path": "first-cleanup-observation.json",
-      "bytes": 423,
-      "sha256": "a560197655b98ddd4d5cf9e5fff9b46bfafec680f598baebfcd16b6567bde943"
+      "bytes": 412,
+      "sha256": "0bac7608428af9a4f830e654fab0d045eb9deaaa87e6c2aa3f3faf4337b48326",
+      "capturedWindowsWorkingCopySha256": "a560197655b98ddd4d5cf9e5fff9b46bfafec680f598baebfcd16b6567bde943",
+      "capturedWindowsWorkingCopyBytes": 423
     },
     {
       "path": "observations/attempt-3/gap-390-geometry.json",
@@ -142,23 +156,31 @@
     },
     {
       "path": "preservation-run-1.json",
-      "bytes": 14763,
-      "sha256": "0401d3dccf7b3b425075b7dc3763e0636828622ae489dc05445b3699520cb46e"
+      "bytes": 14579,
+      "sha256": "dd9ec1b5a5c5e6c96a6e65a673d96f92ac790c17abc888383adcf118cf32c0f7",
+      "capturedWindowsWorkingCopySha256": "0401d3dccf7b3b425075b7dc3763e0636828622ae489dc05445b3699520cb46e",
+      "capturedWindowsWorkingCopyBytes": 14763
     },
     {
       "path": "preservation-run-2.json",
-      "bytes": 16535,
-      "sha256": "79279c55101b3c1de40b71e914dea0ba44a7e9fcdd7a4a3fa4a6050260c7c5cd"
+      "bytes": 16333,
+      "sha256": "1602516ff2412e5ebe4d630a6fbbb8ffa58df2d4eb54101e57db294d9434026d",
+      "capturedWindowsWorkingCopySha256": "79279c55101b3c1de40b71e914dea0ba44a7e9fcdd7a4a3fa4a6050260c7c5cd",
+      "capturedWindowsWorkingCopyBytes": 16535
     },
     {
       "path": "recovered-originals.json",
-      "bytes": 6807,
-      "sha256": "07563a8710c06180851310d3b7f3120d500cb37fcb19759ec959efebdc9fa24b"
+      "bytes": 6715,
+      "sha256": "c56011e4b0f3f6f2629759226c06f1327ad6d3971d02cfba7dee8c0e79949825",
+      "capturedWindowsWorkingCopySha256": "07563a8710c06180851310d3b7f3120d500cb37fcb19759ec959efebdc9fa24b",
+      "capturedWindowsWorkingCopyBytes": 6807
     },
     {
       "path": "resource-check.json",
-      "bytes": 1287,
-      "sha256": "1fc7886d8ffb43f895e29736197ef99f3a5ed9b4266bf1e604fd5a282f470222"
+      "bytes": 1265,
+      "sha256": "851e9494040335e5d74a8b6410893d683f25bac7d1285f13ca962cabb1a682fa",
+      "capturedWindowsWorkingCopySha256": "1fc7886d8ffb43f895e29736197ef99f3a5ed9b4266bf1e604fd5a282f470222",
+      "capturedWindowsWorkingCopyBytes": 1287
     }
   ],
   "count": 32,
@@ -166,5 +188,6 @@
   "historicalArtifactHashesPreserved": 747,
   "normalConfirmationSource": "65f4bb1b1c5f4ec9f4f87b2b410ff62fbdb2cd29",
   "noBenchmarkExecution": true,
-  "publicationFormatting": "New redacted text exports normalized to LF without trailing whitespace in a separate corrective commit. All raw private outputs and recorded results remain unchanged; historical artifacts untouched."
+  "publicationFormatting": "New redacted text exports normalized to LF without trailing whitespace in a separate corrective commit. All raw private outputs and recorded results remain unchanged; historical artifacts untouched.",
+  "sha256Meaning": "Exact published Git-blob bytes, including LF-normalized text. Where different, capturedWindowsWorkingCopySha256/Bytes retain original Windows working-copy provenance (CRLF). Binary PNG hashes are identical in both forms."
 }
