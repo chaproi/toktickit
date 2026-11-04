@@ -1,0 +1,57 @@
+# Lab 4: bounded closeout verification proposal
+
+Date: 4 November 2026 (Asia/Bangkok). Reviewed candidate: `bb16551fdf4588ad86d3782106f53b3947cde838`, PR58.
+
+**Status: proposed verification/disposition plan, not an accepted contract amendment or a passing result.** The student requested a more convenient, faster route, allowing scope adjustment: “มีวิธีที่สะดวกและเร็วกว่านี้มั้ย หรือปรับขอบเขตงานก็ได้ ขอแค่ lab4 จบ”. This authorizes preparing a concrete plan; it is not an exact student/peer acceptance of the performance or observation dispositions below.
+
+## 1. Preserve the required product
+
+The provided SE Lab 4 handout requires Actions Taken, Ticket workflow, role dashboards, preserved Labs1–3 behavior, real regression/accessibility/visual evidence, peer review and staged integration. Section4.2 excludes production-scale cloud operations; sections8.5–8.6/10 require hardening and inherited responsive/accessibility coverage; section14 requires final-main passing test evidence and the nine-part PDF.
+
+Retain all implemented features, role/ownership/security/data/race/replay invariants, accepted D-12/D-13 wording, AC/FR/BR identifiers, current test assertions and existing performance thresholds. [Specification](specification.md), [UI contract](ui-spec.md) and [55-scenario reconciliation](hardening-closeout-2026-11-04.md) remain authoritative until an actual reviewed amendment says otherwise. No code rollback, dependency change, new feature, expanded production-capacity study or speculative latency tuning is proposed.
+
+The change is to organize verification by already-covered behavior and remaining evidence, rather than ask the student to repeat every automated case or answer one chat message per control. Automated semantics and real speech remain separate proof.
+
+## 2. Concrete closeout map
+
+| Gate | Reuse | Remaining bounded work | Actual decision |
+| --- | --- | --- | --- |
+| T-37 visual | [92 original PNGs and AI review](t37-visual-review-2026-11-04.md), retained geometry/zoom evidence and valid historical provenance | Human inspects a coverage-mapped gallery for every required major screen/viewport and records clipping, wrapping, readability and focus appearance in one checklist. First recover/verify the four referenced missing PNGs and absent Login/password coverage; capture only genuinely missing required states. Human decides the minor History spacing observation. | Human observation/coverage acceptance Pending; AI inspection is not relabelled as human sign-off. |
+| T-38 accessibility | Existing executed component/keyboard/ARIA/contrast/genuine200% checks, source equivalence, student-reported Login observations | Three grouped task sessions below, one consolidated observation record per group; an additional supported-browser session. Reuse a shared component proof only where actual implementation/behavior is shared; cover distinct dialogs and role navigation separately. | Student/peer reviews named/browser/version/source evidence and explicit untested combinations. No automatic full-scenario pass. |
+| T-47 smoke | All four unchanged ABBA runs and samples: A1/B2 pass, B3/A4 fail; B2 is on current application bytes | Review the complete mixed evidence once and make an explicit acceptance or rejection decision for the Lab configuration. No additional benchmark is implied. | Proposed disposition below requires actual student and peer agreement; otherwise Pending. |
+| PR/Issue49 | Current correctness evidence and complete reconciliation | Peer reviews exact amendment/implementation plus only the new evidence/method/disposition delta against the previously reviewed HEAD. Resolve actual remaining findings and integrate into lab4-staging when approved. | No substituted peer approval or Issue closure. |
+| Release/Issue50 | Approved staging work and existing report material | Reviewed integration into main, required final-main verification output, final source/checklist reconciliation and Answer Part1–9 PDF with actual student reflection. | These remain required; candidate review cannot finish the complete Lab submission by itself. |
+
+No repeated comprehensive suite follows solely from this documentation proposal. Any code correction needs appropriate affected verification; final-main execution required by the handout still occurs at release. Previous failures and warnings are retained.
+
+## 3. Group the actual accessibility work
+
+**Group A — Login and shared navigation.** Finish field names/required semantics, Show password label/state and keyboard activation, Sign in button name and actual validation-summary announcement. Then observe role-appropriate navigation and active state for Requester and Staff; verify the distinct Admin navigation entry where applicable. Record actual speech, focus movement and failures together rather than one message per button.
+
+**Group B — Dashboard/list flow.** Requester Dashboard → one metric drill-down → list filter/page/detail; Staff Dashboard → My assigned Actions → selected Action. Observe meaningful metric names/values, filter/page labels, loading/busy and a safely controlled read-error/Retry announcement for each distinct implementation pattern. Record actual inspected tasks and shared-component mapping; do not claim every browser/role/state combination from one traversal.
+
+**Group C — Dialog/workflow/history flow.** Observe Action creation validation, a status/confirmation dialog, any distinct nested clear-confirmation behavior, history navigation and a Ticket workflow blocker/confirmation. Test focus entry/trap/return, field/error relationships, announced state and keyboard exit when allowed. Unique dialog behavior cannot be inferred solely from a different dialog's result.
+
+**Additional browser session.** Propose the student's installed Edge alongside the currently used Chrome for the same representative navigation, form, dialog, keyboard and actual200% zoom behaviors, subject to the supported-browser scope and peer agreement. Record exact versions and observed differences. Chrome+Edge is two browsers but both Chromium-based: Firefox/WebKit/other engines are untested, not certified. If the existing/inherited agreed browser scope requires another engine, it must actually be observed or explicitly amended by the proper reviewer; this proposal does not remove it.
+
+For each group, collect one compact record: operator/date, application HEAD and dirty state, actual browser/Windows/screen-reader versions, task/actions, words actually heard, focus/state result and defect/untested items. A short user-supplied recording can assist transcription when available; do not record real passwords or treat silence/uncertain transcription as a pass.
+
+Current student reports are **partial**: Email/Password approximately “added requie”; Show password was initially unheard, then “scan checked”, with the name subsequently explicitly confirmed; error text was reported after blank submit, but exact spoken words/automatic focus behavior remain unconfirmed. Sign in's own button-name announcement and exact local source/version metadata remain unrecorded. This does not establish a new demonstrated code defect or a full Login/T-38 pass.
+
+## 4. Proposed T-47 disposition, for explicit review
+
+Suggested decision wording:
+
+> Accept B2 as evidence of **one complete passing T-47 observation** on the current application bytes in the recorded local Lab configuration. Retain B3's CREATE p95=506.970ms and A4's aggregate p95=963.614ms as failed observations and an explicit repeatability limitation. Do not claim all ABBA runs passed, stable capacity, a consistent code-caused performance gain, production readiness or that the failed observations meet the unchanged<500ms target. This is a proposed limited Lab acceptance decision, not a new test result or permission to hide failures.
+
+B2's aggregate p95 was401.518ms with all18operation targets and every inline assertion passing. B3 aggregate441.080ms passed but CREATE failed; A4 aggregate failed; A1 passed. All22000samples, zero request errors/exact persistence, telemetry gaps and unknown historical causes remain at their original provenance.
+
+**Neither the student's request for speed nor this proposal accepts that wording.** Actual student and peer disposition must be recorded against the current accepted contract; instructor clarification is needed if a mandatory assessment target would be relaxed. If the reviewers require demonstrated repeatability or reject the limited disposition, T-47 remains unresolved. Raising thresholds, deleting assertions, excluding a slow operation or reporting a failed run as passed is not proposed.
+
+## 5. Adoption and completion boundary
+
+This proposal adds one reviewable document. It changes no normative requirement, test, application/configuration/dependency/benchmark byte, old artifact, checklist state or PR Draft status. No application, database, browser, screen-reader or performance command ran for preparing it.
+
+Student exact-plan decision: **not yet recorded**. Human review of method/browser scope/T-47 disposition: **Pending**. T-37/T-38/T-47 acceptance, PR58 approval, Issue49 completion and Lab4 release/submission: **Pending**.
+
+Once actual decisions exist, update the specification/API/test/reviewer traceability only to the extent required by what was accepted, and preserve the original wording/results. The fastest supported route is a finite evidence closeout and explicit review decision; it is not an automatic promise of approval or a declaration that the Lab is already complete.
